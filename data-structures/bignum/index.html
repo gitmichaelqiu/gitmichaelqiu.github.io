@@ -12,28 +12,24 @@
         <meta name="author" content="Michael Qiu">
       
       
-        <link rel="canonical" href="https://gitmichaelqiu.github.io/algorithms/sort/bubble-sort/">
+        <link rel="canonical" href="https://gitmichaelqiu.github.io/data-structures/bignum/">
       
       
-        <link rel="prev" href="../sort-overview/">
       
       
-        <link rel="next" href="../../quick-pow/">
-      
-      
-      <link rel="icon" href="../../../images/favicon.png">
+      <link rel="icon" href="../../images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.34">
     
     
       
-        <title>Bubble Sort - Michael Qiu's Blog</title>
+        <title>Bignum - Michael Qiu's Blog</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.35f28582.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.35f28582.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -54,7 +50,7 @@
     
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -89,9 +85,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="Michael Qiu&#39;s Blog" class="md-header__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
+    <a href="../.." title="Michael Qiu&#39;s Blog" class="md-header__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
       
-  <img src="../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
+  <img src="../../assets/logo-MK-round-circle-auto.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -108,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Bubble Sort
+              Bignum
             
           </span>
         </div>
@@ -227,7 +223,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../.." class="md-tabs__link">
+        <a href="../.." class="md-tabs__link">
           
   
   Intro
@@ -241,13 +237,11 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../gcd-lcm/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../algorithms/gcd-lcm/" class="md-tabs__link">
           
   
   Algorithms
@@ -265,7 +259,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../data-structures/binary-heap/" class="md-tabs__link">
+        <a href="../binary-heap/" class="md-tabs__link">
           
   
   Data Structures
@@ -283,7 +277,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../oi-tips/accelerate-ios/" class="md-tabs__link">
+        <a href="../../oi-tips/accelerate-ios/" class="md-tabs__link">
           
   
   OI Tips
@@ -307,7 +301,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../school-notes/junior-notes/geography/" class="md-tabs__link">
+        <a href="../../school-notes/junior-notes/geography/" class="md-tabs__link">
           
   
   School Notes
@@ -343,9 +337,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Michael Qiu&#39;s Blog" class="md-nav__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
+    <a href="../.." title="Michael Qiu&#39;s Blog" class="md-nav__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
       
-  <img src="../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
+  <img src="../../assets/logo-MK-round-circle-auto.svg" alt="logo">
 
     </a>
     Michael Qiu's Blog
@@ -412,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -433,7 +427,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../some-websites/" class="md-nav__link">
+      <a href="../../some-websites/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -458,28 +452,25 @@
       
   
   
-    
   
   
-  
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -490,7 +481,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Algorithms
@@ -504,7 +495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../gcd-lcm/" class="md-nav__link">
+      <a href="../../algorithms/gcd-lcm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -522,8 +513,6 @@
                 
   
   
-    
-  
   
   
     
@@ -533,11 +522,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
         
           
           <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
@@ -551,7 +542,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2_2">
             <span class="md-nav__icon md-icon"></span>
             Sort
@@ -565,7 +556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sort-overview/" class="md-nav__link">
+      <a href="../../algorithms/sort/sort-overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -583,17 +574,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../algorithms/sort/bubble-sort/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -602,7 +586,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -623,7 +606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quick-pow/" class="md-nav__link">
+      <a href="../../algorithms/quick-pow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -691,7 +674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/binary-heap/" class="md-nav__link">
+      <a href="../binary-heap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -712,7 +695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/segment-tree/" class="md-nav__link">
+      <a href="../segment-tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -733,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/stack/" class="md-nav__link">
+      <a href="../stack/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -794,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/tree/binary-tree-traversals/" class="md-nav__link">
+      <a href="../tree/binary-tree-traversals/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -870,7 +853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/accelerate-ios/" class="md-nav__link">
+      <a href="../../oi-tips/accelerate-ios/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -891,7 +874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/qread-and-qwrite/" class="md-nav__link">
+      <a href="../../oi-tips/qread-and-qwrite/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -912,7 +895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/file-read-and-write/" class="md-nav__link">
+      <a href="../../oi-tips/file-read-and-write/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -933,7 +916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/gcc-optimize/" class="md-nav__link">
+      <a href="../../oi-tips/gcc-optimize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1041,7 +1024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../school-notes/junior-notes/geography/" class="md-nav__link">
+      <a href="../../school-notes/junior-notes/geography/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1110,7 +1093,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../school-notes/senior-high-school/sets/" class="md-nav__link">
+      <a href="../../school-notes/senior-high-school/sets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1173,28 +1156,9 @@
   
 
 
-  <h1>Bubble Sort</h1>
+  <h1>Bignum</h1>
 
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Type</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Bubble</span><span class="p">(</span><span class="n">Type</span><span class="w"> </span><span class="n">arr</span><span class="p">[],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">Type</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">sorted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">arr</span><span class="p">[</span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">                </span><span class="n">swap</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="w"> </span><span class="n">arr</span><span class="p">[</span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]);</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">                </span><span class="n">sorted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">            </span><span class="p">}</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">            </span><span class="o">++</span><span class="n">loop</span><span class="p">;</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sorted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
 </span></code></pre></div>
 
 
@@ -1296,44 +1260,6 @@
         <footer class="md-footer">
   
     
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../sort-overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Sort Overview">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Sort Overview
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../../quick-pow/" class="md-footer__link md-footer__link--next" aria-label="Next: Quick Pow">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Quick Pow
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
-    
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -1372,12 +1298,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
       
-        <script src="../../../javascripts/katex.js"></script>
+        <script src="../../javascripts/katex.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
       
