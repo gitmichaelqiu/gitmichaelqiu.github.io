@@ -1588,7 +1588,7 @@
           
           <li class="md-meta__item">
             
-              1 min read
+              2 min read
             
           </li>
         
@@ -1605,10 +1605,10 @@
 <ol>
 <li>Visit <a href="https://ollama.com/">Ollama</a> and download.</li>
 <li>Choose a model you like</li>
-<li>Run <code>ollama run YourModel:ParameterSize</code> in terminal or Windows CMD (Windows: Win+R $\rightarrow$ cmd)</li>
-<li>Your model will start downloading. If the model has already been downloaded, you will go to the chat page (starts with <code>&gt;</code>);</li>
+<li>Run <code>ollama run YourModel:ParameterSize</code> in the terminal or Windows CMD (Windows: Win+R $\rightarrow$ cmd)</li>
+<li>Your model will start downloading. If the model has already been downloaded, you will go to the chat page (starts with <code>&gt;&gt;&gt;</code>);</li>
 </ol>
-<h4 id="how-to-choose-a-appropriate-model"><a class="toclink" href="../../2024/09/14/deploy-ai-models-locally/#how-to-choose-a-appropriate-model">How to Choose A Appropriate Model</a></h4>
+<h4 id="how-to-choose-an-appropriate-model"><a class="toclink" href="../../2024/09/14/deploy-ai-models-locally/#how-to-choose-an-appropriate-model">How to Choose An Appropriate Model</a></h4>
 <h5 id="choose-model"><a class="toclink" href="../../2024/09/14/deploy-ai-models-locally/#choose-model">Choose Model</a></h5>
 <p>Visit <a href="https://ollama.com/library">Model Library</a></p>
 <p>Here is the <a href="https://artificialanalysis.ai/leaderboards/models">Aritificial Analysis's LLM Leaderboard</a></p>
@@ -1621,8 +1621,8 @@
 <h5 id="choose-parameter-size"><a class="toclink" href="../../2024/09/14/deploy-ai-models-locally/#choose-parameter-size">Choose Parameter Size</a></h5>
 <p>The model size should be smaller than your memory size.</p>
 <blockquote>
-<p>For instance, <code>gemma2:9b</code> model is 5.4GB which is runnable on devices with 16GB memory.</p>
-<p>However, <code>gemma2:27b</code> model is 16GB and it is not runnable on the same device (there must be some other programmes that eat up your memory).</p>
+<p>For instance, the <code>gemma2:9b</code> model is 5.4GB which is runnable on devices with 16GB memory.</p>
+<p>However, the <code>gemma2:27b</code> model is 16GB and it is not runnable on the same device (there must be some other programs that eat up your memory).</p>
 </blockquote>
 <h4 id="drawbacks-of-running-in-terminal"><a class="toclink" href="../../2024/09/14/deploy-ai-models-locally/#drawbacks-of-running-in-terminal">Drawbacks of Running in Terminal</a></h4>
 <p>Your chat history cannot be saved. If you want to store your history chat, deploy one of the following apps (the titles link to their GitHub Repos):</p>
@@ -1637,6 +1637,14 @@
 <li>Download <a href="https://www.docker.com/">Docker</a></li>
 <li>Follow the <a href="https://github.com/open-webui/open-webui?tab=readme-ov-file#how-to-install-">Instructions</a></li>
 </ol>
+<h3 id="moa"><a class="toclink" href="../../2024/09/14/deploy-ai-models-locally/#moa">MoA</a></h3>
+<p><a href="https://github.com/togethercomputer/MoA">Together MoA Repo</a></p>
+<blockquote>
+<p>Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results.</p>
+</blockquote>
+<p><img alt="MoA" src="https://github.com/togethercomputer/MoA/blob/main/assets/moa-3layer.png?raw=true" /></p>
+<p>The original MoA does not support Ollama. Here is <a href="https://github.com/gitmichaelqiu/MoA-Ollama-Chat">my edited Ollama version of MoA</a> forked from <a href="https://github.com/severian42/MoA-Ollama-Chat">severian42's MoA-Ollama-Chat</a>. I edited the GUI to make it look better.</p>
+<p>Follow the <a href="https://github.com/gitmichaelqiu/MoA-Ollama-Chat">Instructions</a> here.</p>
     
   </div>
 </article>
