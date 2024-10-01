@@ -16,6 +16,8 @@
       
       
       
+        <link rel="next" href="../../../10/01/music-gpt/">
+      
       
       <link rel="icon" href="../../../../../images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.34">
@@ -892,6 +894,8 @@
       
         
       
+        
+      
     
     
       
@@ -937,6 +941,27 @@
   
   <span class="md-ellipsis">
     Binary Heap
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../data-structures/disjoint-set-union/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Disjoint Set Union
   </span>
   
 
@@ -1032,10 +1057,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1046,8 +1071,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
             Tree
           </label>
@@ -1867,18 +1892,18 @@
 
   <h1>Deploy AI Models Locally</h1>
 
-<h3 id="ollama">Ollama<a class="headerlink" href="#ollama" title="Permanent link">&para;</a></h3>
-<h4 id="what-is-ollama">What Is Ollama?<a class="headerlink" href="#what-is-ollama" title="Permanent link">&para;</a></h4>
+<div><h3 id="ollama">Ollama<a class="headerlink" href="#ollama" title="Permanent link">¶</a></h3>
+<h4 id="what-is-ollama">What Is Ollama?<a class="headerlink" href="#what-is-ollama" title="Permanent link">¶</a></h4>
 <p>Ollama is an open-source platform designed to make large language models (LLMs) more accessible and usable.</p>
-<h4 id="how-to-deploy">How to Deploy<a class="headerlink" href="#how-to-deploy" title="Permanent link">&para;</a></h4>
+<h4 id="how-to-deploy">How to Deploy<a class="headerlink" href="#how-to-deploy" title="Permanent link">¶</a></h4>
 <ol>
 <li>Visit <a href="https://ollama.com/">Ollama</a> and download.</li>
 <li>Choose a model you like</li>
 <li>Run <code>ollama run YourModel:ParameterSize</code> in the terminal or Windows CMD (Windows: Win+R $\rightarrow$ cmd)</li>
 <li>Your model will start downloading. If the model has already been downloaded, you will go to the chat page (starts with <code>&gt;&gt;&gt;</code>);</li>
 </ol>
-<h4 id="how-to-choose-an-appropriate-model">How to Choose An Appropriate Model<a class="headerlink" href="#how-to-choose-an-appropriate-model" title="Permanent link">&para;</a></h4>
-<h5 id="choose-model">Choose Model<a class="headerlink" href="#choose-model" title="Permanent link">&para;</a></h5>
+<h4 id="how-to-choose-an-appropriate-model">How to Choose An Appropriate Model<a class="headerlink" href="#how-to-choose-an-appropriate-model" title="Permanent link">¶</a></h4>
+<h5 id="choose-model">Choose Model<a class="headerlink" href="#choose-model" title="Permanent link">¶</a></h5>
 <p>Visit <a href="https://ollama.com/library">Model Library</a></p>
 <p>Here is the <a href="https://artificialanalysis.ai/leaderboards/models">Aritificial Analysis's LLM Leaderboard</a></p>
 <p><strong>Recommendations</strong>:</p>
@@ -1887,33 +1912,33 @@
 <li><a href="https://ollama.com/library/llama3.1">Meta Llama 3.1</a></li>
 <li><a href="https://ollama.com/library/qwen2">Alibaba Qwen2</a></li>
 </ul>
-<h5 id="choose-parameter-size">Choose Parameter Size<a class="headerlink" href="#choose-parameter-size" title="Permanent link">&para;</a></h5>
+<h5 id="choose-parameter-size">Choose Parameter Size<a class="headerlink" href="#choose-parameter-size" title="Permanent link">¶</a></h5>
 <p>The model size should be smaller than your memory size.</p>
 <blockquote>
 <p>For instance, the <code>gemma2:9b</code> model is 5.4GB which is runnable on devices with 16GB memory.</p>
 <p>However, the <code>gemma2:27b</code> model is 16GB and it is not runnable on the same device (there must be some other programs that eat up your memory).</p>
 </blockquote>
-<h4 id="drawbacks-of-running-in-terminal">Drawbacks of Running in Terminal<a class="headerlink" href="#drawbacks-of-running-in-terminal" title="Permanent link">&para;</a></h4>
+<h4 id="drawbacks-of-running-in-terminal">Drawbacks of Running in Terminal<a class="headerlink" href="#drawbacks-of-running-in-terminal" title="Permanent link">¶</a></h4>
 <p>Your chat history cannot be saved. If you want to store your history chat, deploy one of the following apps (the titles link to their GitHub Repos):</p>
 <ul>
 <li><a href="https://github.com/AugustDev/enchanted">Enchanted (macOS Only)</a></li>
 <li><a href="https://github.com/open-webui/open-webui">Open WebUI</a></li>
 </ul>
-<h3 id="enchanted">Enchanted<a class="headerlink" href="#enchanted" title="Permanent link">&para;</a></h3>
+<h3 id="enchanted">Enchanted<a class="headerlink" href="#enchanted" title="Permanent link">¶</a></h3>
 <p><a href="https://apps.apple.com/gb/app/enchanted-llm/id6474268307">Download in AppStore</a></p>
-<h3 id="open-webui">Open WebUI<a class="headerlink" href="#open-webui" title="Permanent link">&para;</a></h3>
+<h3 id="open-webui">Open WebUI<a class="headerlink" href="#open-webui" title="Permanent link">¶</a></h3>
 <ol>
 <li>Download <a href="https://www.docker.com/">Docker</a></li>
 <li>Follow the <a href="https://github.com/open-webui/open-webui?tab=readme-ov-file#how-to-install-">Instructions</a></li>
 </ol>
-<h3 id="moa">MoA<a class="headerlink" href="#moa" title="Permanent link">&para;</a></h3>
+<h3 id="moa">MoA<a class="headerlink" href="#moa" title="Permanent link">¶</a></h3>
 <p><a href="https://github.com/togethercomputer/MoA">Together MoA Repo</a></p>
 <blockquote>
 <p>Mixture of Agents (MoA) is a novel approach that leverages the collective strengths of multiple LLMs to enhance performance, achieving state-of-the-art results.</p>
 </blockquote>
-<p><img alt="MoA" src="https://github.com/togethercomputer/MoA/blob/main/assets/moa-3layer.png?raw=true" /></p>
+<p><img alt="MoA" src="https://github.com/togethercomputer/MoA/blob/main/assets/moa-3layer.png?raw=true"></p>
 <p>The original MoA does not support Ollama. Here is <a href="https://github.com/gitmichaelqiu/MoA-Ollama-Chat">my edited Ollama version of MoA</a> forked from <a href="https://github.com/severian42/MoA-Ollama-Chat">severian42's MoA-Ollama-Chat</a>. I edited the GUI to make it look better.</p>
-<p>Follow the <a href="https://github.com/gitmichaelqiu/MoA-Ollama-Chat">Instructions</a> here.</p>
+<p>Follow the <a href="https://github.com/gitmichaelqiu/MoA-Ollama-Chat">Instructions</a> here.</p></div>
 
 
 
@@ -1934,7 +1959,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">September 28, 2024 00:41:32</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">October 1, 2024 14:40:26</span>
   </span>
 
     
@@ -1951,16 +1976,17 @@
 
   <h2 id="__comments">Comments</h2>
   <!-- Insert generated snippet here -->
+
   <script src="https://giscus.app/client.js"
         data-repo="gitmichaelqiu/gitmichaelqiu.github.io"
-        data-repo-id="R_kgDOK9M1WQ"
+        data-repo-id="R_kgDOMqoBNg"
         data-category="Announcements"
-        data-category-id="DIC_kwDOK9M1Wc4Cb9pn"
+        data-category-id="DIC_kwDOMqoBNs4CiGiO"
         data-mapping="pathname"
         data-strict="0"
         data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
+        data-emit-metadata="1"
+        data-input-position="top"
         data-theme="preferred_color_scheme"
         data-lang="en"
         crossorigin="anonymous"
@@ -1971,22 +1997,28 @@
   <script>
     var giscus = document.querySelector("script[src*=giscus]")
 
-    /* Set palette on initial load */
+    // Set palette on initial load
     var palette = __md_get("__palette")
     if (palette && typeof palette.color === "object") {
-      var theme = palette.color.scheme === "slate" ? "dark" : "light"
+      var theme = palette.color.scheme === "slate"
+        ? "transparent_dark"
+        : "light"
+
+      // Instruct Giscus to set theme
       giscus.setAttribute("data-theme", theme) 
     }
 
-    /* Register event handlers after documented loaded */
+    // Register event handlers after documented loaded
     document.addEventListener("DOMContentLoaded", function() {
       var ref = document.querySelector("[data-md-component=palette]")
       ref.addEventListener("change", function() {
         var palette = __md_get("__palette")
         if (palette && typeof palette.color === "object") {
-          var theme = palette.color.scheme === "slate" ? "dark" : "light"
+          var theme = palette.color.scheme === "slate"
+            ? "transparent_dark"
+            : "light"
 
-          /* Instruct Giscus to change theme */
+          // Instruct Giscus to change theme
           var frame = document.querySelector(".giscus-frame")
           frame.contentWindow.postMessage(
             { giscus: { setConfig: { theme } } },
@@ -2015,6 +2047,30 @@
       
         <footer class="md-footer">
   
+    
+      
+        
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+        
+          
+          <a href="../../../10/01/music-gpt/" class="md-footer__link md-footer__link--next" aria-label="Next: Music GPT">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Music GPT
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">

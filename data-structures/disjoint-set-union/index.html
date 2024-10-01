@@ -12,24 +12,28 @@
         <meta name="author" content="Michael Qiu">
       
       
-        <link rel="canonical" href="https://gitmichaelqiu.github.io/graph-theory/templates/topological-sort/">
+        <link rel="canonical" href="https://gitmichaelqiu.github.io/data-structures/disjoint-set-union/">
       
       
+        <link rel="prev" href="../binary-heap/">
       
       
-      <link rel="icon" href="../../../images/favicon.png">
+        <link rel="next" href="../segment-tree/">
+      
+      
+      <link rel="icon" href="../../images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.34">
     
     
       
-        <title>Topological sort - Michael Qiu's Blog</title>
+        <title>Disjoint Set Union - Michael Qiu's Blog</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.35f28582.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.35f28582.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -50,7 +54,7 @@
     
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -85,9 +89,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="Michael Qiu&#39;s Blog" class="md-header__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
+    <a href="../.." title="Michael Qiu&#39;s Blog" class="md-header__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
       
-  <img src="../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
+  <img src="../../assets/logo-MK-round-circle-auto.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -104,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Topological sort
+              Disjoint Set Union
             
           </span>
         </div>
@@ -223,7 +227,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../.." class="md-tabs__link">
+        <a href="../.." class="md-tabs__link">
           
   
     
@@ -243,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../algorithms/gcd-lcm/" class="md-tabs__link">
+        <a href="../../algorithms/gcd-lcm/" class="md-tabs__link">
           
   
     
@@ -259,11 +263,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../data-structures/binary-heap/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../binary-heap/" class="md-tabs__link">
           
   
     
@@ -283,7 +289,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../oi-tips/elapsed-time/" class="md-tabs__link">
+        <a href="../../oi-tips/elapsed-time/" class="md-tabs__link">
           
   
     
@@ -309,7 +315,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../school-notes/junior-notes/geography/" class="md-tabs__link">
+        <a href="../../school-notes/junior-notes/geography/" class="md-tabs__link">
           
   
     
@@ -332,7 +338,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../blog/" class="md-tabs__link">
+        <a href="../../blog/" class="md-tabs__link">
           
   
     
@@ -367,9 +373,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Michael Qiu&#39;s Blog" class="md-nav__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
+    <a href="../.." title="Michael Qiu&#39;s Blog" class="md-nav__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
       
-  <img src="../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
+  <img src="../../assets/logo-MK-round-circle-auto.svg" alt="logo">
 
     </a>
     Michael Qiu's Blog
@@ -421,7 +427,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../.." class="md-nav__link ">
+            <a href="../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -454,7 +460,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../some-websites/" class="md-nav__link">
+      <a href="../../some-websites/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -534,7 +540,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/gcd-lcm/" class="md-nav__link">
+      <a href="../../algorithms/gcd-lcm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -599,7 +605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/search/a-star/" class="md-nav__link">
+      <a href="../../algorithms/search/a-star/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -676,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/shortest-path/bellman-ford/" class="md-nav__link">
+      <a href="../../algorithms/shortest-path/bellman-ford/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -697,7 +703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/shortest-path/dijkstra/" class="md-nav__link">
+      <a href="../../algorithms/shortest-path/dijkstra/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -718,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/shortest-path/floyd/" class="md-nav__link">
+      <a href="../../algorithms/shortest-path/floyd/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -793,7 +799,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/sort/sort-overview/" class="md-nav__link">
+      <a href="../../algorithms/sort/sort-overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -814,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/sort/bubble-sort/" class="md-nav__link">
+      <a href="../../algorithms/sort/bubble-sort/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -843,7 +849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../algorithms/quick-pow/" class="md-nav__link">
+      <a href="../../algorithms/quick-pow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -868,8 +874,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -883,22 +891,25 @@
       
         
       
-    
-    
-      
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
       
         
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -909,7 +920,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Data Structures
@@ -923,7 +934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/binary-heap/" class="md-nav__link">
+      <a href="../binary-heap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -941,10 +952,39 @@
                 
   
   
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Disjoint Set Union
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/segment-tree/" class="md-nav__link">
+      <a href="../segment-tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -965,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/sparse-table/" class="md-nav__link">
+      <a href="../sparse-table/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -986,7 +1026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/stack/" class="md-nav__link">
+      <a href="../stack/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1023,10 +1063,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1037,8 +1077,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
             <span class="md-nav__icon md-icon"></span>
             Tree
           </label>
@@ -1051,7 +1091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../data-structures/tree/binary-tree-traversals/" class="md-nav__link">
+      <a href="../tree/binary-tree-traversals/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1139,7 +1179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/elapsed-time/" class="md-nav__link">
+      <a href="../../oi-tips/elapsed-time/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1160,7 +1200,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/file-read-and-write/" class="md-nav__link">
+      <a href="../../oi-tips/file-read-and-write/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1181,7 +1221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/gcc-optimize/" class="md-nav__link">
+      <a href="../../oi-tips/gcc-optimize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1202,7 +1242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/accelerate-ios/" class="md-nav__link">
+      <a href="../../oi-tips/accelerate-ios/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1223,7 +1263,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../oi-tips/qread-and-qwrite/" class="md-nav__link">
+      <a href="../../oi-tips/qread-and-qwrite/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1341,7 +1381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../school-notes/junior-notes/geography/" class="md-nav__link">
+      <a href="../../school-notes/junior-notes/geography/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1414,7 +1454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../school-notes/senior-high-school/sets/" class="md-nav__link">
+      <a href="../../school-notes/senior-high-school/sets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1477,7 +1517,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../blog/" class="md-nav__link ">
+            <a href="../../blog/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1556,7 +1596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../blog/archive/2024/" class="md-nav__link">
+      <a href="../../blog/archive/2024/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1631,7 +1671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../blog/category/ai/" class="md-nav__link">
+      <a href="../../blog/category/ai/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1694,37 +1734,38 @@
   
 
 
-  <h1>Topological sort</h1>
+  <h1>Disjoint Set Union</h1>
 
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Solution</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">public</span><span class="o">:</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">canFinish</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numCourses</span><span class="p">,</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">prerequisites</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ind</span><span class="p">(</span><span class="n">numCourses</span><span class="p">);</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">link</span><span class="p">[</span><span class="n">numCourses</span><span class="p">];</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">prerequisites</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">            </span><span class="n">link</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]].</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">            </span><span class="o">++</span><span class="n">ind</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="n">queue</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">;</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">numCourses</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ind</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">                </span><span class="n">q</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">            </span><span class="o">++</span><span class="n">cnt</span><span class="p">;</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">link</span><span class="p">[</span><span class="n">now</span><span class="p">])</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">--</span><span class="n">ind</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">                    </span><span class="n">q</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">numCourses</span><span class="p">;</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="p">};</span>
+<div><div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked id="__tabbed_1_1" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Head Files</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 </span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="language-cpp highlight"><span class="filename">Template</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">dsu</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">private</span><span class="o">:</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fa</span><span class="p">;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">public</span><span class="o">:</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="n">dsu</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sz</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="n">fa</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">sz</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;=</span><span class="n">sz</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">            </span><span class="n">fa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">fa</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">fa</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">fa</span><span class="p">[</span><span class="n">x</span><span class="p">]);</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">        </span><span class="n">fa</span><span class="p">[</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="p">};</span>
+</span></code></pre></div></div>
 
 
 
@@ -1745,7 +1786,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">September 28, 2024 00:41:32</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">October 1, 2024 14:40:26</span>
   </span>
 
     
@@ -1757,6 +1798,61 @@
 
 
 
+
+  <h2 id="__comments">Comments</h2>
+  <!-- Insert generated snippet here -->
+
+  <script src="https://giscus.app/client.js"
+        data-repo="gitmichaelqiu/gitmichaelqiu.github.io"
+        data-repo-id="R_kgDOMqoBNg"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMqoBNs4CiGiO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+  </script>
+
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    // Set palette on initial load
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate"
+        ? "transparent_dark"
+        : "light"
+
+      // Instruct Giscus to set theme
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    // Register event handlers after documented loaded
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate"
+            ? "transparent_dark"
+            : "light"
+
+          // Instruct Giscus to change theme
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
 
                 
               </article>
@@ -1776,6 +1872,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../binary-heap/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Binary Heap">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Binary Heap
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../segment-tree/" class="md-footer__link md-footer__link--next" aria-label="Next: Segment Tree">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Segment Tree
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
@@ -1815,12 +1949,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate", "navigation.indexes"], "search": "../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
       
-        <script src="../../../javascripts/katex.js"></script>
+        <script src="../../javascripts/katex.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
       

@@ -2,122 +2,122 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://gitmichaelqiu.github.io/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/some-websites/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/gcd-lcm/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/quick-pow/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/search/a-star/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/shortest-path/bellman-ford/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/shortest-path/dijkstra/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/shortest-path/floyd/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/sort/bubble-sort/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/algorithms/sort/sort-overview/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/blog/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/blog/2024/09/14/deploy-ai-models-locally/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
+    </url>
+    <url>
+         <loc>https://gitmichaelqiu.github.io/blog/2024/10/01/music-gpt/</loc>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/data-structures/bignum/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/data-structures/binary-heap/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
+    </url>
+    <url>
+         <loc>https://gitmichaelqiu.github.io/data-structures/disjoint-set-union/</loc>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/data-structures/segment-tree/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/data-structures/sparse-table/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/data-structures/stack/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/data-structures/tree/binary-tree-traversals/</loc>
-         <lastmod>2024-09-28</lastmod>
-    </url>
-    <url>
-         <loc>https://gitmichaelqiu.github.io/graph-theory/graph-theory-overview/</loc>
-         <lastmod>2024-09-28</lastmod>
-    </url>
-    <url>
-         <loc>https://gitmichaelqiu.github.io/graph-theory/templates/topological-sort/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/oi-tips/-qread-and-qwrite/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/oi-tips/accelerate-ios/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/oi-tips/elapsed-time/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/oi-tips/file-read-and-write/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/oi-tips/gcc-optimize/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/oi-tips/qread-and-qwrite/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/school-notes/junior-notes/geography/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/school-notes/senior-high-school/sets/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/blog/archive/2024/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
     <url>
          <loc>https://gitmichaelqiu.github.io/blog/category/ai/</loc>
-         <lastmod>2024-09-28</lastmod>
+         <lastmod>2024-10-01</lastmod>
     </url>
 </urlset>
