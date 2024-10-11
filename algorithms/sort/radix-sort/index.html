@@ -12,26 +12,24 @@
         <meta name="author" content="Michael Qiu">
       
       
-        <link rel="canonical" href="https://gitmichaelqiu.github.io/blog/2024/10/01/music-gpt/">
-      
-      
-        <link rel="prev" href="../../../09/14/deploy-ai-models-locally/">
+        <link rel="canonical" href="https://gitmichaelqiu.github.io/algorithms/sort/radix-sort/">
       
       
       
-      <link rel="icon" href="../../../../../images/favicon.png">
+      
+      <link rel="icon" href="../../../images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.34">
     
     
       
-        <title>Music GPT - Michael Qiu's Blog</title>
+        <title>Radix sort - Michael Qiu's Blog</title>
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.35f28582.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.35f28582.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -52,7 +50,7 @@
     
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     
-    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#musicgpt" class="md-skip">
+        <a href="#video-recommendation" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +90,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../../.." title="Michael Qiu&#39;s Blog" class="md-header__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
+    <a href="../../.." title="Michael Qiu&#39;s Blog" class="md-header__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
       
-  <img src="../../../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
+  <img src="../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Music GPT
+              Radix sort
             
           </span>
         </div>
@@ -230,7 +228,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../.." class="md-tabs__link">
+        <a href="../../.." class="md-tabs__link">
           
   
     
@@ -250,7 +248,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../algorithms/gcd-lcm/" class="md-tabs__link">
+        <a href="../../gcd-lcm/" class="md-tabs__link">
           
   
     
@@ -270,7 +268,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../data-structures/binary-heap/" class="md-tabs__link">
+        <a href="../../../data-structures/binary-heap/" class="md-tabs__link">
           
   
     
@@ -290,7 +288,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../oi-tips/elapsed-time/" class="md-tabs__link">
+        <a href="../../../oi-tips/elapsed-time/" class="md-tabs__link">
           
   
     
@@ -316,7 +314,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../school-notes/junior-notes/geography/" class="md-tabs__link">
+        <a href="../../../school-notes/junior-notes/geography/" class="md-tabs__link">
           
   
     
@@ -335,13 +333,11 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../../../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../blog/" class="md-tabs__link">
           
   
     
@@ -365,9 +361,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -378,9 +372,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../../.." title="Michael Qiu&#39;s Blog" class="md-nav__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
+    <a href="../../.." title="Michael Qiu&#39;s Blog" class="md-nav__button md-logo" aria-label="Michael Qiu's Blog" data-md-component="logo">
       
-  <img src="../../../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
+  <img src="../../../assets/logo-MK-round-circle-auto.svg" alt="logo">
 
     </a>
     Michael Qiu's Blog
@@ -432,7 +426,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../.." class="md-nav__link ">
+            <a href="../../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -465,7 +459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../some-websites/" class="md-nav__link">
+      <a href="../../../some-websites/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -545,7 +539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/gcd-lcm/" class="md-nav__link">
+      <a href="../../gcd-lcm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -610,7 +604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/search/a-star/" class="md-nav__link">
+      <a href="../../search/a-star/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -689,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/shortest-path/bellman-ford/" class="md-nav__link">
+      <a href="../../shortest-path/bellman-ford/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -710,7 +704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/shortest-path/dijkstra/" class="md-nav__link">
+      <a href="../../shortest-path/dijkstra/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -731,7 +725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/shortest-path/floyd/" class="md-nav__link">
+      <a href="../../shortest-path/floyd/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -752,7 +746,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/shortest-path/spfa/" class="md-nav__link">
+      <a href="../../shortest-path/spfa/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -782,8 +776,6 @@
   
     
     
-      
-        
       
         
       
@@ -827,32 +819,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/sort/sort-overview/" class="md-nav__link">
+      <a href="../sort-overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Sort Overview
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../algorithms/sort/bubble-sort/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Bubble Sort
   </span>
   
 
@@ -877,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../algorithms/quick-pow/" class="md-nav__link">
+      <a href="../../quick-pow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -959,7 +930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../data-structures/binary-heap/" class="md-nav__link">
+      <a href="../../../data-structures/binary-heap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -980,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../data-structures/disjoint-set-union/" class="md-nav__link">
+      <a href="../../../data-structures/disjoint-set-union/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1001,7 +972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../data-structures/segment-tree/" class="md-nav__link">
+      <a href="../../../data-structures/segment-tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1022,7 +993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../data-structures/sparse-table/" class="md-nav__link">
+      <a href="../../../data-structures/sparse-table/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1043,7 +1014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../data-structures/stack/" class="md-nav__link">
+      <a href="../../../data-structures/stack/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1108,7 +1079,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../data-structures/tree/binary-tree-traversals/" class="md-nav__link">
+      <a href="../../../data-structures/tree/binary-tree-traversals/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1196,7 +1167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../oi-tips/elapsed-time/" class="md-nav__link">
+      <a href="../../../oi-tips/elapsed-time/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1217,7 +1188,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../oi-tips/file-read-and-write/" class="md-nav__link">
+      <a href="../../../oi-tips/file-read-and-write/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1238,7 +1209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../oi-tips/gcc-optimize/" class="md-nav__link">
+      <a href="../../../oi-tips/gcc-optimize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1259,7 +1230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../oi-tips/accelerate-ios/" class="md-nav__link">
+      <a href="../../../oi-tips/accelerate-ios/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1280,7 +1251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../oi-tips/qread-and-qwrite/" class="md-nav__link">
+      <a href="../../../oi-tips/qread-and-qwrite/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1398,7 +1369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../school-notes/junior-notes/geography/" class="md-nav__link">
+      <a href="../../../school-notes/junior-notes/geography/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1471,7 +1442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../school-notes/senior-high-school/sets/" class="md-nav__link">
+      <a href="../../../school-notes/senior-high-school/sets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1504,8 +1475,6 @@
       
   
   
-    
-  
   
   
     
@@ -1522,22 +1491,21 @@
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../" class="md-nav__link ">
+            <a href="../../../blog/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1548,13 +1516,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Blog
@@ -1616,7 +1584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../archive/2024/" class="md-nav__link">
+      <a href="../../../blog/archive/2024/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1691,7 +1659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../category/ai/" class="md-nav__link">
+      <a href="../../../blog/category/ai/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1728,8 +1696,6 @@
             
             
               
-                
-              
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -1747,36 +1713,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#musicgpt" class="md-nav__link">
+  <a href="#video-recommendation" class="md-nav__link">
     <span class="md-ellipsis">
-      MusicGPT
+      Video Recommendation
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#install" class="md-nav__link">
+  <a href="#complexity" class="md-nav__link">
     <span class="md-ellipsis">
-      Install
+      Complexity
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#template" class="md-nav__link">
     <span class="md-ellipsis">
-      Usage
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sample" class="md-nav__link">
-    <span class="md-ellipsis">
-      Sample
+      Template
     </span>
   </a>
   
@@ -1791,115 +1748,24 @@
             
           
           
-  <div class="md-content md-content--post" data-md-component="content">
-    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
-      <div class="md-sidebar__scrollwrap">
-        <div class="md-sidebar__inner md-post">
-          <nav class="md-nav md-nav--primary">
-            <div class="md-post__back">
-              <div class="md-nav__title md-nav__container">
-                <a href="../../../../" class="md-nav__link">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-                  <span class="md-ellipsis">
-                    Back to index
-                  </span>
-                </a>
-              </div>
-            </div>
-            
-            <ul class="md-post__meta md-nav__list">
-              <li class="md-nav__item md-nav__item--section">
-                <div class="md-post__title">
-                  <span class="md-ellipsis">
-                    Metadata
-                  </span>
-                </div>
-                <nav class="md-nav">
-                  <ul class="md-nav__list">
-                    <li class="md-nav__item">
-                      <div class="md-nav__link">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
-                        <time datetime="2024-10-01 00:00:00" class="md-ellipsis">October 1, 2024</time>
-                      </div>
-                    </li>
-                    
-                      <li class="md-nav__item">
-                        <div class="md-nav__link">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 13h1.5v2.82l2.44 1.41-.75 1.3L15 16.69zm4-5H5v11h4.67c-.43-.91-.67-1.93-.67-3a7 7 0 0 1 7-7c1.07 0 2.09.24 3 .67zM5 21a2 2 0 0 1-2-2V5c0-1.11.89-2 2-2h1V1h2v2h8V1h2v2h1a2 2 0 0 1 2 2v6.1c1.24 1.26 2 2.99 2 4.9a7 7 0 0 1-7 7c-1.91 0-3.64-.76-4.9-2zm11-9.85A4.85 4.85 0 0 0 11.15 16c0 2.68 2.17 4.85 4.85 4.85A4.85 4.85 0 0 0 20.85 16c0-2.68-2.17-4.85-4.85-4.85"/></svg>
-                          <time datetime="2024-10-01 00:00:00" class="md-ellipsis">October 1, 2024</time>
-                        </div>
-                      </li>
-                    
-                    
-                      <li class="md-nav__item">
-                        <div class="md-nav__link">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
-                          <span class="md-ellipsis">
-                            in
-                            
-                              <a href="../../../../category/ai/">Ai</a></span>
-                        </div>
-                      </li>
-                    
-                    
-                      
-                      <li class="md-nav__item">
-                        <div class="md-nav__link">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
-                          <span class="md-ellipsis">
-                            
-                              1 min read
-                            
-                          </span>
-                        </div>
-                      </li>
-                    
-                  </ul>
-                </nav>
-              </li>
-            </ul>
-          </nav>
-          
-        </div>
-      </div>
-    </div>
-    <article class="md-content__inner md-typeset">
-      
-        
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
 
   
   
 
 
-  <h1>Music GPT</h1>
+  <h1>Radix sort</h1>
 
-<div><h3 id="musicgpt">MusicGPT<a class="headerlink" href="#musicgpt" title="Permanent link">¶</a></h3>
-<p><a href="https://github.com/gabotechs/MusicGPT">gabotechs's MusciGPT Repo</a></p>
-<p>You can generate music using natural language prompts locally on MusicGPT.</p>
-<h3 id="install">Install<a class="headerlink" href="#install" title="Permanent link">¶</a></h3>
-<p><a href="https://github.com/gabotechs/MusicGPT">Official Instruction</a></p>
-<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">¶</a></h3>
-<p>Execute the following command in terminal:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>musicgpt
-</span></code></pre></div>
-<h3 id="sample">Sample<a class="headerlink" href="#sample" title="Permanent link">¶</a></h3>
-<blockquote>
-<p>Create a prog rock song with space rock elements</p>
-</blockquote>
-<p><div class="audio-container"><audio controls="controls" style="width:100%" alt="type:audio"><source src="../../../../assets/music-gpt/musicgpt-sample-1.wav" type="audio/mp3"></source></audio></div></p>
-<blockquote>
-<p>Create a relaxing jazz song</p>
-</blockquote>
-<p><div class="audio-container"><audio controls="controls" style="width:100%" alt="type:audio"><source src=".assets/music-gpt/musicgpt-sample-2.wav" type="audio/mp3"></source></audio></div></p>
-<blockquote>
-<p>Create epic, atmospheric music with soaring strings, synths, and organ. Evoking transcendence, build intensity gradually.</p>
-</blockquote>
-<p><div class="audio-container"><audio controls="controls" style="width:100%" alt="type:audio"><source src="../../../../assets/music-gpt/musicgpt-sample-3.wav" type="audio/mp3"></source></audio></div></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When running the default <code>musicgpt</code> model (small), the maximum duration of audio is <strong>29</strong> seconds.</p>
-<p>Also, it is <strong>NOT</strong> able to generate vocal sounds.</p>
-</div></div>
+<div><h3 id="video-recommendation">Video Recommendation<a class="headerlink" href="#video-recommendation" title="Permanent link">¶</a></h3>
+<ul>
+<li><a href="https://www.bilibili.com/video/BV1zF411G7AU/?share_source=copy_web&amp;vd_source=175473930ca0ed01bc70c00b3fe391c0">【排序算法】基数排序】</a></li>
+</ul>
+<h3 id="complexity">Complexity<a class="headerlink" href="#complexity" title="Permanent link">¶</a></h3>
+<p>$O(n)$ or $O(n \lg n)$</p>
+<h3 id="template">Template<a class="headerlink" href="#template" title="Permanent link">¶</a></h3></div>
 
 
 
@@ -1920,7 +1786,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">October 1, 2024 15:08:55</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">October 11, 2024 15:38:09</span>
   </span>
 
     
@@ -1930,8 +1796,6 @@
   </aside>
 
 
-
-  
 
 
 
@@ -1990,10 +1854,10 @@
     })
   </script>
 
-      
-    </article>
-  </div>
-
+                
+              </article>
+            </div>
+          
           
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
@@ -2008,30 +1872,6 @@
       
         <footer class="md-footer">
   
-    
-      
-        
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../../../09/14/deploy-ai-models-locally/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Deploy AI Models Locally">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Deploy AI Models Locally
-              </div>
-            </div>
-          </a>
-        
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">
@@ -2071,12 +1911,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate", "navigation.indexes"], "search": "../../../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate", "navigation.indexes"], "search": "../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.56dfad97.min.js"></script>
       
-        <script src="../../../../../javascripts/katex.js"></script>
+        <script src="../../../javascripts/katex.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
       
