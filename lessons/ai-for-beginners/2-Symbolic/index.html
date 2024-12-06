@@ -1,0 +1,1628 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="This is Michael Qiu's personal site." name="description"/>
+<meta content="Michael Qiu" name="author"/>
+<link href="https://gitmichaelqiu.github.io/lessons/ai-for-beginners/2-Symbolic/" rel="canonical"/>
+<link href="../1-Intro/" rel="prev"/>
+<link href="../3-NeuralNetworks/" rel="next"/>
+<link href="../../../images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.5.34" name="generator"/>
+<title>Lesson 2 - Michael Qiu's Blog</title>
+<link href="../../../assets/stylesheets/main.35f28582.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#knowledge-representation-and-expert-systems">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Michael Qiu's Blog" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Michael Qiu's Blog
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Lesson 2
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.8 5.67A9.8 9.8 0 0 1 22 11h-2.06c-.2-1.43-.78-2.78-1.68-3.9zM13 2.05c1.96.19 3.81.95 5.33 2.21L16.9 5.69A8 8 0 0 0 13 4.05zm-2 .01c-1.96.2-3.81.97-5.33 2.21L7.1 5.69A8 8 0 0 1 11 4.06zM4.26 5.67l1.37 1.39v.04A8 8 0 0 0 4 11H2c.21-1.96 1-3.82 2.26-5.33M2 14v5l1.6-1.6C5.38 20.17 8.47 22 12 22c4.82 0 8.87-3.45 9.8-8h-2.05c-.89 3.45-4.03 6-7.75 6-2.95 0-5.61-1.61-7-4l2-2zm10 3 1.56-3.42L17 12l-3.44-1.56L12 7l-1.57 3.44L7 12l3.43 1.58z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="white" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+</label>
+<input aria-label="Switch to system preference" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="black" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to system preference">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../..">
+          
+  
+  Intro
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../algorithms/gcd-lcm/">
+          
+  
+  Algorithms
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../data-structures/binary-heap/">
+          
+  
+  Data Structures
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../oi-tips/elapsed-time/">
+          
+  
+  OI Tips
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../school-notes/junior-notes/geography/">
+          
+  
+  School Notes
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../">
+          
+  
+  Curricula
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../blog/">
+          
+  
+  Blog
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Michael Qiu's Blog" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+    Michael Qiu's Blog
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Intro
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+            Intro
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+<span class="md-ellipsis">
+    About
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../some-websites/">
+<span class="md-ellipsis">
+    Some Websites
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Algorithms
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Algorithms
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/gcd-lcm/">
+<span class="md-ellipsis">
+    GCD &amp; LCM
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Prime
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+            Prime
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/prime/euler-sieve/">
+<span class="md-ellipsis">
+    Euler Sieve
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Search
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+            Search
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/search/a-star/">
+<span class="md-ellipsis">
+    A*
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Shortest Path
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+            Shortest Path
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/bellman-ford/">
+<span class="md-ellipsis">
+    Bellman Ford
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/dijkstra/">
+<span class="md-ellipsis">
+    Dijkstra (prioirty_queue)
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/floyd/">
+<span class="md-ellipsis">
+    Floyd
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/spfa/">
+<span class="md-ellipsis">
+    SPFA
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Sort
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+            Sort
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/sort/sort-overview/">
+<span class="md-ellipsis">
+    Sort Overview
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/quick-pow/">
+<span class="md-ellipsis">
+    Quick Pow
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Data Structures
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Data Structures
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/binary-heap/">
+<span class="md-ellipsis">
+    Binary Heap
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/disjoint-set-union/">
+<span class="md-ellipsis">
+    Disjoint Set Union
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/segment-tree/">
+<span class="md-ellipsis">
+    Segment Tree
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/sparse-table/">
+<span class="md-ellipsis">
+    Sparse Table
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/stack/">
+<span class="md-ellipsis">
+    Stack
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Tree
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_6_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_6">
+<span class="md-nav__icon md-icon"></span>
+            Tree
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/tree/binary-tree-traversals/">
+<span class="md-ellipsis">
+    Binary Tree Traversals
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    OI Tips
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            OI Tips
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/elapsed-time/">
+<span class="md-ellipsis">
+    Elapsed Time Measurement
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/file-read-and-write/">
+<span class="md-ellipsis">
+    File Read &amp; Write
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/gcc-optimize/">
+<span class="md-ellipsis">
+    GCC Optimize
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/accelerate-ios/">
+<span class="md-ellipsis">
+    iostream Acceleration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/qread-and-qwrite/">
+<span class="md-ellipsis">
+    Quick Read &amp; Write
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    School Notes
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            School Notes
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+<span class="md-ellipsis">
+    初中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_1">
+<span class="md-nav__icon md-icon"></span>
+            初中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../school-notes/junior-notes/geography/">
+<span class="md-ellipsis">
+    初中地理总结
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+<span class="md-ellipsis">
+    高中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_2">
+<span class="md-nav__icon md-icon"></span>
+            高中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../school-notes/senior-high-school/sets/">
+<span class="md-ellipsis">
+    集合
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+<span class="md-ellipsis">
+    Curricula
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            Curricula
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+<span class="md-ellipsis">
+    AI For Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_1">
+<span class="md-nav__icon md-icon"></span>
+            AI For Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../">
+<span class="md-ellipsis">
+    README
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../0-course-setup/README.md">
+<span class="md-ellipsis">
+    Lesson 0
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../1-Intro/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#knowledge-representation-and-expert-systems">
+<span class="md-ellipsis">
+      Knowledge Representation and Expert Systems
+    </span>
+</a>
+<nav aria-label="Knowledge Representation and Expert Systems" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-lecture-quiz">
+<span class="md-ellipsis">
+      Pre-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#knowledge-representation">
+<span class="md-ellipsis">
+      Knowledge Representation
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#classifying-computer-knowledge-representations">
+<span class="md-ellipsis">
+      Classifying Computer Knowledge Representations
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#expert-systems">
+<span class="md-ellipsis">
+      Expert Systems
+    </span>
+</a>
+<nav aria-label="Expert Systems" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forward-vs-backward-inference">
+<span class="md-ellipsis">
+      Forward vs. Backward Inference
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#implementing-expert-systems">
+<span class="md-ellipsis">
+      Implementing Expert Systems
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-animal-inference">
+<span class="md-ellipsis">
+      ✍️ Exercise: Animal Inference
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ontologies-and-the-semantic-web">
+<span class="md-ellipsis">
+      Ontologies and the Semantic Web
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-a-family-ontology">
+<span class="md-ellipsis">
+      ✍️ Exercise: A Family Ontology
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#microsoft-concept-graph">
+<span class="md-ellipsis">
+      Microsoft Concept Graph
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-a-concept-graph">
+<span class="md-ellipsis">
+      ✍️ Exercise: A Concept Graph
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#conclusion">
+<span class="md-ellipsis">
+      Conclusion
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+<span class="md-ellipsis">
+      🚀 Challenge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#post-lecture-quiz">
+<span class="md-ellipsis">
+      Post-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#review-self-study">
+<span class="md-ellipsis">
+      Review &amp; Self Study
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6_1_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_5" id="__nav_6_1_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_5_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_5">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 3
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../3-NeuralNetworks/">
+<span class="md-ellipsis">
+    Intro
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../3-NeuralNetworks/03-Perceptron/">
+<span class="md-ellipsis">
+    Perceptron
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../3-NeuralNetworks/04-OwnFramework/">
+<span class="md-ellipsis">
+    Own Framework
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../3-NeuralNetworks/05-Frameworks/">
+<span class="md-ellipsis">
+    Frameworks
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../4-ComputerVision/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../5-NLP/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6_1_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_8" id="__nav_6_1_8_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_8_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_8">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 6
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../6-Other/21-GeneticAlgorithms/">
+<span class="md-ellipsis">
+    Genetic Algorithms
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../6-Other/22-DeepRL/">
+<span class="md-ellipsis">
+    Deep RL
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../6-Other/23-MultiagentSystems/">
+<span class="md-ellipsis">
+    Multi-Agent Systems
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../7-Ethics/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../X-Extras/X1-MultiModal/">
+<span class="md-ellipsis">
+    Lesson X
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Generative AI for Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_2">
+<span class="md-nav__icon md-icon"></span>
+            Generative AI for Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/">
+<span class="md-ellipsis">
+    README
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/00-course-setup/">
+<span class="md-ellipsis">
+    Lesson 0
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/01-introduction-to-genai/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/02-exploring-and-comparing-different-llms/">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/03-using-generative-ai-responsibly/">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/04-prompt-engineering-fundamentals/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/05-advanced-prompts/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/06-text-generation-apps/">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/07-building-chat-applications/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/08-building-search-applications/">
+<span class="md-ellipsis">
+    Lesson 8
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/09-building-image-applications/">
+<span class="md-ellipsis">
+    Lesson 9
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/10-building-low-code-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 10
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/11-integrating-with-function-calling/">
+<span class="md-ellipsis">
+    Lesson 11
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/12-designing-ux-for-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 12
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/13-securing-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 13
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/14-the-generative-ai-application-lifecycle/">
+<span class="md-ellipsis">
+    Lesson 14
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/15-rag-and-vector-databases/">
+<span class="md-ellipsis">
+    Lesson 15
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/16-open-source-models/">
+<span class="md-ellipsis">
+    Lesson 16
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/17-ai-agents/">
+<span class="md-ellipsis">
+    Lesson 17
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/18-fine-tuning/">
+<span class="md-ellipsis">
+    Lesson 18
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/19-slm/">
+<span class="md-ellipsis">
+    Lesson 19
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/20-mistral/">
+<span class="md-ellipsis">
+    Lesson 20
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../generative-ai-for-beginners/21-meta/">
+<span class="md-ellipsis">
+    Lesson 21
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Blog
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../blog/">
+<span class="md-ellipsis">
+    Index
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Archive
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_2">
+<span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../blog/archive/2024/">
+<span class="md-ellipsis">
+    2024
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Categories
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_3">
+<span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../blog/category/ai/">
+<span class="md-ellipsis">
+    Ai
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#knowledge-representation-and-expert-systems">
+<span class="md-ellipsis">
+      Knowledge Representation and Expert Systems
+    </span>
+</a>
+<nav aria-label="Knowledge Representation and Expert Systems" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-lecture-quiz">
+<span class="md-ellipsis">
+      Pre-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#knowledge-representation">
+<span class="md-ellipsis">
+      Knowledge Representation
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#classifying-computer-knowledge-representations">
+<span class="md-ellipsis">
+      Classifying Computer Knowledge Representations
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#expert-systems">
+<span class="md-ellipsis">
+      Expert Systems
+    </span>
+</a>
+<nav aria-label="Expert Systems" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forward-vs-backward-inference">
+<span class="md-ellipsis">
+      Forward vs. Backward Inference
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#implementing-expert-systems">
+<span class="md-ellipsis">
+      Implementing Expert Systems
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-animal-inference">
+<span class="md-ellipsis">
+      ✍️ Exercise: Animal Inference
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ontologies-and-the-semantic-web">
+<span class="md-ellipsis">
+      Ontologies and the Semantic Web
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-a-family-ontology">
+<span class="md-ellipsis">
+      ✍️ Exercise: A Family Ontology
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#microsoft-concept-graph">
+<span class="md-ellipsis">
+      Microsoft Concept Graph
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-a-concept-graph">
+<span class="md-ellipsis">
+      ✍️ Exercise: A Concept Graph
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#conclusion">
+<span class="md-ellipsis">
+      Conclusion
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+<span class="md-ellipsis">
+      🚀 Challenge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#post-lecture-quiz">
+<span class="md-ellipsis">
+      Post-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#review-self-study">
+<span class="md-ellipsis">
+      Review &amp; Self Study
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1>Lesson 2</h1>
+<div><h2 id="knowledge-representation-and-expert-systems">Knowledge Representation and Expert Systems<a class="headerlink" href="#knowledge-representation-and-expert-systems" title="Permanent link">¶</a></h2>
+<p><img alt="Summary of Symbolic AI content" src="../sketchnotes/ai-symbolic.png"/></p>
+<blockquote>
+<p>Sketchnote by <a href="https://twitter.com/girlie_mac">Tomomi Imura</a></p>
+</blockquote>
+<p>The quest for artificial intelligence is based on a search for knowledge, to make sense of the world similar to how humans do. But how can you go about doing this?</p>
+<h3 id="pre-lecture-quiz"><a href="https://red-field-0a6ddfd03.1.azurestaticapps.net/quiz/102">Pre-lecture quiz</a><a class="headerlink" href="#pre-lecture-quiz" title="Permanent link">¶</a></h3>
+<p>In the early days of AI, the top-down approach to creating intelligent systems (discussed in the previous lesson) was popular. The idea was to extract the knowledge from people into some machine-readable form, and then use it to automatically solve problems. This approach was based on two big ideas:</p>
+<ul>
+<li>Knowledge Representation</li>
+<li>Reasoning</li>
+</ul>
+<h3 id="knowledge-representation">Knowledge Representation<a class="headerlink" href="#knowledge-representation" title="Permanent link">¶</a></h3>
+<p>One of the important concepts in Symbolic AI is <strong>knowledge</strong>. It is important to differentiate knowledge from <em>information</em> or <em>data</em>. For example, one can say that books contain knowledge, because one can study books and become an expert. However, what books contain is actually called <em>data</em>, and by reading books and integrating this data into our world model we convert this data to knowledge.</p>
+<blockquote>
+<p>✅ <strong>Knowledge</strong> is something which is contained in our head and represents our understanding of the world. It is obtained by an active <strong>learning</strong> process, which integrates pieces of information that we receive into our active model of the world.</p>
+</blockquote>
+<p>Most often, we do not strictly define knowledge, but we align it with other related concepts using <a href="https://en.wikipedia.org/wiki/DIKW_pyramid">DIKW Pyramid</a>. It contains the following concepts:</p>
+<ul>
+<li><strong>Data</strong> is something represented in physical media, such as written text or spoken words. Data exists independently of human beings and can be passed between people.</li>
+<li><strong>Information</strong> is how we interpret data in our head. For example, when we hear the word <em>computer</em>, we have some understanding of what it is.</li>
+<li><strong>Knowledge</strong> is information being integrated into our world model. For example, once we learn what a computer is, we start having some ideas about how it works, how much it costs, and what it can be used for. This network of interrelated concepts forms our knowledge.</li>
+<li><strong>Wisdom</strong> is yet one more level of our understanding of the world, and it represents <em>meta-knowledge</em>, eg. some notion on how and when the knowledge should be used.</li>
+</ul>
+<p><img src="images/DIKW_Pyramid.png" width="30%"/></p>
+<p><em>Image <a href="https://commons.wikimedia.org/w/index.php?curid=37705247">from Wikipedia</a>, By Longlivetheux - Own work, CC BY-SA 4.0</em></p>
+<p>Thus, the problem of <strong>knowledge representation</strong> is to find some effective way to represent knowledge inside a computer in the form of data, to make it automatically usable. This can be seen as a spectrum:</p>
+<p><img alt="Knowledge representation spectrum" src="images/knowledge-spectrum.png"/></p>
+<blockquote>
+<p>Image by <a href="http://soshnikov.com">Dmitry Soshnikov</a></p>
+</blockquote>
+<ul>
+<li>On the left, there are very simple types of knowledge representations that can be effectively used by computers. The simplest one is algorithmic, when knowledge is represented by a computer program. This, however, is not the best way to represent knowledge, because it is not flexible. Knowledge inside our head is often non-algorithmic.</li>
+<li>On the right, there are representations such as natural text. It is the most powerful, but cannot be used for automatic reasoning.</li>
+</ul>
+<blockquote>
+<p>✅ Think for a minute about how you represent knowledge in your head and convert it to notes. Is there a particular format that works well for you to aid in retention?</p>
+</blockquote>
+<h3 id="classifying-computer-knowledge-representations">Classifying Computer Knowledge Representations<a class="headerlink" href="#classifying-computer-knowledge-representations" title="Permanent link">¶</a></h3>
+<p>We can classify different computer knowledge representation methods in the following categories:</p>
+<ul>
+<li>
+<p><strong>Network representations</strong> are based on the fact that we have a network of interrelated concepts inside our head. We can try to reproduce the same networks as a graph inside a computer - a so-called <strong>semantic network</strong>.</p>
+</li>
+<li>
+<p><strong>Object-Attribute-Value triplets</strong> or <strong>attribute-value pairs</strong>. Since a graph can be represented inside a computer as a list of nodes and edges, we can represent a semantic network by a list of triplets, containing objects, attributes, and values. For example, we build the following triplets about programming languages:</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th>Attribute</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td>is</td>
+<td>Untyped-Language</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>invented-by</td>
+<td>Guido van Rossum</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>block-syntax</td>
+<td>indentation</td>
+</tr>
+<tr>
+<td>Untyped-Language</td>
+<td>doesn't have</td>
+<td>type definitions</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>✅ Think how triplets can be used to represent other types of knowledge.</p>
+</blockquote>
+<ol>
+<li>
+<p><strong>Hierarchical representations</strong> emphasize the fact that we often create a hierarchy of objects inside our head. For example, we know that canary is a bird, and all birds have wings. We also have some idea about what colour a canary usually is, and what is their flight speed.</p>
+</li>
+<li>
+<p><strong>Frame representation</strong> is based on representing each object or class of objects as a <strong>frame</strong> which contains <strong>slots</strong>. Slots have possible default values, value restrictions, or stored procedures that can be called to obtain the value of a slot. All frames form a hierarchy similar to an object hierarchy in object-oriented programming languages.</p>
+</li>
+<li><strong>Scenarios</strong> are special kind of frames that represent complex situations that can unfold in time.</li>
+</ol>
+<p><strong>Python</strong></p>
+<table>
+<thead>
+<tr>
+<th>Slot</th>
+<th>Value</th>
+<th>Default value</th>
+<th>Interval</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>Python</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Is-A</td>
+<td>Untyped-Language</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Variable Case</td>
+<td></td>
+<td>CamelCase</td>
+<td></td>
+</tr>
+<tr>
+<td>Program Length</td>
+<td></td>
+<td></td>
+<td>5-5000 lines</td>
+</tr>
+<tr>
+<td>Block Syntax</td>
+<td>Indent</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>Procedural representations</strong> are based on representing knowledge by a list of actions that can be executed when a certain condition occurs.</li>
+<li>Production rules are if-then statements that allow us to draw conclusions. For example, a doctor can have a rule saying that <strong>IF</strong> a patient has high fever <strong>OR</strong> high level of C-reactive protein in blood test <strong>THEN</strong> he has an inflammation. Once we encounter one of the conditions, we can make a conclusion about inflammation, and then use it in further reasoning.</li>
+<li>
+<p>Algorithms can be considered another form of procedural representation, although they are almost never used directly in knowledge-based systems.</p>
+</li>
+<li>
+<p><strong>Logic</strong> was originally proposed by Aristotle as a way to represent universal human knowledge.</p>
+</li>
+<li>Predicate Logic as a mathematical theory is too rich to be computable, therefore some subset of it is normally used, such as Horn clauses used in Prolog.</li>
+<li>Descriptive Logic is a family of logical systems used to represent and reason about hierarchies of objects distributed knowledge representations such as <em>semantic web</em>.</li>
+</ol>
+<h3 id="expert-systems">Expert Systems<a class="headerlink" href="#expert-systems" title="Permanent link">¶</a></h3>
+<p>One of the early successes of symbolic AI were so-called <strong>expert systems</strong> - computer systems that were designed to act as an expert in some limited problem domain. They were based on a <strong>knowledge base</strong> extracted from one or more human experts, and they contained an <strong>inference engine</strong> that performed some reasoning on top of it.</p>
+<table>
+<thead>
+<tr>
+<th><img alt="Human Architecture" src="images/arch-human.png"/></th>
+<th><img alt="Knowledge-Based System" src="images/arch-kbs.png"/></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simplified structure of a human neural system</td>
+<td>Architecture of a knowledge-based system</td>
+</tr>
+</tbody>
+</table>
+<p>Expert systems are built like the human reasoning system, which contains <strong>short-term memory</strong> and <strong>long-term memory</strong>. Similarly, in knowledge-based systems we distinguish the following components:</p>
+<ul>
+<li><strong>Problem memory</strong>: contains the knowledge about the problem being currently solved, i.e. the temperature or blood pressure of a patient, whether he has inflammation or not, etc. This knowledge is also called <strong>static knowledge</strong>, because it contains a snapshot of what we currently know about the problem - the so-called <em>problem state</em>.</li>
+<li><strong>Knowledge base</strong>: represents long-term knowledge about a problem domain. It is extracted manually from human experts, and does not change from consultation to consultation. Because it allows us to navigate from one problem state to another, it is also called <strong>dynamic knowledge</strong>.</li>
+<li><strong>Inference engine</strong>: orchestrates the whole process of searching in the problem state space, asking questions of the user when necessary. It is also responsible for finding the right rules to be applied to each state.</li>
+</ul>
+<p>As an example, let's consider the following expert system of determining an animal based on its physical characteristics:</p>
+<p><img alt="AND-OR Tree" src="images/AND-OR-Tree.png"/></p>
+<blockquote>
+<p>Image by <a href="http://soshnikov.com">Dmitry Soshnikov</a></p>
+</blockquote>
+<p>This diagram is called an <strong>AND-OR tree</strong>, and it is a graphical representation of a set of production rules. Drawing a tree is useful at the beginning of extracting knowledge from the expert. To represent the knowledge inside the computer it is more convenient to use rules:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>IF the animal eats meat
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>OR (animal has sharp teeth
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>    AND animal has claws
+</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>    AND animal has forward-looking eyes
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>) 
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>THEN the animal is a carnivore
+</span></code></pre></div>
+<p>You can notice that each condition on the left-hand-side of the rule and the action are essentially object-attribute-value (OAV) triplets. <strong>Working memory</strong> contains the set of OAV triplets that correspond to the problem currently being solved. A <strong>rules engine</strong> looks for rules for which a condition is satisfied and applies them, adding another triplet to the working memory.</p>
+<blockquote>
+<p>✅ Write your own AND-OR tree on a topic you like!</p>
+</blockquote>
+<h4 id="forward-vs-backward-inference">Forward vs. Backward Inference<a class="headerlink" href="#forward-vs-backward-inference" title="Permanent link">¶</a></h4>
+<p>The process described above is called <strong>forward inference</strong>. It starts with some initial data about the problem available in the working memory, and then executes the following reasoning loop:</p>
+<ol>
+<li>If the target attribute is present in the working memory - stop and give the result</li>
+<li>Look for all the rules whose condition is currently satisfied - obtain <strong>conflict set</strong> of rules.</li>
+<li>Perform <strong>conflict resolution</strong> - select one rule that will be executed on this step. There could be different conflict resolution strategies:</li>
+<li>Select the first applicable rule in the knowledge base</li>
+<li>Select a random rule</li>
+<li>Select a <em>more specific</em> rule, i.e. the one meeting the most conditions in the "left-hand-side" (LHS)</li>
+<li>Apply selected rule and insert new piece of knowledge into the problem state</li>
+<li>Repeat from step 1.</li>
+</ol>
+<p>However, in some cases we might want to start with an empty knowledge about the problem, and ask questions that will help us arrive to the conclusion. For example, when doing medical diagnosis, we usually do not perform all medical analyses in advance before starting diagnosing the patient. We rather want to perform analyses when a decision needs to be made.</p>
+<p>This process can be modeled using <strong>backward inference</strong>. It is driven by the <strong>goal</strong> - the attribute value that we are looking to find:</p>
+<ol>
+<li>Select all rules that can give us the value of a goal (i.e. with the goal on the RHS ("right-hand-side")) - a conflict set</li>
+<li>If there are no rules for this attribute, or there is a rule saying that we should ask the value from the user - ask for it, otherwise:</li>
+<li>Use conflict resolution strategy to select one rule that we will use as <em>hypothesis</em> - we will try to prove it</li>
+<li>Recurrently repeat the process for all attributes in the LHS of the rule, trying to prove them as goals</li>
+<li>If at any point the process fails - use another rule at step 3.</li>
+</ol>
+<blockquote>
+<p>✅ In which situations is forward inference more appropriate? How about backward inference?</p>
+</blockquote>
+<h4 id="implementing-expert-systems">Implementing Expert Systems<a class="headerlink" href="#implementing-expert-systems" title="Permanent link">¶</a></h4>
+<p>Expert systems can be implemented using different tools:</p>
+<ul>
+<li>Programming them directly in some high level programming language. This is not the best idea, because the main advantage of a knowledge-based system is that knowledge is separated from inference, and potentially a problem domain expert should be able to write rules without understanding the details of the inference process</li>
+<li>Using <strong>expert systems shell</strong>, i.e. a system specifically designed to be populated by knowledge using some knowledge representation language.</li>
+</ul>
+<h3 id="exercise-animal-inference">✍️ Exercise: Animal Inference<a class="headerlink" href="#exercise-animal-inference" title="Permanent link">¶</a></h3>
+<p>See <a href="https://github.com/microsoft/AI-For-Beginners/blob/main/lessons/2-Symbolic/Animals.ipynb">Animals.ipynb</a> for an example of implementing forward and backward inference expert system.</p>
+<blockquote>
+<p><strong>Note</strong>: This example is rather simple, and only gives the idea of how an expert system looks like. Once you start creating such a system, you will only notice some <em>intelligent</em> behaviour from it once you reach certain number of rules, around 200+. At some point, rules become too complex to keep all of them in mind, and at this point you may start wondering why a system makes certain decisions. However, the important characteristics of knowledge-based systems is that you can always <em>explain</em> exactly how any of the decisions were made.</p>
+</blockquote>
+<h3 id="ontologies-and-the-semantic-web">Ontologies and the Semantic Web<a class="headerlink" href="#ontologies-and-the-semantic-web" title="Permanent link">¶</a></h3>
+<p>At the end of 20th century there was an initiative to use knowledge representation to annotate Internet resources, so that it would be possible to find resources that correspond to very specific queries. This motion was called <strong>Semantic Web</strong>, and it relied on several concepts:</p>
+<ul>
+<li>A special knowledge representation based on <strong><a href="https://en.wikipedia.org/wiki/Description_logic">description logics</a></strong> (DL). It is similar to frame knowledge representation, because it builds a hierarchy of objects with properties, but it has formal logical semantics and inference. There is a whole family of DLs which balance between expressiveness and algorithmic complexity of inference.</li>
+<li>Distributed knowledge representation, where all concepts are represented by a global URI identifier, making it possible to create knowledge hierarchies that span the internet.</li>
+<li>A family of XML-based languages for knowledge description: RDF (Resource Description Framework), RDFS (RDF Schema), OWL (Ontology Web Language).</li>
+</ul>
+<p>A core concept in the Semantic Web is a concept of <strong>Ontology</strong>. It refers to a explicit specification of a problem domain using some formal knowledge representation. The simplest ontology can be just a hierarchy of objects in a problem domain, but more complex ontologies will include rules that can be used for inference.</p>
+<p>In the semantic web, all representations are based on triplets. Each object and each relation are uniquely identified by the URI. For example, if we want to state the fact that this AI Curriculum has been developed by Dmitry Soshnikov on Jan 1st, 2022 - here are the triplets we can use:</p>
+<p><img src="images/triplet.png" width="30%"/></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>http://github.com/microsoft/ai-for-beginners http://www.example.com/terms/creation-date “Jan 13, 2007”
+</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>http://github.com/microsoft/ai-for-beginners http://purl.org/dc/elements/1.1/creator http://soshnikov.com
+</span></code></pre></div>
+<blockquote>
+<p>✅ Here <code>http://www.example.com/terms/creation-date</code> and <code>http://purl.org/dc/elements/1.1/creator</code> are some well-known and universally accepted URIs to express the concepts of <em>creator</em> and <em>creation date</em>.</p>
+</blockquote>
+<p>In a more complex case, if we want to define a list of creators, we can use some data structures defined in RDF.</p>
+<p><img src="images/triplet-complex.png" width="40%"/></p>
+<blockquote>
+<p>Diagrams above by <a href="http://soshnikov.com">Dmitry Soshnikov</a></p>
+</blockquote>
+<p>The progress of building the Semantic Web was somehow slowed down by the success of search engines and natural language processing techniques, which allow extracting structured data from text. However, in some areas there are still significant efforts to maintain ontologies and knowledge bases. A few projects worth noting:</p>
+<ul>
+<li><a href="https://wikidata.org/">WikiData</a> is a collection of machine readable knowledge bases associated with Wikipedia. Most of the data is mined from Wikipedia <em>InfoBoxes</em>, pieces of structured content inside Wikipedia pages. You can <a href="https://query.wikidata.org/">query</a> wikidata in SPARQL, a special query language for Semantic Web. Here is a sample query that displays most popular eye colors among humans:</li>
+</ul>
+<div class="language-sparql highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c">#defaultView:BubbleChart</span>
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">SELECT</span> <span class="nv">?eyeColorLabel</span> <span class="p">(</span><span class="nf">COUNT</span><span class="p">(</span><span class="nv">?human</span><span class="p">)</span> <span class="k">AS</span> <span class="nv">?count</span><span class="p">)</span>
+</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="k">WHERE</span>
+</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="p">{</span>
+</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>  <span class="nv">?human</span> <span class="nn">wdt</span><span class="p">:</span><span class="nt">P31</span> <span class="nn">wd</span><span class="p">:</span><span class="nt">Q5</span><span class="p">.</span>       <span class="c"># human instance-of homo sapiens</span>
+</span><span id="__span-2-6"><a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>  <span class="nv">?human</span> <span class="nn">wdt</span><span class="p">:</span><span class="nt">P1340</span> <span class="nv">?eyeColor</span><span class="p">.</span> <span class="c"># human eye-color ?eyeColor</span>
+</span><span id="__span-2-7"><a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>  <span class="k">SERVICE</span> <span class="nn">wikibase</span><span class="p">:</span><span class="nt">label</span> <span class="p">{</span> <span class="nn">bd</span><span class="p">:</span><span class="nt">serviceParam</span> <span class="nn">wikibase</span><span class="p">:</span><span class="nt">language</span> <span class="s">"en"</span><span class="p">.</span> <span class="p">}</span>
+</span><span id="__span-2-8"><a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="p">}</span>
+</span><span id="__span-2-9"><a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="k">GROUP BY</span> <span class="nv">?eyeColorLabel</span>
+</span></code></pre></div>
+<ul>
+<li><a href="https://www.dbpedia.org/">DBpedia</a> is another effort similar to WikiData.</li>
+</ul>
+<blockquote>
+<p>✅ If you want to experiment with building your own ontologies, or opening existing ones, there is a great visual ontology editor called <a href="https://protege.stanford.edu/">Protégé</a>. Download it, or use it online.</p>
+</blockquote>
+<p><img src="images/protege.png" width="70%"/></p>
+<p><em>Web Protégé editor open with the Romanov Family ontology. Screenshot by Dmitry Soshnikov</em></p>
+<h3 id="exercise-a-family-ontology">✍️ Exercise: A Family Ontology<a class="headerlink" href="#exercise-a-family-ontology" title="Permanent link">¶</a></h3>
+<p>See <a href="https://github.com/Ezana135/AI-For-Beginners/blob/main/lessons/2-Symbolic/FamilyOntology.ipynb">FamilyOntology.ipynb</a> for an example of using Semantic Web techniques to reason about family relationships. We will take a family tree represented in common GEDCOM format and an ontology of family relationships and build a graph of all family relationships for given set of individuals.</p>
+<h3 id="microsoft-concept-graph">Microsoft Concept Graph<a class="headerlink" href="#microsoft-concept-graph" title="Permanent link">¶</a></h3>
+<p>In most of the cases, ontologies are carefully created by hand. However, it is also possible to <strong>mine</strong> ontologies from unstructured data, for example, from natural language texts.</p>
+<p>One such attempt was done by Microsoft Research, and resulted in <a href="https://blogs.microsoft.com/ai/microsoft-researchers-release-graph-that-helps-machines-conceptualize/?WT.mc_id=academic-77998-cacaste">Microsoft Concept Graph</a>.</p>
+<p>It is a large collection of entities grouped together using <code>is-a</code> inheritance relationship. It allows answering questions like "What is Microsoft?" - the answer being something like "a company with probability 0.87, and a brand with probability 0.75".</p>
+<p>The Graph is available either as REST API, or as a large downloadable text file that lists all entity pairs.</p>
+<h3 id="exercise-a-concept-graph">✍️ Exercise: A Concept Graph<a class="headerlink" href="#exercise-a-concept-graph" title="Permanent link">¶</a></h3>
+<p>Try the <a href="https://github.com/microsoft/AI-For-Beginners/blob/main/lessons/2-Symbolic/MSConceptGraph.ipynb">MSConceptGraph.ipynb</a> notebook to see how we can use Microsoft Concept Graph to group news articles into several categories.</p>
+<h3 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">¶</a></h3>
+<p>Nowadays, AI is often considered to be a synonym for <em>Machine Learning</em> or <em>Neural Networks</em>. However, a human being also exhibits explicit reasoning, which is something currently not being handled by neural networks. In real world projects, explicit reasoning is still used to perform tasks that require explanations, or being able to modify the behavior of the system in a controlled way.</p>
+<h3 id="challenge">🚀 Challenge<a class="headerlink" href="#challenge" title="Permanent link">¶</a></h3>
+<p>In the Family Ontology notebook associated to this lesson, there is an opportunity to experiment with other family relations. Try to discover new connections between people in the family tree.</p>
+<h3 id="post-lecture-quiz"><a href="https://red-field-0a6ddfd03.1.azurestaticapps.net/quiz/202">Post-lecture quiz</a><a class="headerlink" href="#post-lecture-quiz" title="Permanent link">¶</a></h3>
+<h3 id="review-self-study">Review &amp; Self Study<a class="headerlink" href="#review-self-study" title="Permanent link">¶</a></h3>
+<p>Do some research on the internet to discover areas where humans have tried to quantify and codify knowledge. Take a look at Bloom's Taxonomy, and go back in history to learn how humans tried to make sense of their world. Explore the work of Linnaeus to create a taxonomy of organisms, and observe the way Dmitri Mendeleev created a way for chemical elements to be described and grouped. What other interesting examples can you find?</p>
+<p><strong>Assignment</strong>: <a href="assignment.md">Build an Ontology</a></p></div>
+<aside class="md-source-file">
+<span class="md-source-file__fact">
+<span class="md-icon" title="Last update">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">December 6, 2024 15:04:23</span>
+</span>
+</aside>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Lesson 1" class="md-footer__link md-footer__link--prev" href="../1-Intro/">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</div>
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Previous
+              </span>
+<div class="md-ellipsis">
+                Lesson 1
+              </div>
+</div>
+</a>
+<a aria-label="Next: Intro" class="md-footer__link md-footer__link--next" href="../3-NeuralNetworks/">
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Next
+              </span>
+<div class="md-ellipsis">
+                Intro
+              </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/gitmichaelqiu" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../../assets/javascripts/bundle.56dfad97.min.js"></script>
+<script src="../../../javascripts/katex.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1505 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="This is Michael Qiu's personal site." name="description"/>
+<meta content="Michael Qiu" name="author"/>
+<link href="https://gitmichaelqiu.github.io/lessons/generative-ai-for-beginners/18-fine-tuning/" rel="canonical"/>
+<link href="../17-ai-agents/" rel="prev"/>
+<link href="../19-slm/" rel="next"/>
+<link href="../../../images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.5.34" name="generator"/>
+<title>Lesson 18 - Michael Qiu's Blog</title>
+<link href="../../../assets/stylesheets/main.35f28582.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#fine-tuning-your-llm">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Michael Qiu's Blog" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Michael Qiu's Blog
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Lesson 18
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.8 5.67A9.8 9.8 0 0 1 22 11h-2.06c-.2-1.43-.78-2.78-1.68-3.9zM13 2.05c1.96.19 3.81.95 5.33 2.21L16.9 5.69A8 8 0 0 0 13 4.05zm-2 .01c-1.96.2-3.81.97-5.33 2.21L7.1 5.69A8 8 0 0 1 11 4.06zM4.26 5.67l1.37 1.39v.04A8 8 0 0 0 4 11H2c.21-1.96 1-3.82 2.26-5.33M2 14v5l1.6-1.6C5.38 20.17 8.47 22 12 22c4.82 0 8.87-3.45 9.8-8h-2.05c-.89 3.45-4.03 6-7.75 6-2.95 0-5.61-1.61-7-4l2-2zm10 3 1.56-3.42L17 12l-3.44-1.56L12 7l-1.57 3.44L7 12l3.43 1.58z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="white" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+</label>
+<input aria-label="Switch to system preference" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="black" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to system preference">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../..">
+          
+  
+  Intro
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../algorithms/gcd-lcm/">
+          
+  
+  Algorithms
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../data-structures/binary-heap/">
+          
+  
+  Data Structures
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../oi-tips/elapsed-time/">
+          
+  
+  OI Tips
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../school-notes/junior-notes/geography/">
+          
+  
+  School Notes
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../ai-for-beginners/">
+          
+  
+  Curricula
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../blog/">
+          
+  
+  Blog
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Michael Qiu's Blog" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+    Michael Qiu's Blog
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Intro
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+            Intro
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+<span class="md-ellipsis">
+    About
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../some-websites/">
+<span class="md-ellipsis">
+    Some Websites
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Algorithms
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Algorithms
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/gcd-lcm/">
+<span class="md-ellipsis">
+    GCD &amp; LCM
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Prime
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+            Prime
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/prime/euler-sieve/">
+<span class="md-ellipsis">
+    Euler Sieve
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Search
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+            Search
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/search/a-star/">
+<span class="md-ellipsis">
+    A*
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Shortest Path
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+            Shortest Path
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/bellman-ford/">
+<span class="md-ellipsis">
+    Bellman Ford
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/dijkstra/">
+<span class="md-ellipsis">
+    Dijkstra (prioirty_queue)
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/floyd/">
+<span class="md-ellipsis">
+    Floyd
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/shortest-path/spfa/">
+<span class="md-ellipsis">
+    SPFA
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Sort
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+            Sort
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/sort/sort-overview/">
+<span class="md-ellipsis">
+    Sort Overview
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../algorithms/quick-pow/">
+<span class="md-ellipsis">
+    Quick Pow
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Data Structures
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Data Structures
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/binary-heap/">
+<span class="md-ellipsis">
+    Binary Heap
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/disjoint-set-union/">
+<span class="md-ellipsis">
+    Disjoint Set Union
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/segment-tree/">
+<span class="md-ellipsis">
+    Segment Tree
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/sparse-table/">
+<span class="md-ellipsis">
+    Sparse Table
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/stack/">
+<span class="md-ellipsis">
+    Stack
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Tree
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_6_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_6">
+<span class="md-nav__icon md-icon"></span>
+            Tree
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../data-structures/tree/binary-tree-traversals/">
+<span class="md-ellipsis">
+    Binary Tree Traversals
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    OI Tips
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            OI Tips
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/elapsed-time/">
+<span class="md-ellipsis">
+    Elapsed Time Measurement
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/file-read-and-write/">
+<span class="md-ellipsis">
+    File Read &amp; Write
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/gcc-optimize/">
+<span class="md-ellipsis">
+    GCC Optimize
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/accelerate-ios/">
+<span class="md-ellipsis">
+    iostream Acceleration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../oi-tips/qread-and-qwrite/">
+<span class="md-ellipsis">
+    Quick Read &amp; Write
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    School Notes
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            School Notes
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+<span class="md-ellipsis">
+    初中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_1">
+<span class="md-nav__icon md-icon"></span>
+            初中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../school-notes/junior-notes/geography/">
+<span class="md-ellipsis">
+    初中地理总结
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+<span class="md-ellipsis">
+    高中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_2">
+<span class="md-nav__icon md-icon"></span>
+            高中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../school-notes/senior-high-school/sets/">
+<span class="md-ellipsis">
+    集合
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+<span class="md-ellipsis">
+    Curricula
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            Curricula
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+<span class="md-ellipsis">
+    AI For Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_1">
+<span class="md-nav__icon md-icon"></span>
+            AI For Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/">
+<span class="md-ellipsis">
+    README
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/0-course-setup/README.md">
+<span class="md-ellipsis">
+    Lesson 0
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/1-Intro/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/2-Symbolic/">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6_1_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_5" id="__nav_6_1_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_5_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_5">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 3
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/3-NeuralNetworks/">
+<span class="md-ellipsis">
+    Intro
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/3-NeuralNetworks/03-Perceptron/">
+<span class="md-ellipsis">
+    Perceptron
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/3-NeuralNetworks/04-OwnFramework/">
+<span class="md-ellipsis">
+    Own Framework
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/3-NeuralNetworks/05-Frameworks/">
+<span class="md-ellipsis">
+    Frameworks
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/4-ComputerVision/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/5-NLP/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6_1_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_8" id="__nav_6_1_8_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_8_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_8">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 6
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/6-Other/21-GeneticAlgorithms/">
+<span class="md-ellipsis">
+    Genetic Algorithms
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/6-Other/22-DeepRL/">
+<span class="md-ellipsis">
+    Deep RL
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/6-Other/23-MultiagentSystems/">
+<span class="md-ellipsis">
+    Multi-Agent Systems
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/7-Ethics/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ai-for-beginners/X-Extras/X1-MultiModal/">
+<span class="md-ellipsis">
+    Lesson X
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Generative AI for Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_2">
+<span class="md-nav__icon md-icon"></span>
+            Generative AI for Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../">
+<span class="md-ellipsis">
+    README
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../00-course-setup/">
+<span class="md-ellipsis">
+    Lesson 0
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01-introduction-to-genai/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02-exploring-and-comparing-different-llms/">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../03-using-generative-ai-responsibly/">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../04-prompt-engineering-fundamentals/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../05-advanced-prompts/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../06-text-generation-apps/">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../07-building-chat-applications/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../08-building-search-applications/">
+<span class="md-ellipsis">
+    Lesson 8
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../09-building-image-applications/">
+<span class="md-ellipsis">
+    Lesson 9
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../10-building-low-code-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 10
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../11-integrating-with-function-calling/">
+<span class="md-ellipsis">
+    Lesson 11
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../12-designing-ux-for-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 12
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../13-securing-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 13
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../14-the-generative-ai-application-lifecycle/">
+<span class="md-ellipsis">
+    Lesson 14
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../15-rag-and-vector-databases/">
+<span class="md-ellipsis">
+    Lesson 15
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../16-open-source-models/">
+<span class="md-ellipsis">
+    Lesson 16
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../17-ai-agents/">
+<span class="md-ellipsis">
+    Lesson 17
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Lesson 18
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Lesson 18
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fine-tuning-your-llm">
+<span class="md-ellipsis">
+      Fine-Tuning Your LLM
+    </span>
+</a>
+<nav aria-label="Fine-Tuning Your LLM" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#learning-objectives">
+<span class="md-ellipsis">
+      Learning Objectives
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#illustrated-guide">
+<span class="md-ellipsis">
+      Illustrated Guide
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-fine-tuning-for-language-models">
+<span class="md-ellipsis">
+      What is fine-tuning for language models?
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#when-and-why-should-we-fine-tune-models">
+<span class="md-ellipsis">
+      When and why should we fine-tune models?
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#how-can-we-fine-tune-a-pre-trained-model">
+<span class="md-ellipsis">
+      How can we fine-tune a pre-trained model?
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fine-tuning-in-action">
+<span class="md-ellipsis">
+      Fine-Tuning In Action
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#assignment">
+<span class="md-ellipsis">
+      Assignment
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#great-work-continue-your-learning">
+<span class="md-ellipsis">
+      Great Work! Continue Your Learning.
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resources-for-self-guided-learning">
+<span class="md-ellipsis">
+      Resources For Self-Guided Learning
+    </span>
+</a>
+<nav aria-label="Resources For Self-Guided Learning" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-primary-resources">
+<span class="md-ellipsis">
+      1. Primary Resources
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-secondary-resources">
+<span class="md-ellipsis">
+      2. Secondary Resources
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../19-slm/">
+<span class="md-ellipsis">
+    Lesson 19
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../20-mistral/">
+<span class="md-ellipsis">
+    Lesson 20
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../21-meta/">
+<span class="md-ellipsis">
+    Lesson 21
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Blog
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../blog/">
+<span class="md-ellipsis">
+    Index
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Archive
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_2">
+<span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../blog/archive/2024/">
+<span class="md-ellipsis">
+    2024
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Categories
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_3">
+<span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../blog/category/ai/">
+<span class="md-ellipsis">
+    Ai
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fine-tuning-your-llm">
+<span class="md-ellipsis">
+      Fine-Tuning Your LLM
+    </span>
+</a>
+<nav aria-label="Fine-Tuning Your LLM" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#learning-objectives">
+<span class="md-ellipsis">
+      Learning Objectives
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#illustrated-guide">
+<span class="md-ellipsis">
+      Illustrated Guide
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-fine-tuning-for-language-models">
+<span class="md-ellipsis">
+      What is fine-tuning for language models?
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#when-and-why-should-we-fine-tune-models">
+<span class="md-ellipsis">
+      When and why should we fine-tune models?
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#how-can-we-fine-tune-a-pre-trained-model">
+<span class="md-ellipsis">
+      How can we fine-tune a pre-trained model?
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fine-tuning-in-action">
+<span class="md-ellipsis">
+      Fine-Tuning In Action
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#assignment">
+<span class="md-ellipsis">
+      Assignment
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#great-work-continue-your-learning">
+<span class="md-ellipsis">
+      Great Work! Continue Your Learning.
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resources-for-self-guided-learning">
+<span class="md-ellipsis">
+      Resources For Self-Guided Learning
+    </span>
+</a>
+<nav aria-label="Resources For Self-Guided Learning" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-primary-resources">
+<span class="md-ellipsis">
+      1. Primary Resources
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-secondary-resources">
+<span class="md-ellipsis">
+      2. Secondary Resources
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1>Lesson 18</h1>
+<div><p><a href="https://aka.ms/gen-ai-lesson18-gh?WT.mc_id=academic-105485-koreyst"><img alt="Open Source Models" src="img/18-lesson-banner.png?WT.mc_id=academic-105485-koreyst"/></a></p>
+<h2 id="fine-tuning-your-llm">Fine-Tuning Your LLM<a class="headerlink" href="#fine-tuning-your-llm" title="Permanent link">¶</a></h2>
+<p>Using large language models to build generative AI applications comes with new challenges. A key issue is ensuring response quality (accuracy and relevance) in content generated by the model for a given user request. In previous lessons, we discussed techniques like prompt engineering and retrieval-augmented generation that try to solve the problem by <em>modifying the prompt input</em> to the existing model.</p>
+<p>In today's lesson, we discuss a third technique, <strong>fine-tuning</strong>, which tries to address the challenge by <em>retraining the model itself</em> with additional data. Let's dive into the details.</p>
+<h3 id="learning-objectives">Learning Objectives<a class="headerlink" href="#learning-objectives" title="Permanent link">¶</a></h3>
+<p>This lesson introduces the concept of fine-tuning for pre-trained language models, explores the benefits and challenges of this approach, and provides guidance on when and how to use fine tuning to improve the performance of your generative AI models.</p>
+<p>By the end of this lesson, you should be able to answer the following questions:</p>
+<ul>
+<li>What is fine tuning for language models?</li>
+<li>When, and why, is fine tuning useful?</li>
+<li>How can I fine-tune a pre-trained model?</li>
+<li>What are the limitations of fine-tuning?</li>
+</ul>
+<p>Ready? Let's get started.</p>
+<h3 id="illustrated-guide">Illustrated Guide<a class="headerlink" href="#illustrated-guide" title="Permanent link">¶</a></h3>
+<p>Want to get the big picture of what we'll cover before we dive in? Check out this illustrated guide that describes the learning journey for this lesson - from learning the core concepts and motivation for fine-tuning, to understanding the process and best practices for executing the fine-tuning task. This is a fascinating topic for exploration, so don't forget to check out the <a href="RESOURCES/?WT.mc_id=academic-105485-koreyst">Resources</a> page for additional links to support your self-guided learning journey!</p>
+<p><img alt="Illustrated Guide to Fine Tuning Language Models" src="img/18-fine-tuning-sketchnote.png?WT.mc_id=academic-105485-koreyst"/></p>
+<h3 id="what-is-fine-tuning-for-language-models">What is fine-tuning for language models?<a class="headerlink" href="#what-is-fine-tuning-for-language-models" title="Permanent link">¶</a></h3>
+<p>By definition, large language models are <em>pre-trained</em> on large quantities of text sourced from diverse sources including the internet. As we've learned in previous lessons, we need techniques like <em>prompt engineering</em> and <em>retrieval-augmented generation</em> to improve the quality of the model's responses to the user's questions ("prompts").</p>
+<p>A popular prompt-engineering technique involves giving the model more guidance on what is expected in the response either by providing <em>instructions</em> (explicit guidance) or <em>giving it a few examples</em> (implicit guidance). This is referred to as <em>few-shot learning</em> but it has two limitations:</p>
+<ul>
+<li>Model token limits can restrict the number of examples you can give, and limit the effectiveness.</li>
+<li>Model token costs can make it expensive to add examples to every prompt, and limit flexibility.</li>
+</ul>
+<p>Fine-tuning is a common practice in machine learning systems where we take a pre-trained model and retrain it with new data to improve its performance on a specific task. In the context of language models, we can fine-tune the pre-trained model <em>with a curated set of examples for a given task or application domain</em> to create a <strong>custom model</strong> that may be more accurate and relevant for that specific task or domain. A side-benefit of fine-tuning is that it can also reduce the number of examples needed for few-shot learning - reducing token usage and related costs.</p>
+<h3 id="when-and-why-should-we-fine-tune-models">When and why should we fine-tune models?<a class="headerlink" href="#when-and-why-should-we-fine-tune-models" title="Permanent link">¶</a></h3>
+<p>In <em>this</em> context, when we talk about fine-tuning, we are referring to <strong>supervised</strong> fine-tuning where the retraining is done by <strong>adding new data</strong> that was not part of the original training dataset. This is different from an unsupervised fine-tuning approach where the model is retrained on the original data, but with different hyperparameters.</p>
+<p>The key thing to remember is that fine-tuning is an advanced technique that requires a certain level of expertise to get the desired results. If done incorrectly, it may not provide the expected improvements, and may even degrade the performance of the model for your targeted domain.</p>
+<p>So, before you learn "how" to fine-tune language models, you need to know "why" you should take this route, and "when" to start the process of fine-tuning. Start by asking yourself these questions:</p>
+<ul>
+<li><strong>Use Case</strong>: What is your <em>use case</em> for fine-tuning? What aspect of the current pre-trained model do you want to improve upon?</li>
+<li><strong>Alternatives</strong>: Have you tried <em>other techniques</em> to achieve the desired outcomes? Use them to create a baseline for comparison.</li>
+<li>Prompt engineering: Try techniques like few-shot prompting with examples of relevant prompt responses. Evaluate the quality of responses.</li>
+<li>Retrieval Augmented Generation: Try augmenting prompts with query results retrieved by searching your data. Evaluate the quality of responses.</li>
+<li><strong>Costs</strong>: Have you identified the costs for fine-tuning?</li>
+<li>Tunability - is the pre-trained model available for fine-tuning?</li>
+<li>Effort - for preparing training data, evaluating &amp; refining model.</li>
+<li>Compute - for running fine-tuning jobs, and deploying fine-tuned model</li>
+<li>Data - access to sufficient quality examples for fine-tuning impact</li>
+<li><strong>Benefits</strong>: Have you confirmed the benefits for fine-tuning?</li>
+<li>Quality - did fine-tuned model outperform baseline?</li>
+<li>Cost - does it reduce token usage by simplifying prompts?</li>
+<li>Extensibility - can you repurpose base model for new domains?</li>
+</ul>
+<p>By answering these questions, you should be able to decide if fine-tuning is the right approach for your use case. Ideally, the approach is valid only if the benefits outweigh the costs. Once you decide to proceed, it's time to think about <em>how</em> you can fine tune the pre-trained model.</p>
+<p>Want to get more insights on the decision-making process? Watch <a href="https://www.youtube.com/watch?v=0Jo-z-MFxJs">To fine-tune or not to fine-tune</a></p>
+<h3 id="how-can-we-fine-tune-a-pre-trained-model">How can we fine-tune a pre-trained model?<a class="headerlink" href="#how-can-we-fine-tune-a-pre-trained-model" title="Permanent link">¶</a></h3>
+<p>To fine-tune a pre-trained model, you need to have:</p>
+<ul>
+<li>a pre-trained model to fine-tune</li>
+<li>a dataset to use for fine-tuning</li>
+<li>a training environment to run the fine-tuning job</li>
+<li>a hosting environment to deploy fine-tuned model</li>
+</ul>
+<h3 id="fine-tuning-in-action">Fine-Tuning In Action<a class="headerlink" href="#fine-tuning-in-action" title="Permanent link">¶</a></h3>
+<p>The following resources provide step-by-step tutorials to walk you through a real example using a selected model with a curated dataset. To work through these tutorials, you need an account on the specific provider, along with access to the relevant model and datasets.</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Tutorial</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenAI</td>
+<td><a href="https://github.com/openai/openai-cookbook/blob/main/examples/How_to_finetune_chat_models.ipynb?WT.mc_id=academic-105485-koreyst">How to fine-tune chat models</a></td>
+<td>Learn to fine-tune a <code>gpt-35-turbo</code> for a specific domain ("recipe assistant") by preparing training data, running the fine-tuning job, and using the fine-tuned model for inference.</td>
+</tr>
+<tr>
+<td>Azure OpenAI</td>
+<td><a href="https://learn.microsoft.com/azure/ai-services/openai/tutorials/fine-tune?tabs=python-new%2Ccommand-line?WT.mc_id=academic-105485-koreyst">GPT 3.5 Turbo fine-tuning tutorial</a></td>
+<td>Learn to fine-tune a <code>gpt-35-turbo-0613</code> model <strong>on Azure</strong> by taking steps to create &amp; upload training data, run the fine-tuning job. Deploy &amp; use the new model.</td>
+</tr>
+<tr>
+<td>Hugging Face</td>
+<td><a href="https://www.philschmid.de/fine-tune-llms-in-2024-with-trl?WT.mc_id=academic-105485-koreyst">Fine-tuning LLMs with Hugging Face</a></td>
+<td>This blog post walks you fine-tuning an <em>open LLM</em> (ex: <code>CodeLlama 7B</code>) using the <a href="https://huggingface.co/docs/transformers/index?WT.mc_id=academic-105485-koreyst">transformers</a> library &amp; <a href="https://huggingface.co/docs/trl/index?WT.mc_id=academic-105485-koreyst]">Transformer Reinforcement Learning (TRL)</a> with open <a href="https://huggingface.co/docs/datasets/index?WT.mc_id=academic-105485-koreyst">datasets</a> on Hugging Face.</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>🤗 AutoTrain</td>
+<td><a href="https://github.com/huggingface/autotrain-advanced/?WT.mc_id=academic-105485-koreyst">Fine-tuning LLMs with AutoTrain</a></td>
+<td>AutoTrain (or AutoTrain Advanced) is a python library developed by Hugging Face that allows finetuning for many different tasks including LLM finetuning. AutoTrain is a no-code solution and finetuning can be done in your own cloud, on Hugging Face Spaces or locally. It supports both a web-based GUI, CLI and training via yaml config files.</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="assignment">Assignment<a class="headerlink" href="#assignment" title="Permanent link">¶</a></h3>
+<p>Select one of the tutorials above and walk through them. <em>We may replicate a version of these tutorials in Jupyter Notebooks in this repo for reference only. Please use the original sources directly to get the latest versions</em>.</p>
+<h3 id="great-work-continue-your-learning">Great Work! Continue Your Learning.<a class="headerlink" href="#great-work-continue-your-learning" title="Permanent link">¶</a></h3>
+<p>After completing this lesson, check out our <a href="https://aka.ms/genai-collection?WT.mc_id=academic-105485-koreyst">Generative AI Learning collection</a> to continue leveling up your Generative AI knowledge!</p>
+<p>Congratulations!! You have completed the final lesson from the v2 series for this course! Don't stop learning and building. **Check out the <a href="RESOURCES/?WT.mc_id=academic-105485-koreyst">RESOURCES</a> page for a list of additional suggestions for just this topic.</p>
+<p>Our v1 series of lessons have also been updated with more assignments and concepts. So take a minute to refresh your knowledge - and please <a href="https://github.com/microsoft/generative-ai-for-beginners/issues?WT.mc_id=academic-105485-koreyst">share your questions and feedback</a> to help us improve these lessons for the community.</p>
+<hr/>
+<h2 id="resources-for-self-guided-learning">Resources For Self-Guided Learning<a class="headerlink" href="#resources-for-self-guided-learning" title="Permanent link">¶</a></h2>
+<p>The lesson was built using a number of core resources from OpenAI and Azure OpenAI as references for the terminology and tutorials. Here is a non-comprehensive list, for your own self-guided learning journeys.</p>
+<h3 id="1-primary-resources">1. Primary Resources<a class="headerlink" href="#1-primary-resources" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Title/Link</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="https://platform.openai.com/docs/guides/fine-tuning?WT.mc_id=academic-105485-koreyst">Fine-tuning with OpenAI Models</a></td>
+<td style="text-align: left;">Fine-tuning improves on few-shot learning by training on many more examples than can fit in the prompt, saving you costs, improving response quality, and enabling lower-latency requests. <strong>Get an overview of fine-tuning from OpenAI.</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/fine-tuning-considerations#what-is-fine-tuning-with-azure-openai?WT.mc_id=academic-105485-koreyst">What is Fine-Tuning with Azure OpenAI?</a></td>
+<td style="text-align: left;">Understand <strong>what fine-tuning is (concept)</strong>, why you should look at it (motivating problem), what data to use (training) and measuring the quality</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/fine-tuning?tabs=turbo%2Cpython&amp;pivots=programming-language-studio#continuous-fine-tuning?WT.mc_id=academic-105485-koreyst">Customize a model with fine-tuning</a></td>
+<td style="text-align: left;">Azure OpenAI Service lets you tailor our models to your personal datasets using fine-tuning. Learn <strong>how to fine-tune (process)</strong> select models using Azure AI Studio, Python SDK or REST API.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/ai/playbook/technology-guidance/generative-ai/working-with-llms/fine-tuning-recommend?WT.mc_id=academic-105485-koreyst">Recommendations for LLM fine-tuning</a></td>
+<td style="text-align: left;">LLMs may not perform well on specific domains, tasks, or datasets, or may produce inaccurate or misleading outputs. <strong>When should you consider fine-tuning</strong> as a possible solution to this?</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/fine-tuning?tabs=turbo%2Cpython&amp;pivots=programming-language-studio#continuous-fine-tuning?WT.mc_id=academic-105485-koreyst">Continuous Fine Tuning</a></td>
+<td style="text-align: left;">Continuous fine-tuning is the iterative process of selecting an already fine-tuned model as a base model and <strong>fine-tuning it further</strong> on new sets of training examples.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/fine-tuning-functions?WT.mc_id=academic-105485-koreyst">Fine-tuning and function calling</a></td>
+<td style="text-align: left;">Fine-tuning your model <strong>with function calling examples</strong> can improve model output by getting more accurate and consistent outputs - with similarly-formatted responses &amp; cost-savings</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/models#fine-tuning-models?WT.mc_id=academic-105485-koreyst">Fine-tuning Models: Azure OpenAI Guidance</a></td>
+<td style="text-align: left;">Look up this table to understand <strong>what models can be fine-tuned</strong> in Azure OpenAI, and which regions these are available in. Look up their token limits and training data expiry dates if needed.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/shows/ai-show/to-fine-tune-or-not-fine-tune-that-is-the-question?WT.mc_id=academic-105485-koreyst">To Fine Tune or Not To Fine Tune? That is the Question</a></td>
+<td style="text-align: left;">This 30-min <strong>Oct 2023</strong> episode of the AI Show discusses benefits, drawbacks and practical insights that help you make this decision.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://learn.microsoft.com/ai/playbook/technology-guidance/generative-ai/working-with-llms/fine-tuning?WT.mc_id=academic-105485-koreyst">Getting Started With LLM Fine-Tuning</a></td>
+<td style="text-align: left;">This <strong>AI Playbook</strong> resource walks you through data requirements, formatting, hyperparameter fine-tuning and challenges/limitations you should know.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tutorial</strong>: <a href="https://learn.microsoft.com/azure/ai-services/openai/tutorials/fine-tune?tabs=python%2Ccommand-line?WT.mc_id=academic-105485-koreyst">Azure OpenAI GPT3.5 Turbo Fine-Tuning</a></td>
+<td style="text-align: left;">Learn to create a sample fine-tuning dataset, prepare for fine-tuning, create a fine-tuning job, and deploy the fine-tuned model on Azure.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tutorial</strong>: <a href="https://learn.microsoft.com/azure/ai-studio/how-to/fine-tune-model-llama?WT.mc_id=academic-105485-koreyst">Fine-tune a Llama 2 model in Azure AI Studio</a></td>
+<td style="text-align: left;">Azure AI Studio lets you tailor large language models to your personal datasets <em>using a UI-based workflow suitable for low-code developers</em>. See this example.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tutorial</strong>:<a href="https://learn.microsoft.com/azure/databricks/machine-learning/train-model/huggingface/fine-tune-model?WT.mc_id=academic-105485-koreyst">Fine-tune Hugging Face models for a single GPU on Azure</a></td>
+<td style="text-align: left;">This article describes how to fine-tune a Hugging Face model with the Hugging Face transformers library on a single GPU with Azure DataBricks + Hugging Face Trainer libraries</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Training:</strong> <a href="https://learn.microsoft.com/training/modules/finetune-foundation-model-with-azure-machine-learning/?WT.mc_id=academic-105485-koreyst">Fine-tune a foundation model with Azure Machine Learning</a></td>
+<td style="text-align: left;">The model catalog in Azure Machine Learning offers many open source models you can fine-tune for your specific task. Try this module is <a href="https://learn.microsoft.com/training/paths/work-with-generative-models-azure-machine-learning/?WT.mc_id=academic-105485-koreyst">from the AzureML Generative AI Learning Path</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tutorial:</strong> <a href="https://docs.wandb.ai/guides/integrations/azure-openai-fine-tuning?WT.mc_id=academic-105485-koreyst">Azure OpenAI Fine-Tuning</a></td>
+<td style="text-align: left;">Fine-tuning GPT-3.5 or GPT-4 models on Microsoft Azure using W&amp;B allows for detailed tracking and analysis of model performance. This guide extends the concepts from the OpenAI Fine-Tuning guide with specific steps and features for Azure OpenAI.</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-secondary-resources">2. Secondary Resources<a class="headerlink" href="#2-secondary-resources" title="Permanent link">¶</a></h3>
+<p>This section captures additional resources that are worth exploring, but that we did not have time to cover in this lesson. They may be covered in a future lesson, or as a secondary assignment option, at a later date. For now, use them to build your own expertise and knowledge around this topic.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Title/Link</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>OpenAI Cookbook</strong>: <a href="https://cookbook.openai.com/examples/chat_finetuning_data_prep?WT.mc_id=academic-105485-koreyst">Data preparation and analysis for chat model fine-tuning</a></td>
+<td style="text-align: left;">This notebook serves as a tool to preprocess and analyze the chat dataset used for fine-tuning a chat model. It checks for format errors, provides basic statistics, and estimates token counts for fine-tuning costs. See: <a href="https://platform.openai.com/docs/guides/fine-tuning?WT.mc_id=academic-105485-koreyst">Fine-tuning method for gpt-3.5-turbo</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OpenAI Cookbook</strong>: <a href="https://cookbook.openai.com/examples/fine-tuned_qa/ft_retrieval_augmented_generation_qdrant?WT.mc_id=academic-105485-koreyst">Fine-Tuning for Retrieval Augmented Generation (RAG) with Qdrant</a></td>
+<td style="text-align: left;">The aim of this notebook is to walk through a comprehensive example of how to fine-tune OpenAI models for Retrieval Augmented Generation (RAG). We will also be integrating Qdrant and Few-Shot Learning to boost model performance and reduce fabrications.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OpenAI Cookbook</strong>: <a href="https://cookbook.openai.com/examples/third_party/gpt_finetuning_with_wandb?WT.mc_id=academic-105485-koreyst">Fine-tuning GPT with Weights &amp; Biases</a></td>
+<td style="text-align: left;">Weights &amp; Biases (W&amp;B) is the AI developer platform, with tools for training models, fine-tuning models, and leveraging foundation models. Read their <a href="https://docs.wandb.ai/guides/integrations/openai?WT.mc_id=academic-105485-koreyst">OpenAI Fine-Tuning</a> guide first, then try the Cookbook exercise.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Community Tutorial</strong> <a href="https://huggingface.co/blog/g-ronimo/phinetuning?WT.mc_id=academic-105485-koreyst">Phinetuning 2.0</a> - fine-tuning for Small Language Models</td>
+<td style="text-align: left;">Meet <a href="https://www.microsoft.com/research/blog/phi-2-the-surprising-power-of-small-language-models/?WT.mc_id=academic-105485-koreyst">Phi-2</a>, Microsoft’s new small model, remarkably powerful yet compact. This tutorial will guide you through fine-tuning Phi-2, demonstrating how to build a unique dataset and fine-tune model using QLoRA.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hugging Face Tutorial</strong> <a href="https://www.philschmid.de/fine-tune-llms-in-2024-with-trl?WT.mc_id=academic-105485-koreyst">How to Fine-Tune LLMs in 2024 with Hugging Face</a></td>
+<td style="text-align: left;">This blog post walks you thorugh how to fine-tune open LLMs using Hugging Face TRL, Transformers &amp; datasets in 2024. You define a use case, setup a dev environment, prepare a dataset, fine tune the model, test-evaluate it, then deploy it to production.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hugging Face: <a href="https://github.com/huggingface/autotrain-advanced?WT.mc_id=academic-105485-koreyst">AutoTrain Advanced</a></strong></td>
+<td style="text-align: left;">Brings faster and easier training and deployments of <a href="https://twitter.com/abhi1thakur/status/1755167674894557291?WT.mc_id=academic-105485-koreyst">state-of-the-art machine learning models</a>. Repo has Colab-friendly tutorials with YouTube video guidance, for fine-tuning. <strong>Reflects recent <a href="https://twitter.com/abhi1thakur/status/1750828141805777057?WT.mc_id=academic-105485-koreyst">local-first</a> update</strong> . Read the <a href="https://huggingface.co/autotrain?WT.mc_id=academic-105485-koreyst">AutoTrain documentation</a></td>
+</tr>
+</tbody>
+</table></div>
+<aside class="md-source-file">
+<span class="md-source-file__fact">
+<span class="md-icon" title="Last update">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">December 6, 2024 15:04:24</span>
+</span>
+</aside>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Lesson 17" class="md-footer__link md-footer__link--prev" href="../17-ai-agents/">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</div>
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Previous
+              </span>
+<div class="md-ellipsis">
+                Lesson 17
+              </div>
+</div>
+</a>
+<a aria-label="Next: Lesson 19" class="md-footer__link md-footer__link--next" href="../19-slm/">
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Next
+              </span>
+<div class="md-ellipsis">
+                Lesson 19
+              </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/gitmichaelqiu" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../../assets/javascripts/bundle.56dfad97.min.js"></script>
+<script src="../../../javascripts/katex.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+</body>
+</html>
