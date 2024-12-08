@@ -1,0 +1,2280 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="This is Michael Qiu's personal site." name="description"/>
+<meta content="Michael Qiu" name="author"/>
+<link href="https://gitmichaelqiu.github.io/curricula/ml-for-beginners/6-NLP/5-Hotel-Reviews-2/" rel="canonical"/>
+<link href="../4-Hotel-Reviews-1/" rel="prev"/>
+<link href="../../7-TimeSeries/" rel="next"/>
+<link href="../../../../images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.5.34" name="generator"/>
+<title>Hotel Reviews 2 - Michael Qiu's Blog</title>
+<link href="../../../../assets/stylesheets/main.35f28582.min.css" rel="stylesheet"/>
+<link href="../../../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#sentiment-analysis-with-hotel-reviews">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Michael Qiu's Blog" class="md-header__button md-logo" data-md-component="logo" href="../../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Michael Qiu's Blog
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Hotel Reviews 2
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.8 5.67A9.8 9.8 0 0 1 22 11h-2.06c-.2-1.43-.78-2.78-1.68-3.9zM13 2.05c1.96.19 3.81.95 5.33 2.21L16.9 5.69A8 8 0 0 0 13 4.05zm-2 .01c-1.96.2-3.81.97-5.33 2.21L7.1 5.69A8 8 0 0 1 11 4.06zM4.26 5.67l1.37 1.39v.04A8 8 0 0 0 4 11H2c.21-1.96 1-3.82 2.26-5.33M2 14v5l1.6-1.6C5.38 20.17 8.47 22 12 22c4.82 0 8.87-3.45 9.8-8h-2.05c-.89 3.45-4.03 6-7.75 6-2.95 0-5.61-1.61-7-4l2-2zm10 3 1.56-3.42L17 12l-3.44-1.56L12 7l-1.57 3.44L7 12l3.43 1.58z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="white" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+</label>
+<input aria-label="Switch to system preference" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="black" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to system preference">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../..">
+          
+  
+  Intro
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../algorithms/gcd-lcm/">
+          
+  
+  Algorithms
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../data-structures/binary-heap/">
+          
+  
+  Data Structures
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../oi-tips/elapsed-time/">
+          
+  
+  OI Tips
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../school-notes/junior-notes/geography/">
+          
+  
+  School Notes
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../../ai-for-beginners/">
+          
+  
+  Curricula
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../blog/">
+          
+  
+  Blog
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Michael Qiu's Blog" class="md-nav__button md-logo" data-md-component="logo" href="../../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+    Michael Qiu's Blog
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Intro
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+            Intro
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../..">
+<span class="md-ellipsis">
+    About
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../some-websites/">
+<span class="md-ellipsis">
+    Some Websites
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Algorithms
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Algorithms
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/gcd-lcm/">
+<span class="md-ellipsis">
+    GCD &amp; LCM
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Prime
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+            Prime
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/prime/euler-sieve/">
+<span class="md-ellipsis">
+    Euler Sieve
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Search
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+            Search
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/search/a-star/">
+<span class="md-ellipsis">
+    A*
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Shortest Path
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+            Shortest Path
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/bellman-ford/">
+<span class="md-ellipsis">
+    Bellman Ford
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/dijkstra/">
+<span class="md-ellipsis">
+    Dijkstra (prioirty_queue)
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/floyd/">
+<span class="md-ellipsis">
+    Floyd
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/spfa/">
+<span class="md-ellipsis">
+    SPFA
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Sort
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+            Sort
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/sort/sort-overview/">
+<span class="md-ellipsis">
+    Sort Overview
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/quick-pow/">
+<span class="md-ellipsis">
+    Quick Pow
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Data Structures
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Data Structures
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/binary-heap/">
+<span class="md-ellipsis">
+    Binary Heap
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/disjoint-set-union/">
+<span class="md-ellipsis">
+    Disjoint Set Union
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/segment-tree/">
+<span class="md-ellipsis">
+    Segment Tree
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/sparse-table/">
+<span class="md-ellipsis">
+    Sparse Table
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/stack/">
+<span class="md-ellipsis">
+    Stack
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Tree
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_6_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_6">
+<span class="md-nav__icon md-icon"></span>
+            Tree
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/tree/binary-tree-traversals/">
+<span class="md-ellipsis">
+    Binary Tree Traversals
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    OI Tips
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            OI Tips
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/elapsed-time/">
+<span class="md-ellipsis">
+    Elapsed Time Measurement
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/file-read-and-write/">
+<span class="md-ellipsis">
+    File Read &amp; Write
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/gcc-optimize/">
+<span class="md-ellipsis">
+    GCC Optimize
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/accelerate-ios/">
+<span class="md-ellipsis">
+    iostream Acceleration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/qread-and-qwrite/">
+<span class="md-ellipsis">
+    Quick Read &amp; Write
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    School Notes
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            School Notes
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+<span class="md-ellipsis">
+    初中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_1">
+<span class="md-nav__icon md-icon"></span>
+            初中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../school-notes/junior-notes/geography/">
+<span class="md-ellipsis">
+    初中地理总结
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+<span class="md-ellipsis">
+    高中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_2">
+<span class="md-nav__icon md-icon"></span>
+            高中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../school-notes/senior-high-school/sets/">
+<span class="md-ellipsis">
+    集合
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+<span class="md-ellipsis">
+    Curricula
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            Curricula
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+<span class="md-ellipsis">
+    AI For Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_1">
+<span class="md-nav__icon md-icon"></span>
+            AI For Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/">
+<span class="md-ellipsis">
+    Overview
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/1-Intro/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/2-Symbolic/">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_1_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_4" id="__nav_6_1_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_4_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_4">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 3
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/">
+<span class="md-ellipsis">
+    Intro
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/03-Perceptron/">
+<span class="md-ellipsis">
+    Perceptron
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/04-OwnFramework/">
+<span class="md-ellipsis">
+    Own Framework
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/05-Frameworks/">
+<span class="md-ellipsis">
+    Frameworks
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/4-ComputerVision/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/5-NLP/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_1_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_7" id="__nav_6_1_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_7_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_7">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 6
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/6-Other/21-GeneticAlgorithms/">
+<span class="md-ellipsis">
+    Genetic Algorithms
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/6-Other/22-DeepRL/">
+<span class="md-ellipsis">
+    Deep RL
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/6-Other/23-MultiagentSystems/">
+<span class="md-ellipsis">
+    Multi-Agent Systems
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/7-Ethics/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/X-Extras/X1-MultiModal/">
+<span class="md-ellipsis">
+    Lesson X
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Generative AI for Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_2">
+<span class="md-nav__icon md-icon"></span>
+            Generative AI for Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/">
+<span class="md-ellipsis">
+    Overview
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/01-introduction-to-genai/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/02-exploring-and-comparing-different-llms/">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/03-using-generative-ai-responsibly/">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/04-prompt-engineering-fundamentals/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/05-advanced-prompts/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/06-text-generation-apps/">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/07-building-chat-applications/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/08-building-search-applications/">
+<span class="md-ellipsis">
+    Lesson 8
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/09-building-image-applications/">
+<span class="md-ellipsis">
+    Lesson 9
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/10-building-low-code-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 10
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/11-integrating-with-function-calling/">
+<span class="md-ellipsis">
+    Lesson 11
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/12-designing-ux-for-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 12
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/13-securing-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 13
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/14-the-generative-ai-application-lifecycle/">
+<span class="md-ellipsis">
+    Lesson 14
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/15-rag-and-vector-databases/">
+<span class="md-ellipsis">
+    Lesson 15
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/16-open-source-models/">
+<span class="md-ellipsis">
+    Lesson 16
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/17-ai-agents/">
+<span class="md-ellipsis">
+    Lesson 17
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/18-fine-tuning/">
+<span class="md-ellipsis">
+    Lesson 18
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/19-slm/">
+<span class="md-ellipsis">
+    Lesson 19
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/20-mistral/">
+<span class="md-ellipsis">
+    Lesson 20
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/21-meta/">
+<span class="md-ellipsis">
+    Lesson 21
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+<span class="md-ellipsis">
+    ML for Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_3">
+<span class="md-nav__icon md-icon"></span>
+            ML for Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../">
+<span class="md-ellipsis">
+    Overview
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_2" id="__nav_6_3_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_2_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_2">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 1
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/">
+<span class="md-ellipsis">
+    Introduction
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/1-intro-to-ML/">
+<span class="md-ellipsis">
+    Intro to ML
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/2-history-of-ML/">
+<span class="md-ellipsis">
+    History of ML
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/3-fairness/">
+<span class="md-ellipsis">
+    Fairness
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/4-techniques-of-ML/">
+<span class="md-ellipsis">
+    Techniques of ML
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_3" id="__nav_6_3_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_3_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_3">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 2
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/">
+<span class="md-ellipsis">
+    Regression
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/1-Tools/">
+<span class="md-ellipsis">
+    Tools
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/2-Data/">
+<span class="md-ellipsis">
+    Data
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/3-Linear/">
+<span class="md-ellipsis">
+    Linear
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/4-Logistic/">
+<span class="md-ellipsis">
+    Logistic
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../3-Web-App/">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_5" id="__nav_6_3_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_5_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_5">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 4
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/">
+<span class="md-ellipsis">
+    Classification
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/1-Introduction/">
+<span class="md-ellipsis">
+    Introduction
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/2-Classifiers-1/">
+<span class="md-ellipsis">
+    Classifiers 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/3-Classifiers-2/">
+<span class="md-ellipsis">
+    Classifiers 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/4-Applied/">
+<span class="md-ellipsis">
+    Applied
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_6" id="__nav_6_3_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_6_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_6">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 5
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../5-Clustering/">
+<span class="md-ellipsis">
+    Clustering
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../5-Clustering/1-Visualize/">
+<span class="md-ellipsis">
+    Visualize
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../5-Clustering/2-K-Means/">
+<span class="md-ellipsis">
+    K Means
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6_3_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_7" id="__nav_6_3_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_3_7_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_7">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 6
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../">
+<span class="md-ellipsis">
+    NLP
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../1-Introduction-to-NLP/">
+<span class="md-ellipsis">
+    Introduction to NLP
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../2-Tasks/">
+<span class="md-ellipsis">
+    Tasks
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../3-Translation-Sentiment/">
+<span class="md-ellipsis">
+    Translation Sentiment
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../4-Hotel-Reviews-1/">
+<span class="md-ellipsis">
+    Hotel Reviews 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Hotel Reviews 2
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Hotel Reviews 2
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sentiment-analysis-with-hotel-reviews">
+<span class="md-ellipsis">
+      Sentiment analysis with hotel reviews
+    </span>
+</a>
+<nav aria-label="Sentiment analysis with hotel reviews" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-lecture-quiz">
+<span class="md-ellipsis">
+      Pre-lecture quiz
+    </span>
+</a>
+<nav aria-label="Pre-lecture quiz" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filtering-sentiment-analysis-operations">
+<span class="md-ellipsis">
+      Filtering &amp; Sentiment Analysis Operations
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-a-bit-more-data-processing">
+<span class="md-ellipsis">
+      Exercise: a bit more data processing
+    </span>
+</a>
+<nav aria-label="Exercise: a bit more data processing" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-columns">
+<span class="md-ellipsis">
+      Tag columns
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filtering-tags">
+<span class="md-ellipsis">
+      Filtering tags
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#removing-the-length-of-stay-tags">
+<span class="md-ellipsis">
+      Removing the length of stay tags
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#save-your-file">
+<span class="md-ellipsis">
+      Save your file
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sentiment-analysis-operations">
+<span class="md-ellipsis">
+      Sentiment Analysis Operations
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-load-and-save-the-filtered-data">
+<span class="md-ellipsis">
+      Exercise: load and save the filtered data
+    </span>
+</a>
+<nav aria-label="Exercise: load and save the filtered data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#removing-stop-words">
+<span class="md-ellipsis">
+      Removing stop words
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performing-sentiment-analysis">
+<span class="md-ellipsis">
+      Performing sentiment analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#conclusion">
+<span class="md-ellipsis">
+      Conclusion
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#post-lecture-quiz">
+<span class="md-ellipsis">
+      Post-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+<span class="md-ellipsis">
+      Challenge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#review-self-study">
+<span class="md-ellipsis">
+      Review &amp; Self Study
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#assignment">
+<span class="md-ellipsis">
+      Assignment
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_8" id="__nav_6_3_8_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_8_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_8">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 7
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/">
+<span class="md-ellipsis">
+    Time Series
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/1-Introduction/">
+<span class="md-ellipsis">
+    Introduction
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/2-ARIMA/">
+<span class="md-ellipsis">
+    ARIMA
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/3-SVR/">
+<span class="md-ellipsis">
+    SVR
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_9" id="__nav_6_3_9_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 8
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_9_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_9">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 8
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../8-Reinforcement/">
+<span class="md-ellipsis">
+    Reinforcement
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../8-Reinforcement/1-QLearning/">
+<span class="md-ellipsis">
+    Q-Learning
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../8-Reinforcement/2-Gym/">
+<span class="md-ellipsis">
+    Gym
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_10" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_10" id="__nav_6_3_10_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 9
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_10_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_10">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 9
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../9-Real-World/">
+<span class="md-ellipsis">
+    Real World
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../9-Real-World/1-Applications/">
+<span class="md-ellipsis">
+    Applications
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../9-Real-World/2-Debugging-ML-Models/">
+<span class="md-ellipsis">
+    Debugging ML Models
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Blog
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../blog/">
+<span class="md-ellipsis">
+    Index
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Archive
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_2">
+<span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../blog/archive/2024/">
+<span class="md-ellipsis">
+    2024
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Categories
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_3">
+<span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../blog/category/ai/">
+<span class="md-ellipsis">
+    Ai
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sentiment-analysis-with-hotel-reviews">
+<span class="md-ellipsis">
+      Sentiment analysis with hotel reviews
+    </span>
+</a>
+<nav aria-label="Sentiment analysis with hotel reviews" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-lecture-quiz">
+<span class="md-ellipsis">
+      Pre-lecture quiz
+    </span>
+</a>
+<nav aria-label="Pre-lecture quiz" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filtering-sentiment-analysis-operations">
+<span class="md-ellipsis">
+      Filtering &amp; Sentiment Analysis Operations
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-a-bit-more-data-processing">
+<span class="md-ellipsis">
+      Exercise: a bit more data processing
+    </span>
+</a>
+<nav aria-label="Exercise: a bit more data processing" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-columns">
+<span class="md-ellipsis">
+      Tag columns
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filtering-tags">
+<span class="md-ellipsis">
+      Filtering tags
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#removing-the-length-of-stay-tags">
+<span class="md-ellipsis">
+      Removing the length of stay tags
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#save-your-file">
+<span class="md-ellipsis">
+      Save your file
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sentiment-analysis-operations">
+<span class="md-ellipsis">
+      Sentiment Analysis Operations
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-load-and-save-the-filtered-data">
+<span class="md-ellipsis">
+      Exercise: load and save the filtered data
+    </span>
+</a>
+<nav aria-label="Exercise: load and save the filtered data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#removing-stop-words">
+<span class="md-ellipsis">
+      Removing stop words
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performing-sentiment-analysis">
+<span class="md-ellipsis">
+      Performing sentiment analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#conclusion">
+<span class="md-ellipsis">
+      Conclusion
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#post-lecture-quiz">
+<span class="md-ellipsis">
+      Post-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+<span class="md-ellipsis">
+      Challenge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#review-self-study">
+<span class="md-ellipsis">
+      Review &amp; Self Study
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#assignment">
+<span class="md-ellipsis">
+      Assignment
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1>Hotel Reviews 2</h1>
+<div><h2 id="sentiment-analysis-with-hotel-reviews">Sentiment analysis with hotel reviews<a class="headerlink" href="#sentiment-analysis-with-hotel-reviews" title="Permanent link">¶</a></h2>
+<p>Now that you have explored the dataset in detail, it's time to filter the columns and then use NLP techniques on the dataset to gain new insights about the hotels.</p>
+<h3 id="pre-lecture-quiz"><a href="https://gray-sand-07a10f403.1.azurestaticapps.net/quiz/39/">Pre-lecture quiz</a><a class="headerlink" href="#pre-lecture-quiz" title="Permanent link">¶</a></h3>
+<h4 id="filtering-sentiment-analysis-operations">Filtering &amp; Sentiment Analysis Operations<a class="headerlink" href="#filtering-sentiment-analysis-operations" title="Permanent link">¶</a></h4>
+<p>As you've probably noticed, the dataset has a few issues. Some columns are filled with useless information, others seem incorrect. If they are correct, it's unclear how they were calculated, and answers cannot be independently verified by your own calculations.</p>
+<h3 id="exercise-a-bit-more-data-processing">Exercise: a bit more data processing<a class="headerlink" href="#exercise-a-bit-more-data-processing" title="Permanent link">¶</a></h3>
+<p>Clean the data just a bit more. Add columns that will be useful later, change the values in other columns, and drop certain columns completely.</p>
+<ol>
+<li>
+<p>Initial column processing</p>
+</li>
+<li>
+<p>Drop <code>lat</code> and <code>lng</code></p>
+</li>
+<li>
+<p>Replace <code>Hotel_Address</code> values with the following values (if the address contains the same of the city and the country, change it to just the city and the country).</p>
+<p>These are the only cities and countries in the dataset:</p>
+<p>Amsterdam, Netherlands</p>
+<p>Barcelona, Spain</p>
+<p>London, United Kingdom</p>
+<p>Milan, Italy</p>
+<p>Paris, France</p>
+<p>Vienna, Austria </p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">def</span> <span class="nf">replace_address</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>    <span class="k">if</span> <span class="s2">"Netherlands"</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]:</span>
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>        <span class="k">return</span> <span class="s2">"Amsterdam, Netherlands"</span>
+</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>    <span class="k">elif</span> <span class="s2">"Barcelona"</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]:</span>
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>        <span class="k">return</span> <span class="s2">"Barcelona, Spain"</span>
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>    <span class="k">elif</span> <span class="s2">"United Kingdom"</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]:</span>
+</span><span id="__span-0-7"><a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>        <span class="k">return</span> <span class="s2">"London, United Kingdom"</span>
+</span><span id="__span-0-8"><a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="k">elif</span> <span class="s2">"Milan"</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]:</span>        
+</span><span id="__span-0-9"><a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>        <span class="k">return</span> <span class="s2">"Milan, Italy"</span>
+</span><span id="__span-0-10"><a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>    <span class="k">elif</span> <span class="s2">"France"</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]:</span>
+</span><span id="__span-0-11"><a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>        <span class="k">return</span> <span class="s2">"Paris, France"</span>
+</span><span id="__span-0-12"><a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="k">elif</span> <span class="s2">"Vienna"</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]:</span>
+</span><span id="__span-0-13"><a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>        <span class="k">return</span> <span class="s2">"Vienna, Austria"</span> 
+</span><span id="__span-0-14"><a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="c1"># Replace all the addresses with a shortened, more useful form</span>
+</span><span id="__span-0-16"><a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">replace_address</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-17"><a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="c1"># The sum of the value_counts() should add up to the total number of reviews</span>
+</span><span id="__span-0-18"><a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"Hotel_Address"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</span></code></pre></div>
+<p>Now you can query country level data:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"Hotel_Address"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">"Hotel_Name"</span><span class="p">:</span> <span class="s2">"nunique"</span><span class="p">}))</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Hotel_Address</th>
+<th style="text-align: center;">Hotel_Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Amsterdam, Netherlands</td>
+<td style="text-align: center;">105</td>
+</tr>
+<tr>
+<td style="text-align: left;">Barcelona, Spain</td>
+<td style="text-align: center;">211</td>
+</tr>
+<tr>
+<td style="text-align: left;">London, United Kingdom</td>
+<td style="text-align: center;">400</td>
+</tr>
+<tr>
+<td style="text-align: left;">Milan, Italy</td>
+<td style="text-align: center;">162</td>
+</tr>
+<tr>
+<td style="text-align: left;">Paris, France</td>
+<td style="text-align: center;">458</td>
+</tr>
+<tr>
+<td style="text-align: left;">Vienna, Austria</td>
+<td style="text-align: center;">158</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Process Hotel Meta-review columns</p>
+</li>
+<li>
+<p>Drop <code>Additional_Number_of_Scoring</code></p>
+</li>
+<li>
+<p>Replace <code>Total_Number_of_Reviews</code> with the total number of reviews for that hotel that are actually in the dataset </p>
+</li>
+<li>
+<p>Replace <code>Average_Score</code> with our own calculated score</p>
+</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># Drop `Additional_Number_of_Scoring`</span>
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">"Additional_Number_of_Scoring"</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="c1"># Replace `Total_Number_of_Reviews` and `Average_Score` with our own calculated values</span>
+</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="n">df</span><span class="o">.</span><span class="n">Total_Number_of_Reviews</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Hotel_Name'</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">'count'</span><span class="p">)</span>
+</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="n">df</span><span class="o">.</span><span class="n">Average_Score</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Hotel_Name'</span><span class="p">)</span><span class="o">.</span><span class="n">Reviewer_Score</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">'mean'</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li>
+<p>Process review columns</p>
+</li>
+<li>
+<p>Drop <code>Review_Total_Negative_Word_Counts</code>, <code>Review_Total_Positive_Word_Counts</code>, <code>Review_Date</code> and <code>days_since_review</code></p>
+</li>
+<li>
+<p>Keep <code>Reviewer_Score</code>, <code>Negative_Review</code>, and <code>Positive_Review</code> as they are,</p>
+</li>
+<li>
+<p>Keep <code>Tags</code> for now</p>
+<ul>
+<li>We'll be doing some additional filtering operations on the tags in the next section and then tags will be dropped</li>
+</ul>
+</li>
+<li>
+<p>Process reviewer columns</p>
+</li>
+<li>
+<p>Drop <code>Total_Number_of_Reviews_Reviewer_Has_Given</code></p>
+</li>
+<li>
+<p>Keep <code>Reviewer_Nationality</code></p>
+</li>
+</ol>
+<h4 id="tag-columns">Tag columns<a class="headerlink" href="#tag-columns" title="Permanent link">¶</a></h4>
+<p>The <code>Tag</code> column is problematic as it is a list (in text form) stored in the column. Unfortunately the order and number of sub sections in this column are not always the same. It's hard for a human to identify the correct phrases to be interested in, because there are 515,000 rows, and 1427 hotels, and each has slightly different options a reviewer could choose. This is where NLP shines. You can scan the text and find the most common phrases, and count them.</p>
+<p>Unfortunately, we are not interested in single words, but multi-word phrases (e.g. <em>Business trip</em>). Running a multi-word frequency distribution algorithm on that much data (6762646 words) could take an extraordinary amount of time, but without looking at the data, it would seem that is a necessary expense. This is where exploratory data analysis comes in useful, because you've seen a sample of the tags such as <code>[' Business trip  ', ' Solo traveler ', ' Single Room ', ' Stayed 5 nights ', ' Submitted from  a mobile device ']</code> , you can begin to ask if it's possible to greatly reduce the processing you have to do. Luckily, it is - but first you need to follow a few steps to ascertain the tags of interest.</p>
+<h4 id="filtering-tags">Filtering tags<a class="headerlink" href="#filtering-tags" title="Permanent link">¶</a></h4>
+<p>Remember that the goal of the dataset is to add sentiment and columns that will help you choose the best hotel (for yourself or maybe a client tasking you to make a hotel recommendation bot). You need to ask yourself if the tags are useful or not in the final dataset. Here is one interpretation (if you needed the dataset for other reasons different tags might stay in/out of the selection):</p>
+<ol>
+<li>The type of trip is relevant, and that should stay</li>
+<li>The type of guest group is important, and that should stay</li>
+<li>The type of room, suite, or studio that the guest stayed in is irrelevant (all hotels have basically the same rooms)</li>
+<li>The device the review was submitted on is irrelevant</li>
+<li>The number of nights reviewer stayed for <em>could</em> be relevant if you attributed longer stays with them liking the hotel more, but it's a stretch, and probably irrelevant</li>
+</ol>
+<p>In summary, <strong>keep 2 kinds of tags and remove the others</strong>.</p>
+<p>First, you don't want to count the tags until they are in a better format, so that means removing the square brackets and quotes. You can do this several ways, but you want the fastest as it could take a long time to process a lot of data. Luckily, pandas has an easy way to do each of these steps.</p>
+<div class="language-Python highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># Remove opening and closing brackets</span>
+</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="n">df</span><span class="o">.</span><span class="n">Tags</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"[']"</span><span class="p">)</span>
+</span><span id="__span-3-3"><a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="c1"># remove all quotes too</span>
+</span><span id="__span-3-4"><a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="n">df</span><span class="o">.</span><span class="n">Tags</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" ', '"</span><span class="p">,</span> <span class="s2">","</span><span class="p">,</span> <span class="n">regex</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Each tag becomes something like: <code>Business trip, Solo traveler, Single Room, Stayed 5 nights, Submitted from a mobile device</code>. </p>
+<p>Next we find a problem. Some reviews, or rows, have 5 columns, some 3, some 6. This is a result of how the dataset was created, and hard to fix. You want to get a frequency count of each phrase, but they are in different order in each review, so the count might be off, and a hotel might not get a tag assigned to it that it deserved.</p>
+<p>Instead you will use the different order to our advantage, because each tag is multi-word but also separated by a comma! The simplest way to do this is to create 6 temporary columns with each tag inserted in to the column corresponding to its order in the tag. You can then merge the 6 columns into one big column and run the <code>value_counts()</code> method on the resulting column. Printing that out, you'll see there was 2428 unique tags. Here is a small sample:</p>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leisure trip</td>
+<td>417778</td>
+</tr>
+<tr>
+<td>Submitted from a mobile device</td>
+<td>307640</td>
+</tr>
+<tr>
+<td>Couple</td>
+<td>252294</td>
+</tr>
+<tr>
+<td>Stayed 1 night</td>
+<td>193645</td>
+</tr>
+<tr>
+<td>Stayed 2 nights</td>
+<td>133937</td>
+</tr>
+<tr>
+<td>Solo traveler</td>
+<td>108545</td>
+</tr>
+<tr>
+<td>Stayed 3 nights</td>
+<td>95821</td>
+</tr>
+<tr>
+<td>Business trip</td>
+<td>82939</td>
+</tr>
+<tr>
+<td>Group</td>
+<td>65392</td>
+</tr>
+<tr>
+<td>Family with young children</td>
+<td>61015</td>
+</tr>
+<tr>
+<td>Stayed 4 nights</td>
+<td>47817</td>
+</tr>
+<tr>
+<td>Double Room</td>
+<td>35207</td>
+</tr>
+<tr>
+<td>Standard Double Room</td>
+<td>32248</td>
+</tr>
+<tr>
+<td>Superior Double Room</td>
+<td>31393</td>
+</tr>
+<tr>
+<td>Family with older children</td>
+<td>26349</td>
+</tr>
+<tr>
+<td>Deluxe Double Room</td>
+<td>24823</td>
+</tr>
+<tr>
+<td>Double or Twin Room</td>
+<td>22393</td>
+</tr>
+<tr>
+<td>Stayed 5 nights</td>
+<td>20845</td>
+</tr>
+<tr>
+<td>Standard Double or Twin Room</td>
+<td>17483</td>
+</tr>
+<tr>
+<td>Classic Double Room</td>
+<td>16989</td>
+</tr>
+<tr>
+<td>Superior Double or Twin Room</td>
+<td>13570</td>
+</tr>
+<tr>
+<td>2 rooms</td>
+<td>12393</td>
+</tr>
+</tbody>
+</table>
+<p>Some of the common tags like <code>Submitted from a mobile device</code> are of no use to us, so it might be a smart thing to remove them before counting phrase occurrence, but it is such a fast operation you can leave them in and ignore them.</p>
+<h4 id="removing-the-length-of-stay-tags">Removing the length of stay tags<a class="headerlink" href="#removing-the-length-of-stay-tags" title="Permanent link">¶</a></h4>
+<p>Removing these tags is step 1, it reduces the total number of tags to be considered slightly. Note you do not remove them from the dataset, just choose to remove them from consideration as values to  count/keep in the reviews dataset.</p>
+<table>
+<thead>
+<tr>
+<th>Length of stay</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stayed 1 night</td>
+<td>193645</td>
+</tr>
+<tr>
+<td>Stayed  2 nights</td>
+<td>133937</td>
+</tr>
+<tr>
+<td>Stayed 3 nights</td>
+<td>95821</td>
+</tr>
+<tr>
+<td>Stayed  4 nights</td>
+<td>47817</td>
+</tr>
+<tr>
+<td>Stayed 5 nights</td>
+<td>20845</td>
+</tr>
+<tr>
+<td>Stayed  6 nights</td>
+<td>9776</td>
+</tr>
+<tr>
+<td>Stayed 7 nights</td>
+<td>7399</td>
+</tr>
+<tr>
+<td>Stayed  8 nights</td>
+<td>2502</td>
+</tr>
+<tr>
+<td>Stayed 9 nights</td>
+<td>1293</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+</tbody>
+</table>
+<p>There are a huge variety of rooms, suites, studios, apartments and so on. They all mean roughly the same thing and not relevant to you, so remove them from consideration.</p>
+<table>
+<thead>
+<tr>
+<th>Type of room</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Double Room</td>
+<td>35207</td>
+</tr>
+<tr>
+<td>Standard  Double Room</td>
+<td>32248</td>
+</tr>
+<tr>
+<td>Superior Double Room</td>
+<td>31393</td>
+</tr>
+<tr>
+<td>Deluxe  Double Room</td>
+<td>24823</td>
+</tr>
+<tr>
+<td>Double or Twin Room</td>
+<td>22393</td>
+</tr>
+<tr>
+<td>Standard  Double or Twin Room</td>
+<td>17483</td>
+</tr>
+<tr>
+<td>Classic Double Room</td>
+<td>16989</td>
+</tr>
+<tr>
+<td>Superior  Double or Twin Room</td>
+<td>13570</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, and this is delightful (because it didn't take much processing at all), you will be left with the following <em>useful</em> tags:</p>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leisure trip</td>
+<td>417778</td>
+</tr>
+<tr>
+<td>Couple</td>
+<td>252294</td>
+</tr>
+<tr>
+<td>Solo  traveler</td>
+<td>108545</td>
+</tr>
+<tr>
+<td>Business trip</td>
+<td>82939</td>
+</tr>
+<tr>
+<td>Group (combined with Travellers with friends)</td>
+<td>67535</td>
+</tr>
+<tr>
+<td>Family with young children</td>
+<td>61015</td>
+</tr>
+<tr>
+<td>Family  with older children</td>
+<td>26349</td>
+</tr>
+<tr>
+<td>With a  pet</td>
+<td>1405</td>
+</tr>
+</tbody>
+</table>
+<p>You could argue that <code>Travellers with friends</code> is the same as <code>Group</code> more or less, and that would be fair to combine the two as above. The code for identifying the correct tags is <a href="https://github.com/microsoft/ML-For-Beginners/blob/main/6-NLP/5-Hotel-Reviews-2/solution/1-notebook.ipynb">the Tags notebook</a>.</p>
+<p>The final step is to create new columns for each of these tags. Then, for every review row, if the <code>Tag</code> column matches one of the new columns, add a 1, if not, add a 0. The end result will be a count of how many reviewers chose this hotel (in aggregate) for, say, business vs leisure, or to bring a pet to, and this is useful information when recommending a hotel.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># Process the Tags into new columns</span>
+</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="c1"># The file Hotel_Reviews_Tags.py, identifies the most important tags</span>
+</span><span id="__span-4-3"><a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="c1"># Leisure trip, Couple, Solo traveler, Business trip, Group combined with Travelers with friends, </span>
+</span><span id="__span-4-4"><a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="c1"># Family with young children, Family with older children, With a pet</span>
+</span><span id="__span-4-5"><a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Leisure_trip"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"Leisure trip"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-6"><a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Couple"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"Couple"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-7"><a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Solo_traveler"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"Solo traveler"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-8"><a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Business_trip"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"Business trip"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-9"><a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Group"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"Group"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="ow">or</span> <span class="s2">"Travelers with friends"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-10"><a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Family_with_young_children"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"Family with young children"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-11"><a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Family_with_older_children"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"Family with older children"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-12"><a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="n">df</span><span class="p">[</span><span class="s2">"With_a_pet"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Tags</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">"With a pet"</span> <span class="ow">in</span> <span class="n">tag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="save-your-file">Save your file<a class="headerlink" href="#save-your-file" title="Permanent link">¶</a></h4>
+<p>Finally, save the dataset as it is now with a new name.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">"Review_Total_Negative_Word_Counts"</span><span class="p">,</span> <span class="s2">"Review_Total_Positive_Word_Counts"</span><span class="p">,</span> <span class="s2">"days_since_review"</span><span class="p">,</span> <span class="s2">"Total_Number_of_Reviews_Reviewer_Has_Given"</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-5-2"><a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="c1"># Saving new data file with calculated columns</span>
+</span><span id="__span-5-4"><a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Saving results to Hotel_Reviews_Filtered.csv"</span><span class="p">)</span>
+</span><span id="__span-5-5"><a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">'../data/Hotel_Reviews_Filtered.csv'</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="sentiment-analysis-operations">Sentiment Analysis Operations<a class="headerlink" href="#sentiment-analysis-operations" title="Permanent link">¶</a></h3>
+<p>In this final section, you will apply sentiment analysis to the review columns and save the results in a dataset.</p>
+<h3 id="exercise-load-and-save-the-filtered-data">Exercise: load and save the filtered data<a class="headerlink" href="#exercise-load-and-save-the-filtered-data" title="Permanent link">¶</a></h3>
+<p>Note that now you are loading the filtered dataset that was saved in the previous section, <strong>not</strong> the original dataset.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="kn">import</span> <span class="nn">time</span>
+</span><span id="__span-6-2"><a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="__span-6-3"><a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="kn">import</span> <span class="nn">nltk</span> <span class="k">as</span> <span class="nn">nltk</span>
+</span><span id="__span-6-4"><a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
+</span><span id="__span-6-5"><a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="kn">from</span> <span class="nn">nltk.sentiment.vader</span> <span class="kn">import</span> <span class="n">SentimentIntensityAnalyzer</span>
+</span><span id="__span-6-6"><a href="#__codelineno-6-6" id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'vader_lexicon'</span><span class="p">)</span>
+</span><span id="__span-6-7"><a href="#__codelineno-6-7" id="__codelineno-6-7" name="__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a href="#__codelineno-6-8" id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="c1"># Load the filtered hotel reviews from CSV</span>
+</span><span id="__span-6-9"><a href="#__codelineno-6-9" id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'../../data/Hotel_Reviews_Filtered.csv'</span><span class="p">)</span>
+</span><span id="__span-6-10"><a href="#__codelineno-6-10" id="__codelineno-6-10" name="__codelineno-6-10"></a>
+</span><span id="__span-6-11"><a href="#__codelineno-6-11" id="__codelineno-6-11" name="__codelineno-6-11"></a><span class="c1"># You code will be added here</span>
+</span><span id="__span-6-12"><a href="#__codelineno-6-12" id="__codelineno-6-12" name="__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a href="#__codelineno-6-13" id="__codelineno-6-13" name="__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a href="#__codelineno-6-14" id="__codelineno-6-14" name="__codelineno-6-14"></a><span class="c1"># Finally remember to save the hotel reviews with new NLP data added</span>
+</span><span id="__span-6-15"><a href="#__codelineno-6-15" id="__codelineno-6-15" name="__codelineno-6-15"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Saving results to Hotel_Reviews_NLP.csv"</span><span class="p">)</span>
+</span><span id="__span-6-16"><a href="#__codelineno-6-16" id="__codelineno-6-16" name="__codelineno-6-16"></a><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">'../data/Hotel_Reviews_NLP.csv'</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="removing-stop-words">Removing stop words<a class="headerlink" href="#removing-stop-words" title="Permanent link">¶</a></h4>
+<p>If you were to run Sentiment Analysis on the Negative and Positive review columns, it could take a long time. Tested on a powerful test laptop with fast CPU,it took 12 - 14 minutes depending on which sentiment library was used. That's a (relatively) long time, so worth investigating if that can be speeded up. </p>
+<p>Removing stop words, or common English words that do not change the sentiment of a sentence, is the first step. By removing them, the sentiment analysis should run faster, but not be less accurate (as the stop words do not affect sentiment, but they do slow down the analysis). </p>
+<p>The longest negative review was 395 words, but after removing the stop words, it is 195 words.</p>
+<p>Removing the stop words is also a fast operation, removing the stop words from 2 review columns over 515,000 rows took 3.3 seconds on the test device. It could take slightly more or less time for you depending on your device CPU speed, RAM, whether you have an SSD or not, and some other factors. The relative shortness of the operation means that if it improves the sentiment analysis time, then it is worth doing.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
+</span><span id="__span-7-2"><a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="c1"># Load the hotel reviews from CSV</span>
+</span><span id="__span-7-4"><a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"../../data/Hotel_Reviews_Filtered.csv"</span><span class="p">)</span>
+</span><span id="__span-7-5"><a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="c1"># Remove stop words - can be slow for a lot of text!</span>
+</span><span id="__span-7-7"><a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="c1"># Ryan Han (ryanxjhan on Kaggle) has a great post measuring performance of different stop words removal approaches</span>
+</span><span id="__span-7-8"><a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="c1"># https://www.kaggle.com/ryanxjhan/fast-stop-words-removal # using the approach that Ryan recommends</span>
+</span><span id="__span-7-9"><a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-7-10"><a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="n">cache</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s2">"english"</span><span class="p">))</span>
+</span><span id="__span-7-11"><a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="k">def</span> <span class="nf">remove_stopwords</span><span class="p">(</span><span class="n">review</span><span class="p">):</span>
+</span><span id="__span-7-12"><a href="#__codelineno-7-12" id="__codelineno-7-12" name="__codelineno-7-12"></a>    <span class="n">text</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">review</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">])</span>
+</span><span id="__span-7-13"><a href="#__codelineno-7-13" id="__codelineno-7-13" name="__codelineno-7-13"></a>    <span class="k">return</span> <span class="n">text</span>
+</span><span id="__span-7-14"><a href="#__codelineno-7-14" id="__codelineno-7-14" name="__codelineno-7-14"></a>
+</span><span id="__span-7-15"><a href="#__codelineno-7-15" id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="c1"># Remove the stop words from both columns</span>
+</span><span id="__span-7-16"><a href="#__codelineno-7-16" id="__codelineno-7-16" name="__codelineno-7-16"></a><span class="n">df</span><span class="o">.</span><span class="n">Negative_Review</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Negative_Review</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">remove_stopwords</span><span class="p">)</span>   
+</span><span id="__span-7-17"><a href="#__codelineno-7-17" id="__codelineno-7-17" name="__codelineno-7-17"></a><span class="n">df</span><span class="o">.</span><span class="n">Positive_Review</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Positive_Review</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">remove_stopwords</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="performing-sentiment-analysis">Performing sentiment analysis<a class="headerlink" href="#performing-sentiment-analysis" title="Permanent link">¶</a></h4>
+<p>Now you should calculate the sentiment analysis for both negative and positive review columns, and store the result in 2 new columns. The test of the sentiment will be to compare it to the reviewer's score for the same review. For instance, if the sentiment thinks the negative review had a sentiment of 1 (extremely positive sentiment) and a positive review sentiment of 1, but the reviewer gave the hotel the lowest score possible, then either the review text doesn't match the score, or the sentiment analyser could not recognize the sentiment correctly. You should expect some sentiment scores to be completely wrong, and often that will be explainable, e.g. the review could be extremely sarcastic "Of course I LOVED sleeping in a room with no heating" and the sentiment analyser thinks that's positive sentiment, even though a human reading it would know it was sarcasm. </p>
+<p>NLTK supplies different sentiment analyzers to learn with, and you can substitute them and see if the sentiment is more or less accurate. The VADER sentiment analysis is used here.</p>
+<blockquote>
+<p>Hutto, C.J. &amp; Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.</p>
+</blockquote>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">nltk.sentiment.vader</span> <span class="kn">import</span> <span class="n">SentimentIntensityAnalyzer</span>
+</span><span id="__span-8-2"><a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="c1"># Create the vader sentiment analyser (there are others in NLTK you can try too)</span>
+</span><span id="__span-8-4"><a href="#__codelineno-8-4" id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="n">vader_sentiment</span> <span class="o">=</span> <span class="n">SentimentIntensityAnalyzer</span><span class="p">()</span>
+</span><span id="__span-8-5"><a href="#__codelineno-8-5" id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="c1"># Hutto, C.J. &amp; Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.</span>
+</span><span id="__span-8-6"><a href="#__codelineno-8-6" id="__codelineno-8-6" name="__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a href="#__codelineno-8-7" id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="c1"># There are 3 possibilities of input for a review:</span>
+</span><span id="__span-8-8"><a href="#__codelineno-8-8" id="__codelineno-8-8" name="__codelineno-8-8"></a><span class="c1"># It could be "No Negative", in which case, return 0</span>
+</span><span id="__span-8-9"><a href="#__codelineno-8-9" id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="c1"># It could be "No Positive", in which case, return 0</span>
+</span><span id="__span-8-10"><a href="#__codelineno-8-10" id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="c1"># It could be a review, in which case calculate the sentiment</span>
+</span><span id="__span-8-11"><a href="#__codelineno-8-11" id="__codelineno-8-11" name="__codelineno-8-11"></a><span class="k">def</span> <span class="nf">calc_sentiment</span><span class="p">(</span><span class="n">review</span><span class="p">):</span>    
+</span><span id="__span-8-12"><a href="#__codelineno-8-12" id="__codelineno-8-12" name="__codelineno-8-12"></a>    <span class="k">if</span> <span class="n">review</span> <span class="o">==</span> <span class="s2">"No Negative"</span> <span class="ow">or</span> <span class="n">review</span> <span class="o">==</span> <span class="s2">"No Positive"</span><span class="p">:</span>
+</span><span id="__span-8-13"><a href="#__codelineno-8-13" id="__codelineno-8-13" name="__codelineno-8-13"></a>        <span class="k">return</span> <span class="mi">0</span>
+</span><span id="__span-8-14"><a href="#__codelineno-8-14" id="__codelineno-8-14" name="__codelineno-8-14"></a>    <span class="k">return</span> <span class="n">vader_sentiment</span><span class="o">.</span><span class="n">polarity_scores</span><span class="p">(</span><span class="n">review</span><span class="p">)[</span><span class="s2">"compound"</span><span class="p">]</span>    
+</span></code></pre></div>
+<p>Later in your program when you are ready to calculate sentiment, you can apply it to each review as follows:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="c1"># Add a negative sentiment and positive sentiment column</span>
+</span><span id="__span-9-2"><a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Calculating sentiment columns for both positive and negative reviews"</span><span class="p">)</span>
+</span><span id="__span-9-3"><a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-9-4"><a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Negative_Sentiment"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Negative_Review</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">calc_sentiment</span><span class="p">)</span>
+</span><span id="__span-9-5"><a href="#__codelineno-9-5" id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Positive_Sentiment"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Positive_Review</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">calc_sentiment</span><span class="p">)</span>
+</span><span id="__span-9-6"><a href="#__codelineno-9-6" id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-9-7"><a href="#__codelineno-9-7" id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Calculating sentiment took "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s2">" seconds"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>This takes approximately 120 seconds on my computer, but it will vary on each computer. If you want to print of the results and see if the sentiment matches the review:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">"Negative_Sentiment"</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-10-2"><a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s2">"Negative_Review"</span><span class="p">,</span> <span class="s2">"Negative_Sentiment"</span><span class="p">]])</span>
+</span><span id="__span-10-3"><a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">"Positive_Sentiment"</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-10-4"><a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s2">"Positive_Review"</span><span class="p">,</span> <span class="s2">"Positive_Sentiment"</span><span class="p">]])</span>
+</span></code></pre></div>
+<p>The very last thing to do with the file before using it in the challenge, is to save it! You should also consider reordering all your new columns so they are easy to work with (for a human, it's a cosmetic change).</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="c1"># Reorder the columns (This is cosmetic, but to make it easier to explore the data later)</span>
+</span><span id="__span-11-2"><a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">([</span><span class="s2">"Hotel_Name"</span><span class="p">,</span> <span class="s2">"Hotel_Address"</span><span class="p">,</span> <span class="s2">"Total_Number_of_Reviews"</span><span class="p">,</span> <span class="s2">"Average_Score"</span><span class="p">,</span> <span class="s2">"Reviewer_Score"</span><span class="p">,</span> <span class="s2">"Negative_Sentiment"</span><span class="p">,</span> <span class="s2">"Positive_Sentiment"</span><span class="p">,</span> <span class="s2">"Reviewer_Nationality"</span><span class="p">,</span> <span class="s2">"Leisure_trip"</span><span class="p">,</span> <span class="s2">"Couple"</span><span class="p">,</span> <span class="s2">"Solo_traveler"</span><span class="p">,</span> <span class="s2">"Business_trip"</span><span class="p">,</span> <span class="s2">"Group"</span><span class="p">,</span> <span class="s2">"Family_with_young_children"</span><span class="p">,</span> <span class="s2">"Family_with_older_children"</span><span class="p">,</span> <span class="s2">"With_a_pet"</span><span class="p">,</span> <span class="s2">"Negative_Review"</span><span class="p">,</span> <span class="s2">"Positive_Review"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-11-3"><a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Saving results to Hotel_Reviews_NLP.csv"</span><span class="p">)</span>
+</span><span id="__span-11-5"><a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s2">"../data/Hotel_Reviews_NLP.csv"</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</span></code></pre></div>
+<p>You should run the entire code for <a href="https://github.com/microsoft/ML-For-Beginners/blob/main/6-NLP/5-Hotel-Reviews-2/solution/3-notebook.ipynb">the analysis notebook</a> (after you've run <a href="https://github.com/microsoft/ML-For-Beginners/blob/main/6-NLP/5-Hotel-Reviews-2/solution/1-notebook.ipynb">your filtering notebook</a> to generate the Hotel_Reviews_Filtered.csv file).</p>
+<p>To review, the steps are:</p>
+<ol>
+<li>Original dataset file <strong>Hotel_Reviews.csv</strong> is explored in the previous lesson with <a href="https://github.com/microsoft/ML-For-Beginners/blob/main/6-NLP/4-Hotel-Reviews-1/solution/notebook.ipynb">the explorer notebook</a></li>
+<li>Hotel_Reviews.csv is filtered by <a href="https://github.com/microsoft/ML-For-Beginners/blob/main/6-NLP/5-Hotel-Reviews-2/solution/1-notebook.ipynb">the filtering notebook</a> resulting in <strong>Hotel_Reviews_Filtered.csv</strong></li>
+<li>Hotel_Reviews_Filtered.csv is processed by <a href="https://github.com/microsoft/ML-For-Beginners/blob/main/6-NLP/5-Hotel-Reviews-2/solution/3-notebook.ipynb">the sentiment analysis notebook</a> resulting in <strong>Hotel_Reviews_NLP.csv</strong></li>
+<li>Use Hotel_Reviews_NLP.csv in the NLP Challenge below</li>
+</ol>
+<h4 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">¶</a></h4>
+<p>When you started, you had a dataset with columns and data but not all of it could be verified or used. You've explored the data, filtered out what you don't need, converted tags into something useful, calculated your own averages, added some sentiment columns and hopefully, learned some interesting things about processing natural text.</p>
+<h3 id="post-lecture-quiz"><a href="https://gray-sand-07a10f403.1.azurestaticapps.net/quiz/40/">Post-lecture quiz</a><a class="headerlink" href="#post-lecture-quiz" title="Permanent link">¶</a></h3>
+<h3 id="challenge">Challenge<a class="headerlink" href="#challenge" title="Permanent link">¶</a></h3>
+<p>Now that you have your dataset analyzed for sentiment, see if you can use strategies you've learned in this curriculum (clustering, perhaps?) to determine patterns around sentiment. </p>
+<h3 id="review-self-study">Review &amp; Self Study<a class="headerlink" href="#review-self-study" title="Permanent link">¶</a></h3>
+<p>Take <a href="https://docs.microsoft.com/en-us/learn/modules/classify-user-feedback-with-the-text-analytics-api/?WT.mc_id=academic-77952-leestott">this Learn module</a> to learn more and use different tools to explore sentiment in text.</p>
+<h3 id="assignment">Assignment<a class="headerlink" href="#assignment" title="Permanent link">¶</a></h3>
+<p><a href="assignment/">Try a different dataset</a></p></div>
+<aside class="md-source-file">
+<span class="md-source-file__fact">
+<span class="md-icon" title="Last update">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">December 8, 2024 14:20:29</span>
+</span>
+</aside>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Hotel Reviews 1" class="md-footer__link md-footer__link--prev" href="../4-Hotel-Reviews-1/">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</div>
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Previous
+              </span>
+<div class="md-ellipsis">
+                Hotel Reviews 1
+              </div>
+</div>
+</a>
+<a aria-label="Next: Time Series" class="md-footer__link md-footer__link--next" href="../../7-TimeSeries/">
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Next
+              </span>
+<div class="md-ellipsis">
+                Time Series
+              </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/gitmichaelqiu" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../../../assets/javascripts/bundle.56dfad97.min.js"></script>
+<script src="../../../../javascripts/katex.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+</body>
+</html>

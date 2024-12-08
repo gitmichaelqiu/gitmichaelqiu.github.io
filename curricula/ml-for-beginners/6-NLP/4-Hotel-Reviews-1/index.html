@@ -1,0 +1,2182 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="This is Michael Qiu's personal site." name="description"/>
+<meta content="Michael Qiu" name="author"/>
+<link href="https://gitmichaelqiu.github.io/curricula/ml-for-beginners/6-NLP/4-Hotel-Reviews-1/" rel="canonical"/>
+<link href="../3-Translation-Sentiment/" rel="prev"/>
+<link href="../5-Hotel-Reviews-2/" rel="next"/>
+<link href="../../../../images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.5.34" name="generator"/>
+<title>Hotel Reviews 1 - Michael Qiu's Blog</title>
+<link href="../../../../assets/stylesheets/main.35f28582.min.css" rel="stylesheet"/>
+<link href="../../../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#sentiment-analysis-with-hotel-reviews-processing-the-data">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Michael Qiu's Blog" class="md-header__button md-logo" data-md-component="logo" href="../../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Michael Qiu's Blog
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Hotel Reviews 1
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.8 5.67A9.8 9.8 0 0 1 22 11h-2.06c-.2-1.43-.78-2.78-1.68-3.9zM13 2.05c1.96.19 3.81.95 5.33 2.21L16.9 5.69A8 8 0 0 0 13 4.05zm-2 .01c-1.96.2-3.81.97-5.33 2.21L7.1 5.69A8 8 0 0 1 11 4.06zM4.26 5.67l1.37 1.39v.04A8 8 0 0 0 4 11H2c.21-1.96 1-3.82 2.26-5.33M2 14v5l1.6-1.6C5.38 20.17 8.47 22 12 22c4.82 0 8.87-3.45 9.8-8h-2.05c-.89 3.45-4.03 6-7.75 6-2.95 0-5.61-1.61-7-4l2-2zm10 3 1.56-3.42L17 12l-3.44-1.56L12 7l-1.57 3.44L7 12l3.43 1.58z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="white" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+</label>
+<input aria-label="Switch to system preference" class="md-option" data-md-color-accent="indigo" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="black" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to system preference">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../..">
+          
+  
+  Intro
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../algorithms/gcd-lcm/">
+          
+  
+  Algorithms
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../data-structures/binary-heap/">
+          
+  
+  Data Structures
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../oi-tips/elapsed-time/">
+          
+  
+  OI Tips
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../school-notes/junior-notes/geography/">
+          
+  
+  School Notes
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../../ai-for-beginners/">
+          
+  
+  Curricula
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../blog/">
+          
+  
+  Blog
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Michael Qiu's Blog" class="md-nav__button md-logo" data-md-component="logo" href="../../../.." title="Michael Qiu's Blog">
+<img alt="logo" src="../../../../assets/logo-MK-round-circle-auto.svg"/>
+</a>
+    Michael Qiu's Blog
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/gitmichaelqiu/gitmichaelqiu.github.io" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    gitmichaelqiu.github.io
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Intro
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+            Intro
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../..">
+<span class="md-ellipsis">
+    About
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../some-websites/">
+<span class="md-ellipsis">
+    Some Websites
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Algorithms
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Algorithms
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/gcd-lcm/">
+<span class="md-ellipsis">
+    GCD &amp; LCM
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Prime
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+            Prime
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/prime/euler-sieve/">
+<span class="md-ellipsis">
+    Euler Sieve
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Search
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+            Search
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/search/a-star/">
+<span class="md-ellipsis">
+    A*
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Shortest Path
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+            Shortest Path
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/bellman-ford/">
+<span class="md-ellipsis">
+    Bellman Ford
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/dijkstra/">
+<span class="md-ellipsis">
+    Dijkstra (prioirty_queue)
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/floyd/">
+<span class="md-ellipsis">
+    Floyd
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/shortest-path/spfa/">
+<span class="md-ellipsis">
+    SPFA
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Sort
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+            Sort
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/sort/sort-overview/">
+<span class="md-ellipsis">
+    Sort Overview
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../algorithms/quick-pow/">
+<span class="md-ellipsis">
+    Quick Pow
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Data Structures
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Data Structures
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/binary-heap/">
+<span class="md-ellipsis">
+    Binary Heap
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/disjoint-set-union/">
+<span class="md-ellipsis">
+    Disjoint Set Union
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/segment-tree/">
+<span class="md-ellipsis">
+    Segment Tree
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/sparse-table/">
+<span class="md-ellipsis">
+    Sparse Table
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/stack/">
+<span class="md-ellipsis">
+    Stack
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Tree
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_6_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_6">
+<span class="md-nav__icon md-icon"></span>
+            Tree
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../data-structures/tree/binary-tree-traversals/">
+<span class="md-ellipsis">
+    Binary Tree Traversals
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    OI Tips
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            OI Tips
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/elapsed-time/">
+<span class="md-ellipsis">
+    Elapsed Time Measurement
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/file-read-and-write/">
+<span class="md-ellipsis">
+    File Read &amp; Write
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/gcc-optimize/">
+<span class="md-ellipsis">
+    GCC Optimize
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/accelerate-ios/">
+<span class="md-ellipsis">
+    iostream Acceleration
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../oi-tips/qread-and-qwrite/">
+<span class="md-ellipsis">
+    Quick Read &amp; Write
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    School Notes
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            School Notes
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+<span class="md-ellipsis">
+    初中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_1">
+<span class="md-nav__icon md-icon"></span>
+            初中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../school-notes/junior-notes/geography/">
+<span class="md-ellipsis">
+    初中地理总结
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+<span class="md-ellipsis">
+    高中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_2">
+<span class="md-nav__icon md-icon"></span>
+            高中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../school-notes/senior-high-school/sets/">
+<span class="md-ellipsis">
+    集合
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+<span class="md-ellipsis">
+    Curricula
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            Curricula
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+<span class="md-ellipsis">
+    AI For Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_1">
+<span class="md-nav__icon md-icon"></span>
+            AI For Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/">
+<span class="md-ellipsis">
+    Overview
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/1-Intro/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/2-Symbolic/">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_1_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_4" id="__nav_6_1_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_4_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_4">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 3
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/">
+<span class="md-ellipsis">
+    Intro
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/03-Perceptron/">
+<span class="md-ellipsis">
+    Perceptron
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/04-OwnFramework/">
+<span class="md-ellipsis">
+    Own Framework
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/3-NeuralNetworks/05-Frameworks/">
+<span class="md-ellipsis">
+    Frameworks
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/4-ComputerVision/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/5-NLP/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_1_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1_7" id="__nav_6_1_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_1_7_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_1_7">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 6
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/6-Other/21-GeneticAlgorithms/">
+<span class="md-ellipsis">
+    Genetic Algorithms
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/6-Other/22-DeepRL/">
+<span class="md-ellipsis">
+    Deep RL
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/6-Other/23-MultiagentSystems/">
+<span class="md-ellipsis">
+    Multi-Agent Systems
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/7-Ethics/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../ai-for-beginners/X-Extras/X1-MultiModal/">
+<span class="md-ellipsis">
+    Lesson X
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Generative AI for Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_2">
+<span class="md-nav__icon md-icon"></span>
+            Generative AI for Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/">
+<span class="md-ellipsis">
+    Overview
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/01-introduction-to-genai/">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/02-exploring-and-comparing-different-llms/">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/03-using-generative-ai-responsibly/">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/04-prompt-engineering-fundamentals/">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/05-advanced-prompts/">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/06-text-generation-apps/">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/07-building-chat-applications/">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/08-building-search-applications/">
+<span class="md-ellipsis">
+    Lesson 8
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/09-building-image-applications/">
+<span class="md-ellipsis">
+    Lesson 9
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/10-building-low-code-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 10
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/11-integrating-with-function-calling/">
+<span class="md-ellipsis">
+    Lesson 11
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/12-designing-ux-for-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 12
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/13-securing-ai-applications/">
+<span class="md-ellipsis">
+    Lesson 13
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/14-the-generative-ai-application-lifecycle/">
+<span class="md-ellipsis">
+    Lesson 14
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/15-rag-and-vector-databases/">
+<span class="md-ellipsis">
+    Lesson 15
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/16-open-source-models/">
+<span class="md-ellipsis">
+    Lesson 16
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/17-ai-agents/">
+<span class="md-ellipsis">
+    Lesson 17
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/18-fine-tuning/">
+<span class="md-ellipsis">
+    Lesson 18
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/19-slm/">
+<span class="md-ellipsis">
+    Lesson 19
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/20-mistral/">
+<span class="md-ellipsis">
+    Lesson 20
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../generative-ai-for-beginners/21-meta/">
+<span class="md-ellipsis">
+    Lesson 21
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+<span class="md-ellipsis">
+    ML for Beginners
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_3">
+<span class="md-nav__icon md-icon"></span>
+            ML for Beginners
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../">
+<span class="md-ellipsis">
+    Overview
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_2" id="__nav_6_3_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 1
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_2_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_2">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 1
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/">
+<span class="md-ellipsis">
+    Introduction
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/1-intro-to-ML/">
+<span class="md-ellipsis">
+    Intro to ML
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/2-history-of-ML/">
+<span class="md-ellipsis">
+    History of ML
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/3-fairness/">
+<span class="md-ellipsis">
+    Fairness
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../1-Introduction/4-techniques-of-ML/">
+<span class="md-ellipsis">
+    Techniques of ML
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_3" id="__nav_6_3_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 2
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_3_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_3">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 2
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/">
+<span class="md-ellipsis">
+    Regression
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/1-Tools/">
+<span class="md-ellipsis">
+    Tools
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/2-Data/">
+<span class="md-ellipsis">
+    Data
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/3-Linear/">
+<span class="md-ellipsis">
+    Linear
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../2-Regression/4-Logistic/">
+<span class="md-ellipsis">
+    Logistic
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../3-Web-App/">
+<span class="md-ellipsis">
+    Lesson 3
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_5" id="__nav_6_3_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 4
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_5_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_5">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 4
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/">
+<span class="md-ellipsis">
+    Classification
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/1-Introduction/">
+<span class="md-ellipsis">
+    Introduction
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/2-Classifiers-1/">
+<span class="md-ellipsis">
+    Classifiers 1
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/3-Classifiers-2/">
+<span class="md-ellipsis">
+    Classifiers 2
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../4-Classification/4-Applied/">
+<span class="md-ellipsis">
+    Applied
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_6" id="__nav_6_3_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 5
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_6_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_6">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 5
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../5-Clustering/">
+<span class="md-ellipsis">
+    Clustering
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../5-Clustering/1-Visualize/">
+<span class="md-ellipsis">
+    Visualize
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../5-Clustering/2-K-Means/">
+<span class="md-ellipsis">
+    K Means
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6_3_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_7" id="__nav_6_3_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 6
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_6_3_7_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_7">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 6
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../">
+<span class="md-ellipsis">
+    NLP
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../1-Introduction-to-NLP/">
+<span class="md-ellipsis">
+    Introduction to NLP
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../2-Tasks/">
+<span class="md-ellipsis">
+    Tasks
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../3-Translation-Sentiment/">
+<span class="md-ellipsis">
+    Translation Sentiment
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Hotel Reviews 1
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Hotel Reviews 1
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sentiment-analysis-with-hotel-reviews-processing-the-data">
+<span class="md-ellipsis">
+      Sentiment analysis with hotel reviews - processing the data
+    </span>
+</a>
+<nav aria-label="Sentiment analysis with hotel reviews - processing the data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-lecture-quiz">
+<span class="md-ellipsis">
+      Pre-lecture quiz
+    </span>
+</a>
+<nav aria-label="Pre-lecture quiz" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#introduction">
+<span class="md-ellipsis">
+      Introduction
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#preparation">
+<span class="md-ellipsis">
+      Preparation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exploratory-data-analysis">
+<span class="md-ellipsis">
+      Exploratory data analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-data-exploration">
+<span class="md-ellipsis">
+      Exercise - Data exploration
+    </span>
+</a>
+<nav aria-label="Exercise - Data exploration" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#load-the-data">
+<span class="md-ellipsis">
+      Load the data
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#explore-the-data">
+<span class="md-ellipsis">
+      Explore the data
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dataframe-operations">
+<span class="md-ellipsis">
+      Dataframe operations
+    </span>
+</a>
+<nav aria-label="Dataframe operations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#code-answers">
+<span class="md-ellipsis">
+      Code answers
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#another-way">
+<span class="md-ellipsis">
+      Another way
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+<span class="md-ellipsis">
+      🚀Challenge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#post-lecture-quiz">
+<span class="md-ellipsis">
+      Post-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#review-self-study">
+<span class="md-ellipsis">
+      Review &amp; Self Study
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#assignment">
+<span class="md-ellipsis">
+      Assignment
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../5-Hotel-Reviews-2/">
+<span class="md-ellipsis">
+    Hotel Reviews 2
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_8" id="__nav_6_3_8_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 7
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_8_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_8">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 7
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/">
+<span class="md-ellipsis">
+    Time Series
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/1-Introduction/">
+<span class="md-ellipsis">
+    Introduction
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/2-ARIMA/">
+<span class="md-ellipsis">
+    ARIMA
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../7-TimeSeries/3-SVR/">
+<span class="md-ellipsis">
+    SVR
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_9" id="__nav_6_3_9_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 8
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_9_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_9">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 8
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../8-Reinforcement/">
+<span class="md-ellipsis">
+    Reinforcement
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../8-Reinforcement/1-QLearning/">
+<span class="md-ellipsis">
+    Q-Learning
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../8-Reinforcement/2-Gym/">
+<span class="md-ellipsis">
+    Gym
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_6_3_10" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_3_10" id="__nav_6_3_10_label" tabindex="0">
+<span class="md-ellipsis">
+    Lesson 9
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_3_10_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_6_3_10">
+<span class="md-nav__icon md-icon"></span>
+            Lesson 9
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../9-Real-World/">
+<span class="md-ellipsis">
+    Real World
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../9-Real-World/1-Applications/">
+<span class="md-ellipsis">
+    Applications
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../9-Real-World/2-Debugging-ML-Models/">
+<span class="md-ellipsis">
+    Debugging ML Models
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Blog
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../blog/">
+<span class="md-ellipsis">
+    Index
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Archive
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_2">
+<span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../blog/archive/2024/">
+<span class="md-ellipsis">
+    2024
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Categories
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_3">
+<span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../blog/category/ai/">
+<span class="md-ellipsis">
+    Ai
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sentiment-analysis-with-hotel-reviews-processing-the-data">
+<span class="md-ellipsis">
+      Sentiment analysis with hotel reviews - processing the data
+    </span>
+</a>
+<nav aria-label="Sentiment analysis with hotel reviews - processing the data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-lecture-quiz">
+<span class="md-ellipsis">
+      Pre-lecture quiz
+    </span>
+</a>
+<nav aria-label="Pre-lecture quiz" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#introduction">
+<span class="md-ellipsis">
+      Introduction
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#preparation">
+<span class="md-ellipsis">
+      Preparation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exploratory-data-analysis">
+<span class="md-ellipsis">
+      Exploratory data analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-data-exploration">
+<span class="md-ellipsis">
+      Exercise - Data exploration
+    </span>
+</a>
+<nav aria-label="Exercise - Data exploration" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#load-the-data">
+<span class="md-ellipsis">
+      Load the data
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#explore-the-data">
+<span class="md-ellipsis">
+      Explore the data
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dataframe-operations">
+<span class="md-ellipsis">
+      Dataframe operations
+    </span>
+</a>
+<nav aria-label="Dataframe operations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#code-answers">
+<span class="md-ellipsis">
+      Code answers
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#another-way">
+<span class="md-ellipsis">
+      Another way
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+<span class="md-ellipsis">
+      🚀Challenge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#post-lecture-quiz">
+<span class="md-ellipsis">
+      Post-lecture quiz
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#review-self-study">
+<span class="md-ellipsis">
+      Review &amp; Self Study
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#assignment">
+<span class="md-ellipsis">
+      Assignment
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1>Hotel Reviews 1</h1>
+<div><h2 id="sentiment-analysis-with-hotel-reviews-processing-the-data">Sentiment analysis with hotel reviews - processing the data<a class="headerlink" href="#sentiment-analysis-with-hotel-reviews-processing-the-data" title="Permanent link">¶</a></h2>
+<p>In this section you will use the techniques in the previous lessons to do some exploratory data analysis of a large dataset. Once you have a good understanding of the usefulness of the various columns, you will learn: </p>
+<ul>
+<li>how to remove the unnecessary columns</li>
+<li>how to calculate some new data based on the existing columns</li>
+<li>how to save the resulting dataset for use in the final challenge</li>
+</ul>
+<h3 id="pre-lecture-quiz"><a href="https://gray-sand-07a10f403.1.azurestaticapps.net/quiz/37/">Pre-lecture quiz</a><a class="headerlink" href="#pre-lecture-quiz" title="Permanent link">¶</a></h3>
+<h4 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">¶</a></h4>
+<p>So far you've learned about how text data is quite unlike numerical types of data. If it's text that was written or spoken by a human, if can be analysed to find patterns and frequencies, sentiment and meaning. This lesson takes you into a real data set with a real challenge: <strong><a href="https://www.kaggle.com/jiashenliu/515k-hotel-reviews-data-in-europe">515K Hotel Reviews Data in Europe</a></strong> and includes a <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0: Public Domain license</a>. It was scraped from Booking.com from public sources. The creator of the dataset was Jiashen Liu.</p>
+<h4 id="preparation">Preparation<a class="headerlink" href="#preparation" title="Permanent link">¶</a></h4>
+<p>You will need:</p>
+<ul>
+<li>The ability to run .ipynb notebooks using Python 3</li>
+<li>pandas</li>
+<li>NLTK, <a href="https://www.nltk.org/install.html">which you should install locally</a></li>
+<li>The data set which is available on Kaggle <a href="https://www.kaggle.com/jiashenliu/515k-hotel-reviews-data-in-europe">515K Hotel Reviews Data in Europe</a>. It is around 230 MB unzipped. Download it to the root <code>/data</code> folder associated with these NLP lessons.</li>
+</ul>
+<h3 id="exploratory-data-analysis">Exploratory data analysis<a class="headerlink" href="#exploratory-data-analysis" title="Permanent link">¶</a></h3>
+<p>This challenge assumes that you are building a hotel recommendation bot using sentiment analysis and guest reviews scores. The dataset you will be using includes reviews of 1493 different hotels in 6 cities. </p>
+<p>Using Python, a dataset of hotel reviews, and NLTK's sentiment analysis you could find out:</p>
+<ul>
+<li>What are the most frequently used words and phrases in reviews?</li>
+<li>Do the official <em>tags</em> describing a hotel correlate with review scores (e.g. are the more negative reviews for a particular hotel for  <em>Family with young children</em> than by <em>Solo traveller</em>, perhaps indicating it is better for <em>Solo travellers</em>?)</li>
+<li>Do the NLTK sentiment scores 'agree' with the hotel reviewer's numerical score?</li>
+</ul>
+<h5 id="dataset">Dataset<a class="headerlink" href="#dataset" title="Permanent link">¶</a></h5>
+<p>Let's explore the dataset that you've downloaded and saved locally. Open the file in an editor like VS Code or even Excel.</p>
+<p>The headers in the dataset are as follows:</p>
+<p><em>Hotel_Address, Additional_Number_of_Scoring, Review_Date, Average_Score, Hotel_Name, Reviewer_Nationality, Negative_Review, Review_Total_Negative_Word_Counts, Total_Number_of_Reviews, Positive_Review, Review_Total_Positive_Word_Counts, Total_Number_of_Reviews_Reviewer_Has_Given, Reviewer_Score, Tags, days_since_review, lat, lng</em></p>
+<p>Here they are grouped in a way that might be easier to examine: </p>
+<h6 id="hotel-columns">Hotel columns<a class="headerlink" href="#hotel-columns" title="Permanent link">¶</a></h6>
+<ul>
+<li><code>Hotel_Name</code>, <code>Hotel_Address</code>, <code>lat</code> (latitude), <code>lng</code> (longitude)</li>
+<li>Using <em>lat</em> and <em>lng</em> you could plot a map with Python showing the hotel locations (perhaps color coded for negative and positive reviews)</li>
+<li>Hotel_Address is not obviously useful to us, and we'll probably replace that with a country for easier sorting &amp; searching</li>
+</ul>
+<p><strong>Hotel Meta-review columns</strong></p>
+<ul>
+<li><code>Average_Score</code></li>
+<li>According to the dataset creator, this column is the <em>Average Score of the hotel, calculated based on the latest comment in the last year</em>. This seems like an unusual way to calculate the score, but it is the data scraped so we may take it as face value for now. </li>
+</ul>
+<p>✅ Based on the other columns in this data, can you think of another way to calculate the average score?</p>
+<ul>
+<li><code>Total_Number_of_Reviews</code></li>
+<li>The total number of reviews this hotel has received - it is not clear (without writing some code) if this refers to the reviews in the dataset.</li>
+<li><code>Additional_Number_of_Scoring</code></li>
+<li>This means a review score was given but no positive or negative review was written by the reviewer</li>
+</ul>
+<p><strong>Review columns</strong></p>
+<ul>
+<li><code>Reviewer_Score</code></li>
+<li>This is a numerical value with at most 1 decimal place between the min and max values 2.5 and 10</li>
+<li>It is not explained why 2.5 is the lowest score possible</li>
+<li><code>Negative_Review</code></li>
+<li>If a reviewer wrote nothing, this field will have "<strong>No Negative</strong>"</li>
+<li>Note that a reviewer may write a positive review in the Negative review column (e.g. "there is nothing bad about this hotel")</li>
+<li><code>Review_Total_Negative_Word_Counts</code></li>
+<li>Higher negative word counts indicate a lower score (without checking the sentimentality)</li>
+<li><code>Positive_Review</code></li>
+<li>If a reviewer wrote nothing, this field will have "<strong>No Positive</strong>"</li>
+<li>Note that a reviewer may write a negative review in the Positive review column (e.g. "there is nothing good about this hotel at all")</li>
+<li><code>Review_Total_Positive_Word_Counts</code></li>
+<li>Higher positive word counts indicate a higher score (without checking the sentimentality)</li>
+<li><code>Review_Date</code> and <code>days_since_review</code></li>
+<li>A freshness or staleness measure might be applied to a review (older reviews might not be as accurate as newer ones because hotel management changed, or renovations have been done, or a pool was added etc.)</li>
+<li><code>Tags</code></li>
+<li>These are short descriptors that a reviewer may select to describe the type of guest they were (e.g. solo or family), the type of room they had, the length of stay and how the review was submitted. </li>
+<li>Unfortunately, using these tags is problematic, check the section below which discusses their usefulness</li>
+</ul>
+<p><strong>Reviewer columns</strong></p>
+<ul>
+<li><code>Total_Number_of_Reviews_Reviewer_Has_Given</code></li>
+<li>This might be a factor in a recommendation model, for instance, if you could determine that more prolific reviewers with hundreds of reviews were more likely to be negative rather than positive. However, the reviewer of any particular review is not identified with a unique code, and therefore cannot be linked to a set of reviews. There are 30 reviewers with 100 or more reviews, but it's hard to see how this can aid the recommendation model.</li>
+<li><code>Reviewer_Nationality</code></li>
+<li>Some people might think that certain nationalities are more likely to give a positive or negative review because of a national inclination. Be careful building such anecdotal views into your models. These are national (and sometimes racial) stereotypes, and each reviewer was an individual who wrote a review based on their experience. It may have been filtered through many lenses such as their previous hotel stays, the distance travelled, and their personal temperament. Thinking that their nationality was the reason for a review score is hard to justify.</li>
+</ul>
+<h6 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">¶</a></h6>
+<table>
+<thead>
+<tr>
+<th>Average  Score</th>
+<th>Total Number   Reviews</th>
+<th>Reviewer   Score</th>
+<th style="text-align: left;">Negative <br/>Review</th>
+<th>Positive   Review</th>
+<th>Tags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7.8</td>
+<td>1945</td>
+<td>2.5</td>
+<td style="text-align: left;">This is  currently not a hotel but a construction site I was terrorized from early  morning and all day with unacceptable building noise while resting after a  long trip and working in the room People were working all day i e with  jackhammers in the adjacent rooms I asked for a room change but no silent  room was available To make things worse I was overcharged I checked out in  the evening since I had to leave very early flight and received an appropriate  bill A day later the hotel made another charge without my consent in excess  of booked price It's a terrible place Don't punish yourself by booking  here</td>
+<td>Nothing  Terrible place Stay away</td>
+<td>Business trip                                Couple Standard Double  Room Stayed 2 nights</td>
+</tr>
+</tbody>
+</table>
+<p>As you can see, this guest did not have a happy stay at this hotel. The hotel has a good average score of 7.8 and 1945 reviews, but this reviewer gave it 2.5 and wrote 115 words about how negative their stay was. If they wrote nothing at all in the Positive_Review column, you might surmise there was nothing positive, but alas they wrote 7 words of warning. If we just counted words instead of the meaning, or sentiment of the words, we might have a skewed view of the reviewer's intent. Strangely, their score of 2.5 is confusing, because if that hotel stay was so bad, why give it any points at all? Investigating the dataset closely, you'll see that the lowest possible score is 2.5, not 0. The highest possible score is 10.</p>
+<h6 id="tags">Tags<a class="headerlink" href="#tags" title="Permanent link">¶</a></h6>
+<p>As mentioned above, at first glance, the idea to use <code>Tags</code> to categorize the data makes sense. Unfortunately these tags are not standardized, which means that in a given hotel, the options might be <em>Single room</em>, <em>Twin room</em>, and <em>Double room</em>, but in the next hotel, they are <em>Deluxe Single Room</em>, <em>Classic Queen Room</em>, and <em>Executive King Room</em>. These might be the same things, but there are so many variations that the choice becomes:</p>
+<ol>
+<li>
+<p>Attempt to change all terms to a single standard, which is very difficult, because it is not clear what the conversion path would be in each case (e.g. <em>Classic single room</em> maps to <em>Single room</em> but <em>Superior Queen Room with Courtyard Garden or City View</em> is much harder to map)</p>
+</li>
+<li>
+<p>We can take an NLP approach and measure the frequency of certain terms like <em>Solo</em>, <em>Business Traveller</em>, or <em>Family with young kids</em> as they apply to each hotel, and factor that into the recommendation  </p>
+</li>
+</ol>
+<p>Tags are usually (but not always) a single field containing a list of 5 to 6 comma separated values aligning to <em>Type of trip</em>, <em>Type of guests</em>, <em>Type of room</em>, <em>Number of nights</em>, and <em>Type of device review was submitted on</em>. However, because some reviewers don't fill in each field (they might leave one blank), the values are not always in the same order.</p>
+<p>As an example, take <em>Type of group</em>. There are 1025 unique possibilities in this field in the <code>Tags</code> column, and unfortunately only some of them refer to a group (some are the type of room etc.). If you filter only the ones that mention family, the results contain many <em>Family room</em> type results. If you include the term <em>with</em>, i.e. count the <em>Family with</em> values, the results are better, with over 80,000 of the 515,000 results containing the phrase "Family with young children" or "Family with older children".</p>
+<p>This means the tags column is not completely useless to us, but it will take some work to make it useful.</p>
+<h6 id="average-hotel-score">Average hotel score<a class="headerlink" href="#average-hotel-score" title="Permanent link">¶</a></h6>
+<p>There are a number of oddities or discrepancies with the data set that I can't figure out, but are illustrated here so you are aware of them when building your models. If you figure it out, please let us know in the discussion section!</p>
+<p>The dataset has the following columns relating to the average score and number of reviews: </p>
+<ol>
+<li>Hotel_Name</li>
+<li>Additional_Number_of_Scoring</li>
+<li>Average_Score</li>
+<li>Total_Number_of_Reviews</li>
+<li>Reviewer_Score  </li>
+</ol>
+<p>The single hotel with the most reviews in this dataset is <em>Britannia International Hotel Canary Wharf</em> with 4789 reviews out of 515,000. But if we look at the <code>Total_Number_of_Reviews</code> value for this hotel, it is 9086. You might surmise that there are many more scores without reviews, so perhaps we should add in the <code>Additional_Number_of_Scoring</code> column value. That value is 2682, and adding it to 4789 gets us 7,471 which is still 1615 short of the <code>Total_Number_of_Reviews</code>. </p>
+<p>If you take the <code>Average_Score</code> columns, you might surmise it is the average of the reviews in the dataset, but the description from Kaggle is "<em>Average Score of the hotel, calculated based on the latest comment in the last year</em>". That doesn't seem that useful, but we can calculate our own average based on the reviews scores in the data set. Using the same hotel as an example, the average hotel score is given as 7.1 but the calculated score (average reviewer score <em>in</em> the dataset) is 6.8. This is close, but not the same value, and we can only guess that the scores given in the <code>Additional_Number_of_Scoring</code> reviews increased the average to 7.1. Unfortunately with no way to test or prove that assertion, it is difficult to use or trust <code>Average_Score</code>, <code>Additional_Number_of_Scoring</code> and <code>Total_Number_of_Reviews</code> when they are based on, or refer to, data we do not have.</p>
+<p>To complicate things further, the hotel with the second highest number of reviews has a calculated average score of 8.12 and the dataset <code>Average_Score</code> is 8.1. Is this correct score a coincidence or is the first hotel a discrepancy? </p>
+<p>On the possibility that these hotel might be an outlier, and that maybe most of the values tally up (but some do not for some reason) we will write a short program next to explore the values in the dataset and determine the correct usage (or non-usage) of the values.</p>
+<blockquote>
+<p>🚨 A note of caution</p>
+<p>When working with this dataset you will write code that calculates something from the text without having to read or analyse the text yourself. This is the essence of NLP, interpreting meaning or sentiment without having to have a human do it. However, it is possible that you will read some of the negative reviews. I would urge you not to, because you don't have to. Some of them are silly, or irrelevant negative hotel reviews, such as  "The weather wasn't great", something beyond the control of the hotel, or indeed, anyone. But there is a dark side to some reviews too. Sometimes the negative reviews are racist, sexist, or ageist. This is unfortunate but to be expected in a dataset scraped off a public website. Some reviewers leave reviews that you would find distasteful, uncomfortable, or upsetting. Better to let the code measure the sentiment than read them yourself and be upset. That said, it is a minority that write such things, but they exist all the same. </p>
+</blockquote>
+<h3 id="exercise-data-exploration">Exercise -  Data exploration<a class="headerlink" href="#exercise-data-exploration" title="Permanent link">¶</a></h3>
+<h4 id="load-the-data">Load the data<a class="headerlink" href="#load-the-data" title="Permanent link">¶</a></h4>
+<p>That's enough examining the data visually, now you'll write some code and get some answers! This section uses the pandas library. Your very first task is to ensure you can load and read the CSV data. The pandas library has a fast CSV loader, and the result is placed in a dataframe, as in previous lessons. The CSV we are loading has over half a million rows, but only 17 columns. Pandas gives you lots of powerful ways to interact with a dataframe, including the ability to perform operations on every row. </p>
+<p>From here on in this lesson, there will be code snippets and some explanations of the code and some discussion about what the results mean. Use the included <em>notebook.ipynb</em> for your code.</p>
+<p>Let's start with loading the data file you be using:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1"># Load the hotel reviews from CSV</span>
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">time</span>
+</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="c1"># importing time so the start and end time can be used to calculate file loading time</span>
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Loading data file now, this could take a while depending on file size"</span><span class="p">)</span>
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-0-7"><a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="c1"># df is 'DataFrame' - make sure you downloaded the file to the data folder</span>
+</span><span id="__span-0-8"><a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'../../data/Hotel_Reviews.csv'</span><span class="p">)</span>
+</span><span id="__span-0-9"><a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-0-10"><a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Loading took "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s2">" seconds"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Now that the data is loaded, we can perform some operations on it. Keep this code at the top of your program for the next part.</p>
+<h3 id="explore-the-data">Explore the data<a class="headerlink" href="#explore-the-data" title="Permanent link">¶</a></h3>
+<p>In this case, the data is already <em>clean</em>, that means that it is ready to work with, and does not have characters in other languages that might trip up algorithms expecting only English characters. </p>
+<p>✅ You might have to work with data that required some initial processing to format it before applying NLP techniques, but not this time. If you had to, how would you handle non-English characters?</p>
+<p>Take a moment to ensure that once the data is loaded, you can explore it with code. It's very easy to want to focus on the <code>Negative_Review</code> and <code>Positive_Review</code> columns. They are filled with natural text for your NLP algorithms to process. But wait! Before you jump into the NLP and sentiment, you should follow the code below to ascertain if the values given in the dataset match the values you calculate with pandas.</p>
+<h3 id="dataframe-operations">Dataframe operations<a class="headerlink" href="#dataframe-operations" title="Permanent link">¶</a></h3>
+<p>The first task in this lesson is to check if the following assertions are correct by writing some code that examines the data frame (without changing it).</p>
+<blockquote>
+<p>Like many programming tasks, there are several ways to complete this, but good advice is to do it in the simplest, easiest way you can, especially if it will be easier to understand when you come back to this code in the future. With dataframes, there is a comprehensive API that will often have a way to do what you want efficiently.</p>
+</blockquote>
+<p>Treat the following questions as coding tasks and attempt to answer them without looking at the solution. </p>
+<ol>
+<li>Print out the <em>shape</em> of the data frame you have just loaded (the shape is the number of rows and columns)</li>
+<li>Calculate the frequency count for reviewer nationalities:</li>
+<li>How many distinct values are there for the column <code>Reviewer_Nationality</code> and what are they?</li>
+<li>What reviewer nationality is the most common in the dataset (print country and number of reviews)?</li>
+<li>What are the next top 10 most frequently found nationalities, and their frequency count?</li>
+<li>What was the most frequently reviewed hotel for each of the top 10 most reviewer nationalities?</li>
+<li>How many reviews are there per hotel (frequency count of hotel) in the dataset?</li>
+<li>While there is an <code>Average_Score</code> column for each hotel in the dataset, you can also calculate an average score (getting the average of all reviewer scores in the dataset for each hotel). Add a new column to your dataframe with the column header <code>Calc_Average_Score</code> that contains that calculated average. </li>
+<li>Do any hotels have the same (rounded to 1 decimal place) <code>Average_Score</code> and <code>Calc_Average_Score</code>?</li>
+<li>Try writing a Python function that takes a Series (row) as an argument and compares the values, printing out a message when the values are not equal. Then use the <code>.apply()</code> method to process every row with the function.</li>
+<li>Calculate and print out how many rows have column <code>Negative_Review</code> values of "No Negative" </li>
+<li>Calculate and print out how many rows have column <code>Positive_Review</code> values of "No Positive"</li>
+<li>Calculate and print out how many rows have column <code>Positive_Review</code> values of "No Positive" <strong>and</strong> <code>Negative_Review</code> values of "No Negative"</li>
+</ol>
+<h4 id="code-answers">Code answers<a class="headerlink" href="#code-answers" title="Permanent link">¶</a></h4>
+<ol>
+<li>Print out the <em>shape</em> of the data frame you have just loaded (the shape is the number of rows and columns)</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"The shape of the data (rows, cols) is "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="o">&gt;</span> <span class="n">The</span> <span class="n">shape</span> <span class="n">of</span> <span class="n">the</span> <span class="n">data</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span> <span class="ow">is</span> <span class="p">(</span><span class="mi">515738</span><span class="p">,</span> <span class="mi">17</span><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li>
+<p>Calculate the frequency count for reviewer nationalities:</p>
+</li>
+<li>
+<p>How many distinct values are there for the column <code>Reviewer_Nationality</code> and what are they?</p>
+</li>
+<li>What reviewer nationality is the most common in the dataset (print country and number of reviews)?</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># value_counts() creates a Series object that has index and values in this case, the country and the frequency they occur in reviewer nationality</span>
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="n">nationality_freq</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"Reviewer_Nationality"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"There are "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nationality_freq</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" different nationalities"</span><span class="p">)</span>
+</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="c1"># print first and last rows of the Series. Change to nationality_freq.to_string() to print all of the data</span>
+</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">nationality_freq</span><span class="p">)</span> 
+</span><span id="__span-2-6"><a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="n">There</span> <span class="n">are</span> <span class="mi">227</span> <span class="n">different</span> <span class="n">nationalities</span>
+</span><span id="__span-2-8"><a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a> <span class="n">United</span> <span class="n">Kingdom</span>               <span class="mi">245246</span>
+</span><span id="__span-2-9"><a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a> <span class="n">United</span> <span class="n">States</span> <span class="n">of</span> <span class="n">America</span>      <span class="mi">35437</span>
+</span><span id="__span-2-10"><a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a> <span class="n">Australia</span>                     <span class="mi">21686</span>
+</span><span id="__span-2-11"><a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a> <span class="n">Ireland</span>                       <span class="mi">14827</span>
+</span><span id="__span-2-12"><a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a> <span class="n">United</span> <span class="n">Arab</span> <span class="n">Emirates</span>          <span class="mi">10235</span>
+</span><span id="__span-2-13"><a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a>                               <span class="o">...</span>  
+</span><span id="__span-2-14"><a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a> <span class="n">Comoros</span>                           <span class="mi">1</span>
+</span><span id="__span-2-15"><a href="#__codelineno-2-15" id="__codelineno-2-15" name="__codelineno-2-15"></a> <span class="n">Palau</span>                             <span class="mi">1</span>
+</span><span id="__span-2-16"><a href="#__codelineno-2-16" id="__codelineno-2-16" name="__codelineno-2-16"></a> <span class="n">Northern</span> <span class="n">Mariana</span> <span class="n">Islands</span>          <span class="mi">1</span>
+</span><span id="__span-2-17"><a href="#__codelineno-2-17" id="__codelineno-2-17" name="__codelineno-2-17"></a> <span class="n">Cape</span> <span class="n">Verde</span>                        <span class="mi">1</span>
+</span><span id="__span-2-18"><a href="#__codelineno-2-18" id="__codelineno-2-18" name="__codelineno-2-18"></a> <span class="n">Guinea</span>                            <span class="mi">1</span>
+</span><span id="__span-2-19"><a href="#__codelineno-2-19" id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="n">Name</span><span class="p">:</span> <span class="n">Reviewer_Nationality</span><span class="p">,</span> <span class="n">Length</span><span class="p">:</span> <span class="mi">227</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</span></code></pre></div>
+<ol>
+<li>
+<p>What are the next top 10 most frequently found nationalities, and their frequency count?</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"The highest frequency reviewer nationality is "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nationality_freq</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">" with "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nationality_freq</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">" reviews."</span><span class="p">)</span>
+</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="c1"># Notice there is a leading space on the values, strip() removes that for printing</span>
+</span><span id="__span-3-3"><a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="c1"># What is the top 10 most common nationalities and their frequencies?</span>
+</span><span id="__span-3-4"><a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"The next 10 highest frequency reviewer nationalities are:"</span><span class="p">)</span>
+</span><span id="__span-3-5"><a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">nationality_freq</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</span><span id="__span-3-6"><a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="n">The</span> <span class="n">highest</span> <span class="n">frequency</span> <span class="n">reviewer</span> <span class="n">nationality</span> <span class="ow">is</span> <span class="n">United</span> <span class="n">Kingdom</span> <span class="k">with</span> <span class="mi">245246</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-3-8"><a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="n">The</span> <span class="nb">next</span> <span class="mi">10</span> <span class="n">highest</span> <span class="n">frequency</span> <span class="n">reviewer</span> <span class="n">nationalities</span> <span class="n">are</span><span class="p">:</span>
+</span><span id="__span-3-9"><a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a> <span class="n">United</span> <span class="n">States</span> <span class="n">of</span> <span class="n">America</span>     <span class="mi">35437</span>
+</span><span id="__span-3-10"><a href="#__codelineno-3-10" id="__codelineno-3-10" name="__codelineno-3-10"></a> <span class="n">Australia</span>                    <span class="mi">21686</span>
+</span><span id="__span-3-11"><a href="#__codelineno-3-11" id="__codelineno-3-11" name="__codelineno-3-11"></a> <span class="n">Ireland</span>                      <span class="mi">14827</span>
+</span><span id="__span-3-12"><a href="#__codelineno-3-12" id="__codelineno-3-12" name="__codelineno-3-12"></a> <span class="n">United</span> <span class="n">Arab</span> <span class="n">Emirates</span>         <span class="mi">10235</span>
+</span><span id="__span-3-13"><a href="#__codelineno-3-13" id="__codelineno-3-13" name="__codelineno-3-13"></a> <span class="n">Saudi</span> <span class="n">Arabia</span>                  <span class="mi">8951</span>
+</span><span id="__span-3-14"><a href="#__codelineno-3-14" id="__codelineno-3-14" name="__codelineno-3-14"></a> <span class="n">Netherlands</span>                   <span class="mi">8772</span>
+</span><span id="__span-3-15"><a href="#__codelineno-3-15" id="__codelineno-3-15" name="__codelineno-3-15"></a> <span class="n">Switzerland</span>                   <span class="mi">8678</span>
+</span><span id="__span-3-16"><a href="#__codelineno-3-16" id="__codelineno-3-16" name="__codelineno-3-16"></a> <span class="n">Germany</span>                       <span class="mi">7941</span>
+</span><span id="__span-3-17"><a href="#__codelineno-3-17" id="__codelineno-3-17" name="__codelineno-3-17"></a> <span class="n">Canada</span>                        <span class="mi">7894</span>
+</span><span id="__span-3-18"><a href="#__codelineno-3-18" id="__codelineno-3-18" name="__codelineno-3-18"></a> <span class="n">France</span>                        <span class="mi">7296</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>What was the most frequently reviewed hotel for each of the top 10 most reviewer nationalities?</p>
+</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># What was the most frequently reviewed hotel for the top 10 nationalities</span>
+</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="c1"># Normally with pandas you will avoid an explicit loop, but wanted to show creating a new dataframe using criteria (don't do this with large amounts of data because it could be very slow)</span>
+</span><span id="__span-4-3"><a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="k">for</span> <span class="n">nat</span> <span class="ow">in</span> <span class="n">nationality_freq</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+</span><span id="__span-4-4"><a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a>   <span class="c1"># First, extract all the rows that match the criteria into a new dataframe</span>
+</span><span id="__span-4-5"><a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a>   <span class="n">nat_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"Reviewer_Nationality"</span><span class="p">]</span> <span class="o">==</span> <span class="n">nat</span><span class="p">]</span>   
+</span><span id="__span-4-6"><a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a>   <span class="c1"># Now get the hotel freq</span>
+</span><span id="__span-4-7"><a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a>   <span class="n">freq</span> <span class="o">=</span> <span class="n">nat_df</span><span class="p">[</span><span class="s2">"Hotel_Name"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</span><span id="__span-4-8"><a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a>   <span class="nb">print</span><span class="p">(</span><span class="s2">"The most reviewed hotel for "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nat</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">" was "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">freq</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">" with "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">freq</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">" reviews."</span><span class="p">)</span> 
+</span><span id="__span-4-9"><a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">United</span> <span class="n">Kingdom</span> <span class="n">was</span> <span class="n">Britannia</span> <span class="n">International</span> <span class="n">Hotel</span> <span class="n">Canary</span> <span class="n">Wharf</span> <span class="k">with</span> <span class="mi">3833</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-11"><a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">United</span> <span class="n">States</span> <span class="n">of</span> <span class="n">America</span> <span class="n">was</span> <span class="n">Hotel</span> <span class="n">Esther</span> <span class="n">a</span> <span class="k">with</span> <span class="mi">423</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-12"><a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">Australia</span> <span class="n">was</span> <span class="n">Park</span> <span class="n">Plaza</span> <span class="n">Westminster</span> <span class="n">Bridge</span> <span class="n">London</span> <span class="k">with</span> <span class="mi">167</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-13"><a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">Ireland</span> <span class="n">was</span> <span class="n">Copthorne</span> <span class="n">Tara</span> <span class="n">Hotel</span> <span class="n">London</span> <span class="n">Kensington</span> <span class="k">with</span> <span class="mi">239</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-14"><a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">United</span> <span class="n">Arab</span> <span class="n">Emirates</span> <span class="n">was</span> <span class="n">Millennium</span> <span class="n">Hotel</span> <span class="n">London</span> <span class="n">Knightsbridge</span> <span class="k">with</span> <span class="mi">129</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-15"><a href="#__codelineno-4-15" id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">Saudi</span> <span class="n">Arabia</span> <span class="n">was</span> <span class="n">The</span> <span class="n">Cumberland</span> <span class="n">A</span> <span class="n">Guoman</span> <span class="n">Hotel</span> <span class="k">with</span> <span class="mi">142</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-16"><a href="#__codelineno-4-16" id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">Netherlands</span> <span class="n">was</span> <span class="n">Jaz</span> <span class="n">Amsterdam</span> <span class="k">with</span> <span class="mi">97</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-17"><a href="#__codelineno-4-17" id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">Switzerland</span> <span class="n">was</span> <span class="n">Hotel</span> <span class="n">Da</span> <span class="n">Vinci</span> <span class="k">with</span> <span class="mi">97</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-18"><a href="#__codelineno-4-18" id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">Germany</span> <span class="n">was</span> <span class="n">Hotel</span> <span class="n">Da</span> <span class="n">Vinci</span> <span class="k">with</span> <span class="mi">86</span> <span class="n">reviews</span><span class="o">.</span>
+</span><span id="__span-4-19"><a href="#__codelineno-4-19" id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="n">The</span> <span class="n">most</span> <span class="n">reviewed</span> <span class="n">hotel</span> <span class="k">for</span> <span class="n">Canada</span> <span class="n">was</span> <span class="n">St</span> <span class="n">James</span> <span class="n">Court</span> <span class="n">A</span> <span class="n">Taj</span> <span class="n">Hotel</span> <span class="n">London</span> <span class="k">with</span> <span class="mi">61</span> <span class="n">reviews</span><span class="o">.</span>
+</span></code></pre></div>
+<ol>
+<li>How many reviews are there per hotel (frequency count of hotel) in the dataset?</li>
+</ol>
+<p></p><div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1"># First create a new dataframe based on the old one, removing the uneeded columns</span>
+</span><span id="__span-5-2"><a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="n">hotel_freq_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">"Hotel_Address"</span><span class="p">,</span> <span class="s2">"Additional_Number_of_Scoring"</span><span class="p">,</span> <span class="s2">"Review_Date"</span><span class="p">,</span> <span class="s2">"Average_Score"</span><span class="p">,</span> <span class="s2">"Reviewer_Nationality"</span><span class="p">,</span> <span class="s2">"Negative_Review"</span><span class="p">,</span> <span class="s2">"Review_Total_Negative_Word_Counts"</span><span class="p">,</span> <span class="s2">"Positive_Review"</span><span class="p">,</span> <span class="s2">"Review_Total_Positive_Word_Counts"</span><span class="p">,</span> <span class="s2">"Total_Number_of_Reviews_Reviewer_Has_Given"</span><span class="p">,</span> <span class="s2">"Reviewer_Score"</span><span class="p">,</span> <span class="s2">"Tags"</span><span class="p">,</span> <span class="s2">"days_since_review"</span><span class="p">,</span> <span class="s2">"lat"</span><span class="p">,</span> <span class="s2">"lng"</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-5-3"><a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="c1"># Group the rows by Hotel_Name, count them and put the result in a new column Total_Reviews_Found</span>
+</span><span id="__span-5-5"><a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="n">hotel_freq_df</span><span class="p">[</span><span class="s1">'Total_Reviews_Found'</span><span class="p">]</span> <span class="o">=</span> <span class="n">hotel_freq_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Hotel_Name'</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">'count'</span><span class="p">)</span>
+</span><span id="__span-5-6"><a href="#__codelineno-5-6" id="__codelineno-5-6" name="__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a href="#__codelineno-5-7" id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="c1"># Get rid of all the duplicated rows</span>
+</span><span id="__span-5-8"><a href="#__codelineno-5-8" id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="n">hotel_freq_df</span> <span class="o">=</span> <span class="n">hotel_freq_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Hotel_Name"</span><span class="p">])</span>
+</span><span id="__span-5-9"><a href="#__codelineno-5-9" id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="n">display</span><span class="p">(</span><span class="n">hotel_freq_df</span><span class="p">)</span> 
+</span></code></pre></div>
+   |                 Hotel_Name                 | Total_Number_of_Reviews | Total_Reviews_Found |
+   | :----------------------------------------: | :---------------------: | :-----------------: |
+   | Britannia International Hotel Canary Wharf |          9086           |        4789         |
+   |    Park Plaza Westminster Bridge London    |          12158          |        4169         |
+   |   Copthorne Tara Hotel London Kensington   |          7105           |        3578         |
+   |                    ...                     |           ...           |         ...         |
+   |       Mercure Paris Porte d Orleans        |           110           |         10          |
+   |                Hotel Wagner                |           135           |         10          |
+   |            Hotel Gallitzinberg             |           173           |          8          |
+<p>You may notice that the <em>counted in the dataset</em> results do not match the value in <code>Total_Number_of_Reviews</code>. It is unclear if this value in the dataset represented the total number of reviews the hotel had, but not all were scraped, or some other calculation. <code>Total_Number_of_Reviews</code> is not used in the model because of this unclarity.</p>
+<ol>
+<li>While there is an <code>Average_Score</code> column for each hotel in the dataset, you can also calculate an average score (getting the average of all reviewer scores in the dataset for each hotel). Add a new column to your dataframe with the column header <code>Calc_Average_Score</code> that contains that calculated average. Print out the columns <code>Hotel_Name</code>, <code>Average_Score</code>, and <code>Calc_Average_Score</code>.</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="c1"># define a function that takes a row and performs some calculation with it</span>
+</span><span id="__span-6-2"><a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="k">def</span> <span class="nf">get_difference_review_avg</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+</span><span id="__span-6-3"><a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a>  <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Average_Score"</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">"Calc_Average_Score"</span><span class="p">]</span>
+</span><span id="__span-6-4"><a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="c1"># 'mean' is mathematical word for 'average'</span>
+</span><span id="__span-6-6"><a href="#__codelineno-6-6" id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="n">df</span><span class="p">[</span><span class="s1">'Calc_Average_Score'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Hotel_Name'</span><span class="p">)</span><span class="o">.</span><span class="n">Reviewer_Score</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">'mean'</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-6-7"><a href="#__codelineno-6-7" id="__codelineno-6-7" name="__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a href="#__codelineno-6-8" id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="c1"># Add a new column with the difference between the two average scores</span>
+</span><span id="__span-6-9"><a href="#__codelineno-6-9" id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="n">df</span><span class="p">[</span><span class="s2">"Average_Score_Difference"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">get_difference_review_avg</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-6-10"><a href="#__codelineno-6-10" id="__codelineno-6-10" name="__codelineno-6-10"></a>
+</span><span id="__span-6-11"><a href="#__codelineno-6-11" id="__codelineno-6-11" name="__codelineno-6-11"></a><span class="c1"># Create a df without all the duplicates of Hotel_Name (so only 1 row per hotel)</span>
+</span><span id="__span-6-12"><a href="#__codelineno-6-12" id="__codelineno-6-12" name="__codelineno-6-12"></a><span class="n">review_scores_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Hotel_Name"</span><span class="p">])</span>
+</span><span id="__span-6-13"><a href="#__codelineno-6-13" id="__codelineno-6-13" name="__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a href="#__codelineno-6-14" id="__codelineno-6-14" name="__codelineno-6-14"></a><span class="c1"># Sort the dataframe to find the lowest and highest average score difference</span>
+</span><span id="__span-6-15"><a href="#__codelineno-6-15" id="__codelineno-6-15" name="__codelineno-6-15"></a><span class="n">review_scores_df</span> <span class="o">=</span> <span class="n">review_scores_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">"Average_Score_Difference"</span><span class="p">])</span>
+</span><span id="__span-6-16"><a href="#__codelineno-6-16" id="__codelineno-6-16" name="__codelineno-6-16"></a>
+</span><span id="__span-6-17"><a href="#__codelineno-6-17" id="__codelineno-6-17" name="__codelineno-6-17"></a><span class="n">display</span><span class="p">(</span><span class="n">review_scores_df</span><span class="p">[[</span><span class="s2">"Average_Score_Difference"</span><span class="p">,</span> <span class="s2">"Average_Score"</span><span class="p">,</span> <span class="s2">"Calc_Average_Score"</span><span class="p">,</span> <span class="s2">"Hotel_Name"</span><span class="p">]])</span>
+</span></code></pre></div>
+<p>You may also wonder about the <code>Average_Score</code> value and why it is sometimes different from the calculated average score. As we can't know why some of the values match, but others have a difference, it's safest in this case to use the review scores that we have to calculate the average ourselves. That said, the differences are usually very small, here are the hotels with the greatest deviation from the dataset average and the calculated average:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Average_Score_Difference</th>
+<th style="text-align: center;">Average_Score</th>
+<th style="text-align: center;">Calc_Average_Score</th>
+<th style="text-align: right;">Hotel_Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">-0.8</td>
+<td style="text-align: center;">7.7</td>
+<td style="text-align: center;">8.5</td>
+<td style="text-align: right;">Best Western Hotel Astoria</td>
+</tr>
+<tr>
+<td style="text-align: center;">-0.7</td>
+<td style="text-align: center;">8.8</td>
+<td style="text-align: center;">9.5</td>
+<td style="text-align: right;">Hotel Stendhal Place Vend me Paris MGallery</td>
+</tr>
+<tr>
+<td style="text-align: center;">-0.7</td>
+<td style="text-align: center;">7.5</td>
+<td style="text-align: center;">8.2</td>
+<td style="text-align: right;">Mercure Paris Porte d Orleans</td>
+</tr>
+<tr>
+<td style="text-align: center;">-0.7</td>
+<td style="text-align: center;">7.9</td>
+<td style="text-align: center;">8.6</td>
+<td style="text-align: right;">Renaissance Paris Vendome Hotel</td>
+</tr>
+<tr>
+<td style="text-align: center;">-0.5</td>
+<td style="text-align: center;">7.0</td>
+<td style="text-align: center;">7.5</td>
+<td style="text-align: right;">Hotel Royal Elys es</td>
+</tr>
+<tr>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: right;">...</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">7.5</td>
+<td style="text-align: center;">6.8</td>
+<td style="text-align: right;">Mercure Paris Op ra Faubourg Montmartre</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.8</td>
+<td style="text-align: center;">7.1</td>
+<td style="text-align: center;">6.3</td>
+<td style="text-align: right;">Holiday Inn Paris Montparnasse Pasteur</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.9</td>
+<td style="text-align: center;">6.8</td>
+<td style="text-align: center;">5.9</td>
+<td style="text-align: right;">Villa Eugenie</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.9</td>
+<td style="text-align: center;">8.6</td>
+<td style="text-align: center;">7.7</td>
+<td style="text-align: right;">MARQUIS Faubourg St Honor Relais Ch teaux</td>
+</tr>
+<tr>
+<td style="text-align: center;">1.3</td>
+<td style="text-align: center;">7.2</td>
+<td style="text-align: center;">5.9</td>
+<td style="text-align: right;">Kube Hotel Ice Bar</td>
+</tr>
+</tbody>
+</table>
+<p>With only 1 hotel having a difference of score greater than 1, it means we can probably ignore the difference and use the calculated average score.</p>
+<ol>
+<li>
+<p>Calculate and print out how many rows have column <code>Negative_Review</code> values of "No Negative" </p>
+</li>
+<li>
+<p>Calculate and print out how many rows have column <code>Positive_Review</code> values of "No Positive"</p>
+</li>
+<li>
+<p>Calculate and print out how many rows have column <code>Positive_Review</code> values of "No Positive" <strong>and</strong> <code>Negative_Review</code> values of "No Negative"</p>
+</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="c1"># with lambdas:</span>
+</span><span id="__span-7-2"><a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-7-3"><a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="n">no_negative_reviews</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">'Negative_Review'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"No Negative"</span> <span class="k">else</span> <span class="kc">False</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-7-4"><a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Number of No Negative reviews: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">no_negative_reviews</span><span class="p">[</span><span class="n">no_negative_reviews</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
+</span><span id="__span-7-5"><a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="n">no_positive_reviews</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">'Positive_Review'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"No Positive"</span> <span class="k">else</span> <span class="kc">False</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-7-7"><a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Number of No Positive reviews: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">no_positive_reviews</span><span class="p">[</span><span class="n">no_positive_reviews</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
+</span><span id="__span-7-8"><a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a>
+</span><span id="__span-7-9"><a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="n">both_no_reviews</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">'Negative_Review'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"No Negative"</span> <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="s1">'Positive_Review'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"No Positive"</span> <span class="k">else</span> <span class="kc">False</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-7-10"><a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Number of both No Negative and No Positive reviews: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">both_no_reviews</span><span class="p">[</span><span class="n">both_no_reviews</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
+</span><span id="__span-7-11"><a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-7-12"><a href="#__codelineno-7-12" id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Lambdas took "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s2">" seconds"</span><span class="p">)</span>
+</span><span id="__span-7-13"><a href="#__codelineno-7-13" id="__codelineno-7-13" name="__codelineno-7-13"></a>
+</span><span id="__span-7-14"><a href="#__codelineno-7-14" id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="n">Number</span> <span class="n">of</span> <span class="n">No</span> <span class="n">Negative</span> <span class="n">reviews</span><span class="p">:</span> <span class="mi">127890</span>
+</span><span id="__span-7-15"><a href="#__codelineno-7-15" id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="n">Number</span> <span class="n">of</span> <span class="n">No</span> <span class="n">Positive</span> <span class="n">reviews</span><span class="p">:</span> <span class="mi">35946</span>
+</span><span id="__span-7-16"><a href="#__codelineno-7-16" id="__codelineno-7-16" name="__codelineno-7-16"></a><span class="n">Number</span> <span class="n">of</span> <span class="n">both</span> <span class="n">No</span> <span class="n">Negative</span> <span class="ow">and</span> <span class="n">No</span> <span class="n">Positive</span> <span class="n">reviews</span><span class="p">:</span> <span class="mi">127</span>
+</span><span id="__span-7-17"><a href="#__codelineno-7-17" id="__codelineno-7-17" name="__codelineno-7-17"></a><span class="n">Lambdas</span> <span class="n">took</span> <span class="mf">9.64</span> <span class="n">seconds</span>
+</span></code></pre></div>
+<h3 id="another-way">Another way<a class="headerlink" href="#another-way" title="Permanent link">¶</a></h3>
+<p>Another way count items without Lambdas, and use sum to count the rows:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="c1"># without lambdas (using a mixture of notations to show you can use both)</span>
+</span><span id="__span-8-2"><a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-8-3"><a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="n">no_negative_reviews</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Negative_Review</span> <span class="o">==</span> <span class="s2">"No Negative"</span><span class="p">)</span>
+</span><span id="__span-8-4"><a href="#__codelineno-8-4" id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Number of No Negative reviews: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">no_negative_reviews</span><span class="p">))</span>
+</span><span id="__span-8-5"><a href="#__codelineno-8-5" id="__codelineno-8-5" name="__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a href="#__codelineno-8-6" id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="n">no_positive_reviews</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"Positive_Review"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"No Positive"</span><span class="p">)</span>
+</span><span id="__span-8-7"><a href="#__codelineno-8-7" id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Number of No Positive reviews: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">no_positive_reviews</span><span class="p">))</span>
+</span><span id="__span-8-8"><a href="#__codelineno-8-8" id="__codelineno-8-8" name="__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a href="#__codelineno-8-9" id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="n">both_no_reviews</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">Negative_Review</span> <span class="o">==</span> <span class="s2">"No Negative"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Positive_Review</span> <span class="o">==</span> <span class="s2">"No Positive"</span><span class="p">))</span>
+</span><span id="__span-8-10"><a href="#__codelineno-8-10" id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Number of both No Negative and No Positive reviews: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">both_no_reviews</span><span class="p">))</span>
+</span><span id="__span-8-11"><a href="#__codelineno-8-11" id="__codelineno-8-11" name="__codelineno-8-11"></a>
+</span><span id="__span-8-12"><a href="#__codelineno-8-12" id="__codelineno-8-12" name="__codelineno-8-12"></a><span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-8-13"><a href="#__codelineno-8-13" id="__codelineno-8-13" name="__codelineno-8-13"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Sum took "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s2">" seconds"</span><span class="p">)</span>
+</span><span id="__span-8-14"><a href="#__codelineno-8-14" id="__codelineno-8-14" name="__codelineno-8-14"></a>
+</span><span id="__span-8-15"><a href="#__codelineno-8-15" id="__codelineno-8-15" name="__codelineno-8-15"></a><span class="n">Number</span> <span class="n">of</span> <span class="n">No</span> <span class="n">Negative</span> <span class="n">reviews</span><span class="p">:</span> <span class="mi">127890</span>
+</span><span id="__span-8-16"><a href="#__codelineno-8-16" id="__codelineno-8-16" name="__codelineno-8-16"></a><span class="n">Number</span> <span class="n">of</span> <span class="n">No</span> <span class="n">Positive</span> <span class="n">reviews</span><span class="p">:</span> <span class="mi">35946</span>
+</span><span id="__span-8-17"><a href="#__codelineno-8-17" id="__codelineno-8-17" name="__codelineno-8-17"></a><span class="n">Number</span> <span class="n">of</span> <span class="n">both</span> <span class="n">No</span> <span class="n">Negative</span> <span class="ow">and</span> <span class="n">No</span> <span class="n">Positive</span> <span class="n">reviews</span><span class="p">:</span> <span class="mi">127</span>
+</span><span id="__span-8-18"><a href="#__codelineno-8-18" id="__codelineno-8-18" name="__codelineno-8-18"></a><span class="n">Sum</span> <span class="n">took</span> <span class="mf">0.19</span> <span class="n">seconds</span>
+</span></code></pre></div>
+<p>You may have noticed that there are 127 rows that have both "No Negative" and "No Positive" values for the columns <code>Negative_Review</code> and <code>Positive_Review</code> respectively. That means that the reviewer gave the hotel a numerical score, but declined to write either a positive or negative review. Luckily this is a small amount of rows (127 out of 515738, or 0.02%), so it probably won't skew our model or results in any particular direction, but you might not have expected a data set of reviews to have rows with no reviews, so it's worth exploring the data to discover rows like this.</p>
+<p>Now that you have explored the dataset, in the next lesson you will filter the data and add some sentiment analysis.</p>
+<hr/>
+<h3 id="challenge">🚀Challenge<a class="headerlink" href="#challenge" title="Permanent link">¶</a></h3>
+<p>This lesson demonstrates, as we saw in previous lessons, how critically important it is to understand your data and its foibles before performing operations on it. Text-based data, in particular, bears careful scrutiny. Dig through various text-heavy datasets and see if you can discover areas that could introduce bias or skewed sentiment into a model. </p>
+<h3 id="post-lecture-quiz"><a href="https://gray-sand-07a10f403.1.azurestaticapps.net/quiz/38/">Post-lecture quiz</a><a class="headerlink" href="#post-lecture-quiz" title="Permanent link">¶</a></h3>
+<h3 id="review-self-study">Review &amp; Self Study<a class="headerlink" href="#review-self-study" title="Permanent link">¶</a></h3>
+<p>Take <a href="https://docs.microsoft.com/learn/paths/explore-natural-language-processing/?WT.mc_id=academic-77952-leestott">this Learning Path on NLP</a> to discover tools to try when building speech and text-heavy models.</p>
+<h3 id="assignment">Assignment<a class="headerlink" href="#assignment" title="Permanent link">¶</a></h3>
+<p><a href="assignment.md">NLTK</a></p></div>
+<aside class="md-source-file">
+<span class="md-source-file__fact">
+<span class="md-icon" title="Last update">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">December 8, 2024 14:20:29</span>
+</span>
+</aside>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Translation Sentiment" class="md-footer__link md-footer__link--prev" href="../3-Translation-Sentiment/">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</div>
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Previous
+              </span>
+<div class="md-ellipsis">
+                Translation Sentiment
+              </div>
+</div>
+</a>
+<a aria-label="Next: Hotel Reviews 2" class="md-footer__link md-footer__link--next" href="../5-Hotel-Reviews-2/">
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Next
+              </span>
+<div class="md-ellipsis">
+                Hotel Reviews 2
+              </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/gitmichaelqiu" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../../../assets/javascripts/bundle.56dfad97.min.js"></script>
+<script src="../../../../javascripts/katex.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+</body>
+</html>
