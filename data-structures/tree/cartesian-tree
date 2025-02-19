@@ -1,0 +1,56 @@
+---
+comments: true
+---
+
+## Time Complexity:
+
+- Build: $O(n)$
+
+## Template
+
+```cpp
+template<typename Type>
+class cartesian_tree { 
+private:
+	vector<Type> lson, rson, stk;
+	int top;
+public:
+	cartesian_tree(vector<Type> arr, const int &sz) {
+		top = 1;
+		lson.resize(sz+5, Type());
+		rson.resize(sz+5, Type());
+		stk.resize(sz+5, Type());
+		
+		for (int i=1; i<=sz; ++i) {
+			int k = top;
+			while (k > 0 && arr[stk[k]] > arr[i]) {
+				--k;
+			}
+			
+			if (k) rson[stk[k]] = i;
+			if (k < top) lson[i] = stk[k+1];
+			stk[++k] = i;
+			top = k;
+		}
+	}
+	
+	inline Type ls(const int &x) {
+		return lson[x];
+	}
+	inline Type rs(const int &x) {
+		return rson[x];
+	}
+	inline Type root() {
+		return stk[top];
+	}
+};
+```
+
+## Usage
+
+```cpp
+cartesian_tree<int> ct(v, n);
+int l = ct.ls(1);
+int r = ct.rs(2);
+int rt = ct.root();
+```

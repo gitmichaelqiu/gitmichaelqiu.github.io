@@ -148,10 +148,10 @@
         </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../../../../school-notes/junior-notes/geography/">
+<a class="md-tabs__link" href="../../../../academic-notes/calculus/limit/">
           
   
-  School Notes
+  Academic Notes
 
         </a>
 </li>
@@ -515,34 +515,48 @@
 <input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
 <span class="md-ellipsis">
-    School Notes
+    Academic Notes
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
 <nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_5">
 <span class="md-nav__icon md-icon"></span>
-            School Notes
+            Academic Notes
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" id="__nav_5_1" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
 <span class="md-ellipsis">
-    初中
+    Calculus
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
 <nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
 <label class="md-nav__title" for="__nav_5_1">
 <span class="md-nav__icon md-icon"></span>
-            初中
+            Calculus
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../../school-notes/junior-notes/geography/">
+<a class="md-nav__link" href="../../../../academic-notes/calculus/limit/">
 <span class="md-ellipsis">
-    初中地理总结
+    Limit
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../academic-notes/calculus/differentiation/">
+<span class="md-ellipsis">
+    Differentiation
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../academic-notes/calculus/fundamental-calculus/">
+<span class="md-ellipsis">
+    Fundamental Calculus
   </span>
 </a>
 </li>
@@ -553,22 +567,63 @@
 <input class="md-nav__toggle md-toggle" id="__nav_5_2" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
 <span class="md-ellipsis">
-    高中
+    Chinese
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
 <nav aria-expanded="false" aria-labelledby="__nav_5_2_label" class="md-nav" data-md-level="2">
 <label class="md-nav__title" for="__nav_5_2">
 <span class="md-nav__icon md-icon"></span>
+            Chinese
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_2_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_2_1" id="__nav_5_2_1_label" tabindex="0">
+<span class="md-ellipsis">
+    初中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_2_1_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_5_2_1">
+<span class="md-nav__icon md-icon"></span>
+            初中
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../academic-notes/chinese/junior-notes/geography/">
+<span class="md-ellipsis">
+    初中地理总结
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_2_2" id="__nav_5_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    高中
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_2_2_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_5_2_2">
+<span class="md-nav__icon md-icon"></span>
             高中
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../../school-notes/senior-high-school/sets/">
+<a class="md-nav__link" href="../../../../academic-notes/chinese/senior-high-school/sets/">
 <span class="md-ellipsis">
     集合
   </span>
 </a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -1622,7 +1677,7 @@
 </blockquote>
 <p>The idea is simple - we divide the area of intersection between two figures by the area of their union. For two identical areas, IoU would be 1, while for completely disjointed areas it will be 0. Otherwise it will vary from 0 to 1. We typically only consider those bounding boxes for which IoU is over a certain value.</p>
 <h4 id="average-precision">Average Precision<a class="headerlink" href="#average-precision" title="Permanent link">¶</a></h4>
-<p>Suppose we want to measure how well a given class of objects $C$ is recognized. To measure it, we use <strong>Average Precision</strong> metrics, which is calculated as follows:</p>
+<p>Suppose we want to measure how well a given class of objects <span class="arithmatex">\(C\)</span> is recognized. To measure it, we use <strong>Average Precision</strong> metrics, which is calculated as follows:</p>
 <ol>
 <li>Consider Precision-Recall curve shows the accuracy depending on a detection threshold value (from 0 to 1).</li>
 <li>Depending on the threshold, we will get more or less objects detected in the image, and different values of precision and recall.</li>
@@ -1632,18 +1687,18 @@
 <blockquote>
 <p><em>Image from <a href="http://github.com/shwars/NeuroWorkshop">NeuroWorkshop</a></em></p>
 </blockquote>
-<p>The average Precision for a given class $C$ is the area under this curve. More precisely, Recall axis is typically divided into 10 parts, and Precision is averaged over all those points:</p>
-<p>$$
+<p>The average Precision for a given class <span class="arithmatex">\(C\)</span> is the area under this curve. More precisely, Recall axis is typically divided into 10 parts, and Precision is averaged over all those points:</p>
+<div class="arithmatex">\[
 AP = {1\over11}\sum_{i=0}^{10}\mbox{Precision}(\mbox{Recall}={i\over10})
-$$</p>
+\]</div>
 <h4 id="ap-and-iou">AP and IoU<a class="headerlink" href="#ap-and-iou" title="Permanent link">¶</a></h4>
-<p>We shall consider only those detections, for which IoU is above a certain value. For example, in PASCAL VOC dataset typically $\mbox{IoU Threshold} = 0.5$ is assumed, while in COCO AP is measured for different values of $\mbox{IoU Threshold}$.</p>
+<p>We shall consider only those detections, for which IoU is above a certain value. For example, in PASCAL VOC dataset typically <span class="arithmatex">\(\mbox{IoU Threshold} = 0.5\)</span> is assumed, while in COCO AP is measured for different values of <span class="arithmatex">\(\mbox{IoU Threshold}\)</span>.</p>
 <p><img src="https://github.com/shwars/NeuroWorkshop/raw/master/images/ObjDetectionPrecisionRecallIoU.png"/></p>
 <blockquote>
 <p><em>Image from <a href="http://github.com/shwars/NeuroWorkshop">NeuroWorkshop</a></em></p>
 </blockquote>
 <h4 id="mean-average-precision-map">Mean Average Precision - mAP<a class="headerlink" href="#mean-average-precision-map" title="Permanent link">¶</a></h4>
-<p>The main metric for Object Detection is called <strong>Mean Average Precision</strong>, or <strong>mAP</strong>. It is the value of Average Precision, average across all object classes, and sometimes also over $\mbox{IoU Threshold}$. In more detail, the process of calculating <strong>mAP</strong> is described
+<p>The main metric for Object Detection is called <strong>Mean Average Precision</strong>, or <strong>mAP</strong>. It is the value of Average Precision, average across all object classes, and sometimes also over <span class="arithmatex">\(\mbox{IoU Threshold}\)</span>. In more detail, the process of calculating <strong>mAP</strong> is described
 <a href="https://medium.com/@timothycarlen/understanding-the-map-evaluation-metric-for-object-detection-a07fe6962cf3">in this blog post</a>), and also <a href="https://gist.github.com/tarlen5/008809c3decf19313de216b9208f3734">here with code samples</a>.</p>
 <h3 id="different-object-detection-approaches">Different Object Detection Approaches<a class="headerlink" href="#different-object-detection-approaches" title="Permanent link">¶</a></h3>
 <p>There are two broad classes of object detection algorithms:</p>
@@ -1677,8 +1732,8 @@ $$</p>
 <p>This algorithm is even faster than Faster R-CNN. The main idea is the following:</p>
 <ol>
 <li>We extract features using ResNet-101</li>
-<li>Features are processed by <strong>Position-Sensitive Score Map</strong>. Each object from $C$ classes is divided by $k\times k$ regions, and we are training to predict parts of objects.</li>
-<li>For each part from $k\times k$ regions all networks vote for object classes, and the object class with maximum vote is selected.</li>
+<li>Features are processed by <strong>Position-Sensitive Score Map</strong>. Each object from <span class="arithmatex">\(C\)</span> classes is divided by <span class="arithmatex">\(k\times k\)</span> regions, and we are training to predict parts of objects.</li>
+<li>For each part from <span class="arithmatex">\(k\times k\)</span> regions all networks vote for object classes, and the object class with maximum vote is selected.</li>
 </ol>
 <p><img alt="r-fcn image" src="images/r-fcn.png"/></p>
 <blockquote>
@@ -1687,8 +1742,8 @@ $$</p>
 <h4 id="yolo-you-only-look-once">YOLO - You Only Look Once<a class="headerlink" href="#yolo-you-only-look-once" title="Permanent link">¶</a></h4>
 <p>YOLO is a realtime one-pass algorithm. The main idea is the following:</p>
 <ul>
-<li>Image is divided into $S\times S$ regions</li>
-<li>For each region, <strong>CNN</strong> predicts $n$ possible objects, <em>bounding box</em> coordinates and <em>confidence</em>=<em>probability</em> * IoU.</li>
+<li>Image is divided into <span class="arithmatex">\(S\times S\)</span> regions</li>
+<li>For each region, <strong>CNN</strong> predicts <span class="arithmatex">\(n\)</span> possible objects, <em>bounding box</em> coordinates and <em>confidence</em>=<em>probability</em> * IoU.</li>
 </ul>
 <p><img alt="YOLO" src="images/yolo.png"/></p>
 <blockquote>
@@ -1730,7 +1785,7 @@ $$</p>
 <span class="md-icon" title="Last update">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">December 29, 2024 15:11:00</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">February 19, 2025 15:07:12</span>
 </span>
 </aside>
 </article>
@@ -1767,8 +1822,7 @@ $$</p>
 </div>
 <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
 <script src="../../../../assets/javascripts/bundle.56dfad97.min.js"></script>
-<script src="../../../../javascripts/katex.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+<script src="../../../../javascripts/mathjax.js"></script>
+<script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
 </body>
 </html>
