@@ -467,7 +467,7 @@
                 const apps = [
                     { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'resources/DesktopRenamer.png' },
                     { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'resources/OptClicker.png' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/gSpaceSwitcher.png' }
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/SpaceSwitcher.png' }
                 ];
 
                 // Three.js variables
@@ -765,51 +765,61 @@
                     animate();
                 };
 
-                const hoverApp = (appName) => {
+const hoverApp = (appName) => {
                     const index = appName === 'DesktopRenamer' ? 0 : appName === 'OptClick' ? 1 : 2;
                     
-                    // 1. Center the selected icon and bring it forward
-                    gsap.to(icons[index].position, { x: 0, y: 0, z: 3.5, duration: 0.6, ease: "power3.out" });
-                    gsap.to(icons[index].scale, { x: 1.3, y: 1.3, z: 1.3, duration: 0.6, ease: "back.out(1.2)" });
+                    // 1. Center the selected icon and bring it forward strongly
+                    // Add a slight tilt based on mouse position in future, but for now fixed dramatic angle
+                    gsap.to(icons[index].position, { x: 0, y: 0, z: 4, duration: 0.6, ease: "expo.out" });
+                    gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
+                    // Rotate to face perfectly forward but with slight dynamic feel
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
-                    // 2. Activate Spotlight & Volumetric Beam
-                    // Point light at the new center position
-                    gsap.to(focusLight, { intensity: 5, duration: 0.4 });
-                    focusLight.target.position.set(0, 0, 3.5); 
+                    // 2. Activate Spotlight & Volumetric Beam (High Stress)
+                    gsap.to(focusLight, { intensity: 8, angle: Math.PI/5, duration: 0.4 });
+                    focusLight.target.position.set(0, 0, 4); 
                     
-                    // Show Beam
-                    lightBeam.lookAt(0, 0, 3.5); // Point beam at center
-                    gsap.to(lightBeam.material, { opacity: 0.15, duration: 0.4 });
+                    // Beam visibility
+                    lightBeam.lookAt(0, 0, 4); 
+                    gsap.to(lightBeam.material, { opacity: 0.3, duration: 0.4 }); // brighter beam
 
-                    // 3. Glow effect on selected icon
+                    // 3. Material Stress (Glow)
                     if(icons[index].material[1].emissive) {
-                        icons[index].material[1].emissive.setHex(0x002FA7);
-                        gsap.to(icons[index].material[1], { emissiveIntensity: 0.8, duration: 0.4 });
+                        icons[index].material[1].emissive.setHex(0x0044FF); // Bright Blue
+                        gsap.to(icons[index].material[1], { emissiveIntensity: 1.2, duration: 0.4 });
                     }
-                    gsap.to(icons[index].material[0], { opacity: 1, duration: 0.4 });
+                    gsap.to(icons[index].material[0], { opacity: 1, duration: 0.4 }); // Full opacity face
 
-                    // 4. Move other icons to the background (Left and Right)
-                    let sideIndex = 0;
+                    // 4. Move other icons to the background preserving sequence
                     icons.forEach((icon, i) => {
                         if (i !== index) {
-                            // Calculate side positions: Left (-6) and Right (6) in the back (-4)
-                            const sideX = sideIndex === 0 ? -6 : 6;
-                            gsap.to(icon.position, { x: sideX, y: 0, z: -4, duration: 0.6, ease: "power3.out" });
-                            gsap.to(icon.scale, { x: 0.8, y: 0.8, z: 0.8, duration: 0.6 });
-                            gsap.to(icon.rotation, { x: 0, y: sideIndex === 0 ? 0.5 : -0.5, z: 0, duration: 0.6 }); // Tilt inward slightly
+                            // Calculate Side Position based on index order to prevent swapping/jumping
+                            // If the icon index is less than selected, it goes Left.
+                            // If the icon index is greater than selected, it goes Right.
+                            let sideX = 0;
                             
-                            // Dim faces
-                            gsap.to(icon.material[0], { opacity: 0.1, duration: 0.4 });
-                            // Darken sides
-                            if(icon.material[1].color) {
-                                gsap.to(icon.material[1].color, { r: 0, g: 0, b: 0, duration: 0.4 });
+                            if (i < index) {
+                                // To the Left
+                                // e.g. if index is 2, i=0 goes far left, i=1 goes mid left
+                                sideX = -6 - ((index - i - 1) * 2.5); 
+                            } else {
+                                // To the Right
+                                // e.g. if index is 0, i=1 goes mid right, i=2 goes far right
+                                sideX = 6 + ((i - index - 1) * 2.5);
                             }
+
+                            gsap.to(icon.position, { x: sideX, y: 0, z: -5, duration: 0.6, ease: "power3.out" });
+                            gsap.to(icon.scale, { x: 0.6, y: 0.6, z: 0.6, duration: 0.6 });
+                            // Rotate inward to look at center
+                            const rotY = i < index ? 0.5 : -0.5;
+                            gsap.to(icon.rotation, { x: 0, y: rotY, z: 0, duration: 0.6 });
+                            
+                            // Dim faces aggressively
+                            gsap.to(icon.material[0], { opacity: 0.05, duration: 0.4 });
+                            // Darken sides
                             if(icon.material[1].emissive) {
                                 gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
                             }
-                            
-                            sideIndex++;
                         }
                     });
                 };
@@ -820,22 +830,20 @@
                     gsap.to(lightBeam.material, { opacity: 0, duration: 0.5 });
 
                     icons.forEach((icon, i) => {
-                        gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "power2.out" });
+                        gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" }); // Elastic bounce back
                         // Return to base positions
                         gsap.to(icon.position, { 
                             x: basePositions[i].x, 
                             y: basePositions[i].y, 
                             z: basePositions[i].z, 
-                            duration: 0.5 
+                            duration: 0.6,
+                            ease: "power2.out"
                         });
-                        // Reset rotation to near zero (animate loop handles idle wobble)
-                        gsap.to(icon.rotation, { x: 0, y: 0, z: 0, duration: 0.5 });
+                        // Reset rotation
+                        gsap.to(icon.rotation, { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2, z: 0, duration: 0.6 });
                         gsap.to(icon.material[0], { opacity: 1, duration: 0.4 });
                         
-                        // Reset side material color
-                        if(icon.material[1].color) {
-                            gsap.to(icon.material[1].color, { r: 0, g: 0.07, b: 0.2, duration: 0.4 }); // Default dark blue
-                        }
+                        // Reset side material
                         if(icon.material[1].emissive) {
                             icon.material[1].emissive.setHex(0x000000);
                             gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
