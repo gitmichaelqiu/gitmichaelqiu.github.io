@@ -780,19 +780,15 @@
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
                     // 2. Show Tech Halo (Lines and Stuff)
-                    effectGroup.visible = true;
-                    effectGroup.position.set(0, 0, 3.8); // Position behind the centered icon
-                    effectGroup.scale.set(0, 0, 0); // Start small
-                    gsap.to(effectGroup.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "back.out(1.5)" });
 
                     // 3. Material Stress (Glow & Brightness)
                     if(icons[index].material[1].emissive) {
                         icons[index].material[1].emissive.setHex(0x0044FF); 
-                        gsap.to(icons[index].material[1], { emissiveIntensity: 1.5, duration: 0.4 });
+                        gsap.to(icons[index].material[1], { emissiveIntensity: 0.1, opacity: 0.2});
                     }
                     if(icons[index].material[0].emissive) {
                          icons[index].material[0].emissive.setHex(0xFFFFFF);
-                         gsap.to(icons[index].material[0], { emissiveIntensity: 0.2, opacity: 1, duration: 0.4 });
+                         gsap.to(icons[index].material[0], { emissiveIntensity: 0.05, opacity: 0.2});
                     }
 
                     // 4. Move other icons to the background preserving sequence
