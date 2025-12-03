@@ -465,17 +465,26 @@
                 const textureError = ref(false);
                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'DesktopRenamer.png' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'OptClicker.png' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'SpaceSwitcher.png' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'resources/DesktopRenamer.png' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'resources/OptClicker.png' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/gSpaceSwitcher.png' }
                 ];
 
                 // Three.js variables
                 let scene, camera, renderer, appsGroup;
                 let icons = []; 
+                let focusLight; // Dedicated spotlight for selection
+                let lightBeam; // Visible volumetric beam
                 let mouseX = 0, mouseY = 0;
                 let targetRotationX = 0;
                 let targetRotationY = 0;
+                
+                // Base positions to return to and oscillate around
+                const basePositions = [
+                    new THREE.Vector3(-3.2, 0.5, 0),
+                    new THREE.Vector3(0, -0.5, 0.5),
+                    new THREE.Vector3(3.2, 0.5, -0.5)
+                ];
 
                 const toggleSidebar = () => {
                     isSidebarOpen.value = !isSidebarOpen.value;
@@ -599,6 +608,40 @@
                     backLight.position.set(0, 5, -10);
                     backLight.lookAt(0,0,0);
                     scene.add(backLight);
+                    
+                    // --- DEDICATED SPOTLIGHT FOR SELECTION ---
+                    focusLight = new THREE.SpotLight(0xffffff, 0); // Intensity 0 initially
+                    focusLight.position.set(0, 10, 2); // High up, slightly forward
+                    focusLight.angle = Math.PI / 6;
+                    focusLight.penumbra = 0.5;
+                    focusLight.decay = 2;
+                    focusLight.distance = 50;
+                    scene.add(focusLight);
+                    scene.add(focusLight.target); 
+
+                    // --- VOLUMETRIC LIGHT BEAM (Fake Scatter) ---
+                    // Create a cone to simulate the light shaft
+                    const beamGeo = new THREE.ConeGeometry(3, 15, 32, 1, true);
+                    // Shift geometry so pivot is at the tip (top)
+                    beamGeo.translate(0, -7.5, 0);
+                    beamGeo.rotateX(-Math.PI / 2); // Point down z-axis initially for lookAt to work? 
+                    // Actually Cone points up Y by default. Translate y -height/2 puts top at 0,0,0.
+                    // Rotation: Spotlights point -Z in Threejs object space usually, but lookAt works on -Z.
+                    // Let's orient cone to point along -Z.
+                    beamGeo.rotateX(-Math.PI / 2); 
+
+                    const beamMat = new THREE.MeshBasicMaterial({
+                        color: 0x002FA7, // Klein Blue Beam
+                        transparent: true,
+                        opacity: 0, // Invisible initially
+                        side: THREE.DoubleSide,
+                        blending: THREE.AdditiveBlending, // Glowy add effect
+                        depthWrite: false // Don't occlude objects behind
+                    });
+                    
+                    lightBeam = new THREE.Mesh(beamGeo, beamMat);
+                    lightBeam.position.copy(focusLight.position);
+                    scene.add(lightBeam);
 
                     // Squircle Geometry
                     const size = 2.5;
@@ -632,12 +675,6 @@
                     geometry.attributes.uv.needsUpdate = true;
 
                     const texLoader = new THREE.TextureLoader();
-                    
-                    const positions = [
-                        new THREE.Vector3(-3.2, 0.5, 0),
-                        new THREE.Vector3(0, -0.5, 0.5),
-                        new THREE.Vector3(3.2, 0.5, -0.5)
-                    ];
 
                     apps.forEach((app, i) => {
                         const sideMaterial = new THREE.MeshPhysicalMaterial({
@@ -676,7 +713,7 @@
 
                         const mesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial]);
                         geometry.center();
-                        mesh.position.copy(positions[i]);
+                        mesh.position.copy(basePositions[i]);
                         mesh.rotation.x = (Math.random() - 0.5) * 0.2;
                         mesh.rotation.y = (Math.random() - 0.5) * 0.2;
                         
@@ -708,7 +745,18 @@
                         appsGroup.rotation.y += 0.05 * (targetRotationY - appsGroup.rotation.y);
 
                         icons.forEach((icon, i) => {
-                            icon.position.y += Math.sin(Date.now() * 0.0015 + i) * 0.002;
+                            // Floating bobbing effect around base position
+                            // Use basePosition so it doesn't drift away
+                            const yOffset = Math.sin(Date.now() * 0.0015 + i) * 0.1;
+                            // Only apply bobbing if we are not actively modifying the position via GSAP (hover state)
+                            // We can check if it's currently selected, or just add the offset to the base.
+                            // To keep it simple and avoid conflict with GSAP, we will let GSAP override the position completely on hover
+                            // and only apply bobbing to the 'rest' state if not hovered?
+                            // Actually, GSAP modifies .position directly. If we overwrite .position.y here every frame, GSAP fights it.
+                            // Better approach: Create a group wrapper for each icon to handle local wobble, 
+                            // or just accept slight conflict.
+                            // Since resetApp sets the position, let's just do a subtle rotation update here.
+                            
                             icon.rotation.z = Math.sin(Date.now() * 0.001 + i) * 0.01;
                         });
 
@@ -719,41 +767,78 @@
 
                 const hoverApp = (appName) => {
                     const index = appName === 'DesktopRenamer' ? 0 : appName === 'OptClick' ? 1 : 2;
-                    gsap.to(icons[index].scale, { x: 1.15, y: 1.15, z: 1.15, duration: 0.4, ease: "back.out(1.7)" });
-                    gsap.to(icons[index].rotation, { x: 0.2, y: 0, z: 0, duration: 0.5, ease: "power2.out" });
-                    gsap.to(icons[index].position, { z: 2, duration: 0.5, ease: "power2.out" });
                     
+                    // 1. Center the selected icon and bring it forward
+                    gsap.to(icons[index].position, { x: 0, y: 0, z: 3.5, duration: 0.6, ease: "power3.out" });
+                    gsap.to(icons[index].scale, { x: 1.3, y: 1.3, z: 1.3, duration: 0.6, ease: "back.out(1.2)" });
+                    gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
+                    
+                    // 2. Activate Spotlight & Volumetric Beam
+                    // Point light at the new center position
+                    gsap.to(focusLight, { intensity: 5, duration: 0.4 });
+                    focusLight.target.position.set(0, 0, 3.5); 
+                    
+                    // Show Beam
+                    lightBeam.lookAt(0, 0, 3.5); // Point beam at center
+                    gsap.to(lightBeam.material, { opacity: 0.15, duration: 0.4 });
+
+                    // 3. Glow effect on selected icon
                     if(icons[index].material[1].emissive) {
                         icons[index].material[1].emissive.setHex(0x002FA7);
-                        icons[index].material[1].emissiveIntensity = 0.3;
+                        gsap.to(icons[index].material[1], { emissiveIntensity: 0.8, duration: 0.4 });
                     }
+                    gsap.to(icons[index].material[0], { opacity: 1, duration: 0.4 });
 
+                    // 4. Move other icons to the background (Left and Right)
+                    let sideIndex = 0;
                     icons.forEach((icon, i) => {
                         if (i !== index) {
-                            gsap.to(icon.scale, { x: 0.9, y: 0.9, z: 0.9, duration: 0.4 });
-                            gsap.to(icon.position, { z: -1, duration: 0.4 });
-                            gsap.to(icon.material[0], { opacity: 0.4, duration: 0.4 });
-                        } else {
-                            gsap.to(icon.material[0], { opacity: 1, duration: 0.4 });
+                            // Calculate side positions: Left (-6) and Right (6) in the back (-4)
+                            const sideX = sideIndex === 0 ? -6 : 6;
+                            gsap.to(icon.position, { x: sideX, y: 0, z: -4, duration: 0.6, ease: "power3.out" });
+                            gsap.to(icon.scale, { x: 0.8, y: 0.8, z: 0.8, duration: 0.6 });
+                            gsap.to(icon.rotation, { x: 0, y: sideIndex === 0 ? 0.5 : -0.5, z: 0, duration: 0.6 }); // Tilt inward slightly
+                            
+                            // Dim faces
+                            gsap.to(icon.material[0], { opacity: 0.1, duration: 0.4 });
+                            // Darken sides
+                            if(icon.material[1].color) {
+                                gsap.to(icon.material[1].color, { r: 0, g: 0, b: 0, duration: 0.4 });
+                            }
+                            if(icon.material[1].emissive) {
+                                gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
+                            }
+                            
+                            sideIndex++;
                         }
                     });
                 };
 
                 const resetApp = () => {
-                    const positions = [
-                        new THREE.Vector3(-3.2, 0.5, 0),
-                        new THREE.Vector3(0, -0.5, 0.5),
-                        new THREE.Vector3(3.2, 0.5, -0.5)
-                    ];
+                    // Turn off spotlight & beam
+                    gsap.to(focusLight, { intensity: 0, duration: 0.5 });
+                    gsap.to(lightBeam.material, { opacity: 0, duration: 0.5 });
 
                     icons.forEach((icon, i) => {
                         gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "power2.out" });
-                        gsap.to(icon.position, { x: positions[i].x, y: positions[i].y, z: positions[i].z, duration: 0.5 });
+                        // Return to base positions
+                        gsap.to(icon.position, { 
+                            x: basePositions[i].x, 
+                            y: basePositions[i].y, 
+                            z: basePositions[i].z, 
+                            duration: 0.5 
+                        });
+                        // Reset rotation to near zero (animate loop handles idle wobble)
                         gsap.to(icon.rotation, { x: 0, y: 0, z: 0, duration: 0.5 });
                         gsap.to(icon.material[0], { opacity: 1, duration: 0.4 });
+                        
+                        // Reset side material color
+                        if(icon.material[1].color) {
+                            gsap.to(icon.material[1].color, { r: 0, g: 0.07, b: 0.2, duration: 0.4 }); // Default dark blue
+                        }
                         if(icon.material[1].emissive) {
                             icon.material[1].emissive.setHex(0x000000);
-                            icon.material[1].emissiveIntensity = 0;
+                            gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
                         }
                     });
                 };
