@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michael Qiu | Workspace Architect</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --klein-blue: #002FA7;
+            --klein-blue-glow: rgba(0, 47, 167, 0.6);
+            --neon-accent: #3b82f6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030303;
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor */
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-display { font-family: 'Syncopate', sans-serif; }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+        }
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        body:hover .cursor-outline {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Grain Texture */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9998;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.4;
+        }
+
+        /* Marquee Animation */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+        .marquee-content.reverse {
+            animation-direction: reverse;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Glitch & Text Effects */
+        .outline-text {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+        }
+        
+        .glitch-wrapper { position: relative; }
+        .glitch-wrapper::before, .glitch-wrapper::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #030303;
+        }
+        .glitch-wrapper::before {
+            left: 2px; text-shadow: -1px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch-wrapper::after {
+            left: -2px; text-shadow: -1px 0 #00fff9;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(3px, 9999px, 11px, 0); } 20% { clip: rect(68px, 9999px, 99px, 0); }
+            40% { clip: rect(13px, 9999px, 86px, 0); } 60% { clip: rect(90px, 9999px, 5px, 0); }
+            80% { clip: rect(45px, 9999px, 32px, 0); } 100% { clip: rect(22px, 9999px, 76px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 92px, 0); } 20% { clip: rect(2px, 9999px, 15px, 0); }
+            40% { clip: rect(40px, 9999px, 33px, 0); } 60% { clip: rect(12px, 9999px, 58px, 0); }
+            80% { clip: rect(87px, 9999px, 99px, 0); } 100% { clip: rect(35px, 9999px, 12px, 0); }
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card:hover {
+            border-color: var(--klein-blue);
+            background: rgba(0, 47, 167, 0.05);
+        }
+
+        /* Sidebar Transition */
+        .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
+
+        /* Loader */
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="relative min-h-screen selection:bg-[#002FA7] selection:text-white">
+        
+        <!-- Custom Cursor -->
+        <div class="cursor-dot hidden md:block"></div>
+        <div class="cursor-outline hidden md:block"></div>
+
+        <!-- Visual Noise -->
+        <div class="grain-overlay"></div>
+
+        <!-- Loader -->
+        <div class="loader" ref="loader">
+            <div class="flex items-end gap-1 mb-4">
+                <div class="w-2 h-8 bg-white animate-bounce" style="animation-delay: 0s"></div>
+                <div class="w-2 h-12 bg-[var(--klein-blue)] animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-2 h-6 bg-white animate-bounce" style="animation-delay: 0.2s"></div>
+            </div>
+            <div class="font-mono text-sm tracking-[0.3em] text-white">SYSTEM_BOOT</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="fixed top-0 left-0 w-full z-50 px-8 py-8 flex justify-between items-center mix-blend-difference">
+            <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none">
+                <div class="relative w-10 h-10 border border-white/30 rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden bg-black/50 backdrop-blur-sm group-hover:border-[var(--klein-blue)] transition-colors">
+                    <span class="w-4 h-0.5 bg-white transition-all duration-300 group-hover:w-6"></span>
+                    <span class="w-6 h-0.5 bg-white transition-all duration-300 group-hover:w-4"></span>
+                </div>
+                <span class="font-mono text-xs tracking-widest hidden md:block opacity-70 group-hover:opacity-100 group-hover:text-[var(--klein-blue)] transition-all">MENU</span>
+            </button>
+            <div class="font-display font-bold text-xl tracking-tighter">MQ<span class="text-[var(--klein-blue)]">.</span></div>
+        </nav>
+
+        <!-- Sidebar -->
+        <transition name="sidebar">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-12 md:px-24 shadow-2xl">
+                <!-- Background decoration for sidebar -->
+                <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+                    <div class="absolute top-1/4 right-0 w-64 h-64 border border-[var(--klein-blue)] rounded-full translate-x-1/2"></div>
+                    <div class="absolute bottom-1/4 left-0 w-96 h-96 border border-white rounded-full -translate-x-1/2 opacity-20"></div>
+                </div>
+
+                <div class="flex flex-col gap-6 relative z-10">
+                    <div class="font-mono text-xs text-gray-500 mb-4">NAVIGATION</div>
+                    <a v-for="(item, index) in ['HOME', 'PROFILE', 'COLLECTIONS']" 
+                       :key="item"
+                       :href="'#' + item.toLowerCase()" 
+                       @click="toggleSidebar" 
+                       class="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-600 hover:to-[var(--klein-blue)] transition-all duration-500 transform hover:translate-x-6 hover:tracking-widest cursor-none"
+                       style="-webkit-text-stroke: 1px rgba(255,255,255,0.1);">
+                       <span class="text-sm font-mono absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 text-[var(--klein-blue)]">0{{index+1}}</span>
+                       {{ item }}
+                    </a>
+                </div>
+                
+                <div class="absolute bottom-12 left-12 md:left-24 font-mono text-[10px] text-gray-600 flex gap-8">
+                    <div>
+                        <p class="text-white mb-2">CONTACT</p>
+                        <p>hello@michaelqiu.com</p>
+                    </div>
+                    <div>
+                        <p class="text-white mb-2">SOCIAL</p>
+                        <p>@michaelqiu</p>
+                    </div>
+                </div>
+            </aside>
+        </transition>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Hero Section -->
+            <section id="home" class="relative w-full h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden">
+                <!-- Abstract Background Shapes -->
+                <div class="absolute top-1/4 right-[10%] w-[30vw] h-[30vw] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]"></div>
+                <div class="absolute top-1/4 right-[10%] w-[28vw] h-[28vw] border border-[var(--klein-blue)]/20 rounded-full animate-[spin_40s_linear_infinite_reverse]"></div>
+                <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-[var(--klein-blue)]/10 to-transparent"></div>
+                
+                <!-- Floating geometric elements -->
+                <svg class="absolute top-20 right-20 w-24 h-24 opacity-20 animate-pulse" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" stroke="white" stroke-width="1" fill="none" />
+                    <line x1="50" y1="10" x2="50" y2="90" stroke="white" stroke-width="1" />
+                    <line x1="10" y1="50" x2="90" y2="50" stroke="white" stroke-width="1" />
+                </svg>
+
+                <div class="z-10 max-w-7xl mx-auto w-full">
+                    <div class="flex items-center gap-4 mb-6 reveal-text">
+                        <div class="w-12 h-[1px] bg-[var(--klein-blue)]"></div>
+                        <p class="font-mono text-[var(--klein-blue)] tracking-[0.2em] text-xs">PORTFOLIO V2.0</p>
+                    </div>
+                    
+                    <h1 class="text-7xl md:text-[10vw] font-black mb-4 tracking-tighter leading-[0.85] mix-blend-screen reveal-text">
+                        <div class="glitch-wrapper" data-text="MICHAEL">MICHAEL</div>
+                        <div class="outline-text pl-12 md:pl-24">QIU</div>
+                    </h1>
+                    
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mt-12 border-t border-white/10 pt-8 reveal-text">
+                        <div class="max-w-md">
+                            <p class="text-gray-400 font-light leading-relaxed text-lg">
+                                Workspace Architect & Digital Craftsman. <br>
+                                Designing utilities that reshape the <span class="text-white font-bold">macOS ecosystem</span>.
+                            </p>
+                        </div>
+                        <div class="mt-8 md:mt-0 flex gap-4">
+                            <div class="font-mono text-xs text-right text-gray-500">
+                                SCROLL TO EXPLORE<br>
+                                ↓↓↓
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Marquee Strip at Bottom -->
+                <div class="absolute bottom-12 w-full -rotate-1 opacity-50 pointer-events-none mix-blend-overlay">
+                    <div class="marquee-container bg-[var(--klein-blue)]/20 py-2 border-y border-[var(--klein-blue)]/30 backdrop-blur-sm">
+                        <div class="marquee-content font-mono text-xs tracking-[0.5em] text-[var(--klein-blue)]">
+                            WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY // WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY //
+                            WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY // WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY //
+                        </div>
+                        <div class="marquee-content font-mono text-xs tracking-[0.5em] text-[var(--klein-blue)]">
+                            WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY // WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY //
+                            WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY // WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY //
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="w-full py-32 px-6 md:px-12 bg-[#050505] relative border-t border-white/5">
+                <!-- Decor Grid -->
+                <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none"></div>
+
+                <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
+                    <!-- Text Side -->
+                    <div class="lg:col-span-7">
+                        <h2 class="font-display text-4xl md:text-6xl font-bold mb-12">
+                            <span class="text-[var(--klein-blue)]">/</span> PROFILE
+                        </h2>
+                        
+                        <div class="space-y-12">
+                            <p class="text-2xl md:text-3xl font-light leading-snug text-gray-200">
+                                I build digital products that feel inevitable. My work sits at the intersection of rigorous code and fluid design.
+                            </p>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="glass-card p-6 rounded-none border-l-2 border-l-[var(--klein-blue)]">
+                                    <h4 class="font-mono text-xs text-gray-500 mb-2">SPECIALTY</h4>
+                                    <p class="font-bold">System Utilities</p>
+                                </div>
+                                <div class="glass-card p-6 rounded-none border-l-2 border-l-white/20">
+                                    <h4 class="font-mono text-xs text-gray-500 mb-2">DESIGN</h4>
+                                    <p class="font-bold">Minimalist UI</p>
+                                </div>
+                                <div class="glass-card p-6 rounded-none border-l-2 border-l-white/20">
+                                    <h4 class="font-mono text-xs text-gray-500 mb-2">STACK</h4>
+                                    <p class="font-bold">Swift & Vue 3</p>
+                                </div>
+                                <div class="glass-card p-6 rounded-none border-l-2 border-l-[var(--klein-blue)]">
+                                    <h4 class="font-mono text-xs text-gray-500 mb-2">LOCATION</h4>
+                                    <p class="font-bold">Remote</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Side -->
+                    <div class="lg:col-span-5 relative h-[500px] lg:h-auto">
+                        <div class="w-full h-full relative">
+                            <!-- Abstract "Portrait" composed of shapes -->
+                            <div class="absolute inset-0 border border-white/10 p-4">
+                                <div class="w-full h-full bg-[#0a0a0a] relative overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--klein-blue)] blur-[80px]"></div>
+                                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-white blur-[80px] opacity-20"></div>
+                                    
+                                    <!-- Code Decoration -->
+                                    <div class="absolute top-4 left-4 font-mono text-[10px] text-gray-600 leading-tight">
+                                        class MichaelQiu: Developer {<br>
+                                        &nbsp;&nbsp;init() {<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;self.passion = .high<br>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;self.style = .tech<br>
+                                        &nbsp;&nbsp;}<br>
+                                        }
+                                    </div>
+
+                                    <!-- Center Shape -->
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-64 border border-white/20 flex flex-col justify-between p-2">
+                                        <div class="w-full h-[1px] bg-white/20"></div>
+                                        <div class="w-full flex justify-between">
+                                            <div class="w-[1px] h-4 bg-white/20"></div>
+                                            <div class="w-[1px] h-4 bg-white/20"></div>
+                                        </div>
+                                        <div class="w-full h-[1px] bg-white/20"></div>
+                                    </div>
+                                    
+                                    <div class="absolute bottom-4 right-4 text-6xl font-black text-white/5">MQ</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Collections / Apps Section -->
+            <section id="collections" class="relative w-full min-h-screen bg-black overflow-hidden flex flex-col">
+                <!-- Top Marquee -->
+                <div class="w-full py-4 border-y border-white/10 bg-[#020202]">
+                    <div class="marquee-container">
+                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold text-white/10">
+                            DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
+                        </div>
+                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold text-white/10">
+                            DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-grow container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-center py-12">
+                    
+                    <!-- App Menu -->
+                    <div class="w-full md:w-5/12 z-20">
+                        <div class="mb-12">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-2 h-2 bg-[var(--klein-blue)]"></div>
+                                <span class="font-mono text-xs tracking-widest text-gray-400">macOS SOLUTIONS</span>
+                            </div>
+                            <h2 class="text-4xl font-bold leading-tight">
+                                UTILITIES FOR<br>
+                                THE <span class="italic text-[var(--klein-blue)]">POWER USER</span>
+                            </h2>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <div v-for="(app, i) in apps" :key="app.id" 
+                                 @mouseenter="hoverApp(app.id)" 
+                                 @mouseleave="resetApp"
+                                 class="group relative p-6 border border-white/5 bg-white/[0.02] hover:bg-[var(--klein-blue)] hover:border-[var(--klein-blue)] transition-all duration-300 cursor-none overflow-hidden">
+                                
+                                <div class="relative z-10 flex justify-between items-center">
+                                    <div>
+                                        <span class="font-mono text-xs opacity-50 mb-1 block">0{{ i + 1 }}</span>
+                                        <h3 class="text-2xl font-bold">{{ app.name }}</h3>
+                                    </div>
+                                    <i data-lucide="arrow-up-right" class="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </div>
+                                <p class="relative z-10 mt-2 text-sm text-gray-400 group-hover:text-white/80 max-w-[90%] transition-colors">
+                                    {{ app.desc }}
+                                </p>
+
+                                <!-- Hover Background Glitch -->
+                                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3D Viewer -->
+                    <div class="w-full md:w-7/12 h-[50vh] md:h-[70vh] relative mt-12 md:mt-0" ref="canvasContainer">
+                        <div class="absolute inset-0 bg-gradient-to-l from-transparent to-black/20 pointer-events-none z-10"></div>
+                        <!-- Canvas Injected Here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="w-full py-12 px-6 md:px-12 border-t border-white/10 bg-[#050505] flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-600">
+                <p>&copy; 2024 MICHAEL QIU</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-[var(--klein-blue)] transition-colors">TWITTER</a>
+                    <a href="#" class="hover:text-[var(--klein-blue)] transition-colors">GITHUB</a>
+                    <a href="#" class="hover:text-[var(--klein-blue)] transition-colors">LINKEDIN</a>
+                </div>
+                <p class="mt-4 md:mt-0">DESIGNED IN THE VOID</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted, onUnmounted } = Vue;
+
+        createApp({
+            setup() {
+                const isSidebarOpen = ref(false);
+                const loader = ref(null);
+                const canvasContainer = ref(null);
+                
+                const apps = [
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.' }
+                ];
+
+                // Three.js variables
+                let scene, camera, renderer, appsGroup;
+                let icons = []; 
+                let mouseX = 0, mouseY = 0;
+                let targetRotationX = 0;
+                let targetRotationY = 0;
+
+                const toggleSidebar = () => {
+                    isSidebarOpen.value = !isSidebarOpen.value;
+                };
+
+                // Cursor Logic
+                const initCursor = () => {
+                    const dot = document.querySelector('.cursor-dot');
+                    const outline = document.querySelector('.cursor-outline');
+                    
+                    window.addEventListener('mousemove', (e) => {
+                        const posX = e.clientX;
+                        const posY = e.clientY;
+
+                        // Dot follows instantly
+                        dot.style.left = `${posX}px`;
+                        dot.style.top = `${posY}px`;
+
+                        // Outline follows with slight delay logic via animation is handled in CSS/JS libraries usually, 
+                        // but here we do simple trailing
+                        outline.animate({
+                            left: `${posX}px`,
+                            top: `${posY}px`
+                        }, { duration: 500, fill: "forwards" });
+                    });
+                };
+
+                const hoverApp = (appName) => {
+                    const index = appName === 'DesktopRenamer' ? 0 : appName === 'OptClick' ? 1 : 2;
+                    
+                    // Animate the selected cube
+                    gsap.to(icons[index].scale, { x: 1.3, y: 1.3, z: 1.3, duration: 0.4, ease: "back.out(1.7)" });
+                    gsap.to(icons[index].rotation, { y: icons[index].rotation.y + Math.PI, duration: 0.8, ease: "power2.out" });
+                    
+                    // Change color to Klein Blue glow
+                    icons[index].material.emissive.setHex(0x002FA7);
+                    icons[index].material.emissiveIntensity = 0.5;
+
+                    // Push others back
+                    icons.forEach((icon, i) => {
+                        if (i !== index) {
+                            gsap.to(icon.scale, { x: 0.8, y: 0.8, z: 0.8, duration: 0.4 });
+                            gsap.to(icon.material, { opacity: 0.3, duration: 0.4 });
+                        }
+                    });
+                };
+
+                const resetApp = () => {
+                    icons.forEach(icon => {
+                        gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
+                        gsap.to(icon.material, { opacity: 1, duration: 0.4 });
+                        icon.material.emissive.setHex(0x000000);
+                        icon.material.emissiveIntensity = 0;
+                    });
+                };
+
+                const createTexture = (text) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 512;
+                    canvas.height = 512;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Tech BG
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(0, 0, 512, 512);
+                    
+                    // Grid
+                    ctx.strokeStyle = '#222';
+                    ctx.lineWidth = 2;
+                    for(let i=0; i<512; i+=64) {
+                        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 512); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(512, i); ctx.stroke();
+                    }
+
+                    // Border
+                    ctx.strokeStyle = '#002FA7'; // Klein Blue
+                    ctx.lineWidth = 10;
+                    ctx.strokeRect(20, 20, 472, 472);
+
+                    // Text
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 80px "Inter"';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(text.substring(0, 2).toUpperCase(), 256, 256);
+
+                    // Corner accents
+                    ctx.fillStyle = '#002FA7';
+                    ctx.fillRect(20, 20, 40, 40);
+                    ctx.fillRect(452, 452, 40, 40);
+
+                    return new THREE.CanvasTexture(canvas);
+                };
+
+                const initThreeJS = () => {
+                    if (!canvasContainer.value) return;
+                    const width = canvasContainer.value.clientWidth;
+                    const height = canvasContainer.value.clientHeight;
+
+                    scene = new THREE.Scene();
+                    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+                    camera.position.z = 12;
+
+                    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                    renderer.setSize(width, height);
+                    renderer.setPixelRatio(window.devicePixelRatio);
+                    canvasContainer.value.appendChild(renderer.domElement);
+
+                    appsGroup = new THREE.Group();
+                    scene.add(appsGroup);
+
+                    // Lighting
+                    const ambient = new THREE.AmbientLight(0xffffff, 0.2);
+                    scene.add(ambient);
+                    
+                    const blueLight = new THREE.PointLight(0x002FA7, 2, 50);
+                    blueLight.position.set(5, 5, 5);
+                    scene.add(blueLight);
+
+                    const whiteLight = new THREE.PointLight(0xffffff, 1, 50);
+                    whiteLight.position.set(-5, -5, 10);
+                    scene.add(whiteLight);
+
+                    const geometry = new THREE.BoxGeometry(2.5, 2.5, 0.25);
+                    
+                    const positions = [
+                        new THREE.Vector3(-3, 1.5, 0),
+                        new THREE.Vector3(0, -0.5, 1),
+                        new THREE.Vector3(3, 1.5, -0.5)
+                    ];
+
+                    apps.forEach((app, i) => {
+                        const texture = createTexture(app.name);
+                        const material = new THREE.MeshStandardMaterial({ 
+                            map: texture,
+                            roughness: 0.2,
+                            metalness: 0.8,
+                            transparent: true
+                        });
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.position.copy(positions[i]);
+                        
+                        // Random start rotation
+                        mesh.rotation.x = Math.random() * 0.5;
+                        mesh.rotation.y = Math.random() * 0.5;
+                        
+                        appsGroup.add(mesh);
+                        icons.push(mesh);
+                    });
+
+                    // Mouse movement
+                    document.addEventListener('mousemove', (event) => {
+                        mouseX = (event.clientX - window.innerWidth / 2) * 0.0005;
+                        mouseY = (event.clientY - window.innerHeight / 2) * 0.0005;
+                    });
+
+                    window.addEventListener('resize', () => {
+                        if(!canvasContainer.value) return;
+                        const w = canvasContainer.value.clientWidth;
+                        const h = canvasContainer.value.clientHeight;
+                        camera.aspect = w / h;
+                        camera.updateProjectionMatrix();
+                        renderer.setSize(w, h);
+                    });
+
+                    const animate = () => {
+                        requestAnimationFrame(animate);
+
+                        targetRotationX = mouseY;
+                        targetRotationY = mouseX;
+
+                        appsGroup.rotation.x += 0.05 * (targetRotationX - appsGroup.rotation.x);
+                        appsGroup.rotation.y += 0.05 * (targetRotationY - appsGroup.rotation.y);
+
+                        icons.forEach((icon, i) => {
+                            // Floating bobbing effect
+                            icon.position.y += Math.sin(Date.now() * 0.001 + i) * 0.005;
+                            // Gentle rotation
+                            icon.rotation.z = Math.sin(Date.now() * 0.0005 + i) * 0.05;
+                        });
+
+                        renderer.render(scene, camera);
+                    };
+                    animate();
+                };
+
+                onMounted(() => {
+                    // Loader Exit
+                    setTimeout(() => {
+                        if(loader.value) {
+                            loader.value.style.opacity = '0';
+                            setTimeout(() => { loader.value.style.display = 'none'; }, 500);
+                        }
+                        
+                        // Text Reveal Animation
+                        gsap.from(".reveal-text", {
+                            y: 100,
+                            opacity: 0,
+                            duration: 1.2,
+                            stagger: 0.1,
+                            ease: "power4.out",
+                            delay: 0.5
+                        });
+                    }, 1500);
+
+                    lucide.createIcons();
+                    initThreeJS();
+                    initCursor();
+                });
+
+                onUnmounted(() => {
+                    // Cleanup handled by browser mostly for simple pages
+                });
+
+                return {
+                    isSidebarOpen,
+                    toggleSidebar,
+                    loader,
+                    canvasContainer,
+                    hoverApp,
+                    resetApp,
+                    apps
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
