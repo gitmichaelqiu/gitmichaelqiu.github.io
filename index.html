@@ -440,9 +440,9 @@
                 const canvasContainer = ref(null);
                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'DesktopRenamer.png' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'OptClicker.png' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'SpaceSwitcher.png' }
                 ];
 
                 // Three.js variables
@@ -466,15 +466,18 @@
                         const posY = e.clientY;
 
                         // Dot follows instantly
-                        dot.style.left = `${posX}px`;
-                        dot.style.top = `${posY}px`;
+                        if(dot) {
+                            dot.style.left = `${posX}px`;
+                            dot.style.top = `${posY}px`;
+                        }
 
-                        // Outline follows with slight delay logic via animation is handled in CSS/JS libraries usually, 
-                        // but here we do simple trailing
-                        outline.animate({
-                            left: `${posX}px`,
-                            top: `${posY}px`
-                        }, { duration: 500, fill: "forwards" });
+                        // Outline follows with animation
+                        if(outline) {
+                            outline.animate({
+                                left: `${posX}px`,
+                                top: `${posY}px`
+                            }, { duration: 500, fill: "forwards" });
+                        }
                     });
                 };
 
@@ -482,32 +485,62 @@
                     const index = appName === 'DesktopRenamer' ? 0 : appName === 'OptClick' ? 1 : 2;
                     
                     // Animate the selected cube
-                    gsap.to(icons[index].scale, { x: 1.3, y: 1.3, z: 1.3, duration: 0.4, ease: "back.out(1.7)" });
-                    gsap.to(icons[index].rotation, { y: icons[index].rotation.y + Math.PI, duration: 0.8, ease: "power2.out" });
+                    gsap.to(icons[index].scale, { x: 1.1, y: 1.1, z: 1.1, duration: 0.4, ease: "back.out(1.7)" });
+                    gsap.to(icons[index].rotation, { y: icons[index].rotation.y + Math.PI * 0.2, duration: 0.8, ease: "power2.out" });
                     
-                    // Change color to Klein Blue glow
-                    icons[index].material.emissive.setHex(0x002FA7);
-                    icons[index].material.emissiveIntensity = 0.5;
+                    // Slightly increase light emission
+                    if(icons[index].material[1].emissive) {
+                        icons[index].material[1].emissive.setHex(0x222222);
+                        icons[index].material[1].emissiveIntensity = 0.5;
+                    }
 
                     // Push others back
                     icons.forEach((icon, i) => {
                         if (i !== index) {
                             gsap.to(icon.scale, { x: 0.8, y: 0.8, z: 0.8, duration: 0.4 });
-                            gsap.to(icon.material, { opacity: 0.3, duration: 0.4 });
+                            gsap.to(icon.position, { z: -1, duration: 0.4 });
+                        } else {
+                            gsap.to(icon.position, { z: 1, duration: 0.4 });
                         }
                     });
                 };
 
                 const resetApp = () => {
-                    icons.forEach(icon => {
+                    const positions = [
+                        new THREE.Vector3(-3.5, 1, 0),
+                        new THREE.Vector3(0, -1, 1),
+                        new THREE.Vector3(3.5, 1, -0.5)
+                    ];
+
+                    icons.forEach((icon, i) => {
                         gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
-                        gsap.to(icon.material, { opacity: 1, duration: 0.4 });
-                        icon.material.emissive.setHex(0x000000);
-                        icon.material.emissiveIntensity = 0;
+                        gsap.to(icon.position, { x: positions[i].x, y: positions[i].y, z: positions[i].z, duration: 0.4 });
+                        if(icon.material[1].emissive) {
+                            icon.material[1].emissive.setHex(0x000000);
+                            icon.material[1].emissiveIntensity = 0;
+                        }
                     });
                 };
 
-                const createTexture = (text) => {
+                // Create Rounded Rect Shape for Extrusion
+                const createRoundedRectShape = (width, height, radius) => {
+                    const ctx = new THREE.Shape();
+                    const x = -width / 2;
+                    const y = -height / 2;
+                    ctx.moveTo( x, y + radius );
+                    ctx.lineTo( x, y + height - radius );
+                    ctx.quadraticCurveTo( x, y + height, x + radius, y + height );
+                    ctx.lineTo( x + width - radius, y + height );
+                    ctx.quadraticCurveTo( x + width, y + height, x + width, y + height - radius );
+                    ctx.lineTo( x + width, y + radius );
+                    ctx.quadraticCurveTo( x + width, y, x + width - radius, y );
+                    ctx.lineTo( x + radius, y );
+                    ctx.quadraticCurveTo( x, y, x, y + radius );
+                    return ctx;
+                };
+
+                // Fallback Texture Generator
+                const createFallbackTexture = (text) => {
                     const canvas = document.createElement('canvas');
                     canvas.width = 512;
                     canvas.height = 512;
@@ -526,9 +559,11 @@
                     }
 
                     // Border
-                    ctx.strokeStyle = '#002FA7'; // Klein Blue
-                    ctx.lineWidth = 10;
-                    ctx.strokeRect(20, 20, 472, 472);
+                    ctx.strokeStyle = '#002FA7';
+                    ctx.lineWidth = 15;
+                    ctx.beginPath();
+                    ctx.roundRect(20, 20, 472, 472, 80); // Rounded rect drawing on canvas
+                    ctx.stroke();
 
                     // Text
                     ctx.fillStyle = 'white';
@@ -536,11 +571,6 @@
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(text.substring(0, 2).toUpperCase(), 256, 256);
-
-                    // Corner accents
-                    ctx.fillStyle = '#002FA7';
-                    ctx.fillRect(20, 20, 40, 40);
-                    ctx.fillRect(452, 452, 40, 40);
 
                     return new THREE.CanvasTexture(canvas);
                 };
@@ -563,39 +593,117 @@
                     scene.add(appsGroup);
 
                     // Lighting
-                    const ambient = new THREE.AmbientLight(0xffffff, 0.2);
+                    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
                     scene.add(ambient);
                     
-                    const blueLight = new THREE.PointLight(0x002FA7, 2, 50);
+                    const blueLight = new THREE.PointLight(0x002FA7, 1.5, 50);
                     blueLight.position.set(5, 5, 5);
                     scene.add(blueLight);
 
-                    const whiteLight = new THREE.PointLight(0xffffff, 1, 50);
+                    const whiteLight = new THREE.PointLight(0xffffff, 0.8, 50);
                     whiteLight.position.set(-5, -5, 10);
                     scene.add(whiteLight);
 
-                    const geometry = new THREE.BoxGeometry(2.5, 2.5, 0.25);
+                    // Extrusion Settings
+                    const extrudeSettings = {
+                        depth: 0.4, // Thickness of the icon
+                        bevelEnabled: true,
+                        bevelSegments: 2,
+                        steps: 1,
+                        bevelSize: 0.05,
+                        bevelThickness: 0.05
+                    };
+
+                    const shape = createRoundedRectShape(2.5, 2.5, 0.5); // Width, Height, Radius
+                    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    
+                    // Fix UVs for the front face texture mapping
+                    // We need to map the bounding box of the shape to 0..1 UV coordinates
+                    geometry.computeBoundingBox();
+                    const max = geometry.boundingBox.max;
+                    const min = geometry.boundingBox.min;
+                    const offset = new THREE.Vector2(0 - min.x, 0 - min.y);
+                    const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
+                    const uvAttribute = geometry.attributes.uv;
+
+                    for (let i = 0; i < uvAttribute.count; i++) {
+                        const u = uvAttribute.getX(i);
+                        const v = uvAttribute.getY(i);
+                        
+                        // Map geometry XY to UV 0..1
+                        // Note: Extrusion moves in Z, but the face vertices originate from the XY shape
+                        // We check the vertex positions to map them correctly if needed, but often modifying UVs based on X/Y position is easier
+                    }
+                    
+                    // Re-calculate UVs manually based on vertex position for the front face
+                    const posAttribute = geometry.attributes.position;
+                    for (let i = 0; i < posAttribute.count; i++) {
+                        const x = posAttribute.getX(i);
+                        const y = posAttribute.getY(i);
+                        const z = posAttribute.getZ(i);
+                        
+                        // Only map the front face (highest Z) strictly to texture, side faces (lower Z) can be generic
+                        if (z > 0) { 
+                            uvAttribute.setXY(i, (x - min.x) / range.x, (y - min.y) / range.y);
+                        }
+                    }
+                    uvAttribute.needsUpdate = true;
+
+                    // Load Textures
+                    const loader = new THREE.TextureLoader();
                     
                     const positions = [
-                        new THREE.Vector3(-3, 1.5, 0),
-                        new THREE.Vector3(0, -0.5, 1),
-                        new THREE.Vector3(3, 1.5, -0.5)
+                        new THREE.Vector3(-3.5, 1, 0),
+                        new THREE.Vector3(0, -1, 1),
+                        new THREE.Vector3(3.5, 1, -0.5)
                     ];
 
                     apps.forEach((app, i) => {
-                        const texture = createTexture(app.name);
-                        const material = new THREE.MeshStandardMaterial({ 
-                            map: texture,
-                            roughness: 0.2,
-                            metalness: 0.8,
-                            transparent: true
+                        // Material for the sides (dark, sleek)
+                        const sideMaterial = new THREE.MeshStandardMaterial({
+                            color: 0x111111,
+                            roughness: 0.3,
+                            metalness: 0.8
                         });
-                        const mesh = new THREE.Mesh(geometry, material);
+
+                        // Material for the face (Image)
+                        // We try to load the image. If it fails, we fall back to a generated one.
+                        let frontMaterial;
+                        
+                        loader.load(
+                            app.img, 
+                            (texture) => {
+                                // Success
+                                texture.center.set(0.5, 0.5);
+                                frontMaterial.map = texture;
+                                frontMaterial.needsUpdate = true;
+                            },
+                            undefined, // Progress
+                            (err) => {
+                                // Error / Fallback
+                                const fallbackTexture = createFallbackTexture(app.name);
+                                frontMaterial.map = fallbackTexture;
+                                frontMaterial.needsUpdate = true;
+                            }
+                        );
+
+                        frontMaterial = new THREE.MeshStandardMaterial({
+                            color: 0xffffff,
+                            roughness: 0.2,
+                            metalness: 0.1,
+                            emissive: 0x000000
+                        });
+
+                        const mesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial]);
+                        
+                        // Center geometry
+                        geometry.center();
+                        
                         mesh.position.copy(positions[i]);
                         
-                        // Random start rotation
-                        mesh.rotation.x = Math.random() * 0.5;
-                        mesh.rotation.y = Math.random() * 0.5;
+                        // Initial gentle rotation
+                        mesh.rotation.x = (Math.random() - 0.5) * 0.5;
+                        mesh.rotation.y = (Math.random() - 0.5) * 0.5;
                         
                         appsGroup.add(mesh);
                         icons.push(mesh);
@@ -622,14 +730,15 @@
                         targetRotationX = mouseY;
                         targetRotationY = mouseX;
 
+                        // Smooth group rotation
                         appsGroup.rotation.x += 0.05 * (targetRotationX - appsGroup.rotation.x);
                         appsGroup.rotation.y += 0.05 * (targetRotationY - appsGroup.rotation.y);
 
                         icons.forEach((icon, i) => {
                             // Floating bobbing effect
-                            icon.position.y += Math.sin(Date.now() * 0.001 + i) * 0.005;
-                            // Gentle rotation
-                            icon.rotation.z = Math.sin(Date.now() * 0.0005 + i) * 0.05;
+                            icon.position.y += Math.sin(Date.now() * 0.001 + i) * 0.003;
+                            // Gentle idle wobble
+                            icon.rotation.z = Math.sin(Date.now() * 0.0005 + i) * 0.03;
                         });
 
                         renderer.render(scene, camera);
