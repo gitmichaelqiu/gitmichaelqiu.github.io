@@ -201,7 +201,7 @@
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[50vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl">
                 <!-- Background decoration for sidebar -->
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
@@ -474,7 +474,8 @@
                 // Three.js variables
                 let scene, camera, renderer, appsGroup;
                 let icons = []; 
-                let focusLight; // Dedicated spotlight for selection
+                let effectGroup; // Group for extra "cool" effects
+                let rings = []; // Store rings to animate them
                 let mouseX = 0, mouseY = 0;
                 let targetRotationX = 0;
                 let targetRotationY = 0;
@@ -508,7 +509,6 @@
                     const height = size;
                     const x = -width / 2;
                     const y = -height / 2;
-                    // Updated radius to 0.7 for correct rounded corners
                     const r = 0.7; 
                     
                     shape.moveTo( x, y + r );
@@ -613,17 +613,38 @@
                     backLight.lookAt(0,0,0);
                     scene.add(backLight);
                     
-                    // --- DEDICATED SPOTLIGHT FOR SELECTION ---
-                    // Repositioned to illuminate front face (z=4) directly from front (z=8)
-                    focusLight = new THREE.SpotLight(0xffffff, 0); // Intensity 0 initially
-                    focusLight.position.set(0, 2, 8); // Front and slightly up
-                    focusLight.angle = Math.PI / 3; // Wider angle to cover icon
-                    focusLight.penumbra = 0.5;
-                    focusLight.decay = 1;
-                    focusLight.distance = 50;
-                    focusLight.castShadow = true;
-                    scene.add(focusLight);
-                    scene.add(focusLight.target); 
+                    // --- TECH HALO EFFECTS (Hidden by default) ---
+                    effectGroup = new THREE.Group();
+                    scene.add(effectGroup);
+                    effectGroup.visible = false; // Initially hidden
+
+                    // 1. Dashed Rotating Ring
+                    const ringGeo1 = new THREE.TorusGeometry(3.0, 0.02, 16, 100);
+                    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x002FA7, transparent: true, opacity: 0.8 });
+                    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
+                    effectGroup.add(ring1);
+                    rings.push({ mesh: ring1, speed: 0.02, axis: 'z' });
+
+                    // 2. Larger Thin Ring (Opposite rotation)
+                    const ringGeo2 = new THREE.TorusGeometry(3.4, 0.01, 16, 100);
+                    const ringMat2 = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 });
+                    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+                    effectGroup.add(ring2);
+                    rings.push({ mesh: ring2, speed: -0.01, axis: 'z' });
+
+                    // 3. Orbiting Particles
+                    const particleCount = 4;
+                    for(let j=0; j<particleCount; j++) {
+                        const pGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                        const pMat = new THREE.MeshBasicMaterial({ color: 0x002FA7 });
+                        const p = new THREE.Mesh(pGeo, pMat);
+                        // Start positions
+                        const angle = (j / particleCount) * Math.PI * 2;
+                        p.position.set(Math.cos(angle) * 3.0, Math.sin(angle) * 3.0, 0);
+                        effectGroup.add(p);
+                        // Add to animation array with orbit data
+                        rings.push({ mesh: p, speed: 0.03, axis: 'orbit', angle: angle, radius: 3.0 });
+                    }
 
                     // Squircle Geometry
                     const size = 2.5;
@@ -732,6 +753,19 @@
                             icon.rotation.z = Math.sin(Date.now() * 0.001 + i) * 0.01;
                         });
 
+                        // Animate Effect Rings
+                        if(effectGroup.visible) {
+                            rings.forEach(ring => {
+                                if(ring.axis === 'z') {
+                                    ring.mesh.rotation.z += ring.speed;
+                                } else if(ring.axis === 'orbit') {
+                                    ring.angle += ring.speed;
+                                    ring.mesh.position.x = Math.cos(ring.angle) * ring.radius;
+                                    ring.mesh.position.y = Math.sin(ring.angle) * ring.radius;
+                                }
+                            });
+                        }
+
                         renderer.render(scene, camera);
                     };
                     animate();
@@ -745,16 +779,17 @@
                     gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
-                    // 2. Activate Spotlight (Reduced Intensity)
-                    gsap.to(focusLight, { intensity: 4, angle: Math.PI/3, duration: 0.4 });
-                    focusLight.target.position.set(0, 0, 4); 
+                    // 2. Show Tech Halo (Lines and Stuff)
+                    effectGroup.visible = true;
+                    effectGroup.position.set(0, 0, 3.8); // Position behind the centered icon
+                    effectGroup.scale.set(0, 0, 0); // Start small
+                    gsap.to(effectGroup.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "back.out(1.5)" });
 
                     // 3. Material Stress (Glow & Brightness)
                     if(icons[index].material[1].emissive) {
                         icons[index].material[1].emissive.setHex(0x0044FF); 
                         gsap.to(icons[index].material[1], { emissiveIntensity: 1.5, duration: 0.4 });
                     }
-                    // Boost front brightness by enabling emissive on it too slightly
                     if(icons[index].material[0].emissive) {
                          icons[index].material[0].emissive.setHex(0xFFFFFF);
                          gsap.to(icons[index].material[0], { emissiveIntensity: 0.2, opacity: 1, duration: 0.4 });
@@ -785,7 +820,8 @@
                 };
 
                 const resetApp = () => {
-                    gsap.to(focusLight, { intensity: 0, duration: 0.5 });
+                    // Hide Halo
+                    gsap.to(effectGroup.scale, { x: 0, y: 0, z: 0, duration: 0.3, onComplete: () => { effectGroup.visible = false; } });
 
                     icons.forEach((icon, i) => {
                         gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" });
