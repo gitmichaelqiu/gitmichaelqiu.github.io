@@ -200,7 +200,7 @@
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-12 md:px-24 shadow-2xl">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl">
                 <!-- Background decoration for sidebar -->
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
@@ -209,18 +209,18 @@
 
                 <div class="flex flex-col gap-6 relative z-10">
                     <div class="font-mono text-xs text-gray-500 mb-4">NAVIGATION</div>
-                    <a v-for="(item, index) in ['HOME', 'PROFILE', 'COLLECTIONS']" 
+                    <a v-for="(item, index) in ['HOME', 'PROFILE', 'WORKS']" 
                        :key="item"
                        :href="'#' + item.toLowerCase()" 
                        @click="toggleSidebar" 
-                       class="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-600 hover:to-klein-blue transition-all duration-500 transform hover:translate-x-6 hover:tracking-widest cursor-none"
+                       class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-600 hover:to-klein-blue transition-all duration-500 transform hover:translate-x-6 hover:tracking-widest cursor-none break-all"
                        style="-webkit-text-stroke: 1px rgba(255,255,255,0.1);">
                        <span class="text-sm font-mono absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 text-klein-blue">0{{index+1}}</span>
                        {{ item }}
                     </a>
                 </div>
                 
-                <div class="absolute bottom-12 left-12 md:left-24 font-mono text-[10px] text-gray-600 flex gap-8">
+                <div class="absolute bottom-12 left-8 md:left-20 font-mono text-[10px] text-gray-600 flex gap-8">
                     <div>
                         <p class="text-white mb-2">CONTACT</p>
                         <p>hello@michaelqiu.com</p>
@@ -508,7 +508,9 @@
                     const height = size;
                     const x = -width / 2;
                     const y = -height / 2;
-                    const r = 0.55; 
+                    // Increased radius for more rounded corners as requested
+                    const r = 0.7; 
+                    
                     shape.moveTo( x, y + r );
                     shape.lineTo( x, y + height - r );
                     shape.quadraticCurveTo( x, y + height, x + r, y + height );
@@ -518,6 +520,7 @@
                     shape.quadraticCurveTo( x + width, y, x + width - r, y );
                     shape.lineTo( x + r, y );
                     shape.quadraticCurveTo( x, y, x, y + r );
+                    
                     return shape;
                 };
 
@@ -610,33 +613,28 @@
                     scene.add(backLight);
                     
                     // --- DEDICATED SPOTLIGHT FOR SELECTION ---
+                    // Repositioned to illuminate front face (z=4) from front (z=8)
                     focusLight = new THREE.SpotLight(0xffffff, 0); // Intensity 0 initially
-                    focusLight.position.set(0, 10, 2); // High up, slightly forward
-                    focusLight.angle = Math.PI / 6;
+                    focusLight.position.set(0, 2, 8); // Front and slightly up
+                    focusLight.angle = Math.PI / 3; // Wider angle
                     focusLight.penumbra = 0.5;
-                    focusLight.decay = 2;
+                    focusLight.decay = 1;
                     focusLight.distance = 50;
                     scene.add(focusLight);
                     scene.add(focusLight.target); 
 
                     // --- VOLUMETRIC LIGHT BEAM (Fake Scatter) ---
-                    // Create a cone to simulate the light shaft
                     const beamGeo = new THREE.ConeGeometry(3, 15, 32, 1, true);
-                    // Shift geometry so pivot is at the tip (top)
                     beamGeo.translate(0, -7.5, 0);
-                    beamGeo.rotateX(-Math.PI / 2); // Point down z-axis initially for lookAt to work? 
-                    // Actually Cone points up Y by default. Translate y -height/2 puts top at 0,0,0.
-                    // Rotation: Spotlights point -Z in Threejs object space usually, but lookAt works on -Z.
-                    // Let's orient cone to point along -Z.
                     beamGeo.rotateX(-Math.PI / 2); 
 
                     const beamMat = new THREE.MeshBasicMaterial({
-                        color: 0x002FA7, // Klein Blue Beam
+                        color: 0x002FA7,
                         transparent: true,
-                        opacity: 0, // Invisible initially
+                        opacity: 0,
                         side: THREE.DoubleSide,
-                        blending: THREE.AdditiveBlending, // Glowy add effect
-                        depthWrite: false // Don't occlude objects behind
+                        blending: THREE.AdditiveBlending,
+                        depthWrite: false
                     });
                     
                     lightBeam = new THREE.Mesh(beamGeo, beamMat);
@@ -654,7 +652,7 @@
                         bevelThickness: 0.05
                     };
 
-                    const shape = createSquircleShape(size, 0.55);
+                    const shape = createSquircleShape(size, 0.7); // Updated Radius
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
                     
                     // UV Correction
@@ -745,18 +743,7 @@
                         appsGroup.rotation.y += 0.05 * (targetRotationY - appsGroup.rotation.y);
 
                         icons.forEach((icon, i) => {
-                            // Floating bobbing effect around base position
-                            // Use basePosition so it doesn't drift away
-                            const yOffset = Math.sin(Date.now() * 0.0015 + i) * 0.1;
-                            // Only apply bobbing if we are not actively modifying the position via GSAP (hover state)
-                            // We can check if it's currently selected, or just add the offset to the base.
-                            // To keep it simple and avoid conflict with GSAP, we will let GSAP override the position completely on hover
-                            // and only apply bobbing to the 'rest' state if not hovered?
-                            // Actually, GSAP modifies .position directly. If we overwrite .position.y here every frame, GSAP fights it.
-                            // Better approach: Create a group wrapper for each icon to handle local wobble, 
-                            // or just accept slight conflict.
-                            // Since resetApp sets the position, let's just do a subtle rotation update here.
-                            
+                            icon.position.y += Math.sin(Date.now() * 0.0015 + i) * 0.002;
                             icon.rotation.z = Math.sin(Date.now() * 0.001 + i) * 0.01;
                         });
 
@@ -765,58 +752,45 @@
                     animate();
                 };
 
-const hoverApp = (appName) => {
+                const hoverApp = (appName) => {
                     const index = appName === 'DesktopRenamer' ? 0 : appName === 'OptClick' ? 1 : 2;
                     
                     // 1. Center the selected icon and bring it forward strongly
-                    // Add a slight tilt based on mouse position in future, but for now fixed dramatic angle
                     gsap.to(icons[index].position, { x: 0, y: 0, z: 4, duration: 0.6, ease: "expo.out" });
                     gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
-                    // Rotate to face perfectly forward but with slight dynamic feel
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
                     // 2. Activate Spotlight & Volumetric Beam (High Stress)
-                    gsap.to(focusLight, { intensity: 8, angle: Math.PI/5, duration: 0.4 });
+                    gsap.to(focusLight, { intensity: 8, angle: Math.PI/3, duration: 0.4 });
                     focusLight.target.position.set(0, 0, 4); 
                     
                     // Beam visibility
                     lightBeam.lookAt(0, 0, 4); 
-                    gsap.to(lightBeam.material, { opacity: 0.3, duration: 0.4 }); // brighter beam
+                    gsap.to(lightBeam.material, { opacity: 0.3, duration: 0.4 }); 
 
                     // 3. Material Stress (Glow)
                     if(icons[index].material[1].emissive) {
-                        icons[index].material[1].emissive.setHex(0x0044FF); // Bright Blue
+                        icons[index].material[1].emissive.setHex(0x0044FF); 
                         gsap.to(icons[index].material[1], { emissiveIntensity: 1.2, duration: 0.4 });
                     }
-                    gsap.to(icons[index].material[0], { opacity: 1, duration: 0.4 }); // Full opacity face
+                    gsap.to(icons[index].material[0], { opacity: 1, duration: 0.4 });
 
                     // 4. Move other icons to the background preserving sequence
                     icons.forEach((icon, i) => {
                         if (i !== index) {
-                            // Calculate Side Position based on index order to prevent swapping/jumping
-                            // If the icon index is less than selected, it goes Left.
-                            // If the icon index is greater than selected, it goes Right.
                             let sideX = 0;
-                            
                             if (i < index) {
-                                // To the Left
-                                // e.g. if index is 2, i=0 goes far left, i=1 goes mid left
                                 sideX = -6 - ((index - i - 1) * 2.5); 
                             } else {
-                                // To the Right
-                                // e.g. if index is 0, i=1 goes mid right, i=2 goes far right
                                 sideX = 6 + ((i - index - 1) * 2.5);
                             }
 
                             gsap.to(icon.position, { x: sideX, y: 0, z: -5, duration: 0.6, ease: "power3.out" });
                             gsap.to(icon.scale, { x: 0.6, y: 0.6, z: 0.6, duration: 0.6 });
-                            // Rotate inward to look at center
                             const rotY = i < index ? 0.5 : -0.5;
                             gsap.to(icon.rotation, { x: 0, y: rotY, z: 0, duration: 0.6 });
                             
-                            // Dim faces aggressively
                             gsap.to(icon.material[0], { opacity: 0.05, duration: 0.4 });
-                            // Darken sides
                             if(icon.material[1].emissive) {
                                 gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
                             }
@@ -825,13 +799,11 @@ const hoverApp = (appName) => {
                 };
 
                 const resetApp = () => {
-                    // Turn off spotlight & beam
                     gsap.to(focusLight, { intensity: 0, duration: 0.5 });
                     gsap.to(lightBeam.material, { opacity: 0, duration: 0.5 });
 
                     icons.forEach((icon, i) => {
-                        gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" }); // Elastic bounce back
-                        // Return to base positions
+                        gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" });
                         gsap.to(icon.position, { 
                             x: basePositions[i].x, 
                             y: basePositions[i].y, 
@@ -839,11 +811,9 @@ const hoverApp = (appName) => {
                             duration: 0.6,
                             ease: "power2.out"
                         });
-                        // Reset rotation
                         gsap.to(icon.rotation, { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2, z: 0, duration: 0.6 });
                         gsap.to(icon.material[0], { opacity: 1, duration: 0.4 });
                         
-                        // Reset side material
                         if(icon.material[1].emissive) {
                             icon.material[1].emissive.setHex(0x000000);
                             gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
