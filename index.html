@@ -7,7 +7,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tailwind Config to prevent JSON.parse error on 404s -->
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
@@ -48,10 +48,11 @@
         }
 
         body {
-            background-color: #030303;
+            /* Changed from flat #030303 to a subtle deep gradient */
+            background: radial-gradient(circle at 50% 50%, #111111 0%, #050505 100%);
             color: #ffffff;
             overflow-x: hidden;
-            cursor: none; /* Custom cursor */
+            cursor: none;
         }
 
         /* Custom Cursor */
@@ -213,7 +214,7 @@
                        :key="item"
                        :href="'#' + item.toLowerCase()" 
                        @click="toggleSidebar" 
-                       class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-600 hover:to-klein-blue transition-all duration-500 transform hover:translate-x-6 hover:tracking-widest cursor-none break-all"
+                       class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-600 hover:to-klein-blue transition-all duration-500 transform hover:translate-x-6 hover:tracking-widest cursor-none break-all"
                        style="-webkit-text-stroke: 1px rgba(255,255,255,0.1);">
                        <span class="text-sm font-mono absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 text-klein-blue">0{{index+1}}</span>
                        {{ item }}
@@ -292,7 +293,7 @@
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-32 px-6 md:px-12 bg-[#050505] relative border-t border-white/5">
+            <section id="profile" class="w-full py-32 px-6 md:px-12 relative border-t border-white/5 bg-[#050505]/80 backdrop-blur-md">
                 <!-- Decor Grid -->
                 <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none"></div>
 
@@ -366,8 +367,8 @@
                 </div>
             </section>
 
-            <!-- Collections / Apps Section -->
-            <section id="collections" class="relative w-full min-h-screen bg-black overflow-hidden flex flex-col">
+            <!-- Works / Apps Section -->
+            <section id="works" class="relative w-full min-h-screen overflow-hidden flex flex-col bg-transparent">
                 <!-- Top Marquee -->
                 <div class="w-full py-4 border-y border-white/10 bg-[#020202]">
                     <div class="marquee-container">
@@ -465,16 +466,15 @@
                 const textureError = ref(false);
                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'resources/DesktopRenamer.png' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'resources/OptClicker.png' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/SpaceSwitcher.png' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'DesktopRenamer.png' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'OptClicker.png' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'SpaceSwitcher.png' }
                 ];
 
                 // Three.js variables
                 let scene, camera, renderer, appsGroup;
                 let icons = []; 
                 let focusLight; // Dedicated spotlight for selection
-                let lightBeam; // Visible volumetric beam
                 let mouseX = 0, mouseY = 0;
                 let targetRotationX = 0;
                 let targetRotationY = 0;
@@ -508,7 +508,7 @@
                     const height = size;
                     const x = -width / 2;
                     const y = -height / 2;
-                    // Increased radius for more rounded corners as requested
+                    // Updated radius to 0.7 for correct rounded corners
                     const r = 0.7; 
                     
                     shape.moveTo( x, y + r );
@@ -588,6 +588,7 @@
                     renderer.setPixelRatio(window.devicePixelRatio);
                     renderer.toneMapping = THREE.ACESFilmicToneMapping;
                     renderer.toneMappingExposure = 1.2;
+                    renderer.shadowMap.enabled = true; // Enable shadows for more depth
                     canvasContainer.value.appendChild(renderer.domElement);
 
                     appsGroup = new THREE.Group();
@@ -613,33 +614,16 @@
                     scene.add(backLight);
                     
                     // --- DEDICATED SPOTLIGHT FOR SELECTION ---
-                    // Repositioned to illuminate front face (z=4) from front (z=8)
+                    // Repositioned to illuminate front face (z=4) directly from front (z=8)
                     focusLight = new THREE.SpotLight(0xffffff, 0); // Intensity 0 initially
                     focusLight.position.set(0, 2, 8); // Front and slightly up
-                    focusLight.angle = Math.PI / 3; // Wider angle
+                    focusLight.angle = Math.PI / 3; // Wider angle to cover icon
                     focusLight.penumbra = 0.5;
                     focusLight.decay = 1;
                     focusLight.distance = 50;
+                    focusLight.castShadow = true;
                     scene.add(focusLight);
                     scene.add(focusLight.target); 
-
-                    // --- VOLUMETRIC LIGHT BEAM (Fake Scatter) ---
-                    const beamGeo = new THREE.ConeGeometry(3, 15, 32, 1, true);
-                    beamGeo.translate(0, -7.5, 0);
-                    beamGeo.rotateX(-Math.PI / 2); 
-
-                    const beamMat = new THREE.MeshBasicMaterial({
-                        color: 0x002FA7,
-                        transparent: true,
-                        opacity: 0,
-                        side: THREE.DoubleSide,
-                        blending: THREE.AdditiveBlending,
-                        depthWrite: false
-                    });
-                    
-                    lightBeam = new THREE.Mesh(beamGeo, beamMat);
-                    lightBeam.position.copy(focusLight.position);
-                    scene.add(lightBeam);
 
                     // Squircle Geometry
                     const size = 2.5;
@@ -652,7 +636,8 @@
                         bevelThickness: 0.05
                     };
 
-                    const shape = createSquircleShape(size, 0.7); // Updated Radius
+                    // Set radius to 0.7 as requested
+                    const shape = createSquircleShape(size, 0.7); 
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
                     
                     // UV Correction
@@ -760,20 +745,20 @@
                     gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
-                    // 2. Activate Spotlight & Volumetric Beam (High Stress)
-                    gsap.to(focusLight, { intensity: 8, angle: Math.PI/3, duration: 0.4 });
+                    // 2. Activate Spotlight (Reduced Intensity)
+                    gsap.to(focusLight, { intensity: 4, angle: Math.PI/3, duration: 0.4 });
                     focusLight.target.position.set(0, 0, 4); 
-                    
-                    // Beam visibility
-                    lightBeam.lookAt(0, 0, 4); 
-                    gsap.to(lightBeam.material, { opacity: 0.3, duration: 0.4 }); 
 
-                    // 3. Material Stress (Glow)
+                    // 3. Material Stress (Glow & Brightness)
                     if(icons[index].material[1].emissive) {
                         icons[index].material[1].emissive.setHex(0x0044FF); 
-                        gsap.to(icons[index].material[1], { emissiveIntensity: 1.2, duration: 0.4 });
+                        gsap.to(icons[index].material[1], { emissiveIntensity: 1.5, duration: 0.4 });
                     }
-                    gsap.to(icons[index].material[0], { opacity: 1, duration: 0.4 });
+                    // Boost front brightness by enabling emissive on it too slightly
+                    if(icons[index].material[0].emissive) {
+                         icons[index].material[0].emissive.setHex(0xFFFFFF);
+                         gsap.to(icons[index].material[0], { emissiveIntensity: 0.2, opacity: 1, duration: 0.4 });
+                    }
 
                     // 4. Move other icons to the background preserving sequence
                     icons.forEach((icon, i) => {
@@ -790,7 +775,8 @@
                             const rotY = i < index ? 0.5 : -0.5;
                             gsap.to(icon.rotation, { x: 0, y: rotY, z: 0, duration: 0.6 });
                             
-                            gsap.to(icon.material[0], { opacity: 0.05, duration: 0.4 });
+                            // Dim faces aggressively
+                            gsap.to(icon.material[0], { opacity: 0.05, emissiveIntensity: 0, duration: 0.4 });
                             if(icon.material[1].emissive) {
                                 gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
                             }
@@ -800,7 +786,6 @@
 
                 const resetApp = () => {
                     gsap.to(focusLight, { intensity: 0, duration: 0.5 });
-                    gsap.to(lightBeam.material, { opacity: 0, duration: 0.5 });
 
                     icons.forEach((icon, i) => {
                         gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" });
@@ -812,7 +797,7 @@
                             ease: "power2.out"
                         });
                         gsap.to(icon.rotation, { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2, z: 0, duration: 0.6 });
-                        gsap.to(icon.material[0], { opacity: 1, duration: 0.4 });
+                        gsap.to(icon.material[0], { opacity: 1, emissiveIntensity: 0, duration: 0.4 });
                         
                         if(icon.material[1].emissive) {
                             icon.material[1].emissive.setHex(0x000000);
