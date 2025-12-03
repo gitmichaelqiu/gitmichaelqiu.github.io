@@ -201,7 +201,7 @@
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[50vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl">
                 <!-- Background decoration for sidebar -->
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
@@ -466,9 +466,9 @@
                 const textureError = ref(false);
                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'DesktopRenamer.png' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'OptClicker.png' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'SpaceSwitcher.png' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'resources/DesktopRenamer.png' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'resources/OptClicker.png' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/SpaceSwitcher.png' }
                 ];
 
                 // Three.js variables
