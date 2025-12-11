@@ -166,6 +166,13 @@
         .logo-svg {
             fill: currentColor;
         }
+        
+        /* Magnetic Balls Style */
+        .magnetic-ball line {
+            stroke: currentColor;
+            stroke-width: 1;
+            opacity: 0.2;
+        }
     </style>
 </head>
 <body>
@@ -302,31 +309,31 @@
             <!-- Hero Section (NEW LAYOUT) -->
             <section id="home" class="relative w-full h-screen flex items-center justify-center px-6 md:px-12 pt-20 overflow-hidden bg-white dark:bg-[#050505]">
                 
-                <!-- Background Marquees (Higher Opacity) -->
-                <div class="absolute inset-0 flex flex-col justify-between opacity-50 dark:opacity-30 pointer-events-none select-none overflow-hidden py-12">
+                <!-- Background Marquees (Increased Opacity and Contrast) -->
+                <div class="absolute inset-0 flex flex-col justify-between opacity-80 dark:opacity-60 pointer-events-none select-none overflow-hidden py-12">
                     <div class="marquee-container -rotate-2">
-                        <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-200 dark:text-[#111] whitespace-nowrap">
+                        <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-300 dark:text-[#1a1a1a] whitespace-nowrap">
                             SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
                         </div>
-                         <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-200 dark:text-[#111] whitespace-nowrap">
+                         <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-300 dark:text-[#1a1a1a] whitespace-nowrap">
                             SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
                         </div>
                     </div>
                     
                     <div class="marquee-container rotate-1">
-                        <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
+                        <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-200 dark:text-[#111] whitespace-nowrap">
                             DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
                         </div>
-                         <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
+                         <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-200 dark:text-[#111] whitespace-nowrap">
                             DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
                         </div>
                     </div>
 
                     <div class="marquee-container -rotate-1">
-                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-50 dark:text-[#080808] whitespace-nowrap">
+                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
                              MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
                         </div>
-                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-50 dark:text-[#080808] whitespace-nowrap">
+                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
                              MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
                         </div>
                     </div>
@@ -335,7 +342,7 @@
                 <div class="z-10 w-full max-w-[90vw] mx-auto flex flex-col md:flex-row items-center justify-between h-full pb-20">
                     
                     <!-- Left Column: Name & Intro -->
-                    <div class="flex flex-col justify-center items-start z-20 reveal-text mt-20 md:mt-0">
+                    <div class="flex flex-col justify-center items-start z-20 reveal-text mt-20 md:mt-0 w-full md:w-1/2">
                          <h1 class="text-[12vw] leading-[0.85] font-black tracking-tighter mix-blend-exclusion text-black dark:text-white">
                             MICHAEL
                         </h1>
@@ -358,16 +365,11 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Massive Logo -->
-                    <div class="relative w-[50vw] h-[50vw] md:w-[35vw] md:h-[35vw] flex items-center justify-center z-10 opacity-80 mix-blend-difference pointer-events-none md:mr-10">
-                         <svg class="w-full h-full text-klein-blue fill-current animate-float" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
-                            <g>
-                                <path fill-rule="evenodd" d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
-                                <path fill-rule="evenodd" d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z"/>
-                            </g>
-                            <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z"/>
-                            <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"/>
-                        </svg>
+                    <!-- Right Column: Interactive Magnetic Balls Logo -->
+                    <div class="relative w-full md:w-1/2 h-[50vw] md:h-full flex items-center justify-center z-20 md:mr-10">
+                         <div id="magnetic-container" class="w-full h-full relative">
+                             <!-- Balls will be injected here -->
+                         </div>
                     </div>
 
                 </div>
@@ -474,14 +476,14 @@
 
                     <!-- Text Content -->
                     <div class="w-full md:w-5/12 z-20 order-last md:order-first md:py-24">
-                        <div class="mb-12 p-4 md:p-0 rounded-lg">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-2 h-2 bg-klein-blue"></div>
-                                <span class="font-mono text-xs tracking-widest text-gray-600 dark:text-gray-500">macOS SOLUTIONS</span>
-                            </div>
-                            <h2 class="text-4xl font-bold leading-tight text-black dark:text-white">
-                                UTILITIES FOR<br>
-                                THE <span class="italic text-klein-blue">POWER USER</span>
+                        <!-- Redesigned Header to match Profile -->
+                        <div class="mb-12">
+                             <div class="flex items-center gap-2 mb-2">
+                                <span class="text-klein-blue">/</span> 
+                                <span class="font-display font-bold">WORKS</span>
+                             </div>
+                            <h2 class="text-4xl md:text-5xl font-light leading-tight text-gray-800 dark:text-gray-200">
+                                Utilities for the <span class="italic font-serif text-klein-blue">Power User</span>
                             </h2>
                         </div>
 
@@ -659,7 +661,8 @@
                     const scrollTotal = docHeight - winHeight;
                     
                     // Add a tiny buffer to scrollTotal to ensure we hit 100% easily
-                    let progress = (scrollTop / scrollTotal) * 100;
+                    // Use a slightly smaller denominator to guarantee 100% is reachable
+                    let progress = (scrollTop / (scrollTotal - 1)) * 100;
                     progress = Math.min(100, Math.max(0, progress));
                     
                     scrollProgress.value = progress;
@@ -693,6 +696,144 @@
                             outline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
                         });
                     }
+                };
+
+                const initMagneticLogo = () => {
+                    const container = document.getElementById('magnetic-container');
+                    if (!container) return;
+
+                    // Logo paths
+                    const logoPaths = [
+                        "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
+                        "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
+                        "M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z",
+                        "M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"
+                    ];
+
+                    const width = container.clientWidth;
+                    const height = container.clientHeight;
+                    
+                    // Create main SVG
+                    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    svg.setAttribute("width", "100%");
+                    svg.setAttribute("height", "100%");
+                    svg.style.overflow = "visible";
+                    container.appendChild(svg);
+
+                    // Create canvas for pixel scanning
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+
+                    // Draw logo to canvas
+                    const logoScale = Math.min(width, height) / 900; 
+                    const offsetX = (width - 848.58 * logoScale) / 2;
+                    const offsetY = (height - 494.09 * logoScale) / 2;
+
+                    ctx.fillStyle = "black";
+                    ctx.save();
+                    ctx.translate(offsetX, offsetY);
+                    ctx.scale(logoScale, logoScale);
+                    
+                    logoPaths.forEach(pathD => {
+                        const p = new Path2D(pathD);
+                        ctx.fill(p);
+                    });
+                    ctx.restore();
+
+                    // Scan grid and place balls
+                    const step = 15; // Gap between balls
+                    const balls = [];
+                    const mouseRadius = 150;
+
+                    for (let y = 0; y < height; y += step) {
+                        for (let x = 0; x < width; x += step) {
+                            const pixel = ctx.getImageData(x, y, 1, 1).data;
+                            if (pixel[3] > 128) { // If pixel is opaque (part of logo)
+                                // Create ball
+                                const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                                ball.setAttribute("class", "text-klein-blue fill-current");
+                                ball.setAttribute("cx", x);
+                                ball.setAttribute("cy", y);
+                                ball.setAttribute("r", 2);
+                                
+                                // Create origin point
+                                const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                                point.setAttribute("class", "text-gray-300 dark:text-gray-700 fill-current opacity-30");
+                                point.setAttribute("cx", x);
+                                point.setAttribute("cy", y);
+                                point.setAttribute("r", 1);
+
+                                // Create line
+                                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                                line.setAttribute("class", "text-klein-blue stroke-current");
+                                line.setAttribute("x1", x);
+                                line.setAttribute("y1", y);
+                                line.setAttribute("x2", x);
+                                line.setAttribute("y2", y);
+                                line.style.opacity = "0.1";
+
+                                svg.appendChild(line);
+                                svg.appendChild(point);
+                                svg.appendChild(ball);
+
+                                balls.push({
+                                    el: ball,
+                                    line: line,
+                                    ori_x: x,
+                                    ori_y: y
+                                });
+                            }
+                        }
+                    }
+
+                    // Mouse Interaction
+                    const onMouseMove = (e) => {
+                        const rect = container.getBoundingClientRect();
+                        const mouseX = e.clientX - rect.left;
+                        const mouseY = e.clientY - rect.top;
+
+                        balls.forEach(ball => {
+                            const dx = ball.ori_x - mouseX;
+                            const dy = ball.ori_y - mouseY;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+
+                            if (dist < mouseRadius) {
+                                const angle = Math.atan2(dy, dx);
+                                const force = (mouseRadius - dist) / mouseRadius; 
+                                const moveDist = force * 60; // Max displacement
+
+                                const tx = ball.ori_x + Math.cos(angle) * moveDist;
+                                const ty = ball.ori_y + Math.sin(angle) * moveDist;
+
+                                if (ball.animater) ball.animater.kill();
+                                ball.animater = gsap.timeline()
+                                    .to(ball.el, {
+                                        attr: { cx: tx, cy: ty },
+                                        duration: 0.3,
+                                        ease: "power2.out"
+                                    })
+                                    .to(ball.line, {
+                                        attr: { x2: tx, y2: ty },
+                                        duration: 0.3,
+                                        ease: "power2.out"
+                                    }, "<")
+                                    .to(ball.el, {
+                                        attr: { cx: ball.ori_x, cy: ball.ori_y },
+                                        duration: 0.8,
+                                        ease: "elastic.out(1, 0.5)"
+                                    }, ">0.1")
+                                    .to(ball.line, {
+                                        attr: { x2: ball.ori_x, y2: ball.ori_y },
+                                        duration: 0.8,
+                                        ease: "elastic.out(1, 0.5)"
+                                    }, "<");
+                            }
+                        });
+                    };
+
+                    container.addEventListener('mousemove', onMouseMove);
                 };
 
                 const createSquircleShape = (size) => {
@@ -909,6 +1050,8 @@
                             setTimeout(() => { loader.value.style.display = 'none'; }, 500);
                         }
                         gsap.from(".reveal-text", { y: 100, opacity: 0, duration: 1.2, stagger: 0.1, ease: "power4.out", delay: 0.5 });
+                        // Initialize Magnetic Logo after intro
+                        initMagneticLogo();
                     }, 1500);
 
                     lucide.createIcons();
