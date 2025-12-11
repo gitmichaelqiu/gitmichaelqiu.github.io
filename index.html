@@ -164,7 +164,7 @@
             
             <!-- Left: Sidebar Trigger -->
             <button @click="toggleSidebar" 
-                    class="nav-button group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto border border-white/10 shadow-lg"
+                    class="nav-button group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto border shadow-lg"
                     :class="navColorClass">
                 <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
                 <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
@@ -174,7 +174,7 @@
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
                     <!-- Dynamic coloring based on navColorClass -->
-                    <div class="nav-button border border-white/10 rounded-full h-12 flex items-center justify-center overflow-hidden shadow-2xl"
+                    <div class="nav-button border rounded-full h-12 flex items-center justify-center overflow-hidden shadow-2xl"
                          :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navColorClass]">
                         
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
@@ -200,8 +200,8 @@
                               fill="none" stroke="currentColor" stroke-width="2"
                               :stroke-dasharray="capsulePerimeter"
                               :stroke-dashoffset="capsuleDashOffset"
-                              :class="activeTheme === 'dark' ? 'text-white' : 'text-black'" 
-                              style="transition: stroke-dashoffset 0.1s linear, stroke-dasharray 0.5s ease; opacity: 0.3;" />
+                              class="text-klein-blue" 
+                              style="transition: stroke-dashoffset 0.1s linear, stroke-dasharray 0.5s ease; opacity: 1;" />
                     </svg>
                 </div>
             </div>
@@ -209,7 +209,7 @@
             <!-- Right: Theme Toggle -->
             <div class="pointer-events-auto">
                 <button @click="cycleTheme" 
-                        class="nav-button w-12 h-12 rounded-full flex items-center justify-center border border-white/10 shadow-lg hover:rotate-180"
+                        class="nav-button w-12 h-12 rounded-full flex items-center justify-center border shadow-lg hover:rotate-180"
                         :class="navColorClass">
                     <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
                     <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
@@ -241,56 +241,49 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <!-- Hero Section (Blue Void) -->
-            <section id="home" class="relative w-full min-h-[120vh] flex flex-col justify-start overflow-hidden bg-klein-blue text-white">
+            <!-- Hero Section (Blue Void - FULLSCREEN BALLS) -->
+            <section id="home" class="relative w-full min-h-[150vh] flex flex-col justify-start bg-klein-blue text-white overflow-hidden">
                 
-                <!-- Magnetic Logo (Fullscreen Background) -->
-                <div class="absolute inset-0 z-0">
-                     <div id="magnetic-container" class="w-full h-full relative cursor-crosshair opacity-40"></div>
+                <!-- Fixed Fullscreen Magnetic Logo Container -->
+                <div class="fixed inset-0 z-0 pointer-events-none" id="magnetic-wrapper">
+                     <div id="magnetic-container" class="w-full h-full relative pointer-events-auto transition-opacity duration-1000"></div>
                 </div>
 
-                <div class="relative z-10 w-full max-w-[90vw] mx-auto pt-48 flex flex-col justify-between h-[90vh]">
-                    <!-- Banner -->
-                    <div class="w-full border-b border-white/20 pb-4 mb-auto">
-                        <div class="marquee-container opacity-50">
-                            <div class="marquee-content animate-marquee text-lg font-mono tracking-widest whitespace-nowrap">
-                                WORKSPACE ARCHITECT // SYSTEM DESIGN // UI/UX // DIGITAL CRAFTSMANSHIP // WORKSPACE ARCHITECT // SYSTEM DESIGN // UI/UX // DIGITAL CRAFTSMANSHIP //
-                            </div>
-                            <div class="marquee-content animate-marquee text-lg font-mono tracking-widest whitespace-nowrap">
-                                WORKSPACE ARCHITECT // SYSTEM DESIGN // UI/UX // DIGITAL CRAFTSMANSHIP // WORKSPACE ARCHITECT // SYSTEM DESIGN // UI/UX // DIGITAL CRAFTSMANSHIP //
+                <!-- Scrollable Content -->
+                <div class="relative z-10 w-full">
+                    
+                    <!-- Page 1: Logo & Name Only -->
+                    <div class="h-screen w-full flex flex-col justify-end px-6 md:px-12 pb-12 md:pb-24">
+                        <div class="hero-text-container transform transition-transform duration-300 ease-out">
+                            <h1 class="text-[16vw] leading-[0.8] font-black tracking-tighter mix-blend-overlay">MICHAEL</h1>
+                            <h1 class="text-[16vw] leading-[0.8] font-black tracking-tighter pl-4 md:pl-8">QIU</h1>
+                            
+                            <div class="mt-8 flex justify-between items-end border-t border-white/30 pt-8 max-w-4xl">
+                                <p class="text-xl md:text-2xl font-light opacity-90 max-w-lg">
+                                    Designing digital utilities that feel <span class="font-bold italic">inevitable</span>.
+                                </p>
+                                <div class="hidden md:flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse">
+                                    <span>SCROLL TO BEGIN</span>
+                                    <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Name (Starts Bottom, Animated Up) -->
-                    <div class="hero-text-container transform transition-transform duration-1000 ease-out mt-auto">
-                        <h1 class="text-[16vw] leading-[0.8] font-black tracking-tighter mix-blend-overlay">MICHAEL</h1>
-                        <h1 class="text-[16vw] leading-[0.8] font-black tracking-tighter pl-8">QIU</h1>
-                        
-                        <div class="mt-8 flex justify-between items-end border-t border-white/20 pt-8">
-                            <p class="max-w-md text-xl font-light opacity-80">
-                                Designing digital utilities that feel <span class="font-bold italic">inevitable</span>.
-                            </p>
-                            <div class="font-mono text-xs animate-pulse">SCROLL TO EXPLORE ↓</div>
+                    <!-- Page 2: BE CREATIVE Banner (Scroll Expand) -->
+                    <div class="h-[80vh] flex items-center justify-center relative overflow-hidden" id="banner-trigger">
+                        <div class="w-full transform scale-50 opacity-0 transition-all duration-700 ease-out" id="creative-banner">
+                            <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter mix-blend-overlay">
+                                BE<br>CREATIVE
+                            </h2>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- Spacer -->
-            <section class="w-full py-32 bg-black text-white overflow-hidden relative border-y border-white/10">
-                <div class="marquee-container -rotate-1">
-                    <div class="marquee-content animate-marquee text-[8vw] font-display font-black whitespace-nowrap text-white/10">
-                        BE WILD • BE CREATIVE • BE COOL • BE WILD • BE CREATIVE • BE COOL •
-                    </div>
-                    <div class="marquee-content animate-marquee text-[8vw] font-display font-black whitespace-nowrap text-white/10">
-                        BE WILD • BE CREATIVE • BE COOL • BE WILD • BE CREATIVE • BE COOL •
-                    </div>
                 </div>
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-white dark:bg-[#050505]">
+            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505]">
                 <div class="max-w-[90vw] mx-auto relative z-10">
                     <div class="flex items-end justify-between mb-24 border-b border-gray-200 dark:border-white/10 pb-8">
                         <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
@@ -317,10 +310,10 @@
                         <!-- Stack -->
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-klein-blue hover:text-white transition-all duration-300 group">
                             <div class="flex justify-between items-start">
-                                <h3 class="font-mono text-xs opacity-60">STACK</h3>
-                                <i data-lucide="layers" class="w-6 h-6 opacity-60"></i>
+                                <h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3>
+                                <i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i>
                             </div>
-                            <ul class="space-y-3 mt-4 font-bold text-2xl">
+                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white">
                                 <li>Python</li>
                                 <li>C++</li>
                                 <li>SwiftUI</li>
@@ -330,11 +323,11 @@
                          <!-- Focus -->
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-black hover:text-white transition-all duration-300 group">
                             <div class="flex justify-between items-start">
-                                <h3 class="font-mono text-xs opacity-60">FOCUS</h3>
-                                <i data-lucide="crosshair" class="w-6 h-6 opacity-60"></i>
+                                <h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3>
+                                <i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i>
                             </div>
                              <div class="mt-4">
-                                <p class="text-4xl font-black leading-none">System<br>Utils</p>
+                                <p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p>
                             </div>
                         </div>
                          <!-- Motto -->
@@ -362,8 +355,8 @@
                         <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
                     </div>
 
-                    <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center justify-end px-6 md:px-24" :data-index="i">
-                        <div class="max-w-md bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl hover:border-klein-blue/50 transition-colors">
+                    <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center justify-center md:justify-end px-6 md:px-24" :data-index="i">
+                        <div class="max-w-md w-full bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl hover:border-klein-blue/50 transition-colors">
                             <span class="text-klein-blue font-mono text-xs tracking-widest mb-4 block">0{{i+1}} / SYSTEM</span>
                             <h3 class="text-5xl font-bold text-white mb-6 tracking-tight">{{ app.name }}</h3>
                             <p class="text-gray-400 text-lg leading-relaxed mb-8 font-light">
@@ -375,12 +368,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="h-[20vh]"></div>
+                    <!-- Removed empty spacer to prevent dead scroll -->
                 </div>
             </section>
             
             <!-- Connect Section (Syncs with Theme) -->
-            <section id="connect" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500">
+            <section id="connect" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-20">
                 <div class="max-w-7xl mx-auto">
                     <div class="flex items-center gap-3 mb-16">
                         <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
@@ -410,7 +403,7 @@
                 </div>
             </section>
 
-            <footer class="w-full py-16 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500">
+            <footer class="w-full py-16 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-20">
                 <p>&copy; 2025 MICHAEL QIU.</p>
                 <div class="flex gap-8 mt-6 md:mt-0">
                     <a href="#home" class="hover:text-klein-blue transition-colors">BACK TO TOP</a>
@@ -434,20 +427,15 @@
                 const canvasContainer = ref(null);
                 const textureError = ref(false);
                 
-                // Reactive Nav Color Class
+                // Reactive Nav Color Class - FORCED BLACK ON HOME
                 const navColorClass = computed(() => {
-                    // Default to Black BG/White Text on Dark Sections (Home, Works)
-                    // Invert on Light Sections (Profile, Connect in Light Mode)
                     const darkSections = ['home', 'works'];
                     const isDarkSection = darkSections.includes(activeSection.value);
                     
                     if (isDarkSection) {
                         return 'bg-black text-white border-white/20';
                     } else {
-                        // If light section, check theme. 
-                        // If Dark Theme: bg-white/10 text-white (standard glassy)
-                        // If Light Theme: bg-white text-black (standard light)
-                        return activeTheme.value === 'dark' ? 'bg-white/10 text-white border-white/10' : 'bg-white text-black border-black/10';
+                        return activeTheme.value === 'dark' ? 'bg-white text-black border-white/10' : 'bg-black text-white border-black/10';
                     }
                 });
 
@@ -468,6 +456,7 @@
 
                 const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
+                    // Logic to ensure ring completes 100%
                     const progress = Math.min(100, Math.max(0, scrollProgress.value));
                     return Math.max(0, capsulePerimeter - (progress / 100) * capsulePerimeter);
                 });
@@ -501,7 +490,9 @@
                     const docHeight = document.documentElement.scrollHeight;
                     const winHeight = window.innerHeight;
                     const scrollTotal = docHeight - winHeight;
-                    let progress = (scrollTop / (scrollTotal - 1)) * 100;
+                    
+                    // Safe division
+                    let progress = scrollTotal > 0 ? (scrollTop / scrollTotal) * 100 : 0;
                     progress = Math.min(100, Math.max(0, progress));
                     scrollProgress.value = progress;
                     
@@ -510,28 +501,41 @@
                     }
                     window.lastScrollY = scrollTop;
 
-                    // Update Active Section for Nav Coloring
+                    // Update Active Section
                     const sections = ['home', 'profile', 'works', 'connect'];
                     for (const section of sections) {
                         const el = document.getElementById(section);
                         if (el) {
                             const rect = el.getBoundingClientRect();
-                            // Expanded detection area
-                            if (rect.top <= winHeight * 0.6 && rect.bottom >= winHeight * 0.4) {
+                            if (rect.top <= winHeight * 0.5 && rect.bottom >= winHeight * 0.5) {
                                 activeSection.value = section;
                             }
                         }
                     }
                     
                     // Home Animation Logic
-                    if (scrollTop < winHeight) {
-                        const moveFactor = scrollTop * 0.5;
-                        const opacityFactor = Math.max(0, 1 - scrollTop / 500);
-                        const heroText = document.querySelector('.hero-text-container');
-                        const magContainer = document.getElementById('magnetic-container');
+                    const magContainer = document.getElementById('magnetic-container');
+                    const heroText = document.querySelector('.hero-text-container');
+                    const banner = document.getElementById('creative-banner');
+                    
+                    if (scrollTop < winHeight * 2) {
+                        // Fade out balls
+                        if(magContainer) magContainer.style.opacity = Math.max(0, 1 - scrollTop / 500);
                         
-                        if (heroText) heroText.style.transform = `translateY(-${moveFactor}px)`;
-                        if (magContainer) magContainer.style.opacity = opacityFactor * 0.4; // Base opacity 0.4
+                        // Parallax Name Up
+                        if(heroText) heroText.style.transform = `translateY(-${scrollTop * 0.8}px)`;
+                        
+                        // Banner Expansion
+                        if(banner) {
+                            const bannerStart = winHeight * 0.8;
+                            if(scrollTop > bannerStart) {
+                                const progress = Math.min(1, (scrollTop - bannerStart) / 400);
+                                banner.style.transform = `scale(${0.5 + progress * 0.5})`;
+                                banner.style.opacity = progress;
+                            } else {
+                                banner.style.opacity = 0;
+                            }
+                        }
                     }
                 };
 
@@ -575,7 +579,7 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
 
-                    // SCALE UP LOGO TO FILL SCREEN
+                    // FULLSCREEN LOGO SCALE
                     const logoScale = Math.min(width, height) / 300; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
@@ -587,7 +591,7 @@
                     logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
 
-                    const step = 25; 
+                    const step = 28; // Large balls
                     const balls = [];
                     const mouseRadius = 300; 
 
@@ -596,10 +600,11 @@
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
                             if (pixel[3] > 128) {
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                                // Balls are WHITE for contrast on BLUE bg
                                 ball.setAttribute("class", "text-white fill-current magnetic-ball");
                                 ball.setAttribute("cx", x);
                                 ball.setAttribute("cy", y);
-                                ball.setAttribute("r", 3); 
+                                ball.setAttribute("r", 4); 
                                 svg.appendChild(ball);
                                 balls.push({ el: ball, ori_x: x, ori_y: y });
                             }
@@ -616,7 +621,7 @@
                             const dist = Math.sqrt(dx * dx + dy * dy);
                             if (dist < mouseRadius) {
                                 const angle = Math.atan2(dy, dx);
-                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 100; 
+                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 80; 
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
                                 gsap.to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3 });
@@ -644,10 +649,10 @@
                     return shape;
                 };
 
-                // HD Fallback Texture
+                // HD Fallback Texture - IMPROVED RESOLUTION
                 const createFallbackTexture = (text) => {
                     const canvas = document.createElement('canvas');
-                    canvas.width = 2048; canvas.height = 2048; // Increased resolution
+                    canvas.width = 2048; canvas.height = 2048; 
                     const ctx = canvas.getContext('2d');
                     
                     ctx.fillStyle = '#050505';
@@ -688,7 +693,7 @@
 
                     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
                     renderer.setSize(width, height);
-                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Sharper
+                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                     renderer.toneMapping = THREE.ACESFilmicToneMapping;
                     renderer.toneMappingExposure = 1.2;
                     canvasContainer.value.appendChild(renderer.domElement);
@@ -733,7 +738,7 @@
                         texLoader.load(app.img, 
                             (texture) => {
                                 texture.encoding = THREE.sRGBEncoding;
-                                texture.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Sharper textures
+                                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                                 frontMaterial.map = texture;
                                 frontMaterial.needsUpdate = true;
                             },
