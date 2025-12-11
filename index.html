@@ -148,8 +148,9 @@
             <div class="font-mono text-sm tracking-[0.3em] text-white">SYSTEM_BOOT</div>
         </div>
 
-        <!-- Navigation Bar (Z-Index Fixed: 999) -->
-        <nav class="fixed top-0 left-0 w-full z-[999] px-8 py-8 flex justify-between items-center text-current mix-blend-difference pointer-events-none">
+        <!-- Navigation Bar (Z-Index Fixed: 9999 to stay above everything) -->
+        <!-- Fixed: Removed mix-blend-difference to avoid light mode visibility issues. Explicitly setting colors. -->
+        <nav class="fixed top-0 left-0 w-full z-[9999] px-8 py-8 flex justify-between items-center text-black dark:text-white pointer-events-none transition-colors duration-500">
             <!-- Left: Sidebar Trigger -->
             <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none pointer-events-auto">
                 <div class="relative w-10 h-10 border border-current rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden backdrop-blur-sm group-hover:border-klein-blue transition-colors">
@@ -161,19 +162,20 @@
             <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
-                    <div class="bg-black/90 dark:bg-black/80 backdrop-blur-md border border-white/20 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-lg"
+                    <!-- Fixed: Nav pill background colors for better contrast -->
+                    <div class="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-black/10 dark:border-white/20 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-lg text-black dark:text-white"
                          :class="isCapsuleOpen ? 'w-[300px]' : 'w-[140px]'">
                         
-                        <div v-if="!isCapsuleOpen" class="font-mono text-xs tracking-widest text-white px-6">
+                        <div v-if="!isCapsuleOpen" class="font-mono text-xs tracking-widest px-6">
                             {{ activeSection.toUpperCase() }}
                         </div>
 
-                        <div v-else class="flex gap-4 font-mono text-[10px] text-gray-400 px-6 animate-fade-in whitespace-nowrap">
-                            <a href="#home" class="hover:text-white transition-colors">HOME</a>
+                        <div v-else class="flex gap-4 font-mono text-[10px] text-gray-500 dark:text-gray-400 px-6 animate-fade-in whitespace-nowrap">
+                            <a href="#home" class="hover:text-klein-blue dark:hover:text-white transition-colors">HOME</a>
                             <span>/</span>
-                            <a href="#profile" class="hover:text-white transition-colors">PROFILE</a>
+                            <a href="#profile" class="hover:text-klein-blue dark:hover:text-white transition-colors">PROFILE</a>
                             <span>/</span>
-                            <a href="#works" class="hover:text-white transition-colors">WORKS</a>
+                            <a href="#works" class="hover:text-klein-blue dark:hover:text-white transition-colors">WORKS</a>
                         </div>
                     </div>
 
@@ -204,7 +206,7 @@
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white dark:bg-[#050505] text-black dark:text-white z-[900] border-r border-gray-200 dark:border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl transition-colors duration-500 overflow-y-auto overflow-x-hidden">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white dark:bg-[#050505] text-black dark:text-white z-[9000] border-r border-gray-200 dark:border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl transition-colors duration-500 overflow-y-auto overflow-x-hidden">
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
                 </div>
@@ -393,9 +395,11 @@
 
                     <!-- 3D Viewer Area -->
                     <div class="w-full md:w-7/12 h-[50vh] md:h-[70vh] relative mt-12 md:mt-0" ref="canvasContainer">
-                        <!-- Gradient Overlay with fixed Light Mode blend -->
-                        <div class="absolute inset-0 pointer-events-none z-10 bg-gradient-to-l from-transparent transition-colors duration-500"
-                             :class="activeTheme === 'light' ? 'to-[#F2F2F7]' : 'to-black/20'">
+                        <!-- Fixed: Explicit gradient colors for both modes to ensure correct blending -->
+                        <!-- Light Mode: Transparent White -> Solid Page Color (#F2F2F7) -->
+                        <!-- Dark Mode: Transparent Black -> Black/20 -->
+                        <div class="absolute inset-0 pointer-events-none z-10 transition-colors duration-500"
+                             :style="{ background: activeTheme === 'light' ? 'linear-gradient(to left, rgba(242,242,247,0), #F2F2F7)' : 'linear-gradient(to left, transparent, rgba(0,0,0,0.4))' }">
                         </div>
                         
                         <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
@@ -420,7 +424,7 @@
     </div>
 
     <script>
-        const { createApp, ref, computed, onMounted, onUnmounted, watch } = Vue;
+        const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
 
         createApp({
             setup() {
@@ -492,6 +496,13 @@
                     
                     resolveTheme();
                 };
+
+                // Fixed: Watch for theme mode changes to update Lucide icons
+                watch(themeMode, () => {
+                    nextTick(() => {
+                        lucide.createIcons();
+                    });
+                });
 
                 const updateScrollProgress = () => {
                     const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
