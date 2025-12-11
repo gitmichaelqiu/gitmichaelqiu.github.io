@@ -136,13 +136,18 @@
             position: absolute;
             width: 150px;
             height: 150px;
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.6) 0%, transparent 70%); /* Klein Blue Glow */
             opacity: 0;
             transition: opacity 0.5s ease;
             pointer-events: none;
             z-index: 0;
         }
         .group:hover .card-corner-glow { opacity: 1; }
+        
+        /* Specific Hover Fixes */
+        .hover-solid-blue:hover { background-color: #002FA7 !important; color: white !important; }
+        .hover-solid-black:hover { background-color: black !important; color: white !important; }
+        html.dark .hover-solid-black:hover { background-color: white !important; color: black !important; }
     </style>
 </head>
 <body>
@@ -249,7 +254,7 @@
                     <!-- 2. Text Content Overlay -->
                     <div class="absolute inset-0 z-10 flex flex-col justify-end items-start pointer-events-none">
                         
-                        <!-- Legibility Blur Gradient -->
+                        <!-- Readability Blur Gradient -->
                         <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-klein-blue/90 via-klein-blue/40 to-transparent pointer-events-none"></div>
 
                         <!-- Name & Intro Container -->
@@ -261,8 +266,8 @@
                                 <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal whitespace-nowrap" id="hero-name">
                                     MICHAEL QIU
                                 </h1>
-                                <!-- Temporary Underline -->
-                                <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.5vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
+                                <!-- Temporary Underline (White) -->
+                                <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.3vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
                             </div>
                             
                             <!-- Intro: Fades in later -->
@@ -282,7 +287,7 @@
                 </div>
             </section>
 
-            <!-- "Be Creative" Banner Section (Distinct Background) -->
+            <!-- "About Me" Banner Section (Distinct Background) -->
             <section class="w-full h-[120vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
                 <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
                     <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
@@ -312,11 +317,11 @@
                                  <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
                              </div>
                         </div>
-                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-klein-blue hover:text-white transition-all duration-300 group">
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-blue transition-all duration-300 group">
                             <div class="flex justify-between items-start"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3><i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
                             <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white"><li>Python</li><li>C++</li><li>SwiftUI</li><li>Vue.js</li></ul>
                         </div>
-                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-black hover:text-white transition-all duration-300 group">
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-black transition-all duration-300 group">
                             <div class="flex justify-between items-start"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3><i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
                              <div class="mt-4"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p></div>
                         </div>
@@ -347,7 +352,7 @@
                             <!-- Backend Glow for card -->
                             <div class="absolute -inset-4 bg-klein-blue/20 blur-2xl -z-10 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                             
-                            <!-- Corner Glows -->
+                            <!-- Corner Glows (Blue) -->
                             <div class="card-corner-glow -top-10 -right-10"></div>
                             <div class="card-corner-glow -bottom-10 -left-10"></div>
 
@@ -356,9 +361,12 @@
                             <p class="text-gray-400 text-lg leading-relaxed mb-8 font-light relative z-10">
                                 {{ app.desc }}
                             </p>
-                            <div class="flex items-center gap-3 relative z-10">
-                                <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">MACOS</span>
-                                <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">SWIFT</span>
+                            <div class="flex items-center justify-between gap-3 relative z-10">
+                                <div class="flex gap-2">
+                                    <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">MACOS</span>
+                                    <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">SWIFT</span>
+                                </div>
+                                <i data-lucide="arrow-right" class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300"></i>
                             </div>
                         </div>
                     </div>
@@ -375,23 +383,23 @@
                         <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 hover:border-klein-blue transition-all duration-500">
+                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 hover-solid-blue transition-all duration-500">
                             <div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-transparent dark:from-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between">
                                 <div class="flex justify-between items-start">
-                                    <i data-lucide="github" class="w-12 h-12 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
+                                    <i data-lucide="github" class="w-12 h-12 text-gray-400 group-hover:text-white transition-colors"></i>
+                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-white/20 group-hover:border-white group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
                                 </div>
-                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-klein-blue transition-colors text-xl">Explore source code</p></div>
+                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white group-hover:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-white transition-colors text-xl">Explore source code</p></div>
                             </div>
                         </a>
-                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 hover:border-[#20BEFF] transition-all duration-500">
+                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 hover-solid-blue transition-all duration-500">
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between">
                                 <div class="flex justify-between items-start">
-                                    <div class="text-4xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
-                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
+                                    <div class="text-4xl font-black text-gray-400 group-hover:text-white transition-colors">K</div>
+                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-white/20 group-hover:border-white group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
                                 </div>
-                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">Kaggle</h3><p class="text-gray-500 group-hover:text-[#20BEFF] transition-colors text-xl">Data Science</p></div>
+                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white group-hover:text-white">Kaggle</h3><p class="text-gray-500 group-hover:text-white transition-colors text-xl">Data Science</p></div>
                             </div>
                         </a>
                     </div>
@@ -530,7 +538,8 @@
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             
                             // MODIFIED SCALE: Reduced max scale to prevent too large text
-                            const targetScale = 1 + (moveProgress * 0.8); // Reduced from 1.5
+                            // Starts at scale 1, goes to 1.3
+                            const targetScale = 1 + (moveProgress * 0.3); 
 
                             heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
                             
@@ -558,8 +567,8 @@
                         
                         if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
                             const progress = 1 - (bannerRect.top / triggerPoint);
-                            // Reduced scaling for "Be Creative" too
-                            const scale = 0.5 + Math.max(0, progress) * 0.8; // Reduced max scale
+                            // Reduced scaling for "About Me" too
+                            const scale = 0.5 + Math.max(0, progress) * 0.5; // Scale from 0.5 to 1.0
                             creativeBanner.style.transform = `scale(${scale})`;
                             creativeBanner.style.opacity = Math.min(1, progress * 1.5);
                         }
