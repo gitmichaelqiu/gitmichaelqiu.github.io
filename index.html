@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +10,13 @@
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
+                        'bg-dark': '#050505',
+                        'bg-light': '#F0F0F0',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -45,17 +48,32 @@
         :root {
             --klein-blue: #002FA7;
             --klein-blue-glow: rgba(0, 47, 167, 0.6);
+            --bg-gradient-dark: radial-gradient(circle at 50% 50%, #111111 0%, #050505 100%);
+            --bg-gradient-light: radial-gradient(circle at 50% 50%, #f5f5f5 0%, #e0e0e0 100%);
         }
 
         body {
-            /* Changed from flat #030303 to a subtle deep gradient */
-            background: radial-gradient(circle at 50% 50%, #111111 0%, #050505 100%);
+            background: var(--bg-gradient-dark);
             color: #ffffff;
             overflow-x: hidden;
-            cursor: none;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
-        /* Custom Cursor */
+        body.light-mode {
+            background: var(--bg-gradient-light);
+            color: #111111;
+        }
+
+        /* Custom Cursor - Desktop Only */
+        @media (min-width: 768px) {
+            body {
+                cursor: none;
+            }
+            .cursor-dot, .cursor-outline {
+                display: block;
+            }
+        }
+
         .cursor-dot,
         .cursor-outline {
             position: fixed;
@@ -65,16 +83,18 @@
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
+            display: none; /* Hidden by default on mobile */
         }
         .cursor-dot {
             width: 8px;
             height: 8px;
-            background-color: white;
+            background-color: currentColor; /* Use text color */
         }
         .cursor-outline {
             width: 40px;
             height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid currentColor;
+            opacity: 0.5;
             transition: width 0.2s, height 0.2s, background-color 0.2s;
         }
         body:hover .cursor-outline {
@@ -93,6 +113,10 @@
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
             opacity: 0.4;
+        }
+        .light-mode .grain-overlay {
+            opacity: 0.2; /* Subtler grain in light mode */
+            filter: invert(1);
         }
 
         /* Marquee Animation */
@@ -114,6 +138,9 @@
             color: transparent;
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
         }
+        .light-mode .outline-text {
+            -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2);
+        }
         
         .glitch-wrapper { position: relative; }
         .glitch-wrapper::before, .glitch-wrapper::after {
@@ -122,6 +149,10 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: #030303;
         }
+        .light-mode .glitch-wrapper::before, .light-mode .glitch-wrapper::after {
+            background: #e0e0e0;
+        }
+
         .glitch-wrapper::before {
             left: 2px; text-shadow: -1px 0 #ff00c1;
             clip: rect(44px, 450px, 56px, 0);
@@ -148,6 +179,11 @@
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .light-mode .glass-card {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         .glass-card:hover {
             border-color: var(--klein-blue);
@@ -165,14 +201,29 @@
             display: flex; justify-content: center; align-items: center;
             flex-direction: column;
         }
+        
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--klein-blue);
+            z-index: 10001; /* Above loader for persistency, or below? Above Nav. */
+            width: 0%;
+            transition: width 0.1s linear;
+        }
     </style>
 </head>
-<body>
+<body :class="{ 'light-mode': !isDark }">
     <div id="app" class="relative min-h-screen selection:bg-[#002FA7] selection:text-white">
         
+        <!-- Scroll Progress Bar -->
+        <div class="progress-bar" :style="{ width: scrollProgress + '%' }"></div>
+
         <!-- Custom Cursor -->
-        <div class="cursor-dot hidden md:block"></div>
-        <div class="cursor-outline hidden md:block"></div>
+        <div class="cursor-dot"></div>
+        <div class="cursor-outline"></div>
 
         <!-- Visual Noise -->
         <div class="grain-overlay"></div>
@@ -188,7 +239,7 @@
         </div>
 
         <!-- Navigation -->
-        <nav class="fixed top-0 left-0 w-full z-50 px-8 py-8 flex justify-between items-center mix-blend-difference">
+        <nav class="fixed top-0 left-0 w-full z-50 px-8 py-8 flex justify-between items-center mix-blend-difference text-white">
             <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none">
                 <div class="relative w-10 h-10 border border-white/30 rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden bg-black/50 backdrop-blur-sm group-hover:border-klein-blue transition-colors">
                     <span class="w-4 h-0.5 bg-white transition-all duration-300 group-hover:w-6"></span>
@@ -196,16 +247,24 @@
                 </div>
                 <span class="font-mono text-xs tracking-widest hidden md:block opacity-70 group-hover:opacity-100 group-hover:text-klein-blue transition-all">MENU</span>
             </button>
-            <div class="font-display font-bold text-xl tracking-tighter">MQ<span class="text-klein-blue">.</span></div>
+            
+            <div class="flex items-center gap-8">
+                <!-- Theme Toggle -->
+                <button @click="toggleTheme" class="hover:text-klein-blue transition-colors focus:outline-none">
+                    <i v-if="isDark" data-lucide="sun" class="w-5 h-5"></i>
+                    <i v-else data-lucide="moon" class="w-5 h-5"></i>
+                </button>
+                <div class="font-display font-bold text-xl tracking-tighter">MQ<span class="text-klein-blue">.</span></div>
+            </div>
         </nav>
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-[#050505] z-40 border-r border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-[#050505] dark:bg-[#050505] bg-[#ffffff] text-black dark:text-white z-40 border-r border-gray-800 dark:border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl overflow-hidden transition-colors duration-500">
                 <!-- Background decoration for sidebar -->
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
-                    <div class="absolute bottom-1/4 left-0 w-96 h-96 border border-white rounded-full -translate-x-1/2 opacity-20"></div>
+                    <div class="absolute bottom-1/4 left-0 w-96 h-96 border border-current rounded-full -translate-x-1/2 opacity-20"></div>
                 </div>
 
                 <div class="flex flex-col gap-6 relative z-10">
@@ -214,20 +273,24 @@
                        :key="item"
                        :href="'#' + item.toLowerCase()" 
                        @click="toggleSidebar" 
-                       class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-600 hover:to-klein-blue transition-all duration-500 transform hover:translate-x-6 hover:tracking-widest cursor-none break-all"
-                       style="-webkit-text-stroke: 1px rgba(255,255,255,0.1);">
-                       <span class="text-sm font-mono absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 text-klein-blue">0{{index+1}}</span>
+                       class="relative text-4xl md:text-5xl font-black bg-clip-text transition-all duration-500 transform hover:translate-x-6 hover:tracking-widest cursor-none break-all"
+                       :class="activeSection === item.toLowerCase() ? 'text-klein-blue' : 'text-transparent bg-gradient-to-r from-current via-current to-gray-400'"
+                       :style="{ '-webkit-text-stroke': activeSection === item.toLowerCase() ? '0px' : '1px rgba(128,128,128,0.3)' }">
+                       <span class="text-sm font-mono absolute -left-8 top-1/2 -translate-y-1/2 transition-opacity duration-300 text-klein-blue"
+                             :class="activeSection === item.toLowerCase() ? 'opacity-100' : 'opacity-0 hover:opacity-100'">
+                           0{{index+1}}
+                       </span>
                        {{ item }}
                     </a>
                 </div>
                 
-                <div class="absolute bottom-12 left-8 md:left-20 font-mono text-[10px] text-gray-600 flex gap-8">
+                <div class="absolute bottom-12 left-8 md:left-20 font-mono text-[10px] text-gray-500 flex gap-8">
                     <div>
-                        <p class="text-white mb-2">CONTACT</p>
+                        <p class="font-bold mb-2">CONTACT</p>
                         <p>michaelqiu0606@outlook.com</p>
                     </div>
                     <div>
-                        <p class="text-white mb-2">GITHUB</p>
+                        <p class="font-bold mb-2">GITHUB</p>
                         <p>@gitmichaelqiu</p>
                     </div>
                 </div>
@@ -239,17 +302,10 @@
             <!-- Hero Section -->
             <section id="home" class="relative w-full h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden">
                 <!-- Abstract Background Shapes -->
-                <div class="absolute top-1/4 right-[10%] w-[30vw] h-[30vw] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]"></div>
+                <div class="absolute top-1/4 right-[10%] w-[30vw] h-[30vw] border border-current opacity-10 rounded-full animate-[spin_60s_linear_infinite]"></div>
                 <div class="absolute top-1/4 right-[10%] w-[28vw] h-[28vw] border border-klein-blue/20 rounded-full animate-[spin_40s_linear_infinite_reverse]"></div>
                 <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-klein-blue/10 to-transparent"></div>
                 
-                <!-- Floating geometric elements -->
-                <svg class="absolute top-20 right-20 w-24 h-24 opacity-20 animate-pulse" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" stroke="white" stroke-width="1" fill="none" />
-                    <line x1="50" y1="10" x2="50" y2="90" stroke="white" stroke-width="1" />
-                    <line x1="10" y1="50" x2="90" y2="50" stroke="white" stroke-width="1" />
-                </svg>
-
                 <div class="z-10 max-w-7xl mx-auto w-full">
                     <div class="flex items-center gap-4 mb-6 reveal-text">
                         <div class="w-12 h-[1px] bg-klein-blue"></div>
@@ -261,11 +317,11 @@
                         <div class="outline-text pl-12 md:pl-24">QIU</div>
                     </h1>
                     
-                    <div class="flex flex-col md:flex-row md:items-end justify-between mt-12 border-t border-white/10 pt-8 reveal-text">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mt-12 border-t border-current border-opacity-10 pt-8 reveal-text">
                         <div class="max-w-md">
-                            <p class="text-gray-400 font-light leading-relaxed text-lg">
+                            <p class="text-gray-500 dark:text-gray-400 font-light leading-relaxed text-lg">
                                 Student, developer, or... <br>
-                                Designing utilities that reshape the <span class="text-white font-bold">work experiences</span>.
+                                Designing utilities that reshape the <span class="text-black dark:text-white font-bold">work experiences</span>.
                             </p>
                         </div>
                         <div class="mt-8 md:mt-0 flex gap-4">
@@ -293,9 +349,11 @@
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-32 px-6 md:px-12 relative border-t border-white/5 bg-[#050505]/80 backdrop-blur-md">
+            <section id="profile" class="w-full py-32 px-6 md:px-12 relative border-t border-black/5 dark:border-white/5 bg-opacity-80 backdrop-blur-md">
                 <!-- Decor Grid -->
-                <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none"></div>
+                <div class="absolute inset-0 opacity-20 pointer-events-none"
+                    style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px); background-size: 100px 100px; opacity: 0.05;">
+                </div>
 
                 <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
                     <!-- Text Side -->
@@ -305,7 +363,7 @@
                         </h2>
                         
                         <div class="space-y-12">
-                            <p class="text-2xl md:text-3xl font-light leading-snug text-gray-200">
+                            <p class="text-2xl md:text-3xl font-light leading-snug text-gray-800 dark:text-gray-200">
                                 I build digital products that feel inevitable. My work sits at the intersection of rigorous code and fluid design.
                             </p>
                             
@@ -314,11 +372,11 @@
                                     <h4 class="font-mono text-xs text-gray-500 mb-2">SPECIALTY</h4>
                                     <p class="font-bold">System Utilities</p>
                                 </div>
-                                <div class="glass-card p-6 rounded-none border-l-2 border-l-white/20">
+                                <div class="glass-card p-6 rounded-none border-l-2 border-l-black/20 dark:border-l-white/20">
                                     <h4 class="font-mono text-xs text-gray-500 mb-2">DESIGN</h4>
                                     <p class="font-bold">Minimalist UI</p>
                                 </div>
-                                <div class="glass-card p-6 rounded-none border-l-2 border-l-white/20">
+                                <div class="glass-card p-6 rounded-none border-l-2 border-l-black/20 dark:border-l-white/20">
                                     <h4 class="font-mono text-xs text-gray-500 mb-2">STACK</h4>
                                     <p class="font-bold">C++, Python, Swift</p>
                                 </div>
@@ -334,13 +392,13 @@
                     <div class="lg:col-span-5 relative h-[500px] lg:h-auto">
                         <div class="w-full h-full relative">
                             <!-- Abstract "Portrait" composed of shapes -->
-                            <div class="absolute inset-0 border border-white/10 p-4">
-                                <div class="w-full h-full bg-[#0a0a0a] relative overflow-hidden">
+                            <div class="absolute inset-0 border border-current border-opacity-10 p-4">
+                                <div class="w-full h-full bg-[#0a0a0a] dark:bg-[#0a0a0a] bg-white relative overflow-hidden transition-colors duration-500">
                                     <div class="absolute top-0 right-0 w-32 h-32 bg-klein-blue blur-[80px]"></div>
-                                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-white blur-[80px] opacity-20"></div>
+                                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-black dark:bg-white blur-[80px] opacity-10"></div>
                                     
                                     <!-- Code Decoration -->
-                                    <div class="absolute top-4 left-4 font-mono text-[10px] text-gray-600 leading-tight">
+                                    <div class="absolute top-4 left-4 font-mono text-[10px] text-gray-500 leading-tight">
                                         class MichaelQiu: Developer {<br>
                                         &nbsp;&nbsp;init() {<br>
                                         &nbsp;&nbsp;&nbsp;&nbsp;self.passion = .high<br>
@@ -350,16 +408,16 @@
                                     </div>
 
                                     <!-- Center Shape -->
-                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-64 border border-white/20 flex flex-col justify-between p-2">
-                                        <div class="w-full h-[1px] bg-white/20"></div>
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-64 border border-current border-opacity-20 flex flex-col justify-between p-2">
+                                        <div class="w-full h-[1px] bg-current opacity-20"></div>
                                         <div class="w-full flex justify-between">
-                                            <div class="w-[1px] h-4 bg-white/20"></div>
-                                            <div class="w-[1px] h-4 bg-white/20"></div>
+                                            <div class="w-[1px] h-4 bg-current opacity-20"></div>
+                                            <div class="w-[1px] h-4 bg-current opacity-20"></div>
                                         </div>
-                                        <div class="w-full h-[1px] bg-white/20"></div>
+                                        <div class="w-full h-[1px] bg-current opacity-20"></div>
                                     </div>
                                     
-                                    <div class="absolute bottom-4 right-4 text-6xl font-black text-white/5">MQ</div>
+                                    <div class="absolute bottom-4 right-4 text-6xl font-black opacity-5">MQ</div>
                                 </div>
                             </div>
                         </div>
@@ -370,12 +428,12 @@
             <!-- Works / Apps Section -->
             <section id="works" class="relative w-full min-h-screen overflow-hidden flex flex-col bg-transparent">
                 <!-- Top Marquee -->
-                <div class="w-full py-4 border-y border-white/10 bg-[#020202]">
+                <div class="w-full py-4 border-y border-white/10 dark:border-white/10 border-black/10 bg-[#020202] dark:bg-[#020202] bg-white">
                     <div class="marquee-container">
-                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold text-white/10">
+                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10">
                             DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
                         </div>
-                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold text-white/10">
+                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10">
                             DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
                         </div>
                     </div>
@@ -388,7 +446,7 @@
                         <div class="mb-12">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-2 h-2 bg-klein-blue"></div>
-                                <span class="font-mono text-xs tracking-widest text-gray-400">macOS SOLUTIONS</span>
+                                <span class="font-mono text-xs tracking-widest text-gray-500">macOS SOLUTIONS</span>
                             </div>
                             <h2 class="text-4xl font-bold leading-tight">
                                 UTILITIES FOR<br>
@@ -400,16 +458,16 @@
                             <div v-for="(app, i) in apps" :key="app.id" 
                                  @mouseenter="hoverApp(app.id)" 
                                  @mouseleave="resetApp"
-                                 class="group relative p-6 border border-white/5 bg-white/[0.02] hover:bg-klein-blue hover:border-klein-blue transition-all duration-300 cursor-none overflow-hidden">
+                                 class="group relative p-6 border border-white/5 dark:border-white/5 border-black/5 bg-white/[0.02] hover:bg-klein-blue hover:border-klein-blue transition-all duration-300 cursor-none overflow-hidden">
                                 
-                                <div class="relative z-10 flex justify-between items-center">
+                                <div class="relative z-10 flex justify-between items-center text-current group-hover:text-white">
                                     <div>
                                         <span class="font-mono text-xs opacity-50 mb-1 block">0{{ i + 1 }}</span>
                                         <h3 class="text-2xl font-bold">{{ app.name }}</h3>
                                     </div>
                                     <i data-lucide="arrow-up-right" class="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </div>
-                                <p class="relative z-10 mt-2 text-sm text-gray-400 group-hover:text-white/80 max-w-[90%] transition-colors">
+                                <p class="relative z-10 mt-2 text-sm text-gray-500 group-hover:text-white/80 max-w-[90%] transition-colors">
                                     {{ app.desc }}
                                 </p>
 
@@ -421,7 +479,7 @@
 
                     <!-- 3D Viewer -->
                     <div class="w-full md:w-7/12 h-[50vh] md:h-[70vh] relative mt-12 md:mt-0" ref="canvasContainer">
-                        <div class="absolute inset-0 bg-gradient-to-l from-transparent to-black/20 pointer-events-none z-10"></div>
+                        <div class="absolute inset-0 bg-gradient-to-l from-transparent to-black/20 dark:to-black/20 to-white/20 pointer-events-none z-10"></div>
                         
                         <!-- Texture Error Message -->
                         <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
@@ -430,12 +488,7 @@
                                 TEXTURE LOAD FAILED
                             </div>
                             <p class="text-xs font-mono mb-2">
-                                Browsers block local file access (file://).
-                            </p>
-                            <p class="text-xs text-gray-300">
-                                To see real icons, please run a local server:
-                                <br>
-                                <code class="bg-black/50 px-1 py-0.5 rounded text-white">python3 -m http.server</code>
+                                Browsers block local file access. Use <code>python3 -m http.server</code>
                             </p>
                         </div>
                     </div>
@@ -443,7 +496,7 @@
             </section>
 
             <!-- Footer -->
-            <footer class="w-full py-12 px-6 md:px-12 border-t border-white/10 bg-[#050505] flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-600">
+            <footer class="w-full py-12 px-6 md:px-12 border-t border-black/10 dark:border-white/10 bg-[#f0f0f0] dark:bg-[#050505] flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-500 transition-colors duration-500">
                 <p>&copy; 2025 MICHAEL QIU</p>
                 <div class="flex gap-6 mt-4 md:mt-0">
                     <a href="https://github.com/gitmichaelqiu/" class="hover:text-klein-blue transition-colors">GITHUB</a>
@@ -454,11 +507,15 @@
     </div>
 
     <script>
-        const { createApp, ref, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, onMounted, onUnmounted, watch } = Vue;
 
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
+                const isDark = ref(true); // Default to Dark Mode
+                const scrollProgress = ref(0);
+                const activeSection = ref('home');
+                
                 const loader = ref(null);
                 const canvasContainer = ref(null);
                 const textureError = ref(false);
@@ -472,13 +529,15 @@
                 // Three.js variables
                 let scene, camera, renderer, appsGroup;
                 let icons = []; 
-                let effectGroup; // Group for extra "cool" effects
-                let rings = []; // Store rings to animate them
+                let effectGroup; 
+                let rings = []; 
                 let mouseX = 0, mouseY = 0;
                 let targetRotationX = 0;
                 let targetRotationY = 0;
                 
-                // Base positions to return to and oscillate around
+                // Lighting refs for dynamic updating
+                let ambientLight, keyLight, fillLight, backLight;
+                
                 const basePositions = [
                     new THREE.Vector3(-3.2, 0.5, 0),
                     new THREE.Vector3(0, -0.5, 0.5),
@@ -489,7 +548,31 @@
                     isSidebarOpen.value = !isSidebarOpen.value;
                 };
 
+                const toggleTheme = () => {
+                    isDark.value = !isDark.value;
+                    updateSceneTheme();
+                };
+
+                const updateScrollProgress = () => {
+                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    scrollProgress.value = (winScroll / height) * 100;
+                    
+                    // Update active section logic
+                    const sections = ['home', 'profile', 'works'];
+                    for (const section of sections) {
+                        const el = document.getElementById(section);
+                        if (el) {
+                            const rect = el.getBoundingClientRect();
+                            if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                                activeSection.value = section;
+                            }
+                        }
+                    }
+                };
+
                 const initCursor = () => {
+                    // Only init on non-touch devices ideally, but css handles visibility
                     const dot = document.querySelector('.cursor-dot');
                     const outline = document.querySelector('.cursor-outline');
                     window.addEventListener('mousemove', (e) => {
@@ -500,7 +583,6 @@
                     });
                 };
 
-                // Create iOS-style Squircle Shape
                 const createSquircleShape = (size, radius) => {
                     const shape = new THREE.Shape();
                     const width = size;
@@ -518,52 +600,34 @@
                     shape.quadraticCurveTo( x + width, y, x + width - r, y );
                     shape.lineTo( x + r, y );
                     shape.quadraticCurveTo( x, y, x, y + r );
-                    
                     return shape;
                 };
 
-                // Fallback Texture Generator with Polyfill
                 const createFallbackTexture = (text) => {
                     const canvas = document.createElement('canvas');
                     canvas.width = 512;
                     canvas.height = 512;
                     const ctx = canvas.getContext('2d');
                     
-                    // Tech BG
-                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillStyle = isDark.value ? '#0a0a0a' : '#f0f0f0';
                     ctx.fillRect(0, 0, 512, 512);
                     
-                    // Grid
-                    ctx.strokeStyle = '#222';
+                    ctx.strokeStyle = isDark.value ? '#222' : '#ddd';
                     ctx.lineWidth = 2;
                     for(let i=0; i<512; i+=64) {
                         ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 512); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(512, i); ctx.stroke();
                     }
 
-                    // Border (Manual rounded rect if roundRect missing)
                     ctx.strokeStyle = '#002FA7';
                     ctx.lineWidth = 15;
                     ctx.beginPath();
                     const x=20, y=20, w=472, h=472, r=80;
-                    if (ctx.roundRect) {
-                        ctx.roundRect(x, y, w, h, r);
-                    } else {
-                        // Polyfill
-                        ctx.moveTo(x+r, y);
-                        ctx.lineTo(x+w-r, y);
-                        ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-                        ctx.lineTo(x+w, y+h-r);
-                        ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-                        ctx.lineTo(x+r, y+h);
-                        ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-                        ctx.lineTo(x, y+r);
-                        ctx.quadraticCurveTo(x, y, x+r, y);
-                    }
+                    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+                    else ctx.rect(x, y, w, h); // Simple fallback
                     ctx.stroke();
 
-                    // Text
-                    ctx.fillStyle = 'white';
+                    ctx.fillStyle = isDark.value ? 'white' : '#111';
                     ctx.font = 'bold 80px "Inter", sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -586,76 +650,63 @@
                     renderer.setPixelRatio(window.devicePixelRatio);
                     renderer.toneMapping = THREE.ACESFilmicToneMapping;
                     renderer.toneMappingExposure = 1.2;
-                    renderer.shadowMap.enabled = true; // Enable shadows for more depth
+                    renderer.shadowMap.enabled = true;
                     canvasContainer.value.appendChild(renderer.domElement);
 
                     appsGroup = new THREE.Group();
                     scene.add(appsGroup);
 
-                    // --- LIGHTING SETUP ---
-                    const ambient = new THREE.AmbientLight(0x001133, 0.8); 
-                    scene.add(ambient);
+                    // --- LIGHTING ---
+                    ambientLight = new THREE.AmbientLight(0x001133, 0.8); 
+                    scene.add(ambientLight);
                     
-                    const keyLight = new THREE.SpotLight(0xffffff, 1.5);
+                    keyLight = new THREE.SpotLight(0xffffff, 1.5);
                     keyLight.position.set(-10, 10, 10);
                     keyLight.angle = Math.PI / 6;
                     keyLight.penumbra = 1;
                     scene.add(keyLight);
 
-                    const fillLight = new THREE.PointLight(0x002FA7, 2, 20); 
+                    fillLight = new THREE.PointLight(0x002FA7, 2, 20); 
                     fillLight.position.set(5, -5, 5);
                     scene.add(fillLight);
 
-                    const backLight = new THREE.DirectionalLight(0x4488ff, 1);
+                    backLight = new THREE.DirectionalLight(0x4488ff, 1);
                     backLight.position.set(0, 5, -10);
                     backLight.lookAt(0,0,0);
                     scene.add(backLight);
                     
-                    // --- TECH HALO EFFECTS (Hidden by default) ---
+                    // --- TECH HALO EFFECTS ---
                     effectGroup = new THREE.Group();
                     scene.add(effectGroup);
-                    effectGroup.visible = false; // Initially hidden
+                    effectGroup.visible = false; 
+                    effectGroup.scale.set(0,0,0); // Start scaled down
 
-                    // 1. Dashed Rotating Ring
-                    const ringGeo1 = new THREE.TorusGeometry(3.0, 0.02, 16, 100);
+                    const ringGeo1 = new THREE.TorusGeometry(3.0, 0.02, 32, 100);
                     const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x002FA7, transparent: true, opacity: 0.8 });
                     const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
                     effectGroup.add(ring1);
                     rings.push({ mesh: ring1, speed: 0.02, axis: 'z' });
 
-                    // 2. Larger Thin Ring (Opposite rotation)
-                    const ringGeo2 = new THREE.TorusGeometry(3.4, 0.01, 16, 100);
+                    const ringGeo2 = new THREE.TorusGeometry(3.4, 0.01, 32, 100);
                     const ringMat2 = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 });
                     const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
                     effectGroup.add(ring2);
                     rings.push({ mesh: ring2, speed: -0.01, axis: 'z' });
 
-                    // 3. Orbiting Particles
-                    const particleCount = 4;
+                    const particleCount = 6;
                     for(let j=0; j<particleCount; j++) {
-                        const pGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                        const pGeo = new THREE.SphereGeometry(0.05, 8, 8);
                         const pMat = new THREE.MeshBasicMaterial({ color: 0x002FA7 });
                         const p = new THREE.Mesh(pGeo, pMat);
-                        // Start positions
                         const angle = (j / particleCount) * Math.PI * 2;
                         p.position.set(Math.cos(angle) * 3.0, Math.sin(angle) * 3.0, 0);
                         effectGroup.add(p);
-                        // Add to animation array with orbit data
                         rings.push({ mesh: p, speed: 0.03, axis: 'orbit', angle: angle, radius: 3.0 });
                     }
 
-                    // Squircle Geometry
+                    // Geometry
                     const size = 2.5;
-                    const extrudeSettings = {
-                        depth: 0.3,
-                        bevelEnabled: true,
-                        bevelSegments: 5,
-                        steps: 1,
-                        bevelSize: 0.05,
-                        bevelThickness: 0.05
-                    };
-
-                    // Set radius to 0.7 as requested
+                    const extrudeSettings = { depth: 0.3, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
                     const shape = createSquircleShape(size, 0.7); 
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
                     
@@ -666,7 +717,6 @@
                     const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
                     const uvAttribute = geometry.attributes.uv;
                     const posAttribute = geometry.attributes.position;
-
                     for (let i = 0; i < posAttribute.count; i++) {
                         const x = posAttribute.getX(i);
                         const y = posAttribute.getY(i);
@@ -682,7 +732,7 @@
                         const sideMaterial = new THREE.MeshPhysicalMaterial({
                             color: 0x001133,
                             roughness: 0.2,
-                            metalness: 0.6,
+                            metalness: 0.8,
                             clearcoat: 1.0,
                             clearcoatRoughness: 0.1
                         });
@@ -693,6 +743,7 @@
                             metalness: 0.1
                         });
 
+                        // Attempt to load image
                         texLoader.load(
                             app.img, 
                             (texture) => {
@@ -704,8 +755,7 @@
                             },
                             undefined,
                             (err) => {
-                                console.error("Texture Load Failed", err);
-                                textureError.value = true;
+                                console.log("Generating fallback texture");
                                 const fallback = createFallbackTexture(app.name);
                                 frontMaterial.map = fallback;
                                 frontMaterial.color.setHex(0xffffff);
@@ -747,11 +797,11 @@
                         appsGroup.rotation.y += 0.05 * (targetRotationY - appsGroup.rotation.y);
 
                         icons.forEach((icon, i) => {
-                            icon.position.y += Math.sin(Date.now() * 0.0015 + i) * 0.002;
-                            icon.rotation.z = Math.sin(Date.now() * 0.001 + i) * 0.01;
+                            // Gentle floating
+                            icon.position.y = basePositions[i].y + Math.sin(Date.now() * 0.0015 + i) * 0.05;
+                            icon.rotation.z = Math.sin(Date.now() * 0.001 + i) * 0.02;
                         });
 
-                        // Animate Effect Rings
                         if(effectGroup.visible) {
                             rings.forEach(ring => {
                                 if(ring.axis === 'z') {
@@ -767,48 +817,76 @@
                         renderer.render(scene, camera);
                     };
                     animate();
+                    updateSceneTheme(); // Set initial theme
+                };
+
+                const updateSceneTheme = () => {
+                    if (!renderer) return;
+                    
+                    if (isDark.value) {
+                        ambientLight.color.setHex(0x001133);
+                        ambientLight.intensity = 0.8;
+                        keyLight.intensity = 1.5;
+                        backLight.color.setHex(0x4488ff);
+                        
+                        icons.forEach(icon => {
+                            icon.material[1].color.setHex(0x001133); // Dark sides
+                            if(icon.material[0].map) {
+                                // Redraw fallback if it's a canvas texture
+                                if (icon.material[0].map.image instanceof HTMLCanvasElement) {
+                                     // This is complex to redraw dynamically without re-creating texture
+                                     // For now, let's just adjust emissive
+                                }
+                            }
+                        });
+                        // Rings
+                        if(rings[1]) rings[1].mesh.material.color.setHex(0xffffff);
+                    } else {
+                        // Light Mode Settings
+                        ambientLight.color.setHex(0xffffff);
+                        ambientLight.intensity = 1.2;
+                        keyLight.intensity = 1.0;
+                        backLight.color.setHex(0x002FA7);
+                        
+                        icons.forEach(icon => {
+                            icon.material[1].color.setHex(0xcccccc); // Light sides
+                        });
+                        // Rings
+                        if(rings[1]) rings[1].mesh.material.color.setHex(0x333333);
+                    }
                 };
 
                 const hoverApp = (appName) => {
                     const index = appName === 'DesktopRenamer' ? 0 : appName === 'OptClick' ? 1 : 2;
                     
-                    // 1. Center the selected icon and bring it forward strongly
+                    // Center and Scale
                     gsap.to(icons[index].position, { x: 0, y: 0, z: 4, duration: 0.6, ease: "expo.out" });
                     gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
-                    // 2. Show Tech Halo (Lines and Stuff)
+                    // Show Tech Halo
+                    effectGroup.visible = true;
+                    effectGroup.position.set(0, 0, 3.8); // Position slightly behind the popped icon
+                    gsap.to(effectGroup.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "back.out(1.5)" });
 
-                    // 3. Material Stress (Glow & Brightness)
+                    // Material Stress
+                    const glowColor = 0x0044FF;
                     if(icons[index].material[1].emissive) {
-                        icons[index].material[1].emissive.setHex(0x0044FF); 
-                        gsap.to(icons[index].material[1], { emissiveIntensity: 0.1, opacity: 0.2});
-                    }
-                    if(icons[index].material[0].emissive) {
-                         icons[index].material[0].emissive.setHex(0xFFFFFF);
-                         gsap.to(icons[index].material[0], { emissiveIntensity: 0.05, opacity: 0.2});
+                        icons[index].material[1].emissive.setHex(glowColor); 
+                        gsap.to(icons[index].material[1], { emissiveIntensity: 0.3, duration: 0.4 });
                     }
 
-                    // 4. Move other icons to the background preserving sequence
+                    // Push others back
                     icons.forEach((icon, i) => {
                         if (i !== index) {
                             let sideX = 0;
-                            if (i < index) {
-                                sideX = -6 - ((index - i - 1) * 2.5); 
-                            } else {
-                                sideX = 6 + ((i - index - 1) * 2.5);
-                            }
+                            if (i < index) sideX = -7 - ((index - i - 1) * 3); 
+                            else sideX = 7 + ((i - index - 1) * 3);
 
                             gsap.to(icon.position, { x: sideX, y: 0, z: -5, duration: 0.6, ease: "power3.out" });
                             gsap.to(icon.scale, { x: 0.6, y: 0.6, z: 0.6, duration: 0.6 });
-                            const rotY = i < index ? 0.5 : -0.5;
-                            gsap.to(icon.rotation, { x: 0, y: rotY, z: 0, duration: 0.6 });
-                            
-                            // Dim faces aggressively
-                            gsap.to(icon.material[0], { opacity: 0.05, emissiveIntensity: 0, duration: 0.4 });
-                            if(icon.material[1].emissive) {
-                                gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
-                            }
+                            gsap.to(icon.rotation, { x: 0, y: i < index ? 0.5 : -0.5, z: 0, duration: 0.6 });
+                            gsap.to(icon.material[0], { opacity: 0.2, duration: 0.4 });
                         }
                     });
                 };
@@ -827,10 +905,9 @@
                             ease: "power2.out"
                         });
                         gsap.to(icon.rotation, { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2, z: 0, duration: 0.6 });
-                        gsap.to(icon.material[0], { opacity: 1, emissiveIntensity: 0, duration: 0.4 });
+                        gsap.to(icon.material[0], { opacity: 1, duration: 0.4 });
                         
                         if(icon.material[1].emissive) {
-                            icon.material[1].emissive.setHex(0x000000);
                             gsap.to(icon.material[1], { emissiveIntensity: 0, duration: 0.4 });
                         }
                     });
@@ -855,11 +932,21 @@
                     lucide.createIcons();
                     initThreeJS();
                     initCursor();
+                    
+                    window.addEventListener('scroll', updateScrollProgress);
+                });
+                
+                onUnmounted(() => {
+                    window.removeEventListener('scroll', updateScrollProgress);
                 });
 
                 return {
                     isSidebarOpen,
+                    isDark,
+                    scrollProgress,
+                    activeSection,
                     toggleSidebar,
+                    toggleTheme,
                     loader,
                     canvasContainer,
                     hoverApp,
