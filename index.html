@@ -15,7 +15,6 @@
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
-                        'neon-green': '#17f700',
                         'bg-dark': '#050505',
                         'bg-light': '#F2F2F7', 
                     },
@@ -131,6 +130,19 @@
             transition: all 0.3s ease;
             backdrop-filter: blur(12px);
         }
+
+        /* Work Gallery Glows */
+        .card-corner-glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.4) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .group:hover .card-corner-glow { opacity: 1; }
     </style>
 </head>
 <body>
@@ -235,20 +247,26 @@
                     </div>
 
                     <!-- 2. Text Content Overlay -->
-                    <div class="absolute inset-0 z-10 flex flex-col justify-end items-center pb-12 pointer-events-none">
+                    <div class="absolute inset-0 z-10 flex flex-col justify-end items-start pointer-events-none">
                         
+                        <!-- Legibility Blur Gradient -->
+                        <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-klein-blue/90 via-klein-blue/40 to-transparent pointer-events-none"></div>
+
                         <!-- Name & Intro Container -->
-                        <div class="hero-text-container w-full px-6 md:px-12 flex flex-col items-start transition-transform duration-75 ease-out">
+                        <div class="hero-text-container w-full px-6 md:px-12 pb-12 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20">
                             
                             <!-- Initial Position: Bottom Left -->
                             <!-- Name in ONE LINE as requested -->
-                            <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal origin-bottom-left whitespace-nowrap" id="hero-name">
-                                MICHAEL QIU
-                            </h1>
+                            <div class="relative">
+                                <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal whitespace-nowrap" id="hero-name">
+                                    MICHAEL QIU
+                                </h1>
+                                <!-- Temporary Underline -->
+                                <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.5vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
+                            </div>
                             
-                            <!-- Intro: Fades in later, has bottom left blur for legibility -->
+                            <!-- Intro: Fades in later -->
                             <div class="intro-text opacity-0 mt-6 pl-2 max-w-xl transition-opacity duration-500 relative">
-                                <div class="absolute -inset-4 bg-klein-blue/50 blur-xl -z-10 rounded-full"></div>
                                 <p class="text-xl md:text-2xl font-light leading-relaxed">
                                     Designing digital utilities that feel <span class="font-bold italic text-white/90">inevitable</span>.
                                 </p>
@@ -256,7 +274,7 @@
                         </div>
                         
                         <!-- Scroll Hint -->
-                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse">
+                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse z-20">
                             <span>SCROLL TO BEGIN</span>
                             <i data-lucide="arrow-down" class="w-4 h-4"></i>
                         </div>
@@ -267,8 +285,8 @@
             <!-- "Be Creative" Banner Section (Distinct Background) -->
             <section class="w-full h-[120vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
                 <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
-                    <h2 class="text-[15vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
-                        BE<br>CREATIVE
+                    <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
+                        ABOUT<br>ME
                     </h2>
                 </div>
             </section>
@@ -325,16 +343,20 @@
                     </div>
 
                     <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center justify-center md:justify-end px-6 md:px-24" :data-index="i">
-                        <div class="max-w-md w-full bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl hover:border-klein-blue/50 transition-colors shadow-2xl relative">
+                        <div class="max-w-md w-full bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl hover:border-klein-blue/50 transition-colors shadow-2xl relative group overflow-hidden">
                             <!-- Backend Glow for card -->
                             <div class="absolute -inset-4 bg-klein-blue/20 blur-2xl -z-10 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                             
-                            <span class="text-klein-blue font-mono text-xs tracking-widest mb-4 block">0{{i+1}} / SYSTEM</span>
-                            <h3 class="text-5xl font-bold text-white mb-6 tracking-tight">{{ app.name }}</h3>
-                            <p class="text-gray-400 text-lg leading-relaxed mb-8 font-light">
+                            <!-- Corner Glows -->
+                            <div class="card-corner-glow -top-10 -right-10"></div>
+                            <div class="card-corner-glow -bottom-10 -left-10"></div>
+
+                            <span class="text-klein-blue font-mono text-xs tracking-widest mb-4 block relative z-10">0{{i+1}} / SYSTEM</span>
+                            <h3 class="text-5xl font-bold text-white mb-6 tracking-tight relative z-10">{{ app.name }}</h3>
+                            <p class="text-gray-400 text-lg leading-relaxed mb-8 font-light relative z-10">
                                 {{ app.desc }}
                             </p>
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 relative z-10">
                                 <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">MACOS</span>
                                 <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">SWIFT</span>
                             </div>
@@ -402,8 +424,6 @@
                 
                 const navColorClass = computed(() => {
                     const darkSections = ['home', 'works'];
-                    // Creative banner section (approx 200vh to 300vh scroll) is also dark
-                    // This is a simplified check, usually fine.
                     const isDarkSection = darkSections.includes(activeSection.value);
                     
                     if (isDarkSection) {
@@ -492,44 +512,30 @@
                     const heroText = document.querySelector('.hero-text-container');
                     const introText = document.querySelector('.intro-text');
                     const creativeBanner = document.getElementById('creative-banner');
-                    
-                    // The home section is 300vh tall (3 * window height)
-                    // We spread the animation over the first 1.5 screen heights
+                    const tempUnderline = document.getElementById('temp-underline');
                     
                     if (scrollTop < winHeight * 2.5) {
                         
                         // 1. Magnetic Balls FADE & SHRINK (Slowly)
                         if(magContainer) {
-                            // Fades out completely by 1.2 screen height
                             const fadeProgress = Math.min(1, scrollTop / (winHeight * 1.2));
                             magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
-                            magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; // Slight shrink
+                            magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
                         }
 
                         // 2. Name Movement (Bottom Left -> Center -> Grow)
                         if(heroText) {
-                            // Calculate percentage of first screen scrolled
-                            // We want it to reach "center" visual state around 0.8vh scroll
                             const moveProgress = Math.min(1, scrollTop / (winHeight * 0.8));
-                            
-                            // Move from bottom-left (y=0 in container) to center (approx -40vh)
-                            // We use CSS transform to move it UP (negative Y)
+                            // Only move up, stay left-aligned (no X translation)
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             
-                            // Scale from 1 to 2
-                            const targetScale = 1 + (moveProgress * 1.5);
-                            
-                            // Move from Left align to Center align? 
-                            // Since it's absolutely positioned or flex, we keep left align but use X translation if needed
-                            // For simplicity based on prompt, we just move UP and SCALE.
-                            // To center it horizontally effectively, we can translate X
-                            const targetX = (window.innerWidth * 0.15) * moveProgress; // Shift right towards center
+                            // MODIFIED SCALE: Reduced max scale to prevent too large text
+                            const targetScale = 1 + (moveProgress * 0.8); // Reduced from 1.5
 
-                            heroText.style.transform = `translate(${targetX}px, ${targetY}px) scale(${targetScale})`;
+                            heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
                             
                             // 3. Line Fades In AFTER Name is established
                             if(introText) {
-                                // Start fading in after 60% progress
                                 if (moveProgress > 0.6) {
                                     const textFade = (moveProgress - 0.6) / 0.4;
                                     introText.style.opacity = textFade;
@@ -537,18 +543,23 @@
                                     introText.style.opacity = 0;
                                 }
                             }
+
+                            // 4. Temp Underline Fades Out
+                            if(tempUnderline) {
+                                tempUnderline.style.opacity = Math.max(0, 1 - moveProgress * 1.5);
+                            }
                         }
                     }
 
                     // --- CREATIVE BANNER LOGIC ---
                     if(creativeBanner) {
                         const bannerRect = document.getElementById('creative-banner').parentNode.getBoundingClientRect();
-                        const triggerPoint = winHeight * 0.8; // Start expanding when near view
+                        const triggerPoint = winHeight * 0.8; 
                         
                         if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
-                            // 0 to 1 progress as it centers
                             const progress = 1 - (bannerRect.top / triggerPoint);
-                            const scale = 0.5 + Math.max(0, progress) * 1.5; // Scale to fill screen
+                            // Reduced scaling for "Be Creative" too
+                            const scale = 0.5 + Math.max(0, progress) * 0.8; // Reduced max scale
                             creativeBanner.style.transform = `scale(${scale})`;
                             creativeBanner.style.opacity = Math.min(1, progress * 1.5);
                         }
@@ -569,7 +580,6 @@
                     }
                 };
 
-                // --- FIXED MAGNETIC BALLS ---
                 const initMagneticLogo = () => {
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
@@ -596,7 +606,6 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
 
-                    // FIT LOGO FULLSCREEN
                     const logoScale = Math.min(width, height) / 500 * 0.9; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
@@ -608,22 +617,20 @@
                     logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
 
-                    const step = 28; // Ball Density
+                    const step = 28; 
                     const balls = [];
-                    const mouseRadius = 150; // Reduced interaction range
+                    const mouseRadius = 150; 
 
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
                             if (pixel[3] > 128) {
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                // White Balls for Contrast
                                 ball.setAttribute("class", "text-white fill-current magnetic-ball");
                                 ball.setAttribute("cx", x);
                                 ball.setAttribute("cy", y);
-                                ball.setAttribute("r", 5); // Increased ball size
+                                ball.setAttribute("r", 5); 
                                 
-                                // Line
                                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                                 line.setAttribute("class", "text-white magnetic-ball-line");
                                 line.setAttribute("x1", x);
@@ -639,7 +646,6 @@
                         }
                     }
 
-                    // GSAP Logic from user file
                     container.addEventListener('mousemove', (e) => {
                         const rect = container.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
@@ -651,10 +657,8 @@
                             const dist = Math.sqrt(dx * dx + dy * dy);
 
                             if (dist < mouseRadius) {
-                                // Calculate displacement
                                 const angle = Math.atan2(dy, dx);
-                                // Move away from mouse
-                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 60; // Max distance
+                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 60; 
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
 
@@ -662,7 +666,6 @@
                                 ball.animater = gsap.timeline()
                                     .to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3, ease: "power3.out" })
                                     .to(ball.line, { attr: { x2: tx, y2: ty }, duration: 0.3, ease: "power3.out" }, "<")
-                                    // Elastic Return
                                     .to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, ">0.05")
                                     .to(ball.line, { attr: { x2: ball.ori_x, y2: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, "<");
                             }
@@ -687,7 +690,6 @@
                     return shape;
                 };
 
-                // HD Fallback Texture (Fixed Blur)
                 const createFallbackTexture = (text) => {
                     const canvas = document.createElement('canvas');
                     canvas.width = 2048; canvas.height = 2048; 
