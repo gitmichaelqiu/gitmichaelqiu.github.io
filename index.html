@@ -131,12 +131,15 @@
             backdrop-filter: blur(12px);
         }
 
-        /* Work Gallery Glows */
+        /* Work Gallery & Card Glows */
         .card-corner-glow {
             position: absolute;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.6) 0%, transparent 70%); /* Klein Blue Glow */
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 250px;
+            /* Blue Glow from top-right only */
+            background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.6) 0%, transparent 60%); 
             opacity: 0;
             transition: opacity 0.5s ease;
             pointer-events: none;
@@ -147,20 +150,32 @@
         /* Background Glow for Works Page */
         .works-page-glow {
             position: absolute;
-            width: 60vw;
-            height: 60vw;
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 60%);
+            width: 80vw;
+            height: 80vw;
+            /* Blue ambient light for page background */
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
-            filter: blur(80px);
+            filter: blur(100px);
         }
 
-        /* Specific Hover Fixes */
-        .hover-solid-blue:hover { background-color: #002FA7 !important; color: white !important; }
-        /* Fix for dark mode hover */
-        .hover-solid-black:hover { background-color: black !important; color: white !important; }
-        html.dark .hover-solid-black:hover { background-color: white !important; color: black !important; }
+        /* Specific Hover Fixes - SOLID COLOR */
+        .hover-solid-blue:hover { 
+            background-color: #002FA7 !important; 
+            color: white !important; 
+            border-color: #002FA7 !important;
+        }
+        
+        /* Fix for dark mode hover: Always turn black background with white text on hover */
+        .hover-solid-gray:hover { 
+            background-color: gray !important; 
+            color: white !important; 
+            border-color: gray !important;
+        }
+        
+        /* Ensure card content sits above glow */
+        .card-content { position: relative; z-index: 10; }
     </style>
 </head>
 <body>
@@ -232,7 +247,7 @@
             </div>
         </nav>
 
-        <!-- Sidebar (Highest Z-Index) -->
+        <!-- Sidebar -->
         <transition name="backdrop">
             <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[10000]"></div>
         </transition>
@@ -255,8 +270,9 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <!-- Hero Section (SLOW BURN - Shortened to 200vh) -->
-            <section id="home" class="relative w-full h-[200vh] bg-klein-blue text-white">
+            <!-- Hero Section (Blue Void - FULLSCREEN BALLS) -->
+            <!-- Reduced height to 180vh for faster transition -->
+            <section id="home" class="relative w-full h-[180vh] bg-klein-blue text-white">
                 
                 <!-- Sticky Container -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
@@ -321,30 +337,39 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(220px,auto)]">
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
-                             <div class="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-klein-blue/30 to-transparent rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-klein-blue/40 transition-colors duration-500"></div>
-                             <div>
+                             <div class="card-corner-glow"></div> <!-- Glow Top Right -->
+                             <div class="card-content">
                                  <h3 class="font-mono text-xs text-klein-blue mb-6 tracking-widest border border-klein-blue/30 inline-block px-3 py-1 rounded-full">ABOUT_ME</h3>
                                  <p class="text-2xl md:text-3xl font-light leading-snug text-gray-900 dark:text-gray-100">
                                      I don't just write code; <span class="font-bold border-b-2 border-klein-blue">I design workflows.</span> My background in C++ and Python allows me to build rigorous back-end systems.
                                  </p>
                              </div>
-                             <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6">
+                             <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6 card-content">
                                  <div><span class="block font-mono text-xs text-gray-500 mb-1">LOCATION</span><span class="font-bold text-xl text-black dark:text-white">127.0.0.1</span></div>
                                  <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
                              </div>
                         </div>
+                        
+                        <!-- Stack: Solid Blue Hover -->
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-blue transition-all duration-300 group">
-                            <div class="flex justify-between items-start"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3><i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
-                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white"><li>Python</li><li>C++</li><li>SwiftUI</li><li>Vue.js</li></ul>
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3><i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white card-content"><li>Python</li><li>C++</li><li>SwiftUI</li><li>Vue.js</li></ul>
                         </div>
-                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-black transition-all duration-300 group">
-                            <div class="flex justify-between items-start"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3><i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
-                             <div class="mt-4"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p></div>
+                        
+                        <!-- Focus: Solid Black Hover -->
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-gray transition-all duration-300 group">
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3><i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                             <div class="mt-4 card-content"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p></div>
                         </div>
+                        
+                        <!-- Motto: Glow Top Right -->
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
-                             <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">PHILOSOPHY</h3>
-                             <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">"Give people wonderful tools, and they'll do wonderful things."</p>
-                             <p class="text-right text-sm font-bold mt-4 text-klein-blue relative z-10">— Steve Jobs</p>
+                             <div class="card-corner-glow"></div>
+                             <div class="card-content">
+                                 <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">PHILOSOPHY</h3>
+                                 <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">"Give people wonderful tools, and they'll do wonderful things."</p>
+                                 <p class="text-right text-sm font-bold mt-4 text-klein-blue relative z-10">— Steve Jobs</p>
+                             </div>
                         </div>
                     </div>
                 </div>
@@ -357,8 +382,9 @@
                     <div class="w-full h-full" ref="canvasContainer"></div>
                 </div>
                 
-                <!-- Background Page Glow -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 works-page-glow"></div>
+                <!-- Background Page Glow (Corner Light for Page) -->
+                <div class="absolute top-1/4 right-0 works-page-glow"></div>
+                <div class="absolute bottom-1/4 left-0 works-page-glow"></div>
 
                 <div class="relative z-10">
                     <div class="h-[50vh] flex flex-col justify-center items-center pointer-events-none">
@@ -367,25 +393,32 @@
                     </div>
 
                     <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center justify-center md:justify-end px-6 md:px-24" :data-index="i">
-                        <div class="max-w-md w-full bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl hover:border-klein-blue/50 transition-colors shadow-2xl relative group overflow-hidden">
-                            <!-- Backend Glow for card -->
-                            <div class="absolute -inset-4 bg-klein-blue/20 blur-2xl -z-10 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                        <!-- App Card with Corner Glow & Link Indicator -->
+                        <div class="max-w-md w-full bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl transition-colors shadow-2xl relative group overflow-hidden hover:border-white/20 cursor-pointer">
                             
-                            <!-- Corner Glows (Blue) -->
-                            <div class="card-corner-glow -top-10 -right-10"></div>
-                            <div class="card-corner-glow -bottom-10 -left-10"></div>
+                            <!-- Corner Glows (Top Right Only per instruction? "Corner light... to the BACKGROUND OF THE PAGE") 
+                                 Wait, user said "Apply corner light to BACKGROUND OF PAGE... not only cards".
+                                 Then "Glow. The light only comes from the top right corner. No exceptions." for cards. 
+                                 So here is Top Right Glow for Card.
+                            -->
+                            <div class="card-corner-glow"></div>
 
-                            <span class="text-klein-blue font-mono text-xs tracking-widest mb-4 block relative z-10">0{{i+1}} / SYSTEM</span>
-                            <h3 class="text-5xl font-bold text-white mb-6 tracking-tight relative z-10">{{ app.name }}</h3>
-                            <p class="text-gray-400 text-lg leading-relaxed mb-8 font-light relative z-10">
-                                {{ app.desc }}
-                            </p>
-                            <div class="flex items-center justify-between gap-3 relative z-10">
-                                <div class="flex gap-2">
-                                    <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">MACOS</span>
-                                    <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">SWIFT</span>
+                            <div class="card-content">
+                                <span class="text-klein-blue font-mono text-xs tracking-widest mb-4 block relative z-10">0{{i+1}} / SYSTEM</span>
+                                <h3 class="text-5xl font-bold text-white mb-6 tracking-tight relative z-10">{{ app.name }}</h3>
+                                <p class="text-gray-400 text-lg leading-relaxed mb-8 font-light relative z-10">
+                                    {{ app.desc }}
+                                </p>
+                                <div class="flex items-center justify-between gap-3 relative z-10">
+                                    <div class="flex gap-2">
+                                        <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">MACOS</span>
+                                        <span class="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-mono text-gray-300">SWIFT</span>
+                                    </div>
+                                    <!-- Link Indicator on Hover -->
+                                    <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                        <i data-lucide="arrow-up-right" class="w-5 h-5 text-white"></i>
+                                    </div>
                                 </div>
-                                <i data-lucide="arrow-right" class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300"></i>
                             </div>
                         </div>
                     </div>
@@ -403,14 +436,10 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
-                            <!-- Using Glow Effect -->
-                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            
-                            <!-- Corner Glows -->
-                            <div class="card-corner-glow -top-10 -right-10"></div>
-                            <div class="card-corner-glow -bottom-10 -left-10"></div>
+                            <!-- Glow Top Right -->
+                            <div class="card-corner-glow"></div>
 
-                            <div class="relative z-10 h-full p-10 flex flex-col justify-between">
+                            <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
                                 <div class="flex justify-between items-start">
                                     <i data-lucide="github" class="w-12 h-12 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                     <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
@@ -419,14 +448,10 @@
                             </div>
                         </a>
                         <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
-                            <!-- Using Glow Effect -->
-                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[#20BEFF]/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            
-                            <!-- Corner Glows -->
-                            <div class="card-corner-glow -top-10 -right-10"></div>
-                            <div class="card-corner-glow -bottom-10 -left-10"></div>
+                            <!-- Glow Top Right -->
+                            <div class="card-corner-glow"></div>
 
-                            <div class="relative z-10 h-full p-10 flex flex-col justify-between">
+                            <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
                                 <div class="flex justify-between items-start">
                                     <div class="text-4xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
                                     <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
@@ -531,7 +556,7 @@
                     scrollProgress.value = progress;
                     
                     if (isCapsuleOpen.value && Math.abs(scrollTop - (window.lastScrollY || 0)) > 10) {
-                        isCapsuleOpen.value = false;
+                        // Keep open on hover, handled by Vue events
                     }
                     window.lastScrollY = scrollTop;
 
@@ -547,7 +572,7 @@
                         }
                     }
                     
-                    // --- HOME PAGE ANIMATION LOGIC (Shortened to 1.5vh duration for quicker name arrival) ---
+                    // --- HOME PAGE ANIMATION LOGIC (Shortened/Corrected) ---
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
                     const introText = document.querySelector('.intro-text');
@@ -556,29 +581,30 @@
                     
                     if (scrollTop < winHeight * 2.5) {
                         
-                        // 1. Magnetic Balls FADE & SHRINK (Faster)
+                        // 1. Magnetic Balls FADE & SHRINK
                         if(magContainer) {
                             const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
                             magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
                             magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
                         }
 
-                        // 2. Name Movement (Bottom Left -> Center -> Grow) - Faster Transition
+                        // 2. Name Movement (Strict Left Align, Vertical Move Only)
                         if(heroText) {
-                            const moveProgress = Math.min(1, scrollTop / (winHeight * 0.6));
-                            // Only move up, stay left-aligned (no X translation)
+                            const moveProgress = Math.min(1, scrollTop / (winHeight * 0.5)); // Faster transition
+                            
+                            // Move strictly vertically up to center
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             
-                            // MODIFIED SCALE: Reduced max scale to prevent too large text
-                            // Starts at scale 1, goes to 1.3
+                            // Scale up gently (from 1 to 1.3)
                             const targetScale = 1 + (moveProgress * 0.3); 
 
+                            // IMPORTANT: Keep transform-origin at bottom left to maintain alignment
                             heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
                             
                             // 3. Line Fades In AFTER Name is established
                             if(introText) {
-                                if (moveProgress > 0.6) {
-                                    const textFade = (moveProgress - 0.6) / 0.4;
+                                if (moveProgress > 0.8) {
+                                    const textFade = (moveProgress - 0.8) / 0.2;
                                     introText.style.opacity = textFade;
                                 } else {
                                     introText.style.opacity = 0;
@@ -599,8 +625,8 @@
                         
                         if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
                             const progress = 1 - (bannerRect.top / triggerPoint);
-                            // Reduced scaling for "About Me" too
-                            const scale = 0.5 + Math.max(0, progress) * 0.5; // Scale from 0.5 to 1.0
+                            // Reduced scaling for "About Me"
+                            const scale = 0.5 + Math.max(0, progress) * 0.5; // Scale from 0.5 to 1.0 max
                             creativeBanner.style.transform = `scale(${scale})`;
                             creativeBanner.style.opacity = Math.min(1, progress * 1.5);
                         }
