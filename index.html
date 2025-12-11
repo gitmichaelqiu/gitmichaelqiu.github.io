@@ -27,6 +27,8 @@
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'float': 'float 6s ease-in-out infinite',
                         'spin-slow': 'spin 120s linear infinite',
+                        'marquee': 'marquee 25s linear infinite',
+                        'marquee-reverse': 'marqueeReverse 25s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -36,6 +38,14 @@
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' },
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        marqueeReverse: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(0%)' },
                         }
                     }
                 }
@@ -108,13 +118,16 @@
         html.dark .grain-overlay { opacity: 0.4; filter: none; }
 
         /* Marquee */
-        .marquee-container { overflow: hidden; white-space: nowrap; }
-        .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .marquee-container { overflow: hidden; white-space: nowrap; display: flex; }
+        .marquee-content { display: flex; flex-shrink: 0; }
+        
+        .animate-marquee { animation: marquee 30s linear infinite; }
+        .animate-marquee-reverse { animation: marqueeReverse 35s linear infinite; }
+        .animate-marquee-slow { animation: marquee 45s linear infinite; }
 
         /* Typography Effects */
-        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2); }
-        html.dark .outline-text { -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2); }
+        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4); }
+        html.dark .outline-text { -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4); }
         
         .glitch-wrapper { position: relative; }
         .glitch-wrapper::before, .glitch-wrapper::after {
@@ -146,8 +159,8 @@
 
         /* Mask Gradient for 3D Viewer */
         .mask-fade-edges {
-            mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
         }
 
         /* SVG Logo Class */
@@ -219,7 +232,7 @@
                 </div>
             </div>
 
-            <!-- Right: Theme & Logo (FIX: Explicit Colors for Contrast) -->
+            <!-- Right: Theme & Logo -->
             <div class="flex items-center gap-6 pointer-events-auto text-black dark:text-white">
                 <!-- Theme Toggle -->
                 <button @click="cycleTheme" class="hover:text-klein-blue transition-colors focus:outline-none flex items-center justify-center w-8 h-8 rounded-full">
@@ -249,10 +262,11 @@
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white/95 dark:bg-[#050505]/95 backdrop-blur-2xl text-black dark:text-white z-[10000] border-r border-gray-200 dark:border-white/10 flex flex-col px-8 md:px-20 shadow-2xl overflow-y-auto overflow-x-hidden">
+            <!-- FIX: Adjusted padding (pl-6) to move elements leftwards -->
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white/95 dark:bg-[#050505]/95 backdrop-blur-2xl text-black dark:text-white z-[10000] border-r border-gray-200 dark:border-white/10 flex flex-col pl-6 pr-8 md:pl-10 md:pr-12 shadow-2xl overflow-y-auto overflow-x-hidden">
                 
                 <!-- Close Button -->
-                <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-20 w-10 h-10 flex items-center justify-center border border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-klein-blue transition-all">
+                <button @click="toggleSidebar" class="absolute top-8 left-6 md:left-10 w-10 h-10 flex items-center justify-center border border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-klein-blue transition-all">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
 
@@ -262,11 +276,10 @@
 
                 <div class="flex flex-col gap-6 relative z-10 mt-40 w-full">
                     <div class="font-mono text-xs text-gray-500 mb-4 tracking-widest">SYSTEM MAP</div>
-                    <!-- FIX: Fluid font size clamp() to prevent overflow -->
                     <a v-for="(link, index) in systemLinks" 
                        :key="link.name"
                        href="#" 
-                       class="group flex items-center gap-4 text-[clamp(1.5rem,3vw,3rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300 p-2 pr-4 block w-full leading-tight"
+                       class="group flex items-center gap-4 text-[clamp(2rem,4vw,3.5rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300 p-2 pr-4 block w-full leading-tight"
                        style="-webkit-text-stroke: 1px rgba(128,128,128,0.1);">
                         <span class="font-mono text-xs text-klein-blue opacity-0 group-hover:opacity-100 transition-opacity">0{{index+1}}</span>
                         <span class="group-hover:translate-x-4 transition-transform duration-300 break-words">{{ link.name }}</span>
@@ -276,7 +289,7 @@
                     </a>
                 </div>
                 
-                <div class="absolute bottom-12 left-8 md:left-20 font-mono text-[10px] text-gray-500 flex gap-8">
+                <div class="absolute bottom-12 left-6 md:left-10 font-mono text-[10px] text-gray-500 flex gap-8">
                     <div>
                         <p class="font-bold mb-2 tracking-widest">STATUS</p>
                         <p class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> ONLINE</p>
@@ -288,68 +301,79 @@
         <!-- Main Content -->
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none': isSidebarOpen }">
             
-            <!-- Hero Section -->
-            <section id="home" class="relative w-full h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden">
-                <!-- Background Logo Outline -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[60vw] md:h-[60vw] opacity-[0.03] dark:opacity-[0.05] pointer-events-none z-0 animate-spin-slow">
-                     <svg class="w-full h-full text-black dark:text-white" style="fill: none; stroke: currentColor; stroke-width: 2;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
-                        <g>
-                            <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
-                            <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z"/>
-                        </g>
-                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z"/>
-                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"/>
-                    </svg>
-                </div>
-
-                <!-- Abstract Circles -->
-                <div class="absolute top-1/4 right-[10%] w-[30vw] h-[30vw] border border-current opacity-10 rounded-full animate-[spin_60s_linear_infinite]"></div>
-                <div class="absolute top-1/4 right-[10%] w-[28vw] h-[28vw] border border-klein-blue/20 rounded-full animate-[spin_40s_linear_infinite_reverse]"></div>
-                <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-klein-blue/10 to-transparent"></div>
+            <!-- Hero Section (Redesigned) -->
+            <section id="home" class="relative w-full h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden bg-white dark:bg-[#050505]">
                 
-                <div class="z-10 max-w-7xl mx-auto w-full">
-                    <!-- FIX: Removed extra lines -->
-                    <div class="flex items-center gap-4 mb-6 reveal-text">
-                        <p class="font-mono text-klein-blue tracking-[0.2em] text-xs">PORTFOLIO 2025</p>
+                <!-- Background Marquees -->
+                <div class="absolute inset-0 flex flex-col justify-between opacity-30 dark:opacity-20 pointer-events-none select-none overflow-hidden py-12">
+                    <div class="marquee-container -rotate-2">
+                        <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-200 dark:text-[#111] whitespace-nowrap">
+                            SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
+                        </div>
+                         <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-200 dark:text-[#111] whitespace-nowrap">
+                            SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
+                        </div>
                     </div>
                     
-                    <h1 class="text-7xl md:text-[10vw] font-black mb-4 tracking-tighter leading-[0.85] mix-blend-exclusion reveal-text text-black dark:text-white flex flex-wrap items-baseline gap-4">
-                        <div class="glitch-wrapper" data-text="MICHAEL">MICHAEL</div>
-                        <div class="flex items-baseline gap-4">
-                             <div class="outline-text">QIU</div>
-                             <!-- FIX: Big filled icon next to QIU -->
-                             <svg class="w-12 h-12 md:w-20 md:h-20 text-klein-blue fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
-                                <g>
-                                    <path fill-rule="evenodd" d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
-                                    <path fill-rule="evenodd" d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z"/>
-                                </g>
-                                <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z"/>
-                                <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"/>
-                            </svg>
+                    <div class="marquee-container rotate-1">
+                        <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
+                            DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
                         </div>
-                    </h1>
+                         <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
+                            DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
+                        </div>
+                    </div>
+
+                    <div class="marquee-container -rotate-1">
+                        <div class="marquee-content animate-marquee-slow text-[10vw] font-black text-gray-50 dark:text-[#080808] whitespace-nowrap">
+                             MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
+                        </div>
+                        <div class="marquee-content animate-marquee-slow text-[10vw] font-black text-gray-50 dark:text-[#080808] whitespace-nowrap">
+                             MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
+                        </div>
+                    </div>
+                </div>
+
+                <div class="z-10 max-w-[90vw] mx-auto w-full relative">
+                    <div class="flex items-center gap-4 mb-6 reveal-text">
+                        <div class="w-12 h-[2px] bg-klein-blue"></div>
+                        <p class="font-mono text-klein-blue tracking-[0.3em] text-xs font-bold">PORTFOLIO 2025</p>
+                    </div>
                     
-                    <!-- FIX: Removed border-t line -->
-                    <div class="flex flex-col md:flex-row md:items-end justify-between mt-12 pt-8 reveal-text">
-                        <div class="max-w-md">
-                            <p class="text-gray-600 dark:text-gray-400 font-light leading-relaxed text-lg">
-                                Student, developer, or... <br>
-                                Designing utilities that reshape <span class="text-black dark:text-white font-bold">work experiences</span>.
-                            </p>
-                        </div>
-                        <div class="mt-8 md:mt-0 flex gap-4">
-                            <div class="font-mono text-xs text-right text-gray-500">
-                                SCROLL TO EXPLORE<br>
-                                ↓↓↓
+                    <div class="reveal-text relative">
+                        <!-- Huge Central Logo & Name Composition -->
+                        <div class="flex flex-col md:flex-row items-start md:items-end gap-4 md:gap-8">
+                             <h1 class="text-7xl md:text-[11vw] font-black tracking-tighter leading-[0.8] text-black dark:text-white mix-blend-exclusion">
+                                MICHAEL
+                            </h1>
+                            <div class="flex items-center gap-6">
+                                <svg class="w-16 h-16 md:w-[10vw] md:h-[10vw] text-klein-blue fill-current animate-float" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
+                                    <g>
+                                        <path fill-rule="evenodd" d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
+                                        <path fill-rule="evenodd" d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z"/>
+                                    </g>
+                                    <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z"/>
+                                    <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"/>
+                                </svg>
+                                <h1 class="text-7xl md:text-[11vw] font-black tracking-tighter leading-[0.8] outline-text mix-blend-exclusion">
+                                    QIU
+                                </h1>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="absolute bottom-12 w-full -rotate-1 opacity-50 pointer-events-none mix-blend-overlay">
-                    <div class="marquee-container bg-klein-blue/20 py-2 border-y border-klein-blue/30 backdrop-blur-sm">
-                        <div class="marquee-content font-mono text-xs tracking-[0.5em] text-klein-blue">
-                            WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY // WEB DESIGN // APP DEVELOPMENT // UI/UX // VISUAL IDENTITY //
+                    
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mt-16 reveal-text">
+                        <div class="max-w-xl backdrop-blur-sm bg-white/5 p-4 -ml-4 rounded-lg">
+                            <p class="text-gray-800 dark:text-gray-300 font-light leading-relaxed text-xl md:text-2xl">
+                                Designing utilities that reshape <br>
+                                the <span class="text-klein-blue font-bold italic">work experience</span>.
+                            </p>
+                        </div>
+                        <div class="mt-8 md:mt-0 flex gap-4">
+                            <div class="font-mono text-xs text-right text-gray-500 animate-pulse">
+                                SCROLL TO EXPLORE<br>
+                                ↓↓↓
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -434,7 +458,10 @@
             <section id="works" class="relative w-full min-h-screen overflow-hidden flex flex-col bg-transparent">
                 <div class="w-full py-4 border-y border-gray-200 dark:border-white/10 bg-white dark:bg-[#020202] transition-colors duration-500">
                     <div class="marquee-container">
-                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10">
+                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10 animate-marquee">
+                            DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
+                        </div>
+                         <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10 animate-marquee">
                             DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
                         </div>
                     </div>
@@ -442,8 +469,9 @@
 
                 <div class="flex-grow container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-start py-12 gap-12">
                     
-                    <!-- 3D Viewer Area - Positioned vertically center relative to viewport using sticky top-0 h-screen -->
-                    <div class="w-full md:w-7/12 h-[50vh] md:h-screen relative sticky top-24 md:top-0 z-0 mask-fade-edges order-first md:order-last flex items-center justify-center" ref="canvasContainer">
+                    <!-- 3D Viewer Area -->
+                    <!-- FIX: Sticky centering relative to viewport (which roughly equals center of card area while scrolling) -->
+                    <div class="w-full md:w-7/12 h-[50vh] md:h-screen sticky top-24 md:top-0 z-0 mask-fade-edges order-first md:order-last flex items-center justify-center" ref="canvasContainer">
                         <!-- Canvas is injected here -->
                         <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
                             <div class="flex items-center gap-2 mb-2 font-bold text-red-300">
@@ -573,7 +601,7 @@
                 const textureError = ref(false);
 
                 const systemLinks = [
-                    { name: 'PLAYGROUND' },
+                    { name: 'HOME' },
                     { name: 'WRITINGS' },
                     { name: 'ARCHIVE' },
                     { name: 'LABS' }
@@ -591,8 +619,11 @@
                 let ambientLight, keyLight, backLight;
 
                 const capsulePerimeter = 320; 
+                // FIX: Ensure it reaches 100% and clamps
                 const capsuleDashOffset = computed(() => {
-                    return capsulePerimeter - (scrollProgress.value / 100) * capsulePerimeter;
+                    const progress = Math.min(100, Math.max(0, scrollProgress.value));
+                    // Added 1px buffer to ensure visual closure
+                    return Math.max(0, capsulePerimeter - (progress / 100) * capsulePerimeter);
                 });
 
                 const toggleCapsuleNav = () => {
@@ -641,7 +672,8 @@
                 const updateScrollProgress = () => {
                     const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
                     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                    scrollProgress.value = (winScroll / height) * 100;
+                    // FIX: slightly boost the calculation to ensure 100% is reachable with varying browser chrome
+                    scrollProgress.value = (winScroll / (height - 1)) * 100;
                     
                     if (isCapsuleOpen.value && Math.abs(winScroll - (window.lastScrollY || 0)) > 10) {
                         isCapsuleOpen.value = false;
@@ -733,7 +765,8 @@
 
                     scene = new THREE.Scene();
                     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-                    camera.position.z = 12;
+                    // FIX: Moved camera back to Z=16 to see full layout without zoom
+                    camera.position.z = 16;
 
                     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
                     renderer.setSize(width, height);
