@@ -15,6 +15,7 @@
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
+                        'neon-green': '#17f700',
                         'bg-dark': '#050505',
                         'bg-light': '#F2F2F7', 
                     },
@@ -123,7 +124,6 @@
         .capsule-nav { transition: width 0.3s ease, background-color 0.3s ease, color 0.3s ease; }
 
         .magnetic-ball { transition: opacity 0.1s ease; }
-        /* Adjusted line opacity for clarity */
         .magnetic-ball-line { stroke: currentColor; stroke-width: 1; opacity: 0.15; }
         
         /* Nav Uniform Styles */
@@ -222,11 +222,10 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <!-- Hero Section (SLOW BURN) -->
-            <!-- 200vh height to create scroll space for the transition -->
-            <section id="home" class="relative w-full h-[200vh] bg-klein-blue text-white">
+            <!-- Hero Section (SLOW BURN - 300vh for longer transition) -->
+            <section id="home" class="relative w-full h-[300vh] bg-klein-blue text-white">
                 
-                <!-- Sticky Container: Holds the visual elements in place while scrolling -->
+                <!-- Sticky Container -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
                     
                     <!-- 1. Magnetic Balls Logo (Fullscreen, White) -->
@@ -235,26 +234,29 @@
                          <div id="magnetic-container" class="w-full h-full relative cursor-crosshair"></div>
                     </div>
 
-                    <!-- 2. Text Content -->
+                    <!-- 2. Text Content Overlay -->
                     <div class="absolute inset-0 z-10 flex flex-col justify-end items-center pb-12 pointer-events-none">
                         
                         <!-- Name & Intro Container -->
-                        <div class="hero-text-container flex flex-col items-center text-center transform origin-bottom transition-transform duration-75 ease-out">
-                            <!-- Name: Starts small at bottom -->
-                            <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-white mix-blend-normal" id="hero-name">
+                        <div class="hero-text-container w-full px-6 md:px-12 flex flex-col items-start transition-transform duration-75 ease-out">
+                            
+                            <!-- Initial Position: Bottom Left -->
+                            <!-- Name in ONE LINE as requested -->
+                            <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal origin-bottom-left whitespace-nowrap" id="hero-name">
                                 MICHAEL QIU
                             </h1>
                             
-                            <!-- Intro: Fades in later -->
-                            <div class="intro-text opacity-0 mt-6 max-w-xl transition-opacity duration-500">
+                            <!-- Intro: Fades in later, has bottom left blur for legibility -->
+                            <div class="intro-text opacity-0 mt-6 pl-2 max-w-xl transition-opacity duration-500 relative">
+                                <div class="absolute -inset-4 bg-klein-blue/50 blur-xl -z-10 rounded-full"></div>
                                 <p class="text-xl md:text-2xl font-light leading-relaxed">
-                                    Designing digital utilities that feel <span class="font-bold italic">inevitable</span>.
+                                    Designing digital utilities that feel <span class="font-bold italic text-white/90">inevitable</span>.
                                 </p>
                             </div>
                         </div>
                         
-                        <!-- Scroll Hint (Fades out) -->
-                        <div class="scroll-hint absolute bottom-8 flex flex-col items-center gap-2 font-mono text-xs opacity-70 animate-pulse">
+                        <!-- Scroll Hint -->
+                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse">
                             <span>SCROLL TO BEGIN</span>
                             <i data-lucide="arrow-down" class="w-4 h-4"></i>
                         </div>
@@ -262,11 +264,10 @@
                 </div>
             </section>
 
-            <!-- "Be Creative" Banner Section -->
-            <!-- Distinct background to differentiate from Blue home and Content -->
-            <section class="w-full h-screen bg-[#050505] text-white flex items-center justify-center relative overflow-hidden z-20">
+            <!-- "Be Creative" Banner Section (Distinct Background) -->
+            <section class="w-full h-[120vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
                 <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
-                    <h2 class="text-[15vw] font-black text-center leading-none tracking-tighter mix-blend-difference text-white">
+                    <h2 class="text-[15vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
                         BE<br>CREATIVE
                     </h2>
                 </div>
@@ -280,7 +281,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(220px,auto)]">
-                        <!-- Bento Cards (Same as before) -->
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
                              <div class="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-klein-blue/30 to-transparent rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-klein-blue/40 transition-colors duration-500"></div>
                              <div>
@@ -325,7 +325,10 @@
                     </div>
 
                     <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center justify-center md:justify-end px-6 md:px-24" :data-index="i">
-                        <div class="max-w-md w-full bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl hover:border-klein-blue/50 transition-colors">
+                        <div class="max-w-md w-full bg-black/60 backdrop-blur-xl border border-white/10 p-10 rounded-3xl hover:border-klein-blue/50 transition-colors shadow-2xl relative">
+                            <!-- Backend Glow for card -->
+                            <div class="absolute -inset-4 bg-klein-blue/20 blur-2xl -z-10 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                            
                             <span class="text-klein-blue font-mono text-xs tracking-widest mb-4 block">0{{i+1}} / SYSTEM</span>
                             <h3 class="text-5xl font-bold text-white mb-6 tracking-tight">{{ app.name }}</h3>
                             <p class="text-gray-400 text-lg leading-relaxed mb-8 font-light">
@@ -338,7 +341,7 @@
                         </div>
                     </div>
                     <!-- Increased spacer for SpaceSwitcher to breathe -->
-                    <div class="h-[80vh]"></div>
+                    <div class="h-[50vh]"></div>
                 </div>
             </section>
             
@@ -397,20 +400,18 @@
                 const canvasContainer = ref(null);
                 const textureError = ref(false);
                 
-                // Smart Nav Colors: Black/White on Light sections, White/Black on Dark sections
                 const navColorClass = computed(() => {
-                    // Sections with dark backgrounds
                     const darkSections = ['home', 'works'];
-                    // "Be Creative" banner is also dark, but we can detect it via activeSection logic below
+                    // Creative banner section (approx 200vh to 300vh scroll) is also dark
+                    // This is a simplified check, usually fine.
                     const isDarkSection = darkSections.includes(activeSection.value);
                     
                     if (isDarkSection) {
-                        return 'bg-white text-black border-white/20 hover:bg-white/90'; // White buttons on dark bg
+                        return 'bg-white text-black border-white/20 hover:bg-white/90'; 
                     } else {
-                        // Light background sections (Profile, Connect in light mode)
                         return activeTheme.value === 'dark' 
-                            ? 'bg-white text-black border-white/20' // Dark theme (Profile bg is black) -> White buttons
-                            : 'bg-black text-white border-black/10 hover:bg-black/90'; // Light theme (Profile bg is white) -> Black buttons
+                            ? 'bg-white text-black border-white/20' 
+                            : 'bg-black text-white border-black/10 hover:bg-black/90'; 
                     }
                 });
 
@@ -474,7 +475,7 @@
                     }
                     window.lastScrollY = scrollTop;
 
-                    // Active Section Detection
+                    // Update Active Section
                     const sections = ['home', 'profile', 'works', 'connect'];
                     for (const section of sections) {
                         const el = document.getElementById(section);
@@ -486,58 +487,70 @@
                         }
                     }
                     
-                    // --- ANIMATION LOGIC FOR HOME PAGE ---
-                    const homeSectionHeight = winHeight * 2; // matches the CSS height 200vh
+                    // --- HOME PAGE ANIMATION LOGIC (SLOW BURN) ---
+                    const magContainer = document.getElementById('magnetic-container');
+                    const heroText = document.querySelector('.hero-text-container');
+                    const introText = document.querySelector('.intro-text');
+                    const creativeBanner = document.getElementById('creative-banner');
                     
-                    if (scrollTop < homeSectionHeight) {
-                        // 1. Magnetic Balls - Fade Out & Shrink
-                        // Happens in the first 100vh of scroll
-                        const magContainer = document.getElementById('magnetic-container');
-                        const ballFadeProgress = Math.min(1, scrollTop / winHeight);
+                    // The home section is 300vh tall (3 * window height)
+                    // We spread the animation over the first 1.5 screen heights
+                    
+                    if (scrollTop < winHeight * 2.5) {
+                        
+                        // 1. Magnetic Balls FADE & SHRINK (Slowly)
                         if(magContainer) {
-                            magContainer.style.opacity = Math.max(0, 1 - ballFadeProgress * 1.5); // Faster fade
-                            magContainer.style.transform = `scale(${1 - ballFadeProgress * 0.2})`;
+                            // Fades out completely by 1.2 screen height
+                            const fadeProgress = Math.min(1, scrollTop / (winHeight * 1.2));
+                            magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
+                            magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; // Slight shrink
                         }
 
-                        // 2. Name Animation (Bottom -> Center -> Scale Up)
-                        const heroText = document.querySelector('.hero-text-container');
-                        const introText = document.querySelector('.intro-text');
-                        const nameTitle = document.getElementById('hero-name');
-                        
-                        // Move up by half the screen height to reach center
-                        const moveY = -Math.min(scrollTop, winHeight * 0.4); 
-                        // Scale up from 1 to 2
-                        const scale = 1 + (scrollTop / winHeight) * 1.5;
-                        
+                        // 2. Name Movement (Bottom Left -> Center -> Grow)
                         if(heroText) {
-                            heroText.style.transform = `translateY(${moveY}px) scale(${scale})`;
-                        }
+                            // Calculate percentage of first screen scrolled
+                            // We want it to reach "center" visual state around 0.8vh scroll
+                            const moveProgress = Math.min(1, scrollTop / (winHeight * 0.8));
+                            
+                            // Move from bottom-left (y=0 in container) to center (approx -40vh)
+                            // We use CSS transform to move it UP (negative Y)
+                            const targetY = -winHeight * 0.45 * moveProgress; 
+                            
+                            // Scale from 1 to 2
+                            const targetScale = 1 + (moveProgress * 1.5);
+                            
+                            // Move from Left align to Center align? 
+                            // Since it's absolutely positioned or flex, we keep left align but use X translation if needed
+                            // For simplicity based on prompt, we just move UP and SCALE.
+                            // To center it horizontally effectively, we can translate X
+                            const targetX = (window.innerWidth * 0.15) * moveProgress; // Shift right towards center
 
-                        // Intro Text Fade In (Starts after some scroll)
-                        if(introText) {
-                            // Start fading in after scrolling 30% of viewport
-                            const fadeStart = winHeight * 0.3;
-                            if (scrollTop > fadeStart) {
-                                introText.style.opacity = Math.min(1, (scrollTop - fadeStart) / (winHeight * 0.3));
-                            } else {
-                                introText.style.opacity = 0;
+                            heroText.style.transform = `translate(${targetX}px, ${targetY}px) scale(${targetScale})`;
+                            
+                            // 3. Line Fades In AFTER Name is established
+                            if(introText) {
+                                // Start fading in after 60% progress
+                                if (moveProgress > 0.6) {
+                                    const textFade = (moveProgress - 0.6) / 0.4;
+                                    introText.style.opacity = textFade;
+                                } else {
+                                    introText.style.opacity = 0;
+                                }
                             }
                         }
                     }
 
-                    // --- BANNER LOGIC ---
-                    const banner = document.getElementById('creative-banner');
-                    if(banner) {
-                        const bannerRect = document.getElementById('banner-trigger').getBoundingClientRect();
-                        const triggerPoint = winHeight * 0.8;
+                    // --- CREATIVE BANNER LOGIC ---
+                    if(creativeBanner) {
+                        const bannerRect = document.getElementById('creative-banner').parentNode.getBoundingClientRect();
+                        const triggerPoint = winHeight * 0.8; // Start expanding when near view
                         
                         if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
-                            // Calculate progress as banner enters view
+                            // 0 to 1 progress as it centers
                             const progress = 1 - (bannerRect.top / triggerPoint);
-                            // Scale from 0.5 to 1.5 based on scroll
-                            const scale = 0.5 + Math.max(0, progress) * 1.2;
-                            banner.style.transform = `scale(${scale})`;
-                            banner.style.opacity = Math.min(1, progress * 1.5);
+                            const scale = 0.5 + Math.max(0, progress) * 1.5; // Scale to fill screen
+                            creativeBanner.style.transform = `scale(${scale})`;
+                            creativeBanner.style.opacity = Math.min(1, progress * 1.5);
                         }
                     }
                 };
@@ -556,7 +569,7 @@
                     }
                 };
 
-                // --- MAGNETIC LOGO LOGIC (White Balls on Blue BG) ---
+                // --- FIXED MAGNETIC BALLS ---
                 const initMagneticLogo = () => {
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
@@ -583,8 +596,8 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
 
-                    // Scale to fit FULLSCREEN logo
-                    const logoScale = Math.min(width, height) / 500; 
+                    // FIT LOGO FULLSCREEN
+                    const logoScale = Math.min(width, height) / 500 * 0.9; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
 
@@ -595,24 +608,22 @@
                     logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
 
-                    // Larger gaps for cleaner, "Wilder" look
-                    const step = 30; 
+                    const step = 28; // Ball Density
                     const balls = [];
-                    const mouseRadius = 300; 
+                    const mouseRadius = 150; // Reduced interaction range
 
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
-                            // Checking alpha
                             if (pixel[3] > 128) {
-                                // Create ball (White)
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                                // White Balls for Contrast
                                 ball.setAttribute("class", "text-white fill-current magnetic-ball");
                                 ball.setAttribute("cx", x);
                                 ball.setAttribute("cy", y);
-                                ball.setAttribute("r", 5); 
+                                ball.setAttribute("r", 5); // Increased ball size
                                 
-                                // Create Line (Faint)
+                                // Line
                                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                                 line.setAttribute("class", "text-white magnetic-ball-line");
                                 line.setAttribute("x1", x);
@@ -623,17 +634,12 @@
                                 svg.appendChild(line);
                                 svg.appendChild(ball);
 
-                                balls.push({
-                                    el: ball,
-                                    line: line,
-                                    ori_x: x,
-                                    ori_y: y
-                                });
+                                balls.push({ el: ball, line: line, ori_x: x, ori_y: y });
                             }
                         }
                     }
 
-                    // GSAP Physics Logic
+                    // GSAP Logic from user file
                     container.addEventListener('mousemove', (e) => {
                         const rect = container.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
@@ -645,10 +651,10 @@
                             const dist = Math.sqrt(dx * dx + dy * dy);
 
                             if (dist < mouseRadius) {
+                                // Calculate displacement
                                 const angle = Math.atan2(dy, dx);
-                                const force = (mouseRadius - dist) / mouseRadius; 
-                                const moveDist = force * 150; // Strong push
-
+                                // Move away from mouse
+                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 60; // Max distance
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
 
@@ -656,14 +662,32 @@
                                 ball.animater = gsap.timeline()
                                     .to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3, ease: "power3.out" })
                                     .to(ball.line, { attr: { x2: tx, y2: ty }, duration: 0.3, ease: "power3.out" }, "<")
-                                    .to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.4)" }, ">0.05")
-                                    .to(ball.line, { attr: { x2: ball.ori_x, y2: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<");
+                                    // Elastic Return
+                                    .to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, ">0.05")
+                                    .to(ball.line, { attr: { x2: ball.ori_x, y2: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, "<");
                             }
                         });
                     });
                 };
 
-                // THREE.JS High-Res Setup
+                const createSquircleShape = (size) => {
+                    const shape = new THREE.Shape();
+                    const width = size; const height = size;
+                    const x = -width / 2; const y = -height / 2;
+                    const r = 0.7; 
+                    shape.moveTo( x, y + r );
+                    shape.lineTo( x, y + height - r );
+                    shape.quadraticCurveTo( x, y + height, x + r, y + height );
+                    shape.lineTo( x + width - r, y + height );
+                    shape.quadraticCurveTo( x + width, y + height, x + width, y + height - r );
+                    shape.lineTo( x + width, y + r );
+                    shape.quadraticCurveTo( x + width, y, x + width - r, y );
+                    shape.lineTo( x + r, y );
+                    shape.quadraticCurveTo( x, y, x, y + r );
+                    return shape;
+                };
+
+                // HD Fallback Texture (Fixed Blur)
                 const createFallbackTexture = (text) => {
                     const canvas = document.createElement('canvas');
                     canvas.width = 2048; canvas.height = 2048; 
@@ -686,30 +710,13 @@
                     ctx.stroke();
 
                     ctx.fillStyle = 'white';
-                    ctx.font = 'bold 400px "Inter", sans-serif';
+                    ctx.font = 'bold 600px "Inter", sans-serif'; 
                     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                     ctx.fillText(text.substring(0, 2).toUpperCase(), 1024, 1024);
 
                     const tex = new THREE.CanvasTexture(canvas);
                     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
                     return tex;
-                };
-
-                const createSquircleShape = (size) => {
-                    const shape = new THREE.Shape();
-                    const width = size; const height = size;
-                    const x = -width / 2; const y = -height / 2;
-                    const r = 0.7; 
-                    shape.moveTo( x, y + r );
-                    shape.lineTo( x, y + height - r );
-                    shape.quadraticCurveTo( x, y + height, x + r, y + height );
-                    shape.lineTo( x + width - r, y + height );
-                    shape.quadraticCurveTo( x + width, y + height, x + width, y + height - r );
-                    shape.lineTo( x + width, y + r );
-                    shape.quadraticCurveTo( x + width, y, x + width - r, y );
-                    shape.lineTo( x + r, y );
-                    shape.quadraticCurveTo( x, y, x, y + r );
-                    return shape;
                 };
 
                 const initThreeJS = () => {
@@ -864,7 +871,7 @@
                             loader.value.style.opacity = '0';
                             setTimeout(() => { loader.value.style.display = 'none'; }, 500);
                         }
-                        gsap.from(".hero-text-container", { y: 50, opacity: 0, duration: 1.5, ease: "power4.out", delay: 0.2 });
+                        gsap.from(".hero-text-container", { opacity: 0, duration: 2, ease: "power4.out", delay: 0.5 });
                         initMagneticLogo();
                     }, 1500);
 
