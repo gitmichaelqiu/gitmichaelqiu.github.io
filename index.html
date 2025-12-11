@@ -15,6 +15,7 @@
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
+                        'neon-green': '#17f700', /* Added based on reference image vibe */
                         'bg-dark': '#050505',
                         'bg-light': '#F2F2F7', 
                     },
@@ -27,8 +28,9 @@
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'float': 'float 6s ease-in-out infinite',
                         'spin-slow': 'spin 120s linear infinite',
-                        'marquee': 'marquee 40s linear infinite',
-                        'marquee-reverse': 'marqueeReverse 45s linear infinite',
+                        'marquee': 'marquee 30s linear infinite',
+                        'marquee-reverse': 'marqueeReverse 35s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -69,20 +71,20 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --klein-blue: #002FA7;
             --klein-blue-glow: rgba(0, 47, 167, 0.6);
-            --bg-gradient-dark: radial-gradient(circle at 50% 50%, #111111 0%, #050505 100%);
+            /* BOLD BLUE BACKGROUND GRADIENT */
+            --bg-gradient-dark: radial-gradient(circle at 50% 30%, #001a5c 0%, #020b26 40%, #000000 100%); 
             --bg-gradient-light: radial-gradient(circle at 50% 50%, #ffffff 0%, #F2F2F7 100%);
         }
 
         body {
             background: var(--bg-gradient-light);
             color: #111;
-            /* overflow-x: hidden; Handled by Lenis mostly, but keeping for safety */
             transition: background 0.5s ease, color 0.5s ease;
         }
 
@@ -117,43 +119,42 @@
         .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
         body:hover .cursor-outline { width: 30px; height: 30px; }
 
-        /* Grain Texture */
+        /* Aggressive Grain Texture */
         .grain-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 50; 
             pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.2; filter: invert(1);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            opacity: 0.3; mix-blend-mode: overlay;
         }
-        html.dark .grain-overlay { opacity: 0.4; filter: none; }
 
         /* Marquee */
         .marquee-container { overflow: hidden; white-space: nowrap; display: flex; }
         .marquee-content { display: flex; flex-shrink: 0; }
         
-        .animate-marquee { animation: marquee 60s linear infinite; }
-        .animate-marquee-reverse { animation: marqueeReverse 60s linear infinite; }
+        .animate-marquee { animation: marquee 20s linear infinite; } /* Faster */
+        .animate-marquee-reverse { animation: marqueeReverse 25s linear infinite; }
 
-        /* Typography Effects */
-        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4); }
-        html.dark .outline-text { -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4); }
+        /* Typography Effects - WILDER */
+        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(0, 0, 0, 0.8); }
+        html.dark .outline-text { -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8); } /* Thicker stroke */
         
+        /* Glitch Effect - More Aggressive */
         .glitch-wrapper { position: relative; }
         .glitch-wrapper::before, .glitch-wrapper::after {
             content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #F2F2F7; 
+            background: transparent; /* Changed to transparent for blending */
         }
-        html.dark .glitch-wrapper::before, html.dark .glitch-wrapper::after { background: #050505; }
         
-        .glitch-wrapper::before { left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
-        .glitch-wrapper::after { left: -2px; text-shadow: -1px 0 #00fff9; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
+        .glitch-wrapper::before { left: 3px; text-shadow: -2px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
+        .glitch-wrapper::after { left: -3px; text-shadow: -2px 0 #00fff9; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 3s infinite linear alternate-reverse; }
         @keyframes glitch-anim { 0% { clip: rect(3px, 9999px, 11px, 0); } 100% { clip: rect(22px, 9999px, 76px, 0); } }
         @keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 92px, 0); } 100% { clip: rect(35px, 9999px, 12px, 0); } }
 
-        /* Glass Cards - INCREASED BLUR VISIBILITY */
+        /* Glass Cards */
         .glass-card { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
-        html.dark .glass-card { background: rgba(20, 20, 20, 0.2); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .glass-card:hover { border-color: var(--klein-blue); background: rgba(0, 47, 167, 0.05); }
+        html.dark .glass-card { background: rgba(20, 20, 20, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card:hover { border-color: var(--klein-blue); background: rgba(0, 47, 167, 0.1); }
 
         /* Sidebar Transition */
         .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -177,11 +178,11 @@
             fill: currentColor;
         }
         
-        /* Magnetic Balls Style */
+        /* Magnetic Balls Style - WILDER */
         .magnetic-ball line {
             stroke: currentColor;
-            stroke-width: 1;
-            opacity: 0.2;
+            stroke-width: 1.5;
+            opacity: 0.4;
         }
     </style>
 </head>
@@ -209,38 +210,38 @@
         <nav class="fixed top-0 left-0 w-full z-[9990] px-8 py-8 flex justify-between items-center pointer-events-none transition-colors duration-500">
             <!-- Left: Sidebar Trigger -->
             <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none pointer-events-auto text-black dark:text-white">
-                <div class="relative w-10 h-10 border border-current rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden backdrop-blur-sm group-hover:border-klein-blue transition-colors">
-                    <span class="w-4 h-0.5 bg-current transition-all duration-300 group-hover:w-6 group-hover:bg-klein-blue"></span>
-                    <span class="w-6 h-0.5 bg-current transition-all duration-300 group-hover:w-4 group-hover:bg-klein-blue"></span>
+                <div class="relative w-12 h-12 border-2 border-current rounded-full flex flex-col justify-center items-center gap-1.5 overflow-hidden backdrop-blur-sm group-hover:border-klein-blue group-hover:text-klein-blue transition-all duration-300">
+                    <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-8"></span>
+                    <span class="w-8 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
                 </div>
             </button>
             
             <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
-                    <div class="bg-white/30 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-lg text-black dark:text-white hover:bg-white/40 dark:hover:bg-black/30"
-                         :class="isCapsuleOpen ? 'w-[320px]' : 'w-[140px]'">
+                    <div class="bg-white/10 dark:bg-black/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-full h-12 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-2xl text-black dark:text-white hover:bg-white/20 dark:hover:bg-white/5"
+                         :class="isCapsuleOpen ? 'w-[360px]' : 'w-[160px]'">
                         
-                        <div v-if="!isCapsuleOpen" class="font-mono text-xs tracking-widest px-6 animate-fade-in">
+                        <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
                             {{ activeSection.toUpperCase() }}
                         </div>
 
-                        <div v-else class="flex gap-4 font-mono text-[10px] text-gray-800 dark:text-gray-300 px-6 animate-fade-in whitespace-nowrap">
-                            <a href="#home" class="hover:text-klein-blue dark:hover:text-white transition-colors">HOME</a>
+                        <div v-else class="flex gap-6 font-mono text-[10px] font-bold text-gray-800 dark:text-gray-200 px-6 animate-fade-in whitespace-nowrap">
+                            <a href="#home" class="hover:text-klein-blue transition-colors">HOME</a>
                             <span>/</span>
-                            <a href="#profile" class="hover:text-klein-blue dark:hover:text-white transition-colors">PROFILE</a>
+                            <a href="#profile" class="hover:text-klein-blue transition-colors">PROFILE</a>
                             <span>/</span>
-                            <a href="#works" class="hover:text-klein-blue dark:hover:text-white transition-colors">WORKS</a>
+                            <a href="#works" class="hover:text-klein-blue transition-colors">WORKS</a>
                             <span>/</span>
-                            <a href="#connect" class="hover:text-klein-blue dark:hover:text-white transition-colors">CONNECT</a>
+                            <a href="#connect" class="hover:text-klein-blue transition-colors">CONNECT</a>
                         </div>
                     </div>
 
                     <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;">
-                        <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20" 
+                        <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" 
                               fill="none" stroke="transparent" stroke-width="2" />
-                         <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20" 
-                              fill="none" stroke="#002FA7" stroke-width="3"
+                         <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" 
+                              fill="none" stroke="#002FA7" stroke-width="4"
                               :stroke-dasharray="capsulePerimeter"
                               :stroke-dashoffset="capsuleDashOffset"
                               style="transition: stroke-dashoffset 0.1s linear, stroke-dasharray 0.5s ease;" />
@@ -251,182 +252,203 @@
             <!-- Right: Theme & Logo -->
             <div class="flex items-center gap-6 pointer-events-auto text-black dark:text-white">
                 <!-- Theme Toggle -->
-                <button @click="cycleTheme" class="hover:text-klein-blue transition-colors focus:outline-none flex items-center justify-center w-8 h-8 rounded-full">
-                    <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
-                    <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
-                    <span v-show="themeMode === 'auto'" class="animate-fade-in"><i data-lucide="monitor" class="w-5 h-5"></i></span>
+                <button @click="cycleTheme" class="hover:text-klein-blue hover:rotate-180 transition-all duration-500 focus:outline-none flex items-center justify-center w-10 h-10 rounded-full border border-transparent hover:border-current">
+                    <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-6 h-6"></i></span>
+                    <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-6 h-6"></i></span>
+                    <span v-show="themeMode === 'auto'" class="animate-fade-in"><i data-lucide="monitor" class="w-6 h-6"></i></span>
                 </button>
-                
-                <!-- SVG Logo -->
-                <div class="w-8 h-8 hover:text-klein-blue transition-colors duration-300 cursor-pointer">
-                    <svg class="logo-svg w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
-                        <g>
-                            <path fill-rule="evenodd" d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
-                            <path fill-rule="evenodd" d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z"/>
-                        </g>
-                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z"/>
-                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"/>
-                    </svg>
-                </div>
             </div>
         </nav>
 
         <!-- Sidebar Overlay -->
         <transition name="backdrop">
-            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9995]"></div>
+            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[9995]"></div>
         </transition>
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white/95 dark:bg-[#050505]/95 backdrop-blur-2xl text-black dark:text-white z-[10000] border-r border-gray-200 dark:border-white/10 flex flex-col pl-6 pr-8 md:pl-10 md:pr-12 shadow-2xl overflow-y-auto overflow-x-hidden">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10000] border-r border-gray-200 dark:border-white/10 flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden">
                 
                 <!-- Close Button -->
-                <button @click="toggleSidebar" class="absolute top-8 left-6 md:left-10 w-10 h-10 flex items-center justify-center border border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-klein-blue transition-all">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-12 w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
+                    <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
 
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
-                    <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
+                    <div class="absolute top-1/4 right-0 w-96 h-96 border-2 border-klein-blue rounded-full translate-x-1/2 blur-3xl"></div>
                 </div>
 
-                <div class="flex flex-col gap-6 relative z-10 mt-40 w-full">
-                    <div class="font-mono text-xs text-gray-500 mb-4 tracking-widest">SYSTEM MAP</div>
+                <div class="flex flex-col gap-8 relative z-10 mt-48 w-full">
+                    <div class="font-mono text-sm text-klein-blue mb-4 tracking-[0.3em] font-bold">SYSTEM MAP</div>
                     <a v-for="(link, index) in systemLinks" 
                        :key="link.name"
                        href="#" 
-                       class="group flex items-center gap-4 text-[clamp(2rem,4vw,3.5rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300 p-2 pr-4 block w-full leading-tight"
-                       style="-webkit-text-stroke: 1px rgba(128,128,128,0.1);">
-                        <span class="font-mono text-xs text-klein-blue opacity-0 group-hover:opacity-100 transition-opacity">0{{index+1}}</span>
-                        <span class="group-hover:translate-x-4 transition-transform duration-300 break-words">{{ link.name }}</span>
-                        <span class="opacity-0 -ml-4 group-hover:ml-0 group-hover:opacity-100 transition-all duration-300">
-                             <i data-lucide="arrow-right" class="w-6 h-6 text-klein-blue"></i>
+                       class="group flex items-center gap-6 text-[clamp(2.5rem,5vw,4rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 p-2 pr-4 block w-full leading-none"
+                       style="-webkit-text-stroke: 1px rgba(128,128,128,0.2);">
+                        <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2">0{{index+1}}</span>
+                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]">{{ link.name }}</span>
+                        <span class="opacity-0 -ml-8 group-hover:ml-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                             <i data-lucide="arrow-right" class="w-8 h-8 text-klein-blue"></i>
                         </span>
                     </a>
                 </div>
                 
-                <div class="absolute bottom-12 left-6 md:left-10 font-mono text-[10px] text-gray-500 flex gap-8">
+                <div class="absolute bottom-16 left-8 md:left-16 font-mono text-xs text-gray-500 flex gap-12">
                     <div>
-                        <p class="font-bold mb-2 tracking-widest">STATUS</p>
+                        <p class="font-bold mb-2 tracking-widest text-klein-blue">STATUS</p>
                         <p class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> ONLINE</p>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2 tracking-widest text-klein-blue">VERSION</p>
+                        <p>v2.5.0 (2025)</p>
                     </div>
                 </div>
             </aside>
         </transition>
 
         <!-- Main Content -->
-        <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none': isSidebarOpen }">
+        <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <!-- Hero Section (NEW LAYOUT - WILDER) -->
-            <section id="home" class="relative w-full h-screen flex items-center justify-center px-6 md:px-12 pt-20 overflow-hidden bg-white dark:bg-[#050505]">
+            <!-- Hero Section (WILD & BOLD) -->
+            <section id="home" class="relative w-full flex flex-col justify-start overflow-hidden bg-white dark:bg-[#000814] pb-24">
                 
-                <!-- Background Marquees (Increased Opacity and Contrast) -->
-                <div class="absolute inset-0 flex flex-col justify-between opacity-80 dark:opacity-60 pointer-events-none select-none overflow-hidden py-12">
-                    <div class="marquee-container -rotate-2">
-                        <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-300 dark:text-[#1a1a1a] whitespace-nowrap">
-                            SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
-                        </div>
-                         <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-300 dark:text-[#1a1a1a] whitespace-nowrap">
-                            SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
-                        </div>
-                    </div>
-                    
-                    <div class="marquee-container rotate-1">
-                        <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-200 dark:text-[#111] whitespace-nowrap">
-                            DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
-                        </div>
-                         <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-200 dark:text-[#111] whitespace-nowrap">
-                            DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
-                        </div>
-                    </div>
+                <!-- Background Gradient Flare -->
+                <div class="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-klein-blue/20 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+                <div class="absolute bottom-[10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-900/20 rounded-full blur-[100px] pointer-events-none"></div>
 
-                    <div class="marquee-container -rotate-1">
-                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
-                             MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
+                <!-- Marquees (Blueprint Style) -->
+                <div class="absolute inset-0 flex flex-col justify-between opacity-40 dark:opacity-20 pointer-events-none select-none overflow-hidden py-12 z-0">
+                    <div class="marquee-container -rotate-6 scale-110 origin-left translate-y-32">
+                        <div class="marquee-content animate-marquee text-[12vw] font-black text-gray-300 dark:text-[#111] whitespace-nowrap leading-none">
+                            ARCHITECT // DESIGN // CODE // ARCHITECT // DESIGN // CODE //
                         </div>
-                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
-                             MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
+                         <div class="marquee-content animate-marquee text-[12vw] font-black text-gray-300 dark:text-[#111] whitespace-nowrap leading-none">
+                            ARCHITECT // DESIGN // CODE // ARCHITECT // DESIGN // CODE //
                         </div>
                     </div>
                 </div>
 
-                <div class="z-10 w-full max-w-[90vw] mx-auto flex flex-col md:flex-row items-center justify-between h-full pb-20">
+                <!-- Content Wrapper -->
+                <div class="relative w-full max-w-[95vw] mx-auto z-10 pt-32 md:pt-48 min-h-screen flex flex-col">
                     
-                    <!-- Left Column: Name & Intro -->
-                    <div class="flex flex-col justify-center items-start z-20 reveal-text mt-20 md:mt-0 w-full md:w-1/2">
-                         <h1 class="text-[12vw] leading-[0.85] font-black tracking-tighter mix-blend-exclusion text-black dark:text-white">
-                            MICHAEL
-                        </h1>
-                        <h1 class="text-[12vw] leading-[0.85] font-black tracking-tighter outline-text mix-blend-exclusion pl-2 md:pl-4">
-                            QIU
-                        </h1>
+                    <!-- Top Section: TEXT vs LOGO -->
+                    <div class="flex flex-col md:flex-row w-full items-start justify-between">
                         
-                        <div class="mt-8 ml-2 max-w-lg">
-                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-12 h-[2px] bg-klein-blue"></div>
-                                <p class="font-mono text-klein-blue tracking-[0.3em] text-xs font-bold">PORTFOLIO 2025</p>
+                        <!-- Left: Typography Bomb -->
+                        <div class="flex flex-col z-20 reveal-text w-full md:w-[45%]">
+                            <div class="flex items-center gap-4 mb-8">
+                                <div class="w-20 h-[4px] bg-klein-blue shadow-[0_0_15px_rgba(0,47,167,0.8)]"></div>
+                                <p class="font-mono text-klein-blue tracking-[0.4em] text-sm font-bold animate-pulse">PORTFOLIO 2025</p>
                             </div>
-                            <p class="text-lg md:text-xl font-light text-gray-600 dark:text-gray-400 leading-relaxed">
-                                Designing utilities that reshape the <br>
-                                <span class="text-klein-blue font-bold italic">work experience</span>.
-                            </p>
-                             <div class="font-mono text-xs text-gray-500 animate-pulse mt-8">
-                                SCROLL TO EXPLORE ↓↓↓
+
+                            <h1 class="text-[15vw] md:text-[11vw] leading-[0.8] font-black tracking-tighter text-black dark:text-white mix-blend-normal">
+                                MICHAEL
+                            </h1>
+                            <div class="relative">
+                                <h1 class="text-[15vw] md:text-[11vw] leading-[0.8] font-black tracking-tighter outline-text pl-4 md:pl-8">
+                                    QIU
+                                </h1>
+                                <!-- Small accent badge -->
+                                <div class="absolute top-0 right-10 md:right-32 bg-klein-blue text-white font-mono text-xs px-2 py-1 rotate-12 rounded">
+                                    DEV.01
+                                </div>
                             </div>
+
+                            <div class="mt-12 md:mt-24 pl-4 md:pl-8 border-l-4 border-gray-200 dark:border-white/10 max-w-lg">
+                                <p class="text-xl md:text-2xl font-light text-gray-800 dark:text-gray-300 leading-relaxed">
+                                    Designing digital utilities that feel <br>
+                                    <span class="text-klein-blue font-bold italic bg-white/5 px-2">inevitable</span>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Right: MAGNETIC LOGO (Hyper-Scale) -->
+                        <div class="relative w-full md:w-[55%] h-[60vh] md:h-[80vh] flex items-center justify-center z-10 md:-mt-20">
+                             <div id="magnetic-container" class="w-full h-full relative cursor-crosshair">
+                                 <!-- Balls will be injected here -->
+                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column: Interactive Magnetic Balls Logo (WILDER) -->
-                    <div class="relative w-full md:w-1/2 h-[50vw] md:h-full flex items-center justify-center z-20 md:mr-10">
-                         <div id="magnetic-container" class="w-full h-full relative">
-                             <!-- Balls will be injected here -->
-                         </div>
+                    <!-- Transition Banner / Scroll Hint -->
+                    <div class="w-full flex justify-between items-end pb-12 mt-12 md:mt-0 border-b border-gray-200 dark:border-white/10">
+                        <div class="font-mono text-xs text-gray-500">
+                            COORD: 127.0.0.1<br>
+                            LOC: CYBERSPACE
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="font-mono text-xs tracking-widest text-klein-blue animate-pulse">INITIATE SCROLL</span>
+                            <i data-lucide="arrow-down" class="w-6 h-6 text-klein-blue animate-bounce"></i>
+                        </div>
+                        <div class="font-mono text-xs text-gray-500 text-right">
+                            SCROLL VELOCITY:<br>
+                            NON-LINEAR
+                        </div>
                     </div>
 
                 </div>
             </section>
 
+            <!-- Spacer / Transition Section (New) -->
+            <section class="w-full py-32 bg-klein-blue text-white overflow-hidden relative">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                <div class="marquee-container -rotate-1">
+                    <div class="marquee-content animate-marquee text-[8vw] font-display font-black whitespace-nowrap">
+                        BE WILD • BE CREATIVE • BE COOL • BE WILD • BE CREATIVE • BE COOL •
+                    </div>
+                    <div class="marquee-content animate-marquee text-[8vw] font-display font-black whitespace-nowrap">
+                        BE WILD • BE CREATIVE • BE COOL • BE WILD • BE CREATIVE • BE COOL •
+                    </div>
+                </div>
+            </section>
+
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-24 px-6 md:px-12 relative border-t border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md transition-colors duration-500">
-                <div class="max-w-7xl mx-auto relative z-10">
-                    <div class="mb-16">
-                         <div class="flex items-center gap-2 mb-2">
-                            <span class="text-klein-blue">/</span> 
-                            <span class="font-display font-bold">PROFILE</span>
-                         </div>
-                        <h2 class="text-4xl md:text-5xl font-light leading-tight text-gray-800 dark:text-gray-200 max-w-4xl">
-                            I build digital products that feel <span class="italic font-serif text-klein-blue">inevitable</span>. Code is my medium, minimalism is my method.
-                        </h2>
+            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-white dark:bg-[#050505]">
+                <div class="max-w-[90vw] mx-auto relative z-10">
+                    <!-- Section Header -->
+                    <div class="flex items-end justify-between mb-24 border-b border-gray-200 dark:border-white/10 pb-8">
+                        <div>
+                             <div class="flex items-center gap-3 mb-2">
+                                <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
+                                <span class="font-display font-bold tracking-widest text-xl">PROFILE</span>
+                             </div>
+                             <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
+                        </div>
+                        <div class="hidden md:block font-mono text-xs text-gray-600">
+                            // LOADING DATA...<br>
+                            // COMPLETE
+                        </div>
                     </div>
 
                     <!-- Bento Grid Layout -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(220px,auto)]">
                         
                         <!-- Main Info -->
-                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
-                             <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-klein-blue/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-klein-blue/30 transition-colors duration-500"></div>
+                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
+                             <div class="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-klein-blue/30 to-transparent rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-klein-blue/40 transition-colors duration-500"></div>
                              
                              <div>
-                                 <h3 class="font-mono text-xs text-gray-500 mb-4 tracking-widest">ABOUT_ME</h3>
-                                 <p class="text-lg leading-relaxed text-gray-800 dark:text-gray-300">
-                                     As a Workspace Architect, I don't just write code; I design workflows. My background in C++ and Python allows me to build rigorous back-end systems, while my passion for Swift and UI design ensures the front-end is fluid and intuitive.
+                                 <h3 class="font-mono text-xs text-klein-blue mb-6 tracking-widest border border-klein-blue/30 inline-block px-3 py-1 rounded-full">ABOUT_ME</h3>
+                                 <p class="text-2xl md:text-3xl font-light leading-snug text-gray-800 dark:text-gray-200">
+                                     I don't just write code; <span class="text-white font-bold">I design workflows.</span> My background in C++ and Python allows me to build rigorous back-end systems, while my passion for Swift ensures fluid intuition.
                                  </p>
                              </div>
-                             <div class="mt-8">
-                                 <div class="h-[1px] w-full bg-gray-200 dark:bg-white/10 mb-4"></div>
-                                 <div class="flex justify-between items-end">
-                                     <span class="font-mono text-xs">BASED IN</span>
+                             <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6">
+                                 <div>
+                                     <span class="block font-mono text-xs text-gray-500 mb-1">LOCATION</span>
                                      <span class="font-bold text-xl">127.0.0.1</span>
                                  </div>
+                                 <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
                              </div>
                         </div>
 
                         <!-- Stack -->
-                        <div class="col-span-1 md:col-span-1 glass-card p-6 flex flex-col justify-between hover:bg-klein-blue dark:hover:bg-klein-blue hover:text-white dark:hover:text-white transition-all duration-300 group">
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-klein-blue dark:hover:bg-klein-blue hover:text-white dark:hover:text-white transition-all duration-300 group">
                             <div class="flex justify-between items-start">
                                 <h3 class="font-mono text-xs opacity-60">STACK</h3>
-                                <i data-lucide="layers" class="w-5 h-5 opacity-60"></i>
+                                <i data-lucide="layers" class="w-6 h-6 opacity-60"></i>
                             </div>
-                            <ul class="space-y-2 mt-4 font-bold text-lg">
+                            <ul class="space-y-3 mt-4 font-bold text-2xl">
                                 <li>Python</li>
                                 <li>C++</li>
                                 <li>SwiftUI</li>
@@ -435,46 +457,44 @@
                         </div>
 
                          <!-- Focus -->
-                        <div class="col-span-1 md:col-span-1 glass-card p-6 flex flex-col justify-between hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300">
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300">
                             <div class="flex justify-between items-start">
                                 <h3 class="font-mono text-xs opacity-60">FOCUS</h3>
-                                <i data-lucide="crosshair" class="w-5 h-5 opacity-60"></i>
+                                <i data-lucide="crosshair" class="w-6 h-6 opacity-60"></i>
                             </div>
                              <div class="mt-4">
-                                <p class="text-3xl font-black">System<br>Utilities</p>
+                                <p class="text-4xl font-black leading-none">System<br>Utils</p>
                             </div>
                         </div>
 
                          <!-- Motto Card -->
-                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-8 flex flex-col justify-center relative overflow-hidden group">
+                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
                              <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                             <h3 class="font-mono text-xs text-gray-500 mb-2 relative z-10">MOTTO</h3>
-                             <p class="text-xl md:text-2xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10">
+                             <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">PHILOSOPHY</h3>
+                             <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">
                                  "Give people wonderful tools, and they'll do wonderful things."
                              </p>
-                             <p class="text-right text-xs font-bold mt-2 text-gray-500 relative z-10">— Steve Jobs</p>
+                             <p class="text-right text-sm font-bold mt-4 text-klein-blue relative z-10">— Steve Jobs</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Works / Apps Section -->
-            <section id="works" class="relative w-full min-h-screen overflow-hidden flex flex-col bg-transparent">
-                <div class="w-full py-4 border-y border-gray-200 dark:border-white/10 bg-white dark:bg-[#020202] transition-colors duration-500">
+            <section id="works" class="relative w-full min-h-[150vh] flex flex-col bg-[#050505] border-t border-white/10">
+                
+                <div class="w-full py-6 border-b border-white/10 bg-[#020202]">
                     <div class="marquee-container">
-                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10 animate-marquee">
-                            DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
-                        </div>
-                         <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10 animate-marquee">
+                        <div class="marquee-content font-display text-5xl md:text-8xl font-bold opacity-20 text-white animate-marquee">
                             DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
                         </div>
                     </div>
                 </div>
 
-                <div class="flex-grow container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-start py-12 gap-12">
+                <div class="flex-grow container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-start py-24 gap-12">
                     
-                    <!-- 3D Viewer Area (Adjusted position downwards using top-32 and transform) -->
-                    <div class="w-full md:w-7/12 h-[50vh] md:h-screen sticky top-32 md:top-0 z-0 mask-fade-edges order-first md:order-last flex items-center justify-center translate-y-12" ref="canvasContainer">
+                    <!-- 3D Viewer Area (Sticky Center) -->
+                    <div class="w-full md:w-7/12 h-[60vh] sticky top-[20vh] z-0 mask-fade-edges order-first md:order-last flex items-center justify-center" ref="canvasContainer">
                         <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
                             <div class="flex items-center gap-2 mb-2 font-bold text-red-300">
                                 <i data-lucide="alert-triangle" class="w-5 h-5"></i>
@@ -486,35 +506,34 @@
 
                     <!-- Text Content -->
                     <div class="w-full md:w-5/12 z-20 order-last md:order-first md:py-24">
-                        <!-- Redesigned Header to match Profile -->
-                        <div class="mb-12">
-                             <div class="flex items-center gap-2 mb-2">
-                                <span class="text-klein-blue">/</span> 
-                                <span class="font-display font-bold">WORKS</span>
+                        <div class="mb-20">
+                             <div class="flex items-center gap-3 mb-4">
+                                <span class="w-3 h-3 bg-klein-blue rounded-full animate-pulse"></span>
+                                <span class="font-display font-bold tracking-widest text-xl text-white">WORKS</span>
                              </div>
-                            <h2 class="text-4xl md:text-5xl font-light leading-tight text-gray-800 dark:text-gray-200">
-                                Utilities for the <span class="italic font-serif text-klein-blue">Power User</span>
+                            <h2 class="text-5xl md:text-7xl font-light leading-tight text-white">
+                                Power<br><span class="italic font-serif text-klein-blue">Utilities</span>
                             </h2>
                         </div>
 
-                        <div class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-12">
                             <div v-for="(app, i) in apps" :key="app.id" 
                                  @mouseenter="hoverApp(app.id)" 
                                  @mouseleave="resetApp"
-                                 class="group relative p-8 border border-gray-200 dark:border-white/5 bg-white/40 dark:bg-[#0a0a0a]/20 transition-all duration-300 cursor-none overflow-hidden backdrop-blur-xl shadow-lg rounded-sm hover:border-klein-blue/50">
+                                 class="group relative p-10 border border-white/10 bg-white/5 transition-all duration-500 cursor-none overflow-hidden backdrop-blur-xl hover:border-klein-blue hover:bg-white/10">
                                 
-                                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                                <div class="relative z-10 flex justify-between items-center text-current">
+                                <div class="relative z-10 flex justify-between items-center text-white">
                                     <div>
-                                        <span class="font-mono text-xs opacity-50 mb-2 block">0{{ i + 1 }}</span>
-                                        <h3 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ app.name }}</h3>
+                                        <span class="font-mono text-sm text-klein-blue mb-2 block">0{{ i + 1 }}</span>
+                                        <h3 class="text-4xl font-bold tracking-tight mb-2">{{ app.name }}</h3>
                                     </div>
-                                    <span class="w-10 h-10 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all">
-                                         <i data-lucide="arrow-up-right" class="w-5 h-5 text-black dark:text-white group-hover:text-white"></i>
+                                    <span class="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300">
+                                         <i data-lucide="arrow-up-right" class="w-6 h-6 text-white"></i>
                                     </span>
                                 </div>
-                                <p class="relative z-10 mt-4 text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors leading-relaxed">
+                                <p class="relative z-10 mt-6 text-lg text-gray-400 group-hover:text-white transition-colors leading-relaxed">
                                     {{ app.desc }}
                                 </p>
                             </div>
@@ -525,44 +544,44 @@
             </section>
             
             <!-- Connect Section -->
-            <section id="connect" class="w-full py-24 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-black transition-colors duration-500">
+            <section id="connect" class="w-full py-32 px-6 md:px-12 bg-[#000814] text-white border-t border-white/10">
                 <div class="max-w-7xl mx-auto">
-                    <div class="flex items-center gap-2 mb-12">
-                        <div class="w-2 h-2 bg-klein-blue"></div>
-                        <span class="font-mono text-xs tracking-widest text-gray-500">CONNECT</span>
+                    <div class="flex items-center gap-3 mb-16">
+                        <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
+                        <span class="font-display font-bold tracking-widest text-xl">CONNECT</span>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- GitHub -->
-                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-64 overflow-hidden rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 hover:border-klein-blue transition-all duration-500">
-                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gray-200/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            <div class="relative z-10 h-full p-8 flex flex-col justify-between">
+                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-[#0a0a0a] border border-white/10 hover:border-klein-blue transition-all duration-500">
+                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gray-200/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="relative z-10 h-full p-10 flex flex-col justify-between">
                                 <div class="flex justify-between items-start">
-                                    <i data-lucide="github" class="w-10 h-10 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                    <span class="w-10 h-10 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all">
-                                        <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                                    <i data-lucide="github" class="w-12 h-12 text-gray-500 group-hover:text-white transition-colors"></i>
+                                    <span class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue transition-all">
+                                        <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
                                     </span>
                                 </div>
                                 <div>
-                                    <h3 class="text-3xl font-bold mb-2 text-black dark:text-white">GitHub</h3>
-                                    <p class="text-gray-500 group-hover:text-klein-blue transition-colors">Explore my source code</p>
+                                    <h3 class="text-4xl font-bold mb-3">GitHub</h3>
+                                    <p class="text-gray-500 group-hover:text-klein-blue transition-colors text-xl">Explore source code</p>
                                 </div>
                             </div>
                         </a>
 
                         <!-- Kaggle -->
-                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-64 overflow-hidden rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 hover:border-[#20BEFF] transition-all duration-500">
-                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[#20BEFF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            <div class="relative z-10 h-full p-8 flex flex-col justify-between">
+                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-[#0a0a0a] border border-white/10 hover:border-[#20BEFF] transition-all duration-500">
+                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[#20BEFF]/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="relative z-10 h-full p-10 flex flex-col justify-between">
                                 <div class="flex justify-between items-start">
-                                    <div class="text-3xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
-                                    <span class="w-10 h-10 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all">
-                                        <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                                    <div class="text-4xl font-black text-gray-500 group-hover:text-[#20BEFF] transition-colors">K</div>
+                                    <span class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all">
+                                        <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
                                     </span>
                                 </div>
                                 <div>
-                                    <h3 class="text-3xl font-bold mb-2 text-black dark:text-white">Kaggle</h3>
-                                    <p class="text-gray-500 group-hover:text-[#20BEFF] transition-colors">View my data science projects</p>
+                                    <h3 class="text-4xl font-bold mb-3">Kaggle</h3>
+                                    <p class="text-gray-500 group-hover:text-[#20BEFF] transition-colors text-xl">View data science projects</p>
                                 </div>
                             </div>
                         </a>
@@ -570,12 +589,13 @@
                 </div>
             </section>
 
-            <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#050505] flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-500 transition-colors duration-500">
-                <p>&copy; 2025 MICHAEL QIU</p>
-                <div class="flex gap-6 mt-4 md:mt-0">
+            <footer class="w-full py-16 px-6 md:px-12 border-t border-white/10 bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500">
+                <p>&copy; 2025 MICHAEL QIU. ALL RIGHTS RESERVED.</p>
+                <div class="flex gap-8 mt-6 md:mt-0">
                     <a href="#home" class="hover:text-klein-blue transition-colors">BACK TO TOP</a>
+                    <a href="mailto:contact@michaelqiu.com" class="hover:text-klein-blue transition-colors">CONTACT</a>
                 </div>
-                <p class="mt-4 md:mt-0">DESIGNED IN THE VOID</p>
+                <p class="mt-6 md:mt-0">DESIGNED IN THE VOID</p>
             </footer>
         </main>
     </div>
@@ -586,8 +606,8 @@
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
-                const themeMode = ref('auto'); // 'light', 'dark', 'auto'
-                const activeTheme = ref('dark'); // Resolved theme state
+                const themeMode = ref('auto'); 
+                const activeTheme = ref('dark'); 
                 
                 const scrollProgress = ref(0);
                 const activeSection = ref('home');
@@ -605,19 +625,19 @@
                 ];
                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'resources/DesktopRenamer.png' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'resources/OptClicker.png' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/SpaceSwitcher.png' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar. Clean, simple, essential.', img: 'resources/DesktopRenamer.png' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key. Optimised for high-speed touchpad gaming interactions.', img: 'resources/OptClicker.png' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces. The ultimate focus tool.', img: 'resources/SpaceSwitcher.png' }
                 ];
 
                 let scene, camera, renderer, appsGroup;
                 let icons = []; 
                 let mouseX = 0, mouseY = 0;
                 let ambientLight, keyLight, backLight;
-                let lenis; // Lenis instance
+                let lenis;
 
-                const capsulePerimeter = 320; 
-                // FIX: Updated logic to ensure complete closure on scroll
+                // Increased perimeter for larger capsule
+                const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
                     const progress = Math.min(100, Math.max(0, scrollProgress.value));
                     return Math.max(0, capsulePerimeter - (progress / 100) * capsulePerimeter);
@@ -664,15 +684,12 @@
                     resolveTheme();
                 };
 
-                // FIX: More robust scroll calculation
                 const updateScrollProgress = () => {
                     const scrollTop = window.scrollY || document.documentElement.scrollTop;
                     const docHeight = document.documentElement.scrollHeight;
                     const winHeight = window.innerHeight;
                     const scrollTotal = docHeight - winHeight;
                     
-                    // Add a tiny buffer to scrollTotal to ensure we hit 100% easily
-                    // Use a slightly smaller denominator to guarantee 100% is reachable
                     let progress = (scrollTop / (scrollTotal - 1)) * 100;
                     progress = Math.min(100, Math.max(0, progress));
                     
@@ -713,7 +730,6 @@
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
 
-                    // Logo paths
                     const logoPaths = [
                         "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
                         "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
@@ -724,22 +740,19 @@
                     const width = container.clientWidth;
                     const height = container.clientHeight;
                     
-                    // Create main SVG
                     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     svg.setAttribute("width", "100%");
                     svg.setAttribute("height", "100%");
                     svg.style.overflow = "visible";
                     container.appendChild(svg);
 
-                    // Create canvas for pixel scanning
                     const canvas = document.createElement('canvas');
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
 
-                    // Draw logo to canvas
-                    // Increased scale factor to make it bigger ("WILDER")
-                    const logoScale = Math.min(width, height) / 550; // was 900, smaller divisor = bigger logo
+                    // SCALE UP THE LOGO FOR "BIGGER" EFFECT
+                    const logoScale = Math.min(width, height) / 450; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
 
@@ -754,39 +767,35 @@
                     });
                     ctx.restore();
 
-                    // Scan grid and place balls
-                    // Increased step and radius for "WILDER" look
-                    const step = 25; // Gap between balls (was 15)
+                    // Larger balls and larger gaps for WILDER look
+                    const step = 28; 
                     const balls = [];
-                    const mouseRadius = 250; // Increased interaction radius
+                    const mouseRadius = 350; // Huge interaction radius
 
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
-                            if (pixel[3] > 128) { // If pixel is opaque (part of logo)
+                            if (pixel[3] > 128) {
                                 // Create ball
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                ball.setAttribute("class", "text-klein-blue fill-current");
+                                ball.setAttribute("class", "text-klein-blue fill-current magnetic-ball");
                                 ball.setAttribute("cx", x);
                                 ball.setAttribute("cy", y);
-                                ball.setAttribute("r", 6); // Increased radius (was 2)
+                                ball.setAttribute("r", 8); // HUGE balls
                                 
-                                // Create origin point
                                 const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                point.setAttribute("class", "text-gray-300 dark:text-gray-700 fill-current opacity-30");
+                                point.setAttribute("class", "text-gray-500 fill-current opacity-30");
                                 point.setAttribute("cx", x);
                                 point.setAttribute("cy", y);
-                                point.setAttribute("r", 2); // Origin dot size
+                                point.setAttribute("r", 2);
 
-                                // Create line
                                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                                 line.setAttribute("class", "text-klein-blue stroke-current");
                                 line.setAttribute("x1", x);
                                 line.setAttribute("y1", y);
                                 line.setAttribute("x2", x);
                                 line.setAttribute("y2", y);
-                                line.style.opacity = "0.2"; // Increased line visibility slightly
-
+                                
                                 svg.appendChild(line);
                                 svg.appendChild(point);
                                 svg.appendChild(ball);
@@ -801,7 +810,6 @@
                         }
                     }
 
-                    // Mouse Interaction
                     const onMouseMove = (e) => {
                         const rect = container.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
@@ -815,7 +823,7 @@
                             if (dist < mouseRadius) {
                                 const angle = Math.atan2(dy, dx);
                                 const force = (mouseRadius - dist) / mouseRadius; 
-                                const moveDist = force * 100; // Increased displacement force (was 60)
+                                const moveDist = force * 150; // EXPLOSIVE movement
 
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
@@ -824,23 +832,23 @@
                                 ball.animater = gsap.timeline()
                                     .to(ball.el, {
                                         attr: { cx: tx, cy: ty },
-                                        duration: 0.3,
-                                        ease: "power2.out"
+                                        duration: 0.2,
+                                        ease: "power3.out"
                                     })
                                     .to(ball.line, {
                                         attr: { x2: tx, y2: ty },
-                                        duration: 0.3,
-                                        ease: "power2.out"
+                                        duration: 0.2,
+                                        ease: "power3.out"
                                     }, "<")
                                     .to(ball.el, {
                                         attr: { cx: ball.ori_x, cy: ball.ori_y },
-                                        duration: 0.8,
-                                        ease: "elastic.out(1, 0.5)"
-                                    }, ">0.1")
+                                        duration: 1.2,
+                                        ease: "elastic.out(1, 0.3)" // Bouncier return
+                                    }, ">0.05")
                                     .to(ball.line, {
                                         attr: { x2: ball.ori_x, y2: ball.ori_y },
-                                        duration: 0.8,
-                                        ease: "elastic.out(1, 0.5)"
+                                        duration: 1.2,
+                                        ease: "elastic.out(1, 0.3)"
                                     }, "<");
                             }
                         });
@@ -1056,15 +1064,15 @@
                     });
                 };
 
-                // Initialize Lenis for smooth scrolling
+                // Initialize Lenis for smooth scrolling - ADJUSTED FOR 'HEAVIER' FEEL
                 const initLenis = () => {
                     lenis = new Lenis({
-                        duration: 1.2,
+                        duration: 2.0, // Slower duration for weightier feel
                         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                         direction: 'vertical',
                         gestureDirection: 'vertical',
                         smooth: true,
-                        mouseMultiplier: 1,
+                        mouseMultiplier: 0.8, // Slightly reduced sensitivity
                         smoothTouch: false,
                         touchMultiplier: 2,
                     });
@@ -1084,7 +1092,6 @@
                             setTimeout(() => { loader.value.style.display = 'none'; }, 500);
                         }
                         gsap.from(".reveal-text", { y: 100, opacity: 0, duration: 1.2, stagger: 0.1, ease: "power4.out", delay: 0.5 });
-                        // Initialize Magnetic Logo after intro
                         initMagneticLogo();
                     }, 1500);
 
@@ -1093,11 +1100,7 @@
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
                     initThreeJS();
                     initCursor();
-                    initLenis(); // Start Lenis
-                    
-                    // Use Lenis scroll event for progress update
-                    // Note: window scroll event still fires but Lenis is recommended hook
-                    // We keep window listener as fallback/standard, Lenis syncs with it.
+                    initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
                 });
                 
