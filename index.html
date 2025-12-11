@@ -26,6 +26,7 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'float': 'float 6s ease-in-out infinite',
+                        'spin-slow': 'spin 120s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -88,7 +89,7 @@
             top: 0; left: 0;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            z-index: 20000; /* FIXED: Increased Z-Index to be above sidebar (10000) */
+            z-index: 20000;
             pointer-events: none;
             mix-blend-mode: difference;
         }
@@ -153,6 +154,12 @@
         .logo-svg {
             fill: currentColor;
         }
+
+        /* Mix Blend Mode for Right Nav */
+        .nav-right-blend {
+            mix-blend-mode: difference;
+            color: white; /* In difference mode, white inverts the background */
+        }
     </style>
 </head>
 <body>
@@ -176,9 +183,9 @@
         </div>
 
         <!-- Navigation Bar -->
-        <nav class="fixed top-0 left-0 w-full z-[9990] px-8 py-8 flex justify-between items-center text-black dark:text-white pointer-events-none transition-colors duration-500">
+        <nav class="fixed top-0 left-0 w-full z-[9990] px-8 py-8 flex justify-between items-center pointer-events-none transition-colors duration-500">
             <!-- Left: Sidebar Trigger -->
-            <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none pointer-events-auto">
+            <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none pointer-events-auto text-black dark:text-white">
                 <div class="relative w-10 h-10 border border-current rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden backdrop-blur-sm group-hover:border-klein-blue transition-colors">
                     <span class="w-4 h-0.5 bg-current transition-all duration-300 group-hover:w-6 group-hover:bg-klein-blue"></span>
                     <span class="w-6 h-0.5 bg-current transition-all duration-300 group-hover:w-4 group-hover:bg-klein-blue"></span>
@@ -189,7 +196,7 @@
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
                     <div class="bg-white/30 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-lg text-black dark:text-white hover:bg-white/40 dark:hover:bg-black/30"
-                         :class="isCapsuleOpen ? 'w-[300px]' : 'w-[140px]'">
+                         :class="isCapsuleOpen ? 'w-[320px]' : 'w-[140px]'">
                         
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs tracking-widest px-6 animate-fade-in">
                             {{ activeSection.toUpperCase() }}
@@ -201,6 +208,9 @@
                             <a href="#profile" class="hover:text-klein-blue dark:hover:text-white transition-colors">PROFILE</a>
                             <span>/</span>
                             <a href="#works" class="hover:text-klein-blue dark:hover:text-white transition-colors">WORKS</a>
+                            <span>/</span>
+                            <!-- Renamed Links to Connect -->
+                            <a href="#connect" class="hover:text-klein-blue dark:hover:text-white transition-colors">CONNECT</a>
                         </div>
                     </div>
 
@@ -216,17 +226,17 @@
                 </div>
             </div>
 
-            <!-- Right: Theme & Logo -->
-            <div class="flex items-center gap-6 pointer-events-auto">
+            <!-- Right: Theme & Logo (Blend Mode Applied for Readability) -->
+            <div class="flex items-center gap-6 pointer-events-auto nav-right-blend">
                 <!-- Theme Toggle -->
-                <button @click="cycleTheme" class="hover:text-klein-blue transition-colors focus:outline-none flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10">
+                <button @click="cycleTheme" class="hover:text-klein-blue transition-colors focus:outline-none flex items-center justify-center w-8 h-8 rounded-full">
                     <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
                     <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
                     <span v-show="themeMode === 'auto'" class="animate-fade-in"><i data-lucide="monitor" class="w-5 h-5"></i></span>
                 </button>
                 
                 <!-- SVG Logo -->
-                <div class="w-8 h-8 text-black dark:text-white hover:text-klein-blue transition-colors duration-300 cursor-pointer">
+                <div class="w-8 h-8 hover:text-klein-blue transition-colors duration-300 cursor-pointer">
                     <svg class="logo-svg w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
                         <g>
                             <path fill-rule="evenodd" d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
@@ -257,16 +267,16 @@
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
                 </div>
 
-                <div class="flex flex-col gap-6 relative z-10 mt-40">
+                <div class="flex flex-col gap-6 relative z-10 mt-40 w-full">
                     <div class="font-mono text-xs text-gray-500 mb-4 tracking-widest">SYSTEM MAP</div>
-                    <!-- FIX: Adjusted text size for mobile to prevent overflow -->
+                    <!-- FIX: Added whitespace-normal and break-words for better wrapping -->
                     <a v-for="(link, index) in systemLinks" 
                        :key="link.name"
                        href="#" 
-                       class="group flex items-center gap-4 text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300 p-2 pr-4 block w-full truncate"
+                       class="group flex items-center gap-4 text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300 p-2 pr-4 block w-full whitespace-normal break-words leading-tight"
                        style="-webkit-text-stroke: 1px rgba(128,128,128,0.1);">
                         <span class="font-mono text-xs text-klein-blue opacity-0 group-hover:opacity-100 transition-opacity">0{{index+1}}</span>
-                        <span class="group-hover:translate-x-4 transition-transform duration-300 truncate">{{ link.name }}</span>
+                        <span class="group-hover:translate-x-4 transition-transform duration-300 break-words">{{ link.name }}</span>
                         <span class="opacity-0 -ml-4 group-hover:ml-0 group-hover:opacity-100 transition-all duration-300">
                              <i data-lucide="arrow-right" class="w-6 h-6 text-klein-blue"></i>
                         </span>
@@ -287,7 +297,19 @@
             
             <!-- Hero Section -->
             <section id="home" class="relative w-full h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden">
-                <!-- Same animations -->
+                <!-- Background Logo Outline -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[60vw] md:h-[60vw] opacity-[0.03] dark:opacity-[0.05] pointer-events-none z-0 animate-spin-slow">
+                     <svg class="w-full h-full text-black dark:text-white" style="fill: none; stroke: currentColor; stroke-width: 2;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
+                        <g>
+                            <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
+                            <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z"/>
+                        </g>
+                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z"/>
+                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"/>
+                    </svg>
+                </div>
+
+                <!-- Abstract Circles -->
                 <div class="absolute top-1/4 right-[10%] w-[30vw] h-[30vw] border border-current opacity-10 rounded-full animate-[spin_60s_linear_infinite]"></div>
                 <div class="absolute top-1/4 right-[10%] w-[28vw] h-[28vw] border border-klein-blue/20 rounded-full animate-[spin_40s_linear_infinite_reverse]"></div>
                 <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-klein-blue/10 to-transparent"></div>
@@ -344,7 +366,7 @@
                     <!-- Bento Grid Layout -->
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
                         
-                        <!-- Main Info -->
+                        <!-- Main Info - TYPE II: GLOW -->
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
                              <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-klein-blue/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-klein-blue/30 transition-colors duration-500"></div>
                              
@@ -363,7 +385,7 @@
                              </div>
                         </div>
 
-                        <!-- Stack -->
+                        <!-- Stack - TYPE I: SOLID FILL -->
                         <div class="col-span-1 md:col-span-1 glass-card p-6 flex flex-col justify-between hover:bg-klein-blue hover:text-white transition-all duration-300 group">
                             <div class="flex justify-between items-start">
                                 <h3 class="font-mono text-xs opacity-60">STACK</h3>
@@ -377,44 +399,26 @@
                             </ul>
                         </div>
 
-                         <!-- Focus -->
-                        <div class="col-span-1 md:col-span-1 glass-card p-6 flex flex-col justify-between hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                         <!-- Focus - TYPE I: SOLID FILL (Consistent with Stack) -->
+                        <div class="col-span-1 md:col-span-1 glass-card p-6 flex flex-col justify-between hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300">
                             <div class="flex justify-between items-start">
-                                <h3 class="font-mono text-xs text-gray-500">FOCUS</h3>
-                                <i data-lucide="crosshair" class="w-5 h-5 text-klein-blue"></i>
+                                <h3 class="font-mono text-xs opacity-60">FOCUS</h3>
+                                <i data-lucide="crosshair" class="w-5 h-5 opacity-60"></i>
                             </div>
                              <div class="mt-4">
                                 <p class="text-3xl font-black">System<br>Utilities</p>
                             </div>
                         </div>
 
-                         <!-- Code Snippet Decor -->
-                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-0 overflow-hidden relative border border-gray-200 dark:border-white/5">
-                            <div class="absolute inset-0 bg-[#0a0a0a] p-6 font-mono text-xs text-gray-400 overflow-hidden">
-                                <div class="flex gap-2 mb-4">
-                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                </div>
-                                <span class="text-purple-400">class</span> <span class="text-yellow-200">Architect</span>: <span class="text-blue-400">Developer</span> {<br>
-                                &nbsp;&nbsp;<span class="text-purple-400">override func</span> <span class="text-blue-300">create</span>() {<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">let</span> vision = <span class="text-orange-300">"Minimalism"</span><br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">let</span> execution = <span class="text-orange-300">"Precision"</span><br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-400">return</span> <span class="text-green-300">Effect(vision * execution)</span><br>
-                                &nbsp;&nbsp;}<br>
-                                }
-                            </div>
+                         <!-- Motto Card (Replaced Code) - TYPE II: GLOW -->
+                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-8 flex flex-col justify-center relative overflow-hidden group">
+                             <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-klein-blue/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                             <h3 class="font-mono text-xs text-gray-500 mb-2 relative z-10">MOTTO</h3>
+                             <p class="text-xl md:text-2xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10">
+                                 "Give people wonderful tools, and they'll do wonderful things."
+                             </p>
+                             <p class="text-right text-xs font-bold mt-2 text-gray-500 relative z-10">— Steve Jobs</p>
                         </div>
-                         
-                         <!-- Status -->
-                         <div class="col-span-1 glass-card p-6 flex flex-col justify-center items-center gap-2 text-center">
-                             <div class="relative w-3 h-3">
-                                 <div class="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>
-                                 <div class="relative w-3 h-3 bg-green-500 rounded-full"></div>
-                             </div>
-                             <p class="font-mono text-xs font-bold mt-2">OPEN FOR WORK</p>
-                         </div>
-
                     </div>
                 </div>
             </section>
@@ -429,11 +433,11 @@
                     </div>
                 </div>
 
-                <!-- FIX: Changed Layout for Mobile - 3D Viewer is Sticky at Top -->
                 <div class="flex-grow container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-start py-12 gap-12">
                     
-                    <!-- 3D Viewer Area (Order change: First on mobile, sticky) -->
-                    <div class="w-full md:w-7/12 h-[40vh] md:h-[70vh] relative sticky top-24 md:top-20 z-0 mask-fade-edges order-first md:order-last" ref="canvasContainer">
+                    <!-- 3D Viewer Area - Positioned Halfway of height (Vertically Centered) -->
+                    <!-- Changed top-20 to top-1/2 -translate-y-1/2 to center it in viewport -->
+                    <div class="w-full md:w-7/12 h-[40vh] md:h-[60vh] relative sticky top-24 md:top-1/2 md:-translate-y-1/2 z-0 mask-fade-edges order-first md:order-last" ref="canvasContainer">
                         <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
                             <div class="flex items-center gap-2 mb-2 font-bold text-red-300">
                                 <i data-lucide="alert-triangle" class="w-5 h-5"></i>
@@ -457,19 +461,26 @@
                         </div>
 
                         <div class="flex flex-col gap-6">
+                            <!-- Switched to TYPE II: GLOW effect to match Premium feel -->
                             <div v-for="(app, i) in apps" :key="app.id" 
                                  @mouseenter="hoverApp(app.id)" 
                                  @mouseleave="resetApp"
-                                 class="group relative p-8 border border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#0a0a0a]/80 hover:bg-klein-blue hover:border-klein-blue transition-all duration-300 cursor-none overflow-hidden backdrop-blur-xl shadow-lg rounded-sm">
+                                 class="group relative p-8 border border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#0a0a0a]/80 transition-all duration-300 cursor-none overflow-hidden backdrop-blur-xl shadow-lg rounded-sm hover:border-klein-blue/50">
                                 
-                                <div class="relative z-10 flex justify-between items-center text-current group-hover:text-white">
+                                <!-- Glow Effect -->
+                                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                                <div class="relative z-10 flex justify-between items-center text-current">
                                     <div>
                                         <span class="font-mono text-xs opacity-50 mb-2 block">0{{ i + 1 }}</span>
                                         <h3 class="text-3xl font-bold tracking-tight">{{ app.name }}</h3>
                                     </div>
-                                    <i data-lucide="arrow-up-right" class="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300"></i>
+                                    <!-- Arrow Icon -->
+                                    <span class="w-10 h-10 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all">
+                                         <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                                    </span>
                                 </div>
-                                <p class="relative z-10 mt-4 text-sm text-gray-600 dark:text-gray-400 group-hover:text-white/90 max-w-[90%] transition-colors leading-relaxed">
+                                <p class="relative z-10 mt-4 text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors leading-relaxed">
                                     {{ app.desc }}
                                 </p>
                             </div>
@@ -479,8 +490,8 @@
                 </div>
             </section>
             
-            <!-- NEW: Links Section -->
-            <section id="links" class="w-full py-24 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-black transition-colors duration-500">
+            <!-- Connect Section (Renamed from Links) -->
+            <section id="connect" class="w-full py-24 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-black transition-colors duration-500">
                 <div class="max-w-7xl mx-auto">
                     <div class="flex items-center gap-2 mb-12">
                         <div class="w-2 h-2 bg-klein-blue"></div>
@@ -488,7 +499,7 @@
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- GitHub -->
+                        <!-- GitHub - TYPE II: GLOW -->
                         <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-64 overflow-hidden rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 hover:border-klein-blue transition-all duration-500">
                             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gray-200/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             <div class="relative z-10 h-full p-8 flex flex-col justify-between">
@@ -505,7 +516,7 @@
                             </div>
                         </a>
 
-                        <!-- Kaggle -->
+                        <!-- Kaggle - TYPE II: GLOW -->
                         <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-64 overflow-hidden rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 hover:border-[#20BEFF] transition-all duration-500">
                             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[#20BEFF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             <div class="relative z-10 h-full p-8 flex flex-col justify-between">
@@ -628,7 +639,7 @@
                     }
                     window.lastScrollY = winScroll;
 
-                    const sections = ['home', 'profile', 'works', 'links'];
+                    const sections = ['home', 'profile', 'works', 'connect'];
                     for (const section of sections) {
                         const el = document.getElementById(section);
                         if (el) {
