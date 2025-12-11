@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,6 +63,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
+    <!-- Lenis (Smooth Scroll) -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
@@ -79,7 +82,7 @@
         body {
             background: var(--bg-gradient-light);
             color: #111;
-            overflow-x: hidden;
+            /* overflow-x: hidden; Handled by Lenis mostly, but keeping for safety */
             transition: background 0.5s ease, color 0.5s ease;
         }
 
@@ -87,6 +90,13 @@
             background: var(--bg-gradient-dark);
             color: #ffffff;
         }
+
+        /* Lenis Recommended CSS */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        .lenis.lenis-scrolling iframe { pointer-events: none; }
 
         /* Adaptive Cursor */
         @media (hover: hover) and (pointer: fine) {
@@ -306,7 +316,7 @@
         <!-- Main Content -->
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none': isSidebarOpen }">
             
-            <!-- Hero Section (NEW LAYOUT) -->
+            <!-- Hero Section (NEW LAYOUT - WILDER) -->
             <section id="home" class="relative w-full h-screen flex items-center justify-center px-6 md:px-12 pt-20 overflow-hidden bg-white dark:bg-[#050505]">
                 
                 <!-- Background Marquees (Increased Opacity and Contrast) -->
@@ -365,7 +375,7 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Interactive Magnetic Balls Logo -->
+                    <!-- Right Column: Interactive Magnetic Balls Logo (WILDER) -->
                     <div class="relative w-full md:w-1/2 h-[50vw] md:h-full flex items-center justify-center z-20 md:mr-10">
                          <div id="magnetic-container" class="w-full h-full relative">
                              <!-- Balls will be injected here -->
@@ -604,6 +614,7 @@
                 let icons = []; 
                 let mouseX = 0, mouseY = 0;
                 let ambientLight, keyLight, backLight;
+                let lenis; // Lenis instance
 
                 const capsulePerimeter = 320; 
                 // FIX: Updated logic to ensure complete closure on scroll
@@ -727,7 +738,8 @@
                     const ctx = canvas.getContext('2d');
 
                     // Draw logo to canvas
-                    const logoScale = Math.min(width, height) / 900; 
+                    // Increased scale factor to make it bigger ("WILDER")
+                    const logoScale = Math.min(width, height) / 550; // was 900, smaller divisor = bigger logo
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
 
@@ -743,9 +755,10 @@
                     ctx.restore();
 
                     // Scan grid and place balls
-                    const step = 15; // Gap between balls
+                    // Increased step and radius for "WILDER" look
+                    const step = 25; // Gap between balls (was 15)
                     const balls = [];
-                    const mouseRadius = 150;
+                    const mouseRadius = 250; // Increased interaction radius
 
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
@@ -756,14 +769,14 @@
                                 ball.setAttribute("class", "text-klein-blue fill-current");
                                 ball.setAttribute("cx", x);
                                 ball.setAttribute("cy", y);
-                                ball.setAttribute("r", 2);
+                                ball.setAttribute("r", 6); // Increased radius (was 2)
                                 
                                 // Create origin point
                                 const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                                 point.setAttribute("class", "text-gray-300 dark:text-gray-700 fill-current opacity-30");
                                 point.setAttribute("cx", x);
                                 point.setAttribute("cy", y);
-                                point.setAttribute("r", 1);
+                                point.setAttribute("r", 2); // Origin dot size
 
                                 // Create line
                                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -772,7 +785,7 @@
                                 line.setAttribute("y1", y);
                                 line.setAttribute("x2", x);
                                 line.setAttribute("y2", y);
-                                line.style.opacity = "0.1";
+                                line.style.opacity = "0.2"; // Increased line visibility slightly
 
                                 svg.appendChild(line);
                                 svg.appendChild(point);
@@ -802,7 +815,7 @@
                             if (dist < mouseRadius) {
                                 const angle = Math.atan2(dy, dx);
                                 const force = (mouseRadius - dist) / mouseRadius; 
-                                const moveDist = force * 60; // Max displacement
+                                const moveDist = force * 100; // Increased displacement force (was 60)
 
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
@@ -1043,6 +1056,27 @@
                     });
                 };
 
+                // Initialize Lenis for smooth scrolling
+                const initLenis = () => {
+                    lenis = new Lenis({
+                        duration: 1.2,
+                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                        direction: 'vertical',
+                        gestureDirection: 'vertical',
+                        smooth: true,
+                        mouseMultiplier: 1,
+                        smoothTouch: false,
+                        touchMultiplier: 2,
+                    });
+
+                    function raf(time) {
+                        lenis.raf(time);
+                        requestAnimationFrame(raf);
+                    }
+
+                    requestAnimationFrame(raf);
+                };
+
                 onMounted(() => {
                     setTimeout(() => {
                         if(loader.value) {
@@ -1059,12 +1093,18 @@
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
                     initThreeJS();
                     initCursor();
+                    initLenis(); // Start Lenis
+                    
+                    // Use Lenis scroll event for progress update
+                    // Note: window scroll event still fires but Lenis is recommended hook
+                    // We keep window listener as fallback/standard, Lenis syncs with it.
                     window.addEventListener('scroll', updateScrollProgress);
                 });
                 
                 onUnmounted(() => {
                     window.removeEventListener('scroll', updateScrollProgress);
                     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', resolveTheme);
+                    if(lenis) lenis.destroy();
                 });
 
                 return {
