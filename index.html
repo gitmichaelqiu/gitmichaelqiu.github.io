@@ -10,7 +10,7 @@
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
-            darkMode: 'class', // Correctly uses the 'dark' class on html tag
+            darkMode: 'class', 
             theme: {
                 extend: {
                     colors: {
@@ -38,174 +38,94 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
-
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --klein-blue: #002FA7;
             --klein-blue-glow: rgba(0, 47, 167, 0.6);
             --bg-gradient-dark: radial-gradient(circle at 50% 50%, #111111 0%, #050505 100%);
-            --bg-gradient-light: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f0f0 100%);
+            --bg-gradient-light: radial-gradient(circle at 50% 50%, #ffffff 0%, #F2F2F7 100%);
         }
 
         body {
-            background: var(--bg-gradient-light); /* Default Light */
+            background: var(--bg-gradient-light);
             color: #111;
             overflow-x: hidden;
             transition: background 0.5s ease, color 0.5s ease;
         }
 
-        /* Dark Mode Override */
         html.dark body {
             background: var(--bg-gradient-dark);
             color: #ffffff;
         }
 
-        /* 1. CURSOR FIX: Adaptive Color using Difference Mode */
+        /* Adaptive Cursor */
         @media (hover: hover) and (pointer: fine) {
-            body {
-                cursor: none !important;
-            }
-            .cursor-dot, .cursor-outline {
-                display: block;
-            }
+            body { cursor: none !important; }
+            .cursor-dot, .cursor-outline { display: block; }
         }
         
-        .cursor-dot,
-        .cursor-outline {
+        .cursor-dot, .cursor-outline {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            z-index: 9999;
+            z-index: 10000; /* High Z-Index for visibility */
             pointer-events: none;
-            mix-blend-mode: difference; /* This makes it adaptive */
+            mix-blend-mode: difference;
         }
-        .cursor-dot {
-            width: 8px;
-            height: 8px;
-            background-color: white; /* White diffs to black on white bg */
-        }
-        .cursor-outline {
-            width: 40px;
-            height: 40px;
-            border: 1px solid white; /* White diffs to black on white bg */
-            transition: width 0.2s, height 0.2s;
-        }
-        body:hover .cursor-outline {
-            width: 30px;
-            height: 30px;
-        }
+        .cursor-dot { width: 8px; height: 8px; background-color: white; }
+        .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
+        body:hover .cursor-outline { width: 30px; height: 30px; }
 
         /* Grain Texture */
         .grain-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 50; 
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.2; /* Lighter grain for light mode */
-            filter: invert(1);
+            opacity: 0.2; filter: invert(1);
         }
-        html.dark .grain-overlay {
-            opacity: 0.4;
-            filter: none;
-        }
+        html.dark .grain-overlay { opacity: 0.4; filter: none; }
 
-        /* Marquee Animation */
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 20s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        /* Marquee */
+        .marquee-container { overflow: hidden; white-space: nowrap; }
+        .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* Text Effects */
-        .outline-text {
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2);
-        }
-        html.dark .outline-text {
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
-        }
+        /* Typography Effects */
+        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2); }
+        html.dark .outline-text { -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2); }
         
         .glitch-wrapper { position: relative; }
         .glitch-wrapper::before, .glitch-wrapper::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #f0f0f0; 
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #F2F2F7; 
         }
-        html.dark .glitch-wrapper::before, html.dark .glitch-wrapper::after {
-            background: #050505; 
-        }
-
-        .glitch-wrapper::before {
-            left: 2px; text-shadow: -1px 0 #ff00c1;
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 5s infinite linear alternate-reverse;
-        }
-        .glitch-wrapper::after {
-            left: -2px; text-shadow: -1px 0 #00fff9;
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2 5s infinite linear alternate-reverse;
-        }
-        @keyframes glitch-anim {
-            0% { clip: rect(3px, 9999px, 11px, 0); } 20% { clip: rect(68px, 9999px, 99px, 0); }
-            40% { clip: rect(13px, 9999px, 86px, 0); } 60% { clip: rect(90px, 9999px, 5px, 0); }
-            80% { clip: rect(45px, 9999px, 32px, 0); } 100% { clip: rect(22px, 9999px, 76px, 0); }
-        }
-        @keyframes glitch-anim2 {
-            0% { clip: rect(65px, 9999px, 92px, 0); } 20% { clip: rect(2px, 9999px, 15px, 0); }
-            40% { clip: rect(40px, 9999px, 33px, 0); } 60% { clip: rect(12px, 9999px, 58px, 0); }
-            80% { clip: rect(87px, 9999px, 99px, 0); } 100% { clip: rect(35px, 9999px, 12px, 0); }
-        }
+        html.dark .glitch-wrapper::before, html.dark .glitch-wrapper::after { background: #050505; }
+        
+        .glitch-wrapper::before { left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
+        .glitch-wrapper::after { left: -2px; text-shadow: -1px 0 #00fff9; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
+        @keyframes glitch-anim { 0% { clip: rect(3px, 9999px, 11px, 0); } 100% { clip: rect(22px, 9999px, 76px, 0); } }
+        @keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 92px, 0); } 100% { clip: rect(35px, 9999px, 12px, 0); } }
 
         /* Glass Cards */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.6); 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-        html.dark .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .glass-card:hover {
-            border-color: var(--klein-blue);
-            background: rgba(0, 47, 167, 0.05);
-        }
+        .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
+        html.dark .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-card:hover { border-color: var(--klein-blue); background: rgba(0, 47, 167, 0.05); }
 
         /* Sidebar Transition */
         .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
         .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
 
         /* Loader */
-        .loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column;
-        }
+        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 20000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         
-        .capsule-nav {
-            transition: width 0.3s ease, background-color 0.3s ease;
-        }
+        .capsule-nav { transition: width 0.3s ease, background-color 0.3s ease; }
     </style>
 </head>
 <body>
@@ -228,8 +148,8 @@
             <div class="font-mono text-sm tracking-[0.3em] text-white">SYSTEM_BOOT</div>
         </div>
 
-        <!-- Navigation Bar -->
-        <nav class="fixed top-0 left-0 w-full z-[100] px-8 py-8 flex justify-between items-center text-current mix-blend-difference">
+        <!-- Navigation Bar (Z-Index Fixed: 999) -->
+        <nav class="fixed top-0 left-0 w-full z-[999] px-8 py-8 flex justify-between items-center text-current mix-blend-difference pointer-events-none">
             <!-- Left: Sidebar Trigger -->
             <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none pointer-events-auto">
                 <div class="relative w-10 h-10 border border-current rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden backdrop-blur-sm group-hover:border-klein-blue transition-colors">
@@ -241,16 +161,13 @@
             <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
-                    <!-- Background pill -->
                     <div class="bg-black/90 dark:bg-black/80 backdrop-blur-md border border-white/20 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-lg"
                          :class="isCapsuleOpen ? 'w-[300px]' : 'w-[140px]'">
                         
-                        <!-- Collapsed State -->
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs tracking-widest text-white px-6">
                             {{ activeSection.toUpperCase() }}
                         </div>
 
-                        <!-- Expanded State -->
                         <div v-else class="flex gap-4 font-mono text-[10px] text-gray-400 px-6 animate-fade-in whitespace-nowrap">
                             <a href="#home" class="hover:text-white transition-colors">HOME</a>
                             <span>/</span>
@@ -260,7 +177,6 @@
                         </div>
                     </div>
 
-                    <!-- Progress Border SVG -->
                     <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;">
                         <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20" 
                               fill="none" stroke="transparent" stroke-width="2" />
@@ -277,6 +193,7 @@
             <div class="flex items-center gap-6 pointer-events-auto">
                 <!-- Theme Toggle -->
                 <button @click="cycleTheme" class="hover:text-klein-blue transition-colors focus:outline-none flex items-center justify-center w-8 h-8">
+                    <!-- Icon Logic: Light=Sun, Dark=Moon, Auto=Monitor -->
                     <i v-if="themeMode === 'light'" data-lucide="sun" class="w-5 h-5"></i>
                     <i v-else-if="themeMode === 'dark'" data-lucide="moon" class="w-5 h-5"></i>
                     <i v-else data-lucide="monitor" class="w-5 h-5"></i>
@@ -287,16 +204,13 @@
 
         <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white dark:bg-[#050505] text-black dark:text-white z-[90] border-r border-gray-200 dark:border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl transition-colors duration-500 overflow-y-auto overflow-x-hidden">
-                <!-- Background decoration -->
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white dark:bg-[#050505] text-black dark:text-white z-[900] border-r border-gray-200 dark:border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl transition-colors duration-500 overflow-y-auto overflow-x-hidden">
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
                 </div>
 
                 <div class="flex flex-col gap-6 relative z-10">
                     <div class="font-mono text-xs text-gray-500 mb-4">SYSTEM MAP</div>
-                    
-                    <!-- FIX 4: Added padding (p-2 pr-4) to prevent clipping -->
                     <a v-for="(link, index) in systemLinks" 
                        :key="link.name"
                        href="#" 
@@ -449,7 +363,6 @@
                         <div class="mb-12">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-2 h-2 bg-klein-blue"></div>
-                                <!-- FIX 2: Better color class for visibility in both themes -->
                                 <span class="font-mono text-xs tracking-widest text-gray-600 dark:text-gray-500">macOS SOLUTIONS</span>
                             </div>
                             <h2 class="text-4xl font-bold leading-tight text-black dark:text-white">
@@ -478,10 +391,11 @@
                         </div>
                     </div>
 
-                    <!-- 3D Viewer -->
+                    <!-- 3D Viewer Area -->
                     <div class="w-full md:w-7/12 h-[50vh] md:h-[70vh] relative mt-12 md:mt-0" ref="canvasContainer">
+                        <!-- Gradient Overlay with fixed Light Mode blend -->
                         <div class="absolute inset-0 pointer-events-none z-10 bg-gradient-to-l from-transparent transition-colors duration-500"
-                             :class="activeTheme === 'light' ? 'to-white/50' : 'to-black/20'">
+                             :class="activeTheme === 'light' ? 'to-[#F2F2F7]' : 'to-black/20'">
                         </div>
                         
                         <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
@@ -511,8 +425,8 @@
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
-                const themeMode = ref('auto'); 
-                const activeTheme = ref('dark'); 
+                const themeMode = ref('auto'); // 'light', 'dark', 'auto'
+                const activeTheme = ref('dark'); // Resolved theme state
                 
                 const scrollProgress = ref(0);
                 const activeSection = ref('home');
@@ -553,7 +467,6 @@
                     isSidebarOpen.value = !isSidebarOpen.value;
                 };
 
-                // FIX 2: Correctly toggle 'dark' class on HTML element
                 const resolveTheme = () => {
                     let resolved = 'dark';
                     if (themeMode.value === 'auto') {
@@ -571,6 +484,7 @@
                     updateSceneTheme();
                 };
 
+                // Cycle: Auto -> Light -> Dark -> Auto
                 const cycleTheme = () => {
                     if (themeMode.value === 'auto') themeMode.value = 'light';
                     else if (themeMode.value === 'light') themeMode.value = 'dark';
@@ -584,7 +498,6 @@
                     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
                     scrollProgress.value = (winScroll / height) * 100;
                     
-                    // FIX 5: Auto-collapse capsule on scroll
                     if (isCapsuleOpen.value && Math.abs(winScroll - (window.lastScrollY || 0)) > 10) {
                         isCapsuleOpen.value = false;
                     }
@@ -698,8 +611,6 @@
                     backLight.position.set(0, 5, -10);
                     scene.add(backLight);
                     
-                    // FIX 3: Removed effectGroup and rings
-                    
                     const size = 2.5;
                     const extrudeSettings = { depth: 0.3, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
                     const shape = createSquircleShape(size); 
@@ -808,8 +719,6 @@
                     gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
-                    // FIX 3: Removed effectGroup visibility toggle
-
                     icons.forEach((icon, i) => {
                         if (i !== index) {
                             let sideX = i < index ? -7 : 7;
@@ -820,7 +729,6 @@
                 };
 
                 const resetApp = () => {
-                    // FIX 3: Removed effectGroup reset
                     icons.forEach((icon, i) => {
                         gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" });
                         gsap.to(icon.position, { x: basePositions[i].x, y: basePositions[i].y, z: basePositions[i].z, duration: 0.6, ease: "power2.out" });
