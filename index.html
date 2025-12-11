@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,13 +10,13 @@
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // Correctly uses the 'dark' class on html tag
             theme: {
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
                         'bg-dark': '#050505',
-                        'bg-light': '#F2F2F7', // Apple-like light gray
+                        'bg-light': '#F2F2F7', 
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -53,18 +53,19 @@
         }
 
         body {
-            background: var(--bg-gradient-dark);
-            color: #ffffff;
+            background: var(--bg-gradient-light); /* Default Light */
+            color: #111;
             overflow-x: hidden;
             transition: background 0.5s ease, color 0.5s ease;
         }
 
-        body.light-mode {
-            background: var(--bg-gradient-light);
-            color: #111111;
+        /* Dark Mode Override */
+        html.dark body {
+            background: var(--bg-gradient-dark);
+            color: #ffffff;
         }
 
-        /* 1. CURSOR FIX: Ensure cursor is none only on non-touch devices and elements exist */
+        /* 1. CURSOR FIX: Adaptive Color using Difference Mode */
         @media (hover: hover) and (pointer: fine) {
             body {
                 cursor: none !important;
@@ -74,7 +75,6 @@
             }
         }
         
-        /* Ensure cursor elements are visible but ignore pointer events */
         .cursor-dot,
         .cursor-outline {
             position: fixed;
@@ -84,17 +84,17 @@
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
+            mix-blend-mode: difference; /* This makes it adaptive */
         }
         .cursor-dot {
             width: 8px;
             height: 8px;
-            background-color: currentColor; /* Inherits text color */
+            background-color: white; /* White diffs to black on white bg */
         }
         .cursor-outline {
             width: 40px;
             height: 40px;
-            border: 1px solid currentColor;
-            opacity: 0.5;
+            border: 1px solid white; /* White diffs to black on white bg */
             transition: width 0.2s, height 0.2s;
         }
         body:hover .cursor-outline {
@@ -109,14 +109,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 50; /* Lower z-index so it doesn't block interaction */
+            z-index: 50; 
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.4;
-        }
-        .light-mode .grain-overlay {
-            opacity: 0.2;
+            opacity: 0.2; /* Lighter grain for light mode */
             filter: invert(1);
+        }
+        html.dark .grain-overlay {
+            opacity: 0.4;
+            filter: none;
         }
 
         /* Marquee Animation */
@@ -136,10 +137,10 @@
         /* Text Effects */
         .outline-text {
             color: transparent;
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
-        }
-        .light-mode .outline-text {
             -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2);
+        }
+        html.dark .outline-text {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
         }
         
         .glitch-wrapper { position: relative; }
@@ -147,10 +148,10 @@
             content: attr(data-text);
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #050505; /* Default dark bg */
+            background: #f0f0f0; 
         }
-        .light-mode .glitch-wrapper::before, .light-mode .glitch-wrapper::after {
-            background: #f0f0f0; /* Light mode bg match */
+        html.dark .glitch-wrapper::before, html.dark .glitch-wrapper::after {
+            background: #050505; 
         }
 
         .glitch-wrapper::before {
@@ -176,14 +177,14 @@
 
         /* Glass Cards */
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
-        .light-mode .glass-card {
-            background: rgba(255, 255, 255, 0.5); /* Much lighter for light mode */
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        html.dark .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .glass-card:hover {
             border-color: var(--klein-blue);
@@ -202,16 +203,15 @@
             flex-direction: column;
         }
         
-        /* 4. CAPSULE PROGRESS */
         .capsule-nav {
             transition: width 0.3s ease, background-color 0.3s ease;
         }
     </style>
 </head>
-<body :class="{ 'light-mode': activeTheme === 'light' }">
+<body>
     <div id="app" class="relative min-h-screen selection:bg-[#002FA7] selection:text-white">
         
-        <!-- Custom Cursor (Managed via JS + CSS) -->
+        <!-- Custom Cursor -->
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
 
@@ -229,29 +229,29 @@
         </div>
 
         <!-- Navigation Bar -->
-        <nav class="fixed top-0 left-0 w-full z-[100] px-8 py-8 flex justify-between items-center text-white mix-blend-difference">
+        <nav class="fixed top-0 left-0 w-full z-[100] px-8 py-8 flex justify-between items-center text-current mix-blend-difference">
             <!-- Left: Sidebar Trigger -->
-            <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none">
-                <div class="relative w-10 h-10 border border-white/30 rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden bg-black/50 backdrop-blur-sm group-hover:border-klein-blue transition-colors">
-                    <span class="w-4 h-0.5 bg-white transition-all duration-300 group-hover:w-6"></span>
-                    <span class="w-6 h-0.5 bg-white transition-all duration-300 group-hover:w-4"></span>
+            <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none pointer-events-auto">
+                <div class="relative w-10 h-10 border border-current rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden backdrop-blur-sm group-hover:border-klein-blue transition-colors">
+                    <span class="w-4 h-0.5 bg-current transition-all duration-300 group-hover:w-6"></span>
+                    <span class="w-6 h-0.5 bg-current transition-all duration-300 group-hover:w-4"></span>
                 </div>
             </button>
             
-            <!-- Center: Progress Capsule (FIX 4) -->
+            <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
                     <!-- Background pill -->
-                    <div class="bg-black/80 backdrop-blur-md border border-white/20 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden"
+                    <div class="bg-black/90 dark:bg-black/80 backdrop-blur-md border border-white/20 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-lg"
                          :class="isCapsuleOpen ? 'w-[300px]' : 'w-[140px]'">
                         
-                        <!-- Collapsed State: Current Section Name -->
+                        <!-- Collapsed State -->
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs tracking-widest text-white px-6">
                             {{ activeSection.toUpperCase() }}
                         </div>
 
-                        <!-- Expanded State: Links -->
-                        <div v-else class="flex gap-4 font-mono text-[10px] text-gray-400 px-6 animate-fade-in">
+                        <!-- Expanded State -->
+                        <div v-else class="flex gap-4 font-mono text-[10px] text-gray-400 px-6 animate-fade-in whitespace-nowrap">
                             <a href="#home" class="hover:text-white transition-colors">HOME</a>
                             <span>/</span>
                             <a href="#profile" class="hover:text-white transition-colors">PROFILE</a>
@@ -264,7 +264,6 @@
                     <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;">
                         <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20" 
                               fill="none" stroke="transparent" stroke-width="2" />
-                        <!-- We use a path for the progress stroke to handle the rounded rect shape properly -->
                          <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20" 
                               fill="none" stroke="#002FA7" stroke-width="3"
                               :stroke-dasharray="capsulePerimeter"
@@ -275,8 +274,8 @@
             </div>
 
             <!-- Right: Theme & Logo -->
-            <div class="flex items-center gap-6">
-                <!-- Theme Toggle (FIX 6: 3 States) -->
+            <div class="flex items-center gap-6 pointer-events-auto">
+                <!-- Theme Toggle -->
                 <button @click="cycleTheme" class="hover:text-klein-blue transition-colors focus:outline-none flex items-center justify-center w-8 h-8">
                     <i v-if="themeMode === 'light'" data-lucide="sun" class="w-5 h-5"></i>
                     <i v-else-if="themeMode === 'dark'" data-lucide="moon" class="w-5 h-5"></i>
@@ -286,10 +285,10 @@
             </div>
         </nav>
 
-        <!-- Sidebar (FIX 5: System Navigation) -->
+        <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-[#050505] dark:bg-[#050505] bg-white text-black dark:text-white z-[90] border-r border-gray-200 dark:border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl transition-colors duration-500">
-                <!-- Background decoration for sidebar -->
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white dark:bg-[#050505] text-black dark:text-white z-[90] border-r border-gray-200 dark:border-white/10 flex flex-col justify-center px-8 md:px-20 shadow-2xl transition-colors duration-500 overflow-y-auto overflow-x-hidden">
+                <!-- Background decoration -->
                 <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                     <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
                 </div>
@@ -297,11 +296,11 @@
                 <div class="flex flex-col gap-6 relative z-10">
                     <div class="font-mono text-xs text-gray-500 mb-4">SYSTEM MAP</div>
                     
-                    <!-- External / Other Page Links -->
+                    <!-- FIX 4: Added padding (p-2 pr-4) to prevent clipping -->
                     <a v-for="(link, index) in systemLinks" 
                        :key="link.name"
                        href="#" 
-                       class="group flex items-center gap-4 text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300"
+                       class="group flex items-center gap-4 text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300 p-2 pr-4 block w-full"
                        style="-webkit-text-stroke: 1px rgba(128,128,128,0.1);">
                         <span class="font-mono text-xs text-klein-blue opacity-0 group-hover:opacity-100 transition-opacity">0{{index+1}}</span>
                         <span class="group-hover:translate-x-4 transition-transform duration-300">{{ link.name }}</span>
@@ -323,10 +322,8 @@
             
             <!-- Hero Section -->
             <section id="home" class="relative w-full h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden">
-                <!-- Abstract Background Shapes -->
                 <div class="absolute top-1/4 right-[10%] w-[30vw] h-[30vw] border border-current opacity-10 rounded-full animate-[spin_60s_linear_infinite]"></div>
                 <div class="absolute top-1/4 right-[10%] w-[28vw] h-[28vw] border border-klein-blue/20 rounded-full animate-[spin_40s_linear_infinite_reverse]"></div>
-                <!-- Fix 2: Light Mode Gradient compatibility -->
                 <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-klein-blue/10 to-transparent"></div>
                 
                 <div class="z-10 max-w-7xl mx-auto w-full">
@@ -335,7 +332,7 @@
                         <p class="font-mono text-klein-blue tracking-[0.2em] text-xs">PORTFOLIO 2025</p>
                     </div>
                     
-                    <h1 class="text-7xl md:text-[10vw] font-black mb-4 tracking-tighter leading-[0.85] mix-blend-exclusion reveal-text text-white dark:text-white light:text-black">
+                    <h1 class="text-7xl md:text-[10vw] font-black mb-4 tracking-tighter leading-[0.85] mix-blend-exclusion reveal-text text-black dark:text-white">
                         <div class="glitch-wrapper" data-text="MICHAEL">MICHAEL</div>
                         <div class="outline-text pl-12 md:pl-24">QIU</div>
                     </h1>
@@ -356,7 +353,6 @@
                     </div>
                 </div>
 
-                <!-- Marquee Strip at Bottom -->
                 <div class="absolute bottom-12 w-full -rotate-1 opacity-50 pointer-events-none mix-blend-overlay">
                     <div class="marquee-container bg-klein-blue/20 py-2 border-y border-klein-blue/30 backdrop-blur-sm">
                         <div class="marquee-content font-mono text-xs tracking-[0.5em] text-klein-blue">
@@ -366,15 +362,13 @@
                 </div>
             </section>
 
-            <!-- Profile Section (FIX 2: Light Mode Backgrounds) -->
+            <!-- Profile Section -->
             <section id="profile" class="w-full py-32 px-6 md:px-12 relative border-t border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md transition-colors duration-500">
-                <!-- Decor Grid -->
                 <div class="absolute inset-0 opacity-20 pointer-events-none"
                     style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px); background-size: 100px 100px; opacity: 0.05;">
                 </div>
 
                 <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
-                    <!-- Text Side -->
                     <div class="lg:col-span-7">
                         <h2 class="font-display text-4xl md:text-6xl font-bold mb-12">
                             <span class="text-klein-blue">/</span> PROFILE
@@ -406,10 +400,8 @@
                         </div>
                     </div>
 
-                    <!-- Visual Side -->
                     <div class="lg:col-span-5 relative h-[500px] lg:h-auto">
                         <div class="w-full h-full relative">
-                            <!-- Abstract "Portrait" composed of shapes -->
                             <div class="absolute inset-0 border border-current border-opacity-10 p-4">
                                 <div class="w-full h-full bg-gray-100 dark:bg-[#0a0a0a] relative overflow-hidden transition-colors duration-500">
                                     <div class="absolute top-0 right-0 w-32 h-32 bg-klein-blue blur-[80px]"></div>
@@ -441,9 +433,8 @@
                 </div>
             </section>
 
-            <!-- Works / Apps Section (FIX 3: 3D Background Fix) -->
+            <!-- Works / Apps Section -->
             <section id="works" class="relative w-full min-h-screen overflow-hidden flex flex-col bg-transparent">
-                <!-- Top Marquee -->
                 <div class="w-full py-4 border-y border-gray-200 dark:border-white/10 bg-white dark:bg-[#020202] transition-colors duration-500">
                     <div class="marquee-container">
                         <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10">
@@ -454,12 +445,12 @@
 
                 <div class="flex-grow container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-center py-12">
                     
-                    <!-- App Menu -->
                     <div class="w-full md:w-5/12 z-20">
                         <div class="mb-12">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-2 h-2 bg-klein-blue"></div>
-                                <span class="font-mono text-xs tracking-widest text-gray-500">macOS SOLUTIONS</span>
+                                <!-- FIX 2: Better color class for visibility in both themes -->
+                                <span class="font-mono text-xs tracking-widest text-gray-600 dark:text-gray-500">macOS SOLUTIONS</span>
                             </div>
                             <h2 class="text-4xl font-bold leading-tight text-black dark:text-white">
                                 UTILITIES FOR<br>
@@ -480,21 +471,19 @@
                                     </div>
                                     <i data-lucide="arrow-up-right" class="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 </div>
-                                <p class="relative z-10 mt-2 text-sm text-gray-500 group-hover:text-white/80 max-w-[90%] transition-colors">
+                                <p class="relative z-10 mt-2 text-sm text-gray-600 dark:text-gray-500 group-hover:text-white/80 max-w-[90%] transition-colors">
                                     {{ app.desc }}
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 3D Viewer (FIX 3: Background Transparency Handling) -->
+                    <!-- 3D Viewer -->
                     <div class="w-full md:w-7/12 h-[50vh] md:h-[70vh] relative mt-12 md:mt-0" ref="canvasContainer">
-                        <!-- Gradient Overlay matched to theme -->
                         <div class="absolute inset-0 pointer-events-none z-10 bg-gradient-to-l from-transparent transition-colors duration-500"
                              :class="activeTheme === 'light' ? 'to-white/50' : 'to-black/20'">
                         </div>
                         
-                        <!-- Texture Error Message -->
                         <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
                             <div class="flex items-center gap-2 mb-2 font-bold text-red-300">
                                 <i data-lucide="alert-triangle" class="w-5 h-5"></i>
@@ -506,7 +495,6 @@
                 </div>
             </section>
 
-            <!-- Footer -->
             <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#050505] flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-500 transition-colors duration-500">
                 <p>&copy; 2025 MICHAEL QIU</p>
                 <div class="flex gap-6 mt-4 md:mt-0">
@@ -523,8 +511,8 @@
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
-                const themeMode = ref('auto'); // 'light', 'dark', 'auto'
-                const activeTheme = ref('dark'); // 'light' or 'dark' (resolved)
+                const themeMode = ref('auto'); 
+                const activeTheme = ref('dark'); 
                 
                 const scrollProgress = ref(0);
                 const activeSection = ref('home');
@@ -534,7 +522,6 @@
                 const canvasContainer = ref(null);
                 const textureError = ref(false);
 
-                // FIX 5: System Sidebar Links
                 const systemLinks = [
                     { name: 'PLAYGROUND' },
                     { name: 'WRITINGS' },
@@ -548,23 +535,13 @@
                     { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/SpaceSwitcher.png' }
                 ];
 
-                // Three.js variables
                 let scene, camera, renderer, appsGroup;
                 let icons = []; 
-                let effectGroup; 
-                let rings = []; 
                 let mouseX = 0, mouseY = 0;
-                let targetRotationX = 0;
-                let targetRotationY = 0;
                 let ambientLight, keyLight, backLight;
 
-                // --- CAPSULE LOGIC ---
-                // Approximate perimeter of a 140x40 pill (approx circle + straight parts)
-                // Width varies, so we approximate based on a standard "pill" calc for dasharray
-                // Let's assume max perimeter when closed is around 320px for the border stroke logic
                 const capsulePerimeter = 320; 
                 const capsuleDashOffset = computed(() => {
-                    // Invert progress so line grows
                     return capsulePerimeter - (scrollProgress.value / 100) * capsulePerimeter;
                 });
 
@@ -576,13 +553,20 @@
                     isSidebarOpen.value = !isSidebarOpen.value;
                 };
 
-                // --- THEME LOGIC (FIX 6) ---
+                // FIX 2: Correctly toggle 'dark' class on HTML element
                 const resolveTheme = () => {
+                    let resolved = 'dark';
                     if (themeMode.value === 'auto') {
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        activeTheme.value = prefersDark ? 'dark' : 'light';
+                        resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                     } else {
-                        activeTheme.value = themeMode.value;
+                        resolved = themeMode.value;
+                    }
+                    activeTheme.value = resolved;
+                    
+                    if (resolved === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
                     }
                     updateSceneTheme();
                 };
@@ -600,6 +584,12 @@
                     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
                     scrollProgress.value = (winScroll / height) * 100;
                     
+                    // FIX 5: Auto-collapse capsule on scroll
+                    if (isCapsuleOpen.value && Math.abs(winScroll - (window.lastScrollY || 0)) > 10) {
+                        isCapsuleOpen.value = false;
+                    }
+                    window.lastScrollY = winScroll;
+
                     const sections = ['home', 'profile', 'works'];
                     for (const section of sections) {
                         const el = document.getElementById(section);
@@ -615,8 +605,6 @@
                 const initCursor = () => {
                     const dot = document.querySelector('.cursor-dot');
                     const outline = document.querySelector('.cursor-outline');
-                    
-                    // Only run cursor logic if elements exist (desktop)
                     if(dot && outline) {
                         window.addEventListener('mousemove', (e) => {
                             const posX = e.clientX;
@@ -628,7 +616,6 @@
                     }
                 };
 
-                // ... [Same ThreeJS Helper Functions: createSquircleShape, createFallbackTexture] ...
                 const createSquircleShape = (size) => {
                     const shape = new THREE.Shape();
                     const width = size; const height = size;
@@ -700,7 +687,6 @@
                     appsGroup = new THREE.Group();
                     scene.add(appsGroup);
 
-                    // Lights
                     ambientLight = new THREE.AmbientLight(0x001133, 0.8); 
                     scene.add(ambientLight);
                     
@@ -712,32 +698,13 @@
                     backLight.position.set(0, 5, -10);
                     scene.add(backLight);
                     
-                    // Effects Group
-                    effectGroup = new THREE.Group();
-                    scene.add(effectGroup);
-                    effectGroup.visible = false; 
-                    effectGroup.scale.set(0,0,0);
-
-                    // Rings
-                    const ringGeo1 = new THREE.TorusGeometry(3.0, 0.02, 32, 100);
-                    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x002FA7, transparent: true, opacity: 0.8 });
-                    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
-                    effectGroup.add(ring1);
-                    rings.push({ mesh: ring1, speed: 0.02, axis: 'z' });
-
-                    const ringGeo2 = new THREE.TorusGeometry(3.4, 0.01, 32, 100);
-                    const ringMat2 = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 });
-                    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-                    effectGroup.add(ring2);
-                    rings.push({ mesh: ring2, speed: -0.01, axis: 'z' });
-
-                    // Icons Construction
+                    // FIX 3: Removed effectGroup and rings
+                    
                     const size = 2.5;
                     const extrudeSettings = { depth: 0.3, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
                     const shape = createSquircleShape(size); 
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
                     
-                    // Fix UVs
                     geometry.computeBoundingBox();
                     const max = geometry.boundingBox.max; const min = geometry.boundingBox.min;
                     const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
@@ -797,22 +764,14 @@
 
                     const animate = () => {
                         requestAnimationFrame(animate);
-                        // Mouse Look
                         appsGroup.rotation.x += 0.05 * (Math.max(-0.3, Math.min(0.3, mouseY)) - appsGroup.rotation.x);
                         appsGroup.rotation.y += 0.05 * (Math.max(-0.3, Math.min(0.3, mouseX)) - appsGroup.rotation.y);
 
-                        // Idle Float
                         icons.forEach((icon, i) => {
                             icon.position.y = basePositions[i].y + Math.sin(Date.now() * 0.0015 + i) * 0.05;
                             icon.rotation.z = Math.sin(Date.now() * 0.001 + i) * 0.02;
                         });
-
-                        // Rings
-                        if(effectGroup.visible) {
-                            rings.forEach(ring => {
-                                if(ring.axis === 'z') ring.mesh.rotation.z += ring.speed;
-                            });
-                        }
+                        
                         renderer.render(scene, camera);
                     };
                     animate();
@@ -831,20 +790,15 @@
                         icons.forEach(icon => {
                             icon.material[1].color.setHex(0x001133); 
                         });
-                        // White Ring
-                        if(rings[1]) rings[1].mesh.material.color.setHex(0xffffff);
                     } else {
-                        // Light Mode
                         ambientLight.color.setHex(0xffffff);
                         ambientLight.intensity = 1.0;
                         keyLight.intensity = 0.8;
                         backLight.color.setHex(0x002FA7);
                         
                         icons.forEach(icon => {
-                            icon.material[1].color.setHex(0xcccccc); // Light Gray sides
+                            icon.material[1].color.setHex(0xcccccc); 
                         });
-                        // Dark Ring for visibility
-                        if(rings[1]) rings[1].mesh.material.color.setHex(0x333333);
                     }
                 };
 
@@ -854,9 +808,7 @@
                     gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
                     gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
                     
-                    effectGroup.visible = true;
-                    effectGroup.position.set(0, 0, 3.8);
-                    gsap.to(effectGroup.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "back.out(1.5)" });
+                    // FIX 3: Removed effectGroup visibility toggle
 
                     icons.forEach((icon, i) => {
                         if (i !== index) {
@@ -868,7 +820,7 @@
                 };
 
                 const resetApp = () => {
-                    gsap.to(effectGroup.scale, { x: 0, y: 0, z: 0, duration: 0.3, onComplete: () => { effectGroup.visible = false; } });
+                    // FIX 3: Removed effectGroup reset
                     icons.forEach((icon, i) => {
                         gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" });
                         gsap.to(icon.position, { x: basePositions[i].x, y: basePositions[i].y, z: basePositions[i].z, duration: 0.6, ease: "power2.out" });
@@ -886,7 +838,7 @@
                     }, 1500);
 
                     lucide.createIcons();
-                    resolveTheme(); // Check initial theme
+                    resolveTheme(); 
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
                     initThreeJS();
                     initCursor();
