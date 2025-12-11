@@ -135,6 +135,7 @@
             -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
         }
 
+        .magnetic-ball { transition: fill-opacity 0.5s ease; }
         .magnetic-ball line { stroke: currentColor; stroke-width: 1.5; opacity: 0.2; }
         
         /* Nav Uniform Styles */
@@ -159,7 +160,7 @@
             <div class="font-mono text-sm tracking-[0.3em] text-white">SYSTEM_BOOT</div>
         </div>
 
-        <!-- Navigation Bar (Uniform Buttons) -->
+        <!-- Navigation Bar -->
         <nav class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none">
             
             <!-- Left: Sidebar Trigger -->
@@ -218,13 +219,13 @@
             </div>
         </nav>
 
-        <!-- Sidebar -->
+        <!-- Sidebar (Higher Z-Index) -->
         <transition name="backdrop">
-            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[9995]"></div>
+            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[9998]"></div>
         </transition>
 
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10000] border-r border-gray-200 dark:border-white/10 flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[9999] border-r border-gray-200 dark:border-white/10 flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden">
                 <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-12 w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
@@ -245,35 +246,39 @@
             <section id="home" class="relative w-full min-h-[150vh] flex flex-col justify-start bg-klein-blue text-white overflow-hidden">
                 
                 <!-- Fixed Fullscreen Magnetic Logo Container -->
-                <div class="fixed inset-0 z-0 pointer-events-none" id="magnetic-wrapper">
-                     <div id="magnetic-container" class="w-full h-full relative pointer-events-auto transition-opacity duration-1000"></div>
+                <div class="fixed inset-0 z-0" id="magnetic-wrapper">
+                     <!-- Set height to 100vh to fit screen -->
+                     <div id="magnetic-container" class="w-full h-screen relative cursor-crosshair transition-opacity duration-300"></div>
                 </div>
 
                 <!-- Scrollable Content -->
                 <div class="relative z-10 w-full">
                     
-                    <!-- Page 1: Logo & Name Only -->
-                    <div class="h-screen w-full flex flex-col justify-end px-6 md:px-12 pb-12 md:pb-24">
-                        <div class="hero-text-container transform transition-transform duration-300 ease-out">
-                            <h1 class="text-[16vw] leading-[0.8] font-black tracking-tighter mix-blend-overlay">MICHAEL</h1>
-                            <h1 class="text-[16vw] leading-[0.8] font-black tracking-tighter pl-4 md:pl-8">QIU</h1>
+                    <!-- Page 1: Logo (Balls) & Name (Bottom) -->
+                    <div class="h-screen w-full flex flex-col justify-end px-6 md:px-12 pb-12 md:pb-24 pointer-events-none">
+                        <!-- Hero Text Container -->
+                        <div class="hero-text-container transform transition-transform duration-100 ease-linear origin-bottom-left">
+                            <h1 class="text-[5vw] leading-[0.8] font-black tracking-tighter mix-blend-overlay">MICHAEL</h1>
+                            <h1 class="text-[5vw] leading-[0.8] font-black tracking-tighter pl-4 md:pl-8">QIU</h1>
                             
-                            <div class="mt-8 flex justify-between items-end border-t border-white/30 pt-8 max-w-4xl">
-                                <p class="text-xl md:text-2xl font-light opacity-90 max-w-lg">
-                                    Designing digital utilities that feel <span class="font-bold italic">inevitable</span>.
+                            <!-- Intro text following name -->
+                            <div class="intro-text opacity-0 mt-4 pl-4 max-w-xl transition-opacity duration-1000">
+                                <p class="text-2xl font-light leading-relaxed">
+                                    Designing digital utilities that feel <span class="font-bold italic text-white/80">inevitable</span>.
                                 </p>
-                                <div class="hidden md:flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse">
-                                    <span>SCROLL TO BEGIN</span>
-                                    <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                                </div>
                             </div>
+                        </div>
+                        
+                        <div class="absolute bottom-12 right-12 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse pointer-events-auto">
+                            <span>SCROLL TO BEGIN</span>
+                            <i data-lucide="arrow-down" class="w-4 h-4"></i>
                         </div>
                     </div>
 
                     <!-- Page 2: BE CREATIVE Banner (Scroll Expand) -->
-                    <div class="h-[80vh] flex items-center justify-center relative overflow-hidden" id="banner-trigger">
+                    <div class="h-[100vh] flex items-center justify-center relative overflow-hidden bg-black z-20" id="banner-trigger">
                         <div class="w-full transform scale-50 opacity-0 transition-all duration-700 ease-out" id="creative-banner">
-                            <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter mix-blend-overlay">
+                            <h2 class="text-[15vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
                                 BE<br>CREATIVE
                             </h2>
                         </div>
@@ -283,7 +288,7 @@
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505]">
+            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30">
                 <div class="max-w-[90vw] mx-auto relative z-10">
                     <div class="flex items-end justify-between mb-24 border-b border-gray-200 dark:border-white/10 pb-8">
                         <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
@@ -343,7 +348,7 @@
             </section>
 
             <!-- Works Section -->
-            <section id="works" class="relative bg-[#050505]">
+            <section id="works" class="relative bg-[#050505] z-30">
                 <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden z-0">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,#001030_0%,#000000_70%)] opacity-80"></div>
                     <div class="w-full h-full" ref="canvasContainer"></div>
@@ -368,12 +373,13 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Removed empty spacer to prevent dead scroll -->
+                    <!-- Added extra space for SpaceSwitcher -->
+                    <div class="h-[50vh]"></div>
                 </div>
             </section>
             
             <!-- Connect Section (Syncs with Theme) -->
-            <section id="connect" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-20">
+            <section id="connect" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30">
                 <div class="max-w-7xl mx-auto">
                     <div class="flex items-center gap-3 mb-16">
                         <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
@@ -403,7 +409,7 @@
                 </div>
             </section>
 
-            <footer class="w-full py-16 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-20">
+            <footer class="w-full py-16 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
                 <p>&copy; 2025 MICHAEL QIU.</p>
                 <div class="flex gap-8 mt-6 md:mt-0">
                     <a href="#home" class="hover:text-klein-blue transition-colors">BACK TO TOP</a>
@@ -491,7 +497,6 @@
                     const winHeight = window.innerHeight;
                     const scrollTotal = docHeight - winHeight;
                     
-                    // Safe division
                     let progress = scrollTotal > 0 ? (scrollTop / scrollTotal) * 100 : 0;
                     progress = Math.min(100, Math.max(0, progress));
                     scrollProgress.value = progress;
@@ -513,23 +518,38 @@
                         }
                     }
                     
-                    // Home Animation Logic
+                    // Home Animation Logic (Revised)
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
+                    const introText = document.querySelector('.intro-text');
                     const banner = document.getElementById('creative-banner');
                     
                     if (scrollTop < winHeight * 2) {
-                        // Fade out balls
-                        if(magContainer) magContainer.style.opacity = Math.max(0, 1 - scrollTop / 500);
+                        // 1. Balls Fade (Opacity) & Scale Down slightly
+                        if(magContainer) {
+                            magContainer.style.opacity = Math.max(0, 1 - scrollTop / 600);
+                            magContainer.style.transform = `scale(${1 - scrollTop / 2000})`;
+                        }
                         
-                        // Parallax Name Up
-                        if(heroText) heroText.style.transform = `translateY(-${scrollTop * 0.8}px)`;
+                        // 2. Name Grows & Moves Up
+                        if(heroText) {
+                            // Parallax move up
+                            const moveY = -scrollTop * 0.5;
+                            // Scale up
+                            const scale = 1 + scrollTop / 1000;
+                            heroText.style.transform = `translateY(${moveY}px) scale(${scale})`;
+                            
+                            // Fade in intro text
+                            if(introText) {
+                                introText.style.opacity = Math.min(1, scrollTop / 300);
+                            }
+                        }
                         
-                        // Banner Expansion
+                        // 3. Banner Expansion
                         if(banner) {
-                            const bannerStart = winHeight * 0.8;
-                            if(scrollTop > bannerStart) {
-                                const progress = Math.min(1, (scrollTop - bannerStart) / 400);
+                            const bannerTriggerPoint = winHeight * 0.5;
+                            if(scrollTop > bannerTriggerPoint) {
+                                const progress = Math.min(1, (scrollTop - bannerTriggerPoint) / 500);
                                 banner.style.transform = `scale(${0.5 + progress * 0.5})`;
                                 banner.style.opacity = progress;
                             } else {
@@ -579,8 +599,9 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
 
-                    // FULLSCREEN LOGO SCALE
-                    const logoScale = Math.min(width, height) / 300; 
+                    // SCALE: Fit logo within screen boundaries completely
+                    // We use 0.8 scale factor to leave margin
+                    const logoScale = Math.min(width, height) / 500 * 0.8; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
 
@@ -591,7 +612,7 @@
                     logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
 
-                    const step = 28; // Large balls
+                    const step = 25; // Large balls
                     const balls = [];
                     const mouseRadius = 300; 
 
@@ -649,21 +670,25 @@
                     return shape;
                 };
 
-                // HD Fallback Texture - IMPROVED RESOLUTION
+                // HD Fallback Texture - IMPROVED RESOLUTION (2048x2048)
                 const createFallbackTexture = (text) => {
                     const canvas = document.createElement('canvas');
                     canvas.width = 2048; canvas.height = 2048; 
                     const ctx = canvas.getContext('2d');
                     
+                    // Dark background
                     ctx.fillStyle = '#050505';
                     ctx.fillRect(0, 0, 2048, 2048);
                     
+                    // Grid lines
                     ctx.strokeStyle = '#222';
                     ctx.lineWidth = 10;
                     for(let i=0; i<2048; i+=256) {
                         ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 2048); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(2048, i); ctx.stroke();
                     }
+                    
+                    // Border
                     ctx.strokeStyle = '#002FA7';
                     ctx.lineWidth = 40;
                     ctx.beginPath();
@@ -671,8 +696,9 @@
                     else ctx.rect(80, 80, 1888, 1888);
                     ctx.stroke();
 
+                    // Text
                     ctx.fillStyle = 'white';
-                    ctx.font = 'bold 400px "Inter", sans-serif';
+                    ctx.font = 'bold 600px "Inter", sans-serif'; // Bigger font
                     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                     ctx.fillText(text.substring(0, 2).toUpperCase(), 1024, 1024);
 
