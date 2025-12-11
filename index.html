@@ -15,7 +15,6 @@
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
-                        'neon-green': '#17f700',
                         'bg-dark': '#050505',
                         'bg-light': '#F2F2F7', 
                     },
@@ -27,7 +26,6 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'marquee': 'marquee 30s linear infinite',
-                        'marquee-reverse': 'marqueeReverse 35s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -37,10 +35,6 @@
                         marquee: {
                             '0%': { transform: 'translateX(0%)' },
                             '100%': { transform: 'translateX(-100%)' },
-                        },
-                        marqueeReverse: {
-                            '0%': { transform: 'translateX(-100%)' },
-                            '100%': { transform: 'translateX(0%)' },
                         }
                     }
                 }
@@ -116,7 +110,6 @@
         .marquee-container { overflow: hidden; white-space: nowrap; display: flex; }
         .marquee-content { display: flex; flex-shrink: 0; }
         .animate-marquee { animation: marquee 30s linear infinite; }
-        .animate-marquee-reverse { animation: marqueeReverse 35s linear infinite; }
 
         /* Transitions */
         .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -129,14 +122,9 @@
         
         .capsule-nav { transition: width 0.3s ease, background-color 0.3s ease, color 0.3s ease; }
 
-        /* Mask Gradient */
-        .mask-fade-edges {
-            mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-        }
-
-        .magnetic-ball { transition: fill-opacity 0.5s ease; }
-        .magnetic-ball line { stroke: currentColor; stroke-width: 1.5; opacity: 0.2; }
+        .magnetic-ball { transition: opacity 0.1s ease; }
+        /* Adjusted line opacity for clarity */
+        .magnetic-ball-line { stroke: currentColor; stroke-width: 1; opacity: 0.15; }
         
         /* Nav Uniform Styles */
         .nav-button {
@@ -174,14 +162,11 @@
             <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
-                    <!-- Dynamic coloring based on navColorClass -->
                     <div class="nav-button border rounded-full h-12 flex items-center justify-center overflow-hidden shadow-2xl"
                          :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navColorClass]">
-                        
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
                             {{ activeSection.toUpperCase() }}
                         </div>
-
                         <div v-else class="flex gap-5 font-mono text-[10px] font-bold px-6 animate-fade-in whitespace-nowrap">
                             <a href="#home" class="hover:opacity-60 transition-opacity">HOME</a>
                             <span>/</span>
@@ -192,17 +177,12 @@
                             <a href="#connect" class="hover:opacity-60 transition-opacity">CONNECT</a>
                         </div>
                     </div>
-
                     <!-- Progress Ring -->
                     <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;">
-                        <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" 
-                              fill="none" stroke="transparent" stroke-width="2" />
-                         <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" 
-                              fill="none" stroke="currentColor" stroke-width="2"
-                              :stroke-dasharray="capsulePerimeter"
-                              :stroke-dashoffset="capsuleDashOffset"
-                              class="text-klein-blue" 
-                              style="transition: stroke-dashoffset 0.1s linear, stroke-dasharray 0.5s ease; opacity: 1;" />
+                        <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
+                         <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
+                              :stroke-dasharray="capsulePerimeter" :stroke-dashoffset="capsuleDashOffset"
+                              class="text-klein-blue" style="transition: stroke-dashoffset 0.1s linear; opacity: 1;" />
                     </svg>
                 </div>
             </div>
@@ -219,13 +199,13 @@
             </div>
         </nav>
 
-        <!-- Sidebar (Higher Z-Index) -->
+        <!-- Sidebar (Highest Z-Index) -->
         <transition name="backdrop">
-            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[9998]"></div>
+            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[10000]"></div>
         </transition>
 
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[9999] border-r border-gray-200 dark:border-white/10 flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10001] border-r border-gray-200 dark:border-white/10 flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 shadow-2xl overflow-y-auto overflow-x-hidden">
                 <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-12 w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
@@ -242,48 +222,53 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <!-- Hero Section (Blue Void - FULLSCREEN BALLS) -->
-            <section id="home" class="relative w-full min-h-[150vh] flex flex-col justify-start bg-klein-blue text-white overflow-hidden">
+            <!-- Hero Section (SLOW BURN) -->
+            <!-- 200vh height to create scroll space for the transition -->
+            <section id="home" class="relative w-full h-[200vh] bg-klein-blue text-white">
                 
-                <!-- Fixed Fullscreen Magnetic Logo Container -->
-                <div class="fixed inset-0 z-0" id="magnetic-wrapper">
-                     <!-- Set height to 100vh to fit screen -->
-                     <div id="magnetic-container" class="w-full h-screen relative cursor-crosshair transition-opacity duration-300"></div>
-                </div>
-
-                <!-- Scrollable Content -->
-                <div class="relative z-10 w-full">
+                <!-- Sticky Container: Holds the visual elements in place while scrolling -->
+                <div class="sticky top-0 w-full h-screen overflow-hidden">
                     
-                    <!-- Page 1: Logo (Balls) & Name (Bottom) -->
-                    <div class="h-screen w-full flex flex-col justify-end px-6 md:px-12 pb-12 md:pb-24 pointer-events-none">
-                        <!-- Hero Text Container -->
-                        <div class="hero-text-container transform transition-transform duration-100 ease-linear origin-bottom-left">
-                            <h1 class="text-[5vw] leading-[0.8] font-black tracking-tighter mix-blend-overlay">MICHAEL</h1>
-                            <h1 class="text-[5vw] leading-[0.8] font-black tracking-tighter pl-4 md:pl-8">QIU</h1>
+                    <!-- 1. Magnetic Balls Logo (Fullscreen, White) -->
+                    <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
+                         <!-- Canvas container for balls -->
+                         <div id="magnetic-container" class="w-full h-full relative cursor-crosshair"></div>
+                    </div>
+
+                    <!-- 2. Text Content -->
+                    <div class="absolute inset-0 z-10 flex flex-col justify-end items-center pb-12 pointer-events-none">
+                        
+                        <!-- Name & Intro Container -->
+                        <div class="hero-text-container flex flex-col items-center text-center transform origin-bottom transition-transform duration-75 ease-out">
+                            <!-- Name: Starts small at bottom -->
+                            <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-white mix-blend-normal" id="hero-name">
+                                MICHAEL QIU
+                            </h1>
                             
-                            <!-- Intro text following name -->
-                            <div class="intro-text opacity-0 mt-4 pl-4 max-w-xl transition-opacity duration-1000">
-                                <p class="text-2xl font-light leading-relaxed">
-                                    Designing digital utilities that feel <span class="font-bold italic text-white/80">inevitable</span>.
+                            <!-- Intro: Fades in later -->
+                            <div class="intro-text opacity-0 mt-6 max-w-xl transition-opacity duration-500">
+                                <p class="text-xl md:text-2xl font-light leading-relaxed">
+                                    Designing digital utilities that feel <span class="font-bold italic">inevitable</span>.
                                 </p>
                             </div>
                         </div>
                         
-                        <div class="absolute bottom-12 right-12 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse pointer-events-auto">
+                        <!-- Scroll Hint (Fades out) -->
+                        <div class="scroll-hint absolute bottom-8 flex flex-col items-center gap-2 font-mono text-xs opacity-70 animate-pulse">
                             <span>SCROLL TO BEGIN</span>
                             <i data-lucide="arrow-down" class="w-4 h-4"></i>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Page 2: BE CREATIVE Banner (Scroll Expand) -->
-                    <div class="h-[100vh] flex items-center justify-center relative overflow-hidden bg-black z-20" id="banner-trigger">
-                        <div class="w-full transform scale-50 opacity-0 transition-all duration-700 ease-out" id="creative-banner">
-                            <h2 class="text-[15vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
-                                BE<br>CREATIVE
-                            </h2>
-                        </div>
-                    </div>
-
+            <!-- "Be Creative" Banner Section -->
+            <!-- Distinct background to differentiate from Blue home and Content -->
+            <section class="w-full h-screen bg-[#050505] text-white flex items-center justify-center relative overflow-hidden z-20">
+                <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
+                    <h2 class="text-[15vw] font-black text-center leading-none tracking-tighter mix-blend-difference text-white">
+                        BE<br>CREATIVE
+                    </h2>
                 </div>
             </section>
 
@@ -295,7 +280,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(220px,auto)]">
-                        <!-- Main Info -->
+                        <!-- Bento Cards (Same as before) -->
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
                              <div class="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-klein-blue/30 to-transparent rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-klein-blue/40 transition-colors duration-500"></div>
                              <div>
@@ -305,42 +290,21 @@
                                  </p>
                              </div>
                              <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6">
-                                 <div>
-                                     <span class="block font-mono text-xs text-gray-500 mb-1">LOCATION</span>
-                                     <span class="font-bold text-xl text-black dark:text-white">127.0.0.1</span>
-                                 </div>
+                                 <div><span class="block font-mono text-xs text-gray-500 mb-1">LOCATION</span><span class="font-bold text-xl text-black dark:text-white">127.0.0.1</span></div>
                                  <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
                              </div>
                         </div>
-                        <!-- Stack -->
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-klein-blue hover:text-white transition-all duration-300 group">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3>
-                                <i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i>
-                            </div>
-                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white">
-                                <li>Python</li>
-                                <li>C++</li>
-                                <li>SwiftUI</li>
-                                <li>Vue.js</li>
-                            </ul>
+                            <div class="flex justify-between items-start"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3><i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white"><li>Python</li><li>C++</li><li>SwiftUI</li><li>Vue.js</li></ul>
                         </div>
-                         <!-- Focus -->
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover:bg-black hover:text-white transition-all duration-300 group">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3>
-                                <i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i>
-                            </div>
-                             <div class="mt-4">
-                                <p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p>
-                            </div>
+                            <div class="flex justify-between items-start"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3><i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                             <div class="mt-4"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p></div>
                         </div>
-                         <!-- Motto -->
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
                              <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">PHILOSOPHY</h3>
-                             <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">
-                                 "Give people wonderful tools, and they'll do wonderful things."
-                             </p>
+                             <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">"Give people wonderful tools, and they'll do wonderful things."</p>
                              <p class="text-right text-sm font-bold mt-4 text-klein-blue relative z-10">— Steve Jobs</p>
                         </div>
                     </div>
@@ -349,8 +313,8 @@
 
             <!-- Works Section -->
             <section id="works" class="relative bg-[#050505] z-30">
+                <!-- Sticky 3D Background - CLEANED UP (No Overlays) -->
                 <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden z-0">
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,#001030_0%,#000000_70%)] opacity-80"></div>
                     <div class="w-full h-full" ref="canvasContainer"></div>
                 </div>
 
@@ -373,8 +337,8 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Added extra space for SpaceSwitcher -->
-                    <div class="h-[50vh]"></div>
+                    <!-- Increased spacer for SpaceSwitcher to breathe -->
+                    <div class="h-[80vh]"></div>
                 </div>
             </section>
             
@@ -433,15 +397,20 @@
                 const canvasContainer = ref(null);
                 const textureError = ref(false);
                 
-                // Reactive Nav Color Class - FORCED BLACK ON HOME
+                // Smart Nav Colors: Black/White on Light sections, White/Black on Dark sections
                 const navColorClass = computed(() => {
+                    // Sections with dark backgrounds
                     const darkSections = ['home', 'works'];
+                    // "Be Creative" banner is also dark, but we can detect it via activeSection logic below
                     const isDarkSection = darkSections.includes(activeSection.value);
                     
                     if (isDarkSection) {
-                        return 'bg-black text-white border-white/20';
+                        return 'bg-white text-black border-white/20 hover:bg-white/90'; // White buttons on dark bg
                     } else {
-                        return activeTheme.value === 'dark' ? 'bg-white text-black border-white/10' : 'bg-black text-white border-black/10';
+                        // Light background sections (Profile, Connect in light mode)
+                        return activeTheme.value === 'dark' 
+                            ? 'bg-white text-black border-white/20' // Dark theme (Profile bg is black) -> White buttons
+                            : 'bg-black text-white border-black/10 hover:bg-black/90'; // Light theme (Profile bg is white) -> Black buttons
                     }
                 });
 
@@ -462,7 +431,6 @@
 
                 const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
-                    // Logic to ensure ring completes 100%
                     const progress = Math.min(100, Math.max(0, scrollProgress.value));
                     return Math.max(0, capsulePerimeter - (progress / 100) * capsulePerimeter);
                 });
@@ -506,7 +474,7 @@
                     }
                     window.lastScrollY = scrollTop;
 
-                    // Update Active Section
+                    // Active Section Detection
                     const sections = ['home', 'profile', 'works', 'connect'];
                     for (const section of sections) {
                         const el = document.getElementById(section);
@@ -518,43 +486,58 @@
                         }
                     }
                     
-                    // Home Animation Logic (Revised)
-                    const magContainer = document.getElementById('magnetic-container');
-                    const heroText = document.querySelector('.hero-text-container');
-                    const introText = document.querySelector('.intro-text');
-                    const banner = document.getElementById('creative-banner');
+                    // --- ANIMATION LOGIC FOR HOME PAGE ---
+                    const homeSectionHeight = winHeight * 2; // matches the CSS height 200vh
                     
-                    if (scrollTop < winHeight * 2) {
-                        // 1. Balls Fade (Opacity) & Scale Down slightly
+                    if (scrollTop < homeSectionHeight) {
+                        // 1. Magnetic Balls - Fade Out & Shrink
+                        // Happens in the first 100vh of scroll
+                        const magContainer = document.getElementById('magnetic-container');
+                        const ballFadeProgress = Math.min(1, scrollTop / winHeight);
                         if(magContainer) {
-                            magContainer.style.opacity = Math.max(0, 1 - scrollTop / 600);
-                            magContainer.style.transform = `scale(${1 - scrollTop / 2000})`;
+                            magContainer.style.opacity = Math.max(0, 1 - ballFadeProgress * 1.5); // Faster fade
+                            magContainer.style.transform = `scale(${1 - ballFadeProgress * 0.2})`;
                         }
+
+                        // 2. Name Animation (Bottom -> Center -> Scale Up)
+                        const heroText = document.querySelector('.hero-text-container');
+                        const introText = document.querySelector('.intro-text');
+                        const nameTitle = document.getElementById('hero-name');
                         
-                        // 2. Name Grows & Moves Up
+                        // Move up by half the screen height to reach center
+                        const moveY = -Math.min(scrollTop, winHeight * 0.4); 
+                        // Scale up from 1 to 2
+                        const scale = 1 + (scrollTop / winHeight) * 1.5;
+                        
                         if(heroText) {
-                            // Parallax move up
-                            const moveY = -scrollTop * 0.5;
-                            // Scale up
-                            const scale = 1 + scrollTop / 1000;
                             heroText.style.transform = `translateY(${moveY}px) scale(${scale})`;
-                            
-                            // Fade in intro text
-                            if(introText) {
-                                introText.style.opacity = Math.min(1, scrollTop / 300);
+                        }
+
+                        // Intro Text Fade In (Starts after some scroll)
+                        if(introText) {
+                            // Start fading in after scrolling 30% of viewport
+                            const fadeStart = winHeight * 0.3;
+                            if (scrollTop > fadeStart) {
+                                introText.style.opacity = Math.min(1, (scrollTop - fadeStart) / (winHeight * 0.3));
+                            } else {
+                                introText.style.opacity = 0;
                             }
                         }
+                    }
+
+                    // --- BANNER LOGIC ---
+                    const banner = document.getElementById('creative-banner');
+                    if(banner) {
+                        const bannerRect = document.getElementById('banner-trigger').getBoundingClientRect();
+                        const triggerPoint = winHeight * 0.8;
                         
-                        // 3. Banner Expansion
-                        if(banner) {
-                            const bannerTriggerPoint = winHeight * 0.5;
-                            if(scrollTop > bannerTriggerPoint) {
-                                const progress = Math.min(1, (scrollTop - bannerTriggerPoint) / 500);
-                                banner.style.transform = `scale(${0.5 + progress * 0.5})`;
-                                banner.style.opacity = progress;
-                            } else {
-                                banner.style.opacity = 0;
-                            }
+                        if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
+                            // Calculate progress as banner enters view
+                            const progress = 1 - (bannerRect.top / triggerPoint);
+                            // Scale from 0.5 to 1.5 based on scroll
+                            const scale = 0.5 + Math.max(0, progress) * 1.2;
+                            banner.style.transform = `scale(${scale})`;
+                            banner.style.opacity = Math.min(1, progress * 1.5);
                         }
                     }
                 };
@@ -573,6 +556,7 @@
                     }
                 };
 
+                // --- MAGNETIC LOGO LOGIC (White Balls on Blue BG) ---
                 const initMagneticLogo = () => {
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
@@ -599,9 +583,8 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
 
-                    // SCALE: Fit logo within screen boundaries completely
-                    // We use 0.8 scale factor to leave margin
-                    const logoScale = Math.min(width, height) / 500 * 0.8; 
+                    // Scale to fit FULLSCREEN logo
+                    const logoScale = Math.min(width, height) / 500; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
 
@@ -612,45 +595,104 @@
                     logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
 
-                    const step = 25; // Large balls
+                    // Larger gaps for cleaner, "Wilder" look
+                    const step = 30; 
                     const balls = [];
                     const mouseRadius = 300; 
 
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
+                            // Checking alpha
                             if (pixel[3] > 128) {
+                                // Create ball (White)
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                // Balls are WHITE for contrast on BLUE bg
                                 ball.setAttribute("class", "text-white fill-current magnetic-ball");
                                 ball.setAttribute("cx", x);
                                 ball.setAttribute("cy", y);
-                                ball.setAttribute("r", 4); 
+                                ball.setAttribute("r", 5); 
+                                
+                                // Create Line (Faint)
+                                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                                line.setAttribute("class", "text-white magnetic-ball-line");
+                                line.setAttribute("x1", x);
+                                line.setAttribute("y1", y);
+                                line.setAttribute("x2", x);
+                                line.setAttribute("y2", y);
+                                
+                                svg.appendChild(line);
                                 svg.appendChild(ball);
-                                balls.push({ el: ball, ori_x: x, ori_y: y });
+
+                                balls.push({
+                                    el: ball,
+                                    line: line,
+                                    ori_x: x,
+                                    ori_y: y
+                                });
                             }
                         }
                     }
 
+                    // GSAP Physics Logic
                     container.addEventListener('mousemove', (e) => {
                         const rect = container.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
                         const mouseY = e.clientY - rect.top;
+
                         balls.forEach(ball => {
                             const dx = ball.ori_x - mouseX;
                             const dy = ball.ori_y - mouseY;
                             const dist = Math.sqrt(dx * dx + dy * dy);
+
                             if (dist < mouseRadius) {
                                 const angle = Math.atan2(dy, dx);
-                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 80; 
+                                const force = (mouseRadius - dist) / mouseRadius; 
+                                const moveDist = force * 150; // Strong push
+
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
-                                gsap.to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3 });
-                            } else {
-                                gsap.to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 0.8, ease: "elastic.out(1, 0.3)" });
+
+                                if (ball.animater) ball.animater.kill();
+                                ball.animater = gsap.timeline()
+                                    .to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3, ease: "power3.out" })
+                                    .to(ball.line, { attr: { x2: tx, y2: ty }, duration: 0.3, ease: "power3.out" }, "<")
+                                    .to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.4)" }, ">0.05")
+                                    .to(ball.line, { attr: { x2: ball.ori_x, y2: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<");
                             }
                         });
                     });
+                };
+
+                // THREE.JS High-Res Setup
+                const createFallbackTexture = (text) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 2048; canvas.height = 2048; 
+                    const ctx = canvas.getContext('2d');
+                    
+                    ctx.fillStyle = '#050505';
+                    ctx.fillRect(0, 0, 2048, 2048);
+                    
+                    ctx.strokeStyle = '#222';
+                    ctx.lineWidth = 10;
+                    for(let i=0; i<2048; i+=256) {
+                        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 2048); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(2048, i); ctx.stroke();
+                    }
+                    ctx.strokeStyle = '#002FA7';
+                    ctx.lineWidth = 40;
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(80, 80, 1888, 1888, 300);
+                    else ctx.rect(80, 80, 1888, 1888);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 400px "Inter", sans-serif';
+                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.fillText(text.substring(0, 2).toUpperCase(), 1024, 1024);
+
+                    const tex = new THREE.CanvasTexture(canvas);
+                    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                    return tex;
                 };
 
                 const createSquircleShape = (size) => {
@@ -670,50 +712,12 @@
                     return shape;
                 };
 
-                // HD Fallback Texture - IMPROVED RESOLUTION (2048x2048)
-                const createFallbackTexture = (text) => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 2048; canvas.height = 2048; 
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Dark background
-                    ctx.fillStyle = '#050505';
-                    ctx.fillRect(0, 0, 2048, 2048);
-                    
-                    // Grid lines
-                    ctx.strokeStyle = '#222';
-                    ctx.lineWidth = 10;
-                    for(let i=0; i<2048; i+=256) {
-                        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 2048); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(2048, i); ctx.stroke();
-                    }
-                    
-                    // Border
-                    ctx.strokeStyle = '#002FA7';
-                    ctx.lineWidth = 40;
-                    ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(80, 80, 1888, 1888, 300);
-                    else ctx.rect(80, 80, 1888, 1888);
-                    ctx.stroke();
-
-                    // Text
-                    ctx.fillStyle = 'white';
-                    ctx.font = 'bold 600px "Inter", sans-serif'; // Bigger font
-                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                    ctx.fillText(text.substring(0, 2).toUpperCase(), 1024, 1024);
-
-                    const tex = new THREE.CanvasTexture(canvas);
-                    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                    return tex;
-                };
-
                 const initThreeJS = () => {
                     if (!canvasContainer.value) return;
                     const width = canvasContainer.value.clientWidth;
                     const height = canvasContainer.value.clientHeight;
 
                     scene = new THREE.Scene();
-                    
                     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
                     camera.position.z = 12;
 
@@ -860,7 +864,7 @@
                             loader.value.style.opacity = '0';
                             setTimeout(() => { loader.value.style.display = 'none'; }, 500);
                         }
-                        gsap.from(".hero-text-container", { y: 100, opacity: 0, duration: 1.2, ease: "power4.out", delay: 0.5 });
+                        gsap.from(".hero-text-container", { y: 50, opacity: 0, duration: 1.5, ease: "power4.out", delay: 0.2 });
                         initMagneticLogo();
                     }, 1500);
 
