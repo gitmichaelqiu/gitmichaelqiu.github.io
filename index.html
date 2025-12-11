@@ -144,8 +144,21 @@
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
+        /* Background Glow for Works Page */
+        .works-page-glow {
+            position: absolute;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 60%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(80px);
+        }
+
         /* Specific Hover Fixes */
         .hover-solid-blue:hover { background-color: #002FA7 !important; color: white !important; }
+        /* Fix for dark mode hover */
         .hover-solid-black:hover { background-color: black !important; color: white !important; }
         html.dark .hover-solid-black:hover { background-color: white !important; color: black !important; }
     </style>
@@ -178,7 +191,10 @@
             
             <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
-                <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
+                <div class="relative group cursor-pointer" 
+                     @click="toggleCapsuleNav"
+                     @mouseenter="isCapsuleOpen = true" 
+                     @mouseleave="isCapsuleOpen = false">
                     <div class="nav-button border rounded-full h-12 flex items-center justify-center overflow-hidden shadow-2xl"
                          :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navColorClass]">
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
@@ -239,8 +255,8 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <!-- Hero Section (SLOW BURN - 300vh for longer transition) -->
-            <section id="home" class="relative w-full h-[300vh] bg-klein-blue text-white">
+            <!-- Hero Section (SLOW BURN - Shortened to 200vh) -->
+            <section id="home" class="relative w-full h-[200vh] bg-klein-blue text-white">
                 
                 <!-- Sticky Container -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
@@ -340,6 +356,9 @@
                 <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden z-0">
                     <div class="w-full h-full" ref="canvasContainer"></div>
                 </div>
+                
+                <!-- Background Page Glow -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 works-page-glow"></div>
 
                 <div class="relative z-10">
                     <div class="h-[50vh] flex flex-col justify-center items-center pointer-events-none">
@@ -383,23 +402,36 @@
                         <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 hover-solid-blue transition-all duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-transparent dark:from-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
+                            <!-- Using Glow Effect -->
+                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            
+                            <!-- Corner Glows -->
+                            <div class="card-corner-glow -top-10 -right-10"></div>
+                            <div class="card-corner-glow -bottom-10 -left-10"></div>
+
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between">
                                 <div class="flex justify-between items-start">
-                                    <i data-lucide="github" class="w-12 h-12 text-gray-400 group-hover:text-white transition-colors"></i>
-                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-white/20 group-hover:border-white group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
+                                    <i data-lucide="github" class="w-12 h-12 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
                                 </div>
-                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white group-hover:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-white transition-colors text-xl">Explore source code</p></div>
+                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-klein-blue transition-colors text-xl">Explore source code</p></div>
                             </div>
                         </a>
-                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 hover-solid-blue transition-all duration-500">
+                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
+                            <!-- Using Glow Effect -->
+                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[#20BEFF]/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            
+                            <!-- Corner Glows -->
+                            <div class="card-corner-glow -top-10 -right-10"></div>
+                            <div class="card-corner-glow -bottom-10 -left-10"></div>
+
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between">
                                 <div class="flex justify-between items-start">
-                                    <div class="text-4xl font-black text-gray-400 group-hover:text-white transition-colors">K</div>
-                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-white/20 group-hover:border-white group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
+                                    <div class="text-4xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
+                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
                                 </div>
-                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white group-hover:text-white">Kaggle</h3><p class="text-gray-500 group-hover:text-white transition-colors text-xl">Data Science</p></div>
+                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">Kaggle</h3><p class="text-gray-500 group-hover:text-[#20BEFF] transition-colors text-xl">Data Science</p></div>
                             </div>
                         </a>
                     </div>
@@ -515,7 +547,7 @@
                         }
                     }
                     
-                    // --- HOME PAGE ANIMATION LOGIC (SLOW BURN) ---
+                    // --- HOME PAGE ANIMATION LOGIC (Shortened to 1.5vh duration for quicker name arrival) ---
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
                     const introText = document.querySelector('.intro-text');
@@ -524,16 +556,16 @@
                     
                     if (scrollTop < winHeight * 2.5) {
                         
-                        // 1. Magnetic Balls FADE & SHRINK (Slowly)
+                        // 1. Magnetic Balls FADE & SHRINK (Faster)
                         if(magContainer) {
-                            const fadeProgress = Math.min(1, scrollTop / (winHeight * 1.2));
+                            const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
                             magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
                             magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
                         }
 
-                        // 2. Name Movement (Bottom Left -> Center -> Grow)
+                        // 2. Name Movement (Bottom Left -> Center -> Grow) - Faster Transition
                         if(heroText) {
-                            const moveProgress = Math.min(1, scrollTop / (winHeight * 0.8));
+                            const moveProgress = Math.min(1, scrollTop / (winHeight * 0.6));
                             // Only move up, stay left-aligned (no X translation)
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             
