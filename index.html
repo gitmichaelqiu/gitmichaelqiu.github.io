@@ -25,27 +25,16 @@
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'float': 'float 6s ease-in-out infinite',
-                        'spin-slow': 'spin 120s linear infinite',
-                        'marquee': 'marquee 40s linear infinite',
-                        'marquee-reverse': 'marqueeReverse 45s linear infinite',
+                        'marquee': 'marquee 30s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
                         marquee: {
                             '0%': { transform: 'translateX(0%)' },
                             '100%': { transform: 'translateX(-100%)' },
-                        },
-                        marqueeReverse: {
-                            '0%': { transform: 'translateX(-100%)' },
-                            '100%': { transform: 'translateX(0%)' },
                         }
                     }
                 }
@@ -69,513 +58,449 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --klein-blue: #002FA7;
-            --klein-blue-glow: rgba(0, 47, 167, 0.6);
-            --bg-gradient-dark: radial-gradient(circle at 50% 50%, #111111 0%, #050505 100%);
-            --bg-gradient-light: radial-gradient(circle at 50% 50%, #ffffff 0%, #F2F2F7 100%);
         }
 
         body {
-            background: var(--bg-gradient-light);
+            background-color: #F2F2F7;
             color: #111;
-            /* overflow-x: hidden; Handled by Lenis mostly, but keeping for safety */
             transition: background 0.5s ease, color 0.5s ease;
         }
 
         html.dark body {
-            background: var(--bg-gradient-dark);
+            background-color: #050505;
             color: #ffffff;
         }
 
-        /* Lenis Recommended CSS */
+        /* Lenis */
         html.lenis { height: auto; }
         .lenis.lenis-smooth { scroll-behavior: auto; }
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
         .lenis.lenis-stopped { overflow: hidden; }
         .lenis.lenis-scrolling iframe { pointer-events: none; }
 
-        /* Adaptive Cursor */
+        /* Custom Cursor - FIXED VISIBILITY */
         @media (hover: hover) and (pointer: fine) {
-            body { cursor: none !important; }
+            body, button, a, input, [role="button"], .cursor-pointer { cursor: none !important; }
             .cursor-dot, .cursor-outline { display: block; }
         }
-        
         .cursor-dot, .cursor-outline {
-            position: fixed;
-            top: 0; left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 20000;
-            pointer-events: none;
-            mix-blend-mode: difference;
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%); border-radius: 50%;
+            z-index: 20000; pointer-events: none; mix-blend-mode: difference;
         }
         .cursor-dot { width: 8px; height: 8px; background-color: white; }
         .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
         body:hover .cursor-outline { width: 30px; height: 30px; }
 
-        /* Grain Texture */
-        .grain-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 50; 
-            pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.2; filter: invert(1);
-        }
-        html.dark .grain-overlay { opacity: 0.4; filter: none; }
+        /* Typography */
+        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5); }
+        .text-stroke-black { -webkit-text-stroke: 1px rgba(0,0,0,0.8); }
+        
+        /* Glass Cards */
+        .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+        html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card:hover { border-color: var(--klein-blue); background: rgba(0, 47, 167, 0.05); }
 
         /* Marquee */
         .marquee-container { overflow: hidden; white-space: nowrap; display: flex; }
         .marquee-content { display: flex; flex-shrink: 0; }
-        
-        .animate-marquee { animation: marquee 60s linear infinite; }
-        .animate-marquee-reverse { animation: marqueeReverse 60s linear infinite; }
+        .animate-marquee { animation: marquee 30s linear infinite; }
 
-        /* Typography Effects */
-        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4); }
-        html.dark .outline-text { -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4); }
-        
-        .glitch-wrapper { position: relative; }
-        .glitch-wrapper::before, .glitch-wrapper::after {
-            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #F2F2F7; 
-        }
-        html.dark .glitch-wrapper::before, html.dark .glitch-wrapper::after { background: #050505; }
-        
-        .glitch-wrapper::before { left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
-        .glitch-wrapper::after { left: -2px; text-shadow: -1px 0 #00fff9; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
-        @keyframes glitch-anim { 0% { clip: rect(3px, 9999px, 11px, 0); } 100% { clip: rect(22px, 9999px, 76px, 0); } }
-        @keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 92px, 0); } 100% { clip: rect(35px, 9999px, 12px, 0); } }
-
-        /* Glass Cards - INCREASED BLUR VISIBILITY */
-        .glass-card { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
-        html.dark .glass-card { background: rgba(20, 20, 20, 0.2); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .glass-card:hover { border-color: var(--klein-blue); background: rgba(0, 47, 167, 0.05); }
-
-        /* Sidebar Transition */
+        /* Transitions */
         .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
         .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
         .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.4s ease; }
         .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
 
         /* Loader */
-        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 20000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #002FA7; z-index: 20000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         
-        .capsule-nav { transition: width 0.3s ease, background-color 0.3s ease; }
+        .capsule-nav { transition: width 0.3s ease, background-color 0.3s ease, color 0.3s ease; }
 
-        /* Mask Gradient for 3D Viewer */
-        .mask-fade-edges {
-            mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+        .magnetic-ball { transition: opacity 0.1s ease; }
+        .magnetic-ball-line { stroke: currentColor; stroke-width: 1; opacity: 0.15; }
+        
+        /* Nav Uniform Styles */
+        .nav-glass {
+            background: rgba(150, 150, 150, 0.1); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: width 0.3s ease, background 0.3s ease, color 0.2s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        /* SVG Logo Class */
-        .logo-svg {
-            fill: currentColor;
+        /* Work Gallery & Card Glows */
+        .card-corner-glow {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            /* Enhanced Blue Glow */
+            background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .group:hover .card-corner-glow { opacity: 1; }
+        
+        /* Background Glow for Works Page */
+        .works-page-glow {
+            position: absolute;
+            width: 80vw;
+            height: 80vw;
+            /* Blue ambient light for page background */
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(100px);
+        }
+
+        /* Specific Hover Fixes */
+        .hover-solid-blue:hover { 
+            background-color: #002FA7 !important; 
+            color: white !important; 
+            border-color: #002FA7 !important;
         }
         
-        /* Magnetic Balls Style */
-        .magnetic-ball line {
-            stroke: currentColor;
-            stroke-width: 1;
-            opacity: 0.2;
+        .hover-solid-gray:hover { 
+            background-color: gray !important; 
+            color: white !important; 
+            border-color: gray !important;
         }
+        
+        /* Ensure card content sits above glow */
+        .card-content { position: relative; z-index: 10; }
+        
+        /* FIX: Polished Card Blur & Aesthetic (Apple Style) */
+        .app-card-glass {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+            backdrop-filter: blur(60px) saturate(180%);
+            -webkit-backdrop-filter: blur(60px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 30px 60px -10px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(255,255,255,0.2);
+            transform: translateZ(0); 
+            will-change: transform, backdrop-filter;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); /* Apple easing */
+        }
+        
+        html.dark .app-card-glass {
+            /* Deeper dark glass */
+            background: linear-gradient(180deg, rgba(30, 30, 35, 0.7) 0%, rgba(10, 10, 15, 0.6) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 40px 80px -15px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
+        }
+        
+        .app-card-glass:hover {
+            transform: translateY(-8px) scale(1.01) translateZ(0);
+            box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.25);
+        }
+        
+        html.dark .app-card-glass:hover {
+             border-color: rgba(255, 255, 255, 0.2);
+             box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3);
+        }
+
     </style>
 </head>
 <body>
-    <div id="app" class="relative min-h-screen selection:bg-[#002FA7] selection:text-white">
+    <div id="app" class="relative min-h-screen selection:bg-white selection:text-klein-blue">
         
-        <!-- Custom Cursor -->
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
 
-        <!-- Visual Noise -->
-        <div class="grain-overlay"></div>
-
-        <!-- Loader -->
         <div class="loader" ref="loader">
             <div class="flex items-end gap-1 mb-4">
                 <div class="w-2 h-8 bg-white animate-bounce" style="animation-delay: 0s"></div>
-                <div class="w-2 h-12 bg-klein-blue animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-2 h-12 bg-white/50 animate-bounce" style="animation-delay: 0.1s"></div>
                 <div class="w-2 h-6 bg-white animate-bounce" style="animation-delay: 0.2s"></div>
             </div>
             <div class="font-mono text-sm tracking-[0.3em] text-white">SYSTEM_BOOT</div>
         </div>
 
         <!-- Navigation Bar -->
-        <nav class="fixed top-0 left-0 w-full z-[9990] px-8 py-8 flex justify-between items-center pointer-events-none transition-colors duration-500">
+        <nav ref="navBar" class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none">
+            
             <!-- Left: Sidebar Trigger -->
-            <button @click="toggleSidebar" class="group flex items-center gap-4 focus:outline-none pointer-events-auto text-black dark:text-white">
-                <div class="relative w-10 h-10 border border-current rounded-full flex flex-col justify-center items-center gap-1 overflow-hidden backdrop-blur-sm group-hover:border-klein-blue transition-colors">
-                    <span class="w-4 h-0.5 bg-current transition-all duration-300 group-hover:w-6 group-hover:bg-klein-blue"></span>
-                    <span class="w-6 h-0.5 bg-current transition-all duration-300 group-hover:w-4 group-hover:bg-klein-blue"></span>
+            <button @click="toggleSidebar" 
+                    ref="navBtnLeft"
+                    class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform"
+                    :class="navLeftColor">
+                <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
+                    <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
+                    <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
                 </div>
             </button>
             
             <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
-                <div class="relative group cursor-pointer" @click="toggleCapsuleNav">
-                    <div class="bg-white/30 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-full h-10 flex items-center justify-center transition-all duration-500 overflow-hidden shadow-lg text-black dark:text-white hover:bg-white/40 dark:hover:bg-black/30"
-                         :class="isCapsuleOpen ? 'w-[320px]' : 'w-[140px]'">
+                <div class="relative group cursor-pointer" 
+                     ref="navCapsule"
+                     @click="toggleCapsuleNav"
+                     @mouseenter="isCapsuleOpen = true" 
+                     @mouseleave="isCapsuleOpen = false">
+                    <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
+                         :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navCapsuleColor]">
                         
-                        <div v-if="!isCapsuleOpen" class="font-mono text-xs tracking-widest px-6 animate-fade-in">
-                            {{ activeSection.toUpperCase() }}
-                        </div>
-
-                        <div v-else class="flex gap-4 font-mono text-[10px] text-gray-800 dark:text-gray-300 px-6 animate-fade-in whitespace-nowrap">
-                            <a href="#home" class="hover:text-klein-blue dark:hover:text-white transition-colors">HOME</a>
-                            <span>/</span>
-                            <a href="#profile" class="hover:text-klein-blue dark:hover:text-white transition-colors">PROFILE</a>
-                            <span>/</span>
-                            <a href="#works" class="hover:text-klein-blue dark:hover:text-white transition-colors">WORKS</a>
-                            <span>/</span>
-                            <a href="#connect" class="hover:text-klein-blue dark:hover:text-white transition-colors">CONNECT</a>
+                        <div class="w-full h-full flex items-center justify-center">
+                            <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
+                                {{ activeSection.toUpperCase() }}
+                            </div>
+                            <div v-else class="flex gap-5 font-mono text-[10px] font-bold px-6 animate-fade-in whitespace-nowrap">
+                                <a href="#home" class="hover:opacity-60 transition-opacity">HOME</a>
+                                <span>/</span>
+                                <a href="#profile" class="hover:opacity-60 transition-opacity">PROFILE</a>
+                                <span>/</span>
+                                <a href="#works" class="hover:opacity-60 transition-opacity">WORKS</a>
+                                <span>/</span>
+                                <a href="#connect" class="hover:opacity-60 transition-opacity">CONNECT</a>
+                            </div>
                         </div>
                     </div>
-
-                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;">
-                        <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20" 
-                              fill="none" stroke="transparent" stroke-width="2" />
-                         <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20" 
-                              fill="none" stroke="#002FA7" stroke-width="3"
-                              :stroke-dasharray="capsulePerimeter"
-                              :stroke-dashoffset="capsuleDashOffset"
-                              style="transition: stroke-dashoffset 0.1s linear, stroke-dasharray 0.5s ease;" />
+                    <!-- Progress Ring -->
+                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
+                        <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
+                         <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
+                              :stroke-dasharray="capsulePerimeter" :stroke-dashoffset="capsuleDashOffset"
+                              class="opacity-100" style="transition: stroke-dashoffset 0.1s linear;" />
                     </svg>
                 </div>
             </div>
 
-            <!-- Right: Theme & Logo -->
-            <div class="flex items-center gap-6 pointer-events-auto text-black dark:text-white">
-                <!-- Theme Toggle -->
-                <button @click="cycleTheme" class="hover:text-klein-blue transition-colors focus:outline-none flex items-center justify-center w-8 h-8 rounded-full">
-                    <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
-                    <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
-                    <span v-show="themeMode === 'auto'" class="animate-fade-in"><i data-lucide="monitor" class="w-5 h-5"></i></span>
+            <!-- Right: Theme Toggle -->
+            <div class="pointer-events-auto">
+                <button @click="cycleTheme" 
+                        ref="navBtnRight"
+                        class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform"
+                        :class="navRightColor">
+                    <div class="flex items-center justify-center w-full h-full">
+                        <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                        <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
+                        <span v-show="themeMode === 'auto'" class="animate-fade-in"><i data-lucide="monitor" class="w-5 h-5"></i></span>
+                    </div>
                 </button>
-                
-                <!-- SVG Logo -->
-                <div class="w-8 h-8 hover:text-klein-blue transition-colors duration-300 cursor-pointer">
-                    <svg class="logo-svg w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848.58 494.09">
-                        <g>
-                            <path fill-rule="evenodd" d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z"/>
-                            <path fill-rule="evenodd" d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z"/>
-                        </g>
-                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z"/>
-                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"/>
-                    </svg>
-                </div>
             </div>
         </nav>
 
-        <!-- Sidebar Overlay -->
+        <!-- Sidebar -->
         <transition name="backdrop">
-            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9995]"></div>
+            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[10000]"></div>
         </transition>
 
-        <!-- Sidebar -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[33vw] h-full bg-white/95 dark:bg-[#050505]/95 backdrop-blur-2xl text-black dark:text-white z-[10000] border-r border-gray-200 dark:border-white/10 flex flex-col pl-6 pr-8 md:pl-10 md:pr-12 shadow-2xl overflow-y-auto overflow-x-hidden">
-                
-                <!-- Close Button -->
-                <button @click="toggleSidebar" class="absolute top-8 left-6 md:left-10 w-10 h-10 flex items-center justify-center border border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-klein-blue transition-all">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10001] border-r border-gray-200 dark:border-white/10 flex flex-col shadow-2xl overflow-y-auto overflow-x-hidden" style="container-type: inline-size;">
+                <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-12 w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300 z-50">
+                    <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
-
-                <div class="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
-                    <div class="absolute top-1/4 right-0 w-64 h-64 border border-klein-blue rounded-full translate-x-1/2"></div>
-                </div>
-
-                <div class="flex flex-col gap-6 relative z-10 mt-40 w-full">
-                    <div class="font-mono text-xs text-gray-500 mb-4 tracking-widest">SYSTEM MAP</div>
-                    <a v-for="(link, index) in systemLinks" 
-                       :key="link.name"
-                       href="#" 
-                       class="group flex items-center gap-4 text-[clamp(2rem,4vw,3.5rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-600 hover:to-klein-blue transition-all duration-300 p-2 pr-4 block w-full leading-tight"
-                       style="-webkit-text-stroke: 1px rgba(128,128,128,0.1);">
-                        <span class="font-mono text-xs text-klein-blue opacity-0 group-hover:opacity-100 transition-opacity">0{{index+1}}</span>
-                        <span class="group-hover:translate-x-4 transition-transform duration-300 break-words">{{ link.name }}</span>
-                        <span class="opacity-0 -ml-4 group-hover:ml-0 group-hover:opacity-100 transition-all duration-300">
-                             <i data-lucide="arrow-right" class="w-6 h-6 text-klein-blue"></i>
-                        </span>
+                <!-- Updated Sidebar Links with Smart Dynamic Sizing -->
+                <!-- Font size adjusted to 11cqi to prevent overlap while maintaining impact. Arrow spacing handled via pr-12. -->
+                <div class="flex flex-col gap-8 relative z-10 mt-48 w-full">
+                    <div class="font-mono text-sm text-klein-blue mb-4 tracking-[0.3em] font-bold pl-8 md:pl-12">SYSTEM MAP</div>
+                    <a v-for="(link, index) in systemLinks" :key="link.name" href="#" class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(3rem, 11cqi, 6rem);">
+                        <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2" style="font-size: 1rem;">0{{index+1}}</span>
+                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] break-words">{{ link.name }}</span>
+                        <span class="opacity-0 -ml-8 group-hover:ml-0 group-hover:opacity-100 transition-all duration-500 delay-100"><i data-lucide="arrow-right" class="w-8 h-8 text-klein-blue"></i></span>
                     </a>
-                </div>
-                
-                <div class="absolute bottom-12 left-6 md:left-10 font-mono text-[10px] text-gray-500 flex gap-8">
-                    <div>
-                        <p class="font-bold mb-2 tracking-widest">STATUS</p>
-                        <p class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> ONLINE</p>
-                    </div>
                 </div>
             </aside>
         </transition>
 
-        <!-- Main Content -->
-        <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none': isSidebarOpen }">
+        <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <!-- Hero Section (NEW LAYOUT - WILDER) -->
-            <section id="home" class="relative w-full h-screen flex items-center justify-center px-6 md:px-12 pt-20 overflow-hidden bg-white dark:bg-[#050505]">
-                
-                <!-- Background Marquees (Increased Opacity and Contrast) -->
-                <div class="absolute inset-0 flex flex-col justify-between opacity-80 dark:opacity-60 pointer-events-none select-none overflow-hidden py-12">
-                    <div class="marquee-container -rotate-2">
-                        <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-300 dark:text-[#1a1a1a] whitespace-nowrap">
-                            SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
-                        </div>
-                         <div class="marquee-content animate-marquee text-[8vw] font-black text-gray-300 dark:text-[#1a1a1a] whitespace-nowrap">
-                            SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE // SYSTEM ARCHITECTURE // INTERFACE DESIGN // USER EXPERIENCE //
-                        </div>
+            <!-- Hero Section -->
+            <section id="home" class="relative w-full h-[180vh] bg-klein-blue text-white">
+                <div class="sticky top-0 w-full h-screen overflow-hidden">
+                    <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
+                         <div id="magnetic-container" class="w-full h-full relative cursor-crosshair"></div>
                     </div>
-                    
-                    <div class="marquee-container rotate-1">
-                        <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-200 dark:text-[#111] whitespace-nowrap">
-                            DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
+                    <div class="absolute inset-0 z-10 flex flex-col justify-end items-start pointer-events-none">
+                        <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-klein-blue/90 via-klein-blue/40 to-transparent pointer-events-none"></div>
+                        <div class="hero-text-container w-full px-6 md:px-12 pb-12 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20">
+                            <div class="relative">
+                                <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal whitespace-nowrap" id="hero-name">
+                                    MICHAEL QIU
+                                </h1>
+                                <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.3vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
+                            </div>
+                            <div class="intro-text opacity-0 mt-6 pl-2 max-w-xl transition-opacity duration-500 relative">
+                                <p class="text-xl md:text-2xl font-light leading-relaxed">
+                                    Designing digital utilities that feel <span class="font-bold italic text-white/90">inevitable</span>.
+                                </p>
+                            </div>
                         </div>
-                         <div class="marquee-content animate-marquee-reverse text-[6vw] font-display font-bold text-gray-200 dark:text-[#111] whitespace-nowrap">
-                            DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL • DIGITAL CRAFTSMANSHIP • MINIMALIST • FUNCTIONAL •
-                        </div>
-                    </div>
-
-                    <div class="marquee-container -rotate-1">
-                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
-                             MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
-                        </div>
-                        <div class="marquee-content animate-marquee text-[10vw] font-black text-gray-100 dark:text-[#0a0a0a] whitespace-nowrap">
-                             MICHAEL QIU • PORTFOLIO • 2025 • MICHAEL QIU • PORTFOLIO • 2025 •
+                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse z-20">
+                            <span>SCROLL TO BEGIN</span>
+                            <i data-lucide="arrow-down" class="w-4 h-4"></i>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="z-10 w-full max-w-[90vw] mx-auto flex flex-col md:flex-row items-center justify-between h-full pb-20">
-                    
-                    <!-- Left Column: Name & Intro -->
-                    <div class="flex flex-col justify-center items-start z-20 reveal-text mt-20 md:mt-0 w-full md:w-1/2">
-                         <h1 class="text-[12vw] leading-[0.85] font-black tracking-tighter mix-blend-exclusion text-black dark:text-white">
-                            MICHAEL
-                        </h1>
-                        <h1 class="text-[12vw] leading-[0.85] font-black tracking-tighter outline-text mix-blend-exclusion pl-2 md:pl-4">
-                            QIU
-                        </h1>
-                        
-                        <div class="mt-8 ml-2 max-w-lg">
-                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-12 h-[2px] bg-klein-blue"></div>
-                                <p class="font-mono text-klein-blue tracking-[0.3em] text-xs font-bold">PORTFOLIO 2025</p>
-                            </div>
-                            <p class="text-lg md:text-xl font-light text-gray-600 dark:text-gray-400 leading-relaxed">
-                                Designing utilities that reshape the <br>
-                                <span class="text-klein-blue font-bold italic">work experience</span>.
-                            </p>
-                             <div class="font-mono text-xs text-gray-500 animate-pulse mt-8">
-                                SCROLL TO EXPLORE ↓↓↓
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Interactive Magnetic Balls Logo (WILDER) -->
-                    <div class="relative w-full md:w-1/2 h-[50vw] md:h-full flex items-center justify-center z-20 md:mr-10">
-                         <div id="magnetic-container" class="w-full h-full relative">
-                             <!-- Balls will be injected here -->
-                         </div>
-                    </div>
-
+            <!-- About Banner -->
+            <section class="w-full h-[120vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
+                <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
+                    <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
+                        ABOUT<br>ME
+                    </h2>
                 </div>
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-24 px-6 md:px-12 relative border-t border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md transition-colors duration-500">
-                <div class="max-w-7xl mx-auto relative z-10">
-                    <div class="mb-16">
-                         <div class="flex items-center gap-2 mb-2">
-                            <span class="text-klein-blue">/</span> 
-                            <span class="font-display font-bold">PROFILE</span>
-                         </div>
-                        <h2 class="text-4xl md:text-5xl font-light leading-tight text-gray-800 dark:text-gray-200 max-w-4xl">
-                            I build digital products that feel <span class="italic font-serif text-klein-blue">inevitable</span>. Code is my medium, minimalism is my method.
-                        </h2>
+            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30">
+                <div class="max-w-[90vw] mx-auto relative z-10">
+                    <div class="flex items-end justify-between mb-24 border-b border-gray-200 dark:border-white/10 pb-8">
+                        <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
                     </div>
 
-                    <!-- Bento Grid Layout -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
-                        
-                        <!-- Main Info -->
-                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
-                             <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-klein-blue/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-klein-blue/30 transition-colors duration-500"></div>
-                             
-                             <div>
-                                 <h3 class="font-mono text-xs text-gray-500 mb-4 tracking-widest">ABOUT_ME</h3>
-                                 <p class="text-lg leading-relaxed text-gray-800 dark:text-gray-300">
-                                     As a Workspace Architect, I don't just write code; I design workflows. My background in C++ and Python allows me to build rigorous back-end systems, while my passion for Swift and UI design ensures the front-end is fluid and intuitive.
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(220px,auto)]">
+                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
+                             <div class="card-corner-glow"></div>
+                             <div class="card-content">
+                                 <h3 class="font-mono text-xs text-klein-blue mb-6 tracking-widest border border-klein-blue/30 inline-block px-3 py-1 rounded-full">ABOUT_ME</h3>
+                                 <p class="text-2xl md:text-3xl font-light leading-snug text-gray-900 dark:text-gray-100">
+                                     I don't just write code; <span class="font-bold border-b-2 border-klein-blue">I design workflows.</span> My background in C++ and Python allows me to build rigorous back-end systems.
                                  </p>
                              </div>
-                             <div class="mt-8">
-                                 <div class="h-[1px] w-full bg-gray-200 dark:bg-white/10 mb-4"></div>
-                                 <div class="flex justify-between items-end">
-                                     <span class="font-mono text-xs">BASED IN</span>
-                                     <span class="font-bold text-xl">127.0.0.1</span>
-                                 </div>
+                             <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6 card-content">
+                                 <div><span class="block font-mono text-xs text-gray-500 mb-1">LOCATION</span><span class="font-bold text-xl text-black dark:text-white">127.0.0.1</span></div>
+                                 <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
                              </div>
                         </div>
-
-                        <!-- Stack -->
-                        <div class="col-span-1 md:col-span-1 glass-card p-6 flex flex-col justify-between hover:bg-klein-blue dark:hover:bg-klein-blue hover:text-white dark:hover:text-white transition-all duration-300 group">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-mono text-xs opacity-60">STACK</h3>
-                                <i data-lucide="layers" class="w-5 h-5 opacity-60"></i>
-                            </div>
-                            <ul class="space-y-2 mt-4 font-bold text-lg">
-                                <li>Python</li>
-                                <li>C++</li>
-                                <li>SwiftUI</li>
-                                <li>Vue.js</li>
-                            </ul>
+                        
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-blue transition-all duration-300 group">
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3><i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white card-content"><li>Python</li><li>C++</li><li>SwiftUI</li><li>Vue.js</li></ul>
                         </div>
-
-                         <!-- Focus -->
-                        <div class="col-span-1 md:col-span-1 glass-card p-6 flex flex-col justify-between hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-mono text-xs opacity-60">FOCUS</h3>
-                                <i data-lucide="crosshair" class="w-5 h-5 opacity-60"></i>
-                            </div>
-                             <div class="mt-4">
-                                <p class="text-3xl font-black">System<br>Utilities</p>
-                            </div>
+                        
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-gray transition-all duration-300 group">
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3><i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                             <div class="mt-4 card-content"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p></div>
                         </div>
-
-                         <!-- Motto Card -->
-                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-8 flex flex-col justify-center relative overflow-hidden group">
-                             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                             <h3 class="font-mono text-xs text-gray-500 mb-2 relative z-10">MOTTO</h3>
-                             <p class="text-xl md:text-2xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10">
-                                 "Give people wonderful tools, and they'll do wonderful things."
-                             </p>
-                             <p class="text-right text-xs font-bold mt-2 text-gray-500 relative z-10">— Steve Jobs</p>
+                        
+                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
+                             <div class="card-corner-glow"></div>
+                             <div class="card-content">
+                                 <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">PHILOSOPHY</h3>
+                                 <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">"Give people wonderful tools, and they'll do wonderful things."</p>
+                                 <p class="text-right text-sm font-bold mt-4 text-klein-blue relative z-10">— Steve Jobs</p>
+                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Works / Apps Section -->
-            <section id="works" class="relative w-full min-h-screen overflow-hidden flex flex-col bg-transparent">
-                <div class="w-full py-4 border-y border-gray-200 dark:border-white/10 bg-white dark:bg-[#020202] transition-colors duration-500">
-                    <div class="marquee-container">
-                        <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10 animate-marquee">
-                            DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
-                        </div>
-                         <div class="marquee-content font-display text-4xl md:text-6xl font-bold opacity-10 animate-marquee">
-                            DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • DESKTOP RENAMER • OPTCLICKER • SPACESWITCHER • 
-                        </div>
-                    </div>
+            <!-- Works Section -->
+            <section id="works" class="relative bg-[#050505] z-30">
+                <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden z-0">
+                    <div class="w-full h-full" ref="canvasContainer"></div>
                 </div>
+                
+                <div class="absolute top-1/4 right-0 works-page-glow"></div>
+                <div class="absolute bottom-1/4 left-0 works-page-glow"></div>
 
-                <div class="flex-grow container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-start py-12 gap-12">
-                    
-                    <!-- 3D Viewer Area (Adjusted position downwards using top-32 and transform) -->
-                    <div class="w-full md:w-7/12 h-[50vh] md:h-screen sticky top-32 md:top-0 z-0 mask-fade-edges order-first md:order-last flex items-center justify-center translate-y-12" ref="canvasContainer">
-                        <div v-if="textureError" class="absolute top-4 right-4 z-50 bg-red-900/80 border border-red-500 text-white p-4 max-w-sm rounded backdrop-blur-md">
-                            <div class="flex items-center gap-2 mb-2 font-bold text-red-300">
-                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
-                                TEXTURE LOAD FAILED
-                            </div>
-                            <p class="text-xs font-mono mb-2">Run local server to see textures.</p>
-                        </div>
+                <div class="relative z-10">
+                    <div class="min-h-screen flex flex-col justify-center items-center pointer-events-none">
+                        <h2 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 mix-blend-difference">WORKS</h2>
+                        <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
                     </div>
 
-                    <!-- Text Content -->
-                    <div class="w-full md:w-5/12 z-20 order-last md:order-first md:py-24">
-                        <!-- Redesigned Header to match Profile -->
-                        <div class="mb-12">
-                             <div class="flex items-center gap-2 mb-2">
-                                <span class="text-klein-blue">/</span> 
-                                <span class="font-display font-bold">WORKS</span>
-                             </div>
-                            <h2 class="text-4xl md:text-5xl font-light leading-tight text-gray-800 dark:text-gray-200">
-                                Utilities for the <span class="italic font-serif text-klein-blue">Power User</span>
-                            </h2>
-                        </div>
+                    <!-- App Sections -->
+                    <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center px-6 md:px-24" :data-index="i">
+                        <!-- Left: Reserved for 3D Icon -->
+                        <div class="hidden md:block w-1/2 h-full"></div>
+                        
+                        <!-- Right: The Glass Card -->
+                        <div class="w-full md:w-1/2 flex justify-center md:justify-end">
+                            <div class="app-card-glass w-full max-w-2xl rounded-[2.5rem] p-8 md:p-12 relative group overflow-hidden cursor-pointer backdrop-blur-3xl">
+                                <div class="card-corner-glow"></div>
 
-                        <div class="flex flex-col gap-6">
-                            <div v-for="(app, i) in apps" :key="app.id" 
-                                 @mouseenter="hoverApp(app.id)" 
-                                 @mouseleave="resetApp"
-                                 class="group relative p-8 border border-gray-200 dark:border-white/5 bg-white/40 dark:bg-[#0a0a0a]/20 transition-all duration-300 cursor-none overflow-hidden backdrop-blur-xl shadow-lg rounded-sm hover:border-klein-blue/50">
-                                
-                                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-klein-blue/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                                <div class="relative z-10 flex justify-between items-center text-current">
-                                    <div>
-                                        <span class="font-mono text-xs opacity-50 mb-2 block">0{{ i + 1 }}</span>
-                                        <h3 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ app.name }}</h3>
+                                <div class="card-content flex flex-col gap-8" style="container-type: inline-size;">
+                                    <!-- Header -->
+                                    <div class="flex items-center gap-4">
+                                        <span class="font-display font-bold text-3xl text-black/20 dark:text-white/30 group-hover:text-klein-blue transition-colors">0{{i+1}}</span>
+                                        <span class="font-mono text-[10px] tracking-[0.2em] text-gray-600 dark:text-gray-400 uppercase">System Utility</span>
                                     </div>
-                                    <span class="w-10 h-10 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all">
-                                         <i data-lucide="arrow-up-right" class="w-5 h-5 text-black dark:text-white group-hover:text-white"></i>
-                                    </span>
+                                    
+                                    <!-- Body -->
+                                    <div>
+                                        <h3 class="font-black text-gray-900 dark:text-white mb-6 tracking-tighter leading-[0.9] break-words" style="font-size: clamp(2rem, 11cqi, 3.75rem);">{{ app.name }}</h3>
+                                        <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed font-light">
+                                            {{ app.desc }}
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Footer / Actions -->
+                                    <div class="pt-6 mt-4 border-t border-black/10 dark:border-white/5 flex items-center justify-between">
+                                        <div class="flex gap-2">
+                                            <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">MACOS</span>
+                                            <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">SWIFT</span>
+                                        </div>
+                                        
+                                        <!-- Apple Style Glass Action Button (ENHANCED) -->
+                                        <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 shadow-[0_0_20px_rgba(255,255,255,0.1)] text-gray-900 dark:text-white font-bold text-sm hover:scale-105 hover:bg-white/30 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all duration-300">
+                                            <span>View</span>
+                                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <p class="relative z-10 mt-4 text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors leading-relaxed">
-                                    {{ app.desc }}
-                                </p>
                             </div>
                         </div>
                     </div>
-
+                    <div class="h-[50vh]"></div>
                 </div>
             </section>
             
-            <!-- Connect Section -->
-            <section id="connect" class="w-full py-24 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-black transition-colors duration-500">
-                <div class="max-w-7xl mx-auto">
-                    <div class="flex items-center gap-2 mb-12">
-                        <div class="w-2 h-2 bg-klein-blue"></div>
-                        <span class="font-mono text-xs tracking-widest text-gray-500">CONNECT</span>
+            <!-- Connect Section - UPDATED: Perfectly Centered -->
+            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30">
+                <div class="max-w-7xl mx-auto w-full">
+                    <!-- Title centered -->
+                    <div class="flex items-center justify-center gap-3 mb-16 w-full text-center">
+                        <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
+                        <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
                     </div>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- GitHub -->
-                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-64 overflow-hidden rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 hover:border-klein-blue transition-all duration-500">
-                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gray-200/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            <div class="relative z-10 h-full p-8 flex flex-col justify-between">
+                        
+                        <!-- Github -->
+                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
+                            <div class="card-corner-glow"></div>
+                            <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
                                 <div class="flex justify-between items-start">
-                                    <i data-lucide="github" class="w-10 h-10 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                    <span class="w-10 h-10 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all">
-                                        <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
-                                    </span>
+                                    <i data-lucide="github" class="w-12 h-12 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
                                 </div>
-                                <div>
-                                    <h3 class="text-3xl font-bold mb-2 text-black dark:text-white">GitHub</h3>
-                                    <p class="text-gray-500 group-hover:text-klein-blue transition-colors">Explore my source code</p>
-                                </div>
+                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-klein-blue transition-colors text-xl">Explore source code</p></div>
                             </div>
                         </a>
 
                         <!-- Kaggle -->
-                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-64 overflow-hidden rounded-2xl bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 hover:border-[#20BEFF] transition-all duration-500">
-                            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[#20BEFF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            <div class="relative z-10 h-full p-8 flex flex-col justify-between">
+                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
+                            <div class="card-corner-glow" style="background: radial-gradient(circle at 100% 0%, rgba(32, 190, 255, 0.6) 0%, transparent 60%);"></div>
+
+                            <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
                                 <div class="flex justify-between items-start">
-                                    <div class="text-3xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
-                                    <span class="w-10 h-10 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all">
-                                        <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
-                                    </span>
+                                    <div class="text-4xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
+                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
                                 </div>
-                                <div>
-                                    <h3 class="text-3xl font-bold mb-2 text-black dark:text-white">Kaggle</h3>
-                                    <p class="text-gray-500 group-hover:text-[#20BEFF] transition-colors">View my data science projects</p>
-                                </div>
+                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">Kaggle</h3><p class="text-gray-500 group-hover:text-[#20BEFF] transition-colors text-xl">Data Science</p></div>
                             </div>
                         </a>
                     </div>
                 </div>
             </section>
 
-            <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#050505] flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-500 transition-colors duration-500">
-                <p>&copy; 2025 MICHAEL QIU</p>
-                <div class="flex gap-6 mt-4 md:mt-0">
+            <footer class="w-full py-16 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
+                <p>&copy; 2025 MICHAEL QIU.</p>
+                <div class="flex gap-8 mt-6 md:mt-0">
                     <a href="#home" class="hover:text-klein-blue transition-colors">BACK TO TOP</a>
                 </div>
-                <p class="mt-4 md:mt-0">DESIGNED IN THE VOID</p>
             </footer>
         </main>
     </div>
@@ -586,58 +511,48 @@
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
-                const themeMode = ref('auto'); // 'light', 'dark', 'auto'
-                const activeTheme = ref('dark'); // Resolved theme state
-                
+                const themeMode = ref('auto'); 
+                const activeTheme = ref('dark'); 
                 const scrollProgress = ref(0);
                 const activeSection = ref('home');
                 const isCapsuleOpen = ref(false);
-                
                 const loader = ref(null);
                 const canvasContainer = ref(null);
-                const textureError = ref(false);
-
+                
+                // Real-time Nav Color State
+                const navLeftColor = ref('text-white');
+                const navCapsuleColor = ref('text-white');
+                const navRightColor = ref('text-white');
+                
+                const navBtnLeft = ref(null);
+                const navCapsule = ref(null);
+                const navBtnRight = ref(null);
+                
                 const systemLinks = [
-                    { name: 'HOME' },
-                    { name: 'WRITINGS' },
-                    { name: 'ARCHIVE' },
-                    { name: 'LABS' }
+                    { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
                 ];
                 
                 const apps = [
                     { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'resources/DesktopRenamer.png' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click by pressing Option key. Perfect for touchpad gaming.', img: 'resources/OptClicker.png' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/OptClicker.png' },
                     { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/SpaceSwitcher.png' }
                 ];
 
                 let scene, camera, renderer, appsGroup;
                 let icons = []; 
                 let mouseX = 0, mouseY = 0;
-                let ambientLight, keyLight, backLight;
-                let lenis; // Lenis instance
+                let lenis;
 
-                const capsulePerimeter = 320; 
-                // FIX: Updated logic to ensure complete closure on scroll
+                const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
                     const progress = Math.min(100, Math.max(0, scrollProgress.value));
                     return Math.max(0, capsulePerimeter - (progress / 100) * capsulePerimeter);
                 });
 
-                const toggleCapsuleNav = () => {
-                    isCapsuleOpen.value = !isCapsuleOpen.value;
-                };
+                const toggleCapsuleNav = () => { isCapsuleOpen.value = !isCapsuleOpen.value; };
+                const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value; };
 
-                const toggleSidebar = () => {
-                    isSidebarOpen.value = !isSidebarOpen.value;
-                };
-
-                watch(isSidebarOpen, (newVal) => {
-                    if (newVal) {
-                        nextTick(() => {
-                            lucide.createIcons();
-                        });
-                    }
-                });
+                watch(isSidebarOpen, (newVal) => { if (newVal) nextTick(() => lucide.createIcons()); });
 
                 const resolveTheme = () => {
                     let resolved = 'dark';
@@ -647,50 +562,124 @@
                         resolved = themeMode.value;
                     }
                     activeTheme.value = resolved;
-                    
-                    if (resolved === 'dark') {
-                        document.documentElement.classList.add('dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                    }
-                    updateSceneTheme();
+                    if (resolved === 'dark') document.documentElement.classList.add('dark');
+                    else document.documentElement.classList.remove('dark');
                 };
 
                 const cycleTheme = () => {
                     if (themeMode.value === 'auto') themeMode.value = 'light';
                     else if (themeMode.value === 'light') themeMode.value = 'dark';
                     else themeMode.value = 'auto';
-                    
                     resolveTheme();
                 };
 
-                // FIX: More robust scroll calculation
+                // Helper to get luminance of color string
+                const getLuminance = (colorStr) => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = 1; canvas.height = 1;
+                    const ctx = canvas.getContext("2d");
+                    ctx.fillStyle = colorStr;
+                    ctx.fillRect(0, 0, 1, 1);
+                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+                    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                };
+
+                // Check contrast for a specific element
+                const checkElementContrast = (el) => {
+                    if (!el) return 'text-white';
+                    const rect = el.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2;
+                    const y = rect.top + rect.height / 2;
+                    const elements = document.elementsFromPoint(x, y);
+                    let bgLuminance = 0; // Default to dark (so text becomes white)
+                    
+                    for (let e of elements) {
+                        if (e.tagName === 'NAV' || e.closest('nav') || e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) continue;
+                        const style = window.getComputedStyle(e);
+                        const bgColor = style.backgroundColor;
+                        if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') continue;
+                        bgLuminance = getLuminance(bgColor);
+                        break;
+                    }
+                    
+                    return bgLuminance > 128 ? 'text-black' : 'text-white';
+                };
+
+                // Real-time Contrast Check for all buttons
+                const updateNavColors = () => {
+                    navLeftColor.value = checkElementContrast(navBtnLeft.value);
+                    navCapsuleColor.value = checkElementContrast(navCapsule.value);
+                    navRightColor.value = checkElementContrast(navBtnRight.value);
+                };
+
                 const updateScrollProgress = () => {
                     const scrollTop = window.scrollY || document.documentElement.scrollTop;
                     const docHeight = document.documentElement.scrollHeight;
                     const winHeight = window.innerHeight;
                     const scrollTotal = docHeight - winHeight;
                     
-                    // Add a tiny buffer to scrollTotal to ensure we hit 100% easily
-                    // Use a slightly smaller denominator to guarantee 100% is reachable
-                    let progress = (scrollTop / (scrollTotal - 1)) * 100;
+                    let progress = scrollTotal > 0 ? (scrollTop / scrollTotal) * 100 : 0;
                     progress = Math.min(100, Math.max(0, progress));
-                    
                     scrollProgress.value = progress;
                     
-                    if (isCapsuleOpen.value && Math.abs(scrollTop - (window.lastScrollY || 0)) > 10) {
-                        isCapsuleOpen.value = false;
-                    }
                     window.lastScrollY = scrollTop;
 
+                    // Update Active Section
                     const sections = ['home', 'profile', 'works', 'connect'];
                     for (const section of sections) {
                         const el = document.getElementById(section);
                         if (el) {
                             const rect = el.getBoundingClientRect();
-                            if (rect.top <= winHeight / 2 && rect.bottom >= winHeight / 2) {
+                            if (rect.top <= winHeight * 0.5 && rect.bottom >= winHeight * 0.5) {
                                 activeSection.value = section;
                             }
+                        }
+                    }
+
+                    // --- NAV COLOR UPDATE ---
+                    updateNavColors();
+                    
+                    // --- ANIMATION LOGIC ---
+                    const magContainer = document.getElementById('magnetic-container');
+                    const heroText = document.querySelector('.hero-text-container');
+                    const introText = document.querySelector('.intro-text');
+                    const creativeBanner = document.getElementById('creative-banner');
+                    const tempUnderline = document.getElementById('temp-underline');
+                    
+                    if (scrollTop < winHeight * 2.5) {
+                        if(magContainer) {
+                            const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
+                            magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
+                            magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
+                        }
+                        if(heroText) {
+                            const moveProgress = Math.min(1, scrollTop / (winHeight * 0.5)); 
+                            const targetY = -winHeight * 0.45 * moveProgress; 
+                            const targetScale = 1 + (moveProgress * 0.3); 
+                            heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
+                            if(introText) {
+                                if (moveProgress > 0.8) {
+                                    const textFade = (moveProgress - 0.8) / 0.2;
+                                    introText.style.opacity = textFade;
+                                } else {
+                                    introText.style.opacity = 0;
+                                }
+                            }
+                            if(tempUnderline) {
+                                tempUnderline.style.opacity = Math.max(0, 1 - moveProgress * 1.5);
+                            }
+                        }
+                    }
+
+                    if(creativeBanner) {
+                        const bannerRect = document.getElementById('creative-banner').parentNode.getBoundingClientRect();
+                        const triggerPoint = winHeight * 0.8; 
+                        
+                        if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
+                            const progress = 1 - (bannerRect.top / triggerPoint);
+                            const scale = 0.5 + Math.max(0, progress) * 0.5; 
+                            creativeBanner.style.transform = `scale(${scale})`;
+                            creativeBanner.style.opacity = Math.min(1, progress * 1.5);
                         }
                     }
                 };
@@ -712,141 +701,80 @@
                 const initMagneticLogo = () => {
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
-
-                    // Logo paths
+                    container.innerHTML = '';
+                    // ... existing logo path logic ...
                     const logoPaths = [
                         "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
                         "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
                         "M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z",
                         "M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"
                     ];
-
                     const width = container.clientWidth;
                     const height = container.clientHeight;
-                    
-                    // Create main SVG
                     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     svg.setAttribute("width", "100%");
                     svg.setAttribute("height", "100%");
                     svg.style.overflow = "visible";
                     container.appendChild(svg);
-
-                    // Create canvas for pixel scanning
                     const canvas = document.createElement('canvas');
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
-
-                    // Draw logo to canvas
-                    // Increased scale factor to make it bigger ("WILDER")
-                    const logoScale = Math.min(width, height) / 550; // was 900, smaller divisor = bigger logo
+                    const logoScale = Math.min(width, height) / 500 * 0.9; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
-
                     ctx.fillStyle = "black";
                     ctx.save();
                     ctx.translate(offsetX, offsetY);
                     ctx.scale(logoScale, logoScale);
-                    
-                    logoPaths.forEach(pathD => {
-                        const p = new Path2D(pathD);
-                        ctx.fill(p);
-                    });
+                    logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
-
-                    // Scan grid and place balls
-                    // Increased step and radius for "WILDER" look
-                    const step = 25; // Gap between balls (was 15)
+                    const step = 28; 
                     const balls = [];
-                    const mouseRadius = 250; // Increased interaction radius
-
+                    const mouseRadius = 150; 
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
-                            if (pixel[3] > 128) { // If pixel is opaque (part of logo)
-                                // Create ball
+                            if (pixel[3] > 128) {
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                ball.setAttribute("class", "text-klein-blue fill-current");
+                                ball.setAttribute("class", "text-white fill-current magnetic-ball");
                                 ball.setAttribute("cx", x);
                                 ball.setAttribute("cy", y);
-                                ball.setAttribute("r", 6); // Increased radius (was 2)
-                                
-                                // Create origin point
-                                const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                point.setAttribute("class", "text-gray-300 dark:text-gray-700 fill-current opacity-30");
-                                point.setAttribute("cx", x);
-                                point.setAttribute("cy", y);
-                                point.setAttribute("r", 2); // Origin dot size
-
-                                // Create line
+                                ball.setAttribute("r", 5); 
                                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                                line.setAttribute("class", "text-klein-blue stroke-current");
+                                line.setAttribute("class", "text-white magnetic-ball-line");
                                 line.setAttribute("x1", x);
                                 line.setAttribute("y1", y);
                                 line.setAttribute("x2", x);
                                 line.setAttribute("y2", y);
-                                line.style.opacity = "0.2"; // Increased line visibility slightly
-
                                 svg.appendChild(line);
-                                svg.appendChild(point);
                                 svg.appendChild(ball);
-
-                                balls.push({
-                                    el: ball,
-                                    line: line,
-                                    ori_x: x,
-                                    ori_y: y
-                                });
+                                balls.push({ el: ball, line: line, ori_x: x, ori_y: y });
                             }
                         }
                     }
-
-                    // Mouse Interaction
-                    const onMouseMove = (e) => {
+                    container.addEventListener('mousemove', (e) => {
                         const rect = container.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
                         const mouseY = e.clientY - rect.top;
-
                         balls.forEach(ball => {
                             const dx = ball.ori_x - mouseX;
                             const dy = ball.ori_y - mouseY;
                             const dist = Math.sqrt(dx * dx + dy * dy);
-
                             if (dist < mouseRadius) {
                                 const angle = Math.atan2(dy, dx);
-                                const force = (mouseRadius - dist) / mouseRadius; 
-                                const moveDist = force * 100; // Increased displacement force (was 60)
-
+                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 60; 
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
-
                                 if (ball.animater) ball.animater.kill();
                                 ball.animater = gsap.timeline()
-                                    .to(ball.el, {
-                                        attr: { cx: tx, cy: ty },
-                                        duration: 0.3,
-                                        ease: "power2.out"
-                                    })
-                                    .to(ball.line, {
-                                        attr: { x2: tx, y2: ty },
-                                        duration: 0.3,
-                                        ease: "power2.out"
-                                    }, "<")
-                                    .to(ball.el, {
-                                        attr: { cx: ball.ori_x, cy: ball.ori_y },
-                                        duration: 0.8,
-                                        ease: "elastic.out(1, 0.5)"
-                                    }, ">0.1")
-                                    .to(ball.line, {
-                                        attr: { x2: ball.ori_x, y2: ball.ori_y },
-                                        duration: 0.8,
-                                        ease: "elastic.out(1, 0.5)"
-                                    }, "<");
+                                    .to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3, ease: "power3.out" })
+                                    .to(ball.line, { attr: { x2: tx, y2: ty }, duration: 0.3, ease: "power3.out" }, "<")
+                                    .to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, ">0.05")
+                                    .to(ball.line, { attr: { x2: ball.ori_x, y2: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, "<");
                             }
                         });
-                    };
-
-                    container.addEventListener('mousemove', onMouseMove);
+                    });
                 };
 
                 const createSquircleShape = (size) => {
@@ -868,74 +796,58 @@
 
                 const createFallbackTexture = (text) => {
                     const canvas = document.createElement('canvas');
-                    canvas.width = 512; canvas.height = 512;
+                    canvas.width = 2048; canvas.height = 2048; 
                     const ctx = canvas.getContext('2d');
-                    
-                    ctx.fillStyle = activeTheme.value === 'dark' ? '#0a0a0a' : '#f0f0f0';
-                    ctx.fillRect(0, 0, 512, 512);
-                    
-                    ctx.strokeStyle = activeTheme.value === 'dark' ? '#222' : '#ddd';
-                    ctx.lineWidth = 2;
-                    for(let i=0; i<512; i+=64) {
-                        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 512); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(512, i); ctx.stroke();
+                    ctx.fillStyle = '#050505';
+                    ctx.fillRect(0, 0, 2048, 2048);
+                    ctx.strokeStyle = '#222';
+                    ctx.lineWidth = 10;
+                    for(let i=0; i<2048; i+=256) {
+                        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 2048); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(2048, i); ctx.stroke();
                     }
                     ctx.strokeStyle = '#002FA7';
-                    ctx.lineWidth = 15;
+                    ctx.lineWidth = 40;
                     ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(20, 20, 472, 472, 80);
-                    else ctx.rect(20, 20, 472, 472);
+                    if (ctx.roundRect) ctx.roundRect(80, 80, 1888, 1888, 300);
+                    else ctx.rect(80, 80, 1888, 1888);
                     ctx.stroke();
-
-                    ctx.fillStyle = activeTheme.value === 'dark' ? 'white' : '#111';
-                    ctx.font = 'bold 80px "Inter", sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 600px "Inter", sans-serif'; 
                     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                    ctx.fillText(text.substring(0, 2).toUpperCase(), 256, 256);
-
-                    return new THREE.CanvasTexture(canvas);
+                    ctx.fillText(text.substring(0, 2).toUpperCase(), 1024, 1024);
+                    const tex = new THREE.CanvasTexture(canvas);
+                    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                    return tex;
                 };
-
-                const basePositions = [
-                    new THREE.Vector3(-3.2, 0.5, 0),
-                    new THREE.Vector3(0, -0.5, 0.5),
-                    new THREE.Vector3(3.2, 0.5, -0.5)
-                ];
 
                 const initThreeJS = () => {
                     if (!canvasContainer.value) return;
                     const width = canvasContainer.value.clientWidth;
                     const height = canvasContainer.value.clientHeight;
-
                     scene = new THREE.Scene();
                     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-                    camera.position.z = 16;
-
+                    camera.position.z = 12;
                     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
                     renderer.setSize(width, height);
-                    renderer.setPixelRatio(window.devicePixelRatio);
+                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                     renderer.toneMapping = THREE.ACESFilmicToneMapping;
                     renderer.toneMappingExposure = 1.2;
                     canvasContainer.value.appendChild(renderer.domElement);
-
                     appsGroup = new THREE.Group();
                     scene.add(appsGroup);
-
-                    ambientLight = new THREE.AmbientLight(0x001133, 0.8); 
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
                     scene.add(ambientLight);
-                    
-                    keyLight = new THREE.SpotLight(0xffffff, 1.5);
+                    const keyLight = new THREE.SpotLight(0xffffff, 2);
                     keyLight.position.set(-10, 10, 10);
                     scene.add(keyLight);
-
-                    backLight = new THREE.DirectionalLight(0x4488ff, 1);
+                    const backLight = new THREE.DirectionalLight(0x002FA7, 2);
                     backLight.position.set(0, 5, -10);
                     scene.add(backLight);
-                    
-                    const size = 2.5;
-                    const extrudeSettings = { depth: 0.3, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
+                    const size = 3; 
+                    const extrudeSettings = { depth: 0.4, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
                     const shape = createSquircleShape(size); 
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                    
                     geometry.computeBoundingBox();
                     const max = geometry.boundingBox.max; const min = geometry.boundingBox.min;
                     const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
@@ -945,22 +857,15 @@
                         uvAttribute.setXY(i, (x - min.x) / range.x, (y - min.y) / range.y);
                     }
                     geometry.attributes.uv.needsUpdate = true;
-
+                    geometry.center();
                     const texLoader = new THREE.TextureLoader();
-
                     apps.forEach((app, i) => {
-                        const sideMaterial = new THREE.MeshPhysicalMaterial({
-                            color: 0x001133,
-                            roughness: 0.2, metalness: 0.8,
-                        });
-                        const frontMaterial = new THREE.MeshStandardMaterial({
-                            color: 0xffffff, roughness: 0.4, metalness: 0.1
-                        });
-
+                        const sideMaterial = new THREE.MeshPhysicalMaterial({ color: 0x001133, roughness: 0.2, metalness: 0.8 });
+                        const frontMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.1 });
                         texLoader.load(app.img, 
                             (texture) => {
                                 texture.encoding = THREE.sRGBEncoding;
-                                texture.center.set(0.5, 0.5);
+                                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                                 frontMaterial.map = texture;
                                 frontMaterial.needsUpdate = true;
                             },
@@ -971,19 +876,15 @@
                                 frontMaterial.needsUpdate = true;
                             }
                         );
-
                         const mesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial]);
-                        geometry.center();
-                        mesh.position.copy(basePositions[i]);
+                        mesh.position.set(0, -10, 0); 
                         appsGroup.add(mesh);
                         icons.push(mesh);
                     });
-
                     document.addEventListener('mousemove', (event) => {
                         mouseX = (event.clientX - window.innerWidth / 2) * 0.0005;
                         mouseY = (event.clientY - window.innerHeight / 2) * 0.0005;
                     });
-
                     window.addEventListener('resize', () => {
                         if(!canvasContainer.value) return;
                         const w = canvasContainer.value.clientWidth;
@@ -992,88 +893,70 @@
                         camera.updateProjectionMatrix();
                         renderer.setSize(w, h);
                     });
-
                     const animate = () => {
                         requestAnimationFrame(animate);
-                        appsGroup.rotation.x += 0.05 * (Math.max(-0.3, Math.min(0.3, mouseY)) - appsGroup.rotation.x);
-                        appsGroup.rotation.y += 0.05 * (Math.max(-0.3, Math.min(0.3, mouseX)) - appsGroup.rotation.y);
-
                         icons.forEach((icon, i) => {
-                            icon.position.y = basePositions[i].y + Math.sin(Date.now() * 0.0015 + i) * 0.05;
-                            icon.rotation.z = Math.sin(Date.now() * 0.001 + i) * 0.02;
+                            icon.rotation.x += 0.05 * (mouseY * 2 - icon.rotation.x);
+                            icon.rotation.y += 0.05 * (mouseX * 2 - icon.rotation.y);
                         });
-                        
                         renderer.render(scene, camera);
                     };
                     animate();
-                    updateSceneTheme();
-                };
-
-                const updateSceneTheme = () => {
-                    if (!renderer) return;
-                    
-                    if (activeTheme.value === 'dark') {
-                        ambientLight.color.setHex(0x001133);
-                        ambientLight.intensity = 0.8;
-                        keyLight.intensity = 1.5;
-                        backLight.color.setHex(0x4488ff);
-                        
-                        icons.forEach(icon => {
-                            icon.material[1].color.setHex(0x001133); 
+                    const sections = document.querySelectorAll('.app-section');
+                    sections.forEach((section, index) => {
+                        ScrollTrigger.create({
+                            trigger: section,
+                            start: "top center",
+                            end: "bottom center",
+                            // ADDED overwrite: true to fix stuck icon issue
+                            onEnter: () => animateIconIn(index),
+                            onEnterBack: () => animateIconIn(index),
+                            onLeave: () => animateIconOut(index, 1),
+                            onLeaveBack: () => animateIconOut(index, -1)
                         });
-                    } else {
-                        ambientLight.color.setHex(0xffffff);
-                        ambientLight.intensity = 1.0;
-                        keyLight.intensity = 0.8;
-                        backLight.color.setHex(0x002FA7);
-                        
-                        icons.forEach(icon => {
-                            icon.material[1].color.setHex(0xcccccc); 
-                        });
-                    }
-                };
-
-                const hoverApp = (appName) => {
-                    const index = appName === 'DesktopRenamer' ? 0 : appName === 'OptClick' ? 1 : 2;
-                    gsap.to(icons[index].position, { x: 0, y: 0, z: 4, duration: 0.6, ease: "expo.out" });
-                    gsap.to(icons[index].scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.6, ease: "back.out(1.2)" });
-                    gsap.to(icons[index].rotation, { x: 0.1, y: 0, z: 0, duration: 0.6, ease: "power2.out" });
-                    
-                    icons.forEach((icon, i) => {
-                        if (i !== index) {
-                            let sideX = i < index ? -7 : 7;
-                            gsap.to(icon.position, { x: sideX, y: 0, z: -5, duration: 0.6, ease: "power3.out" });
-                            gsap.to(icon.scale, { x: 0.6, y: 0.6, z: 0.6, duration: 0.6 });
-                        }
                     });
                 };
 
-                const resetApp = () => {
-                    icons.forEach((icon, i) => {
-                        gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 0.6, ease: "elastic.out(1, 0.75)" });
-                        gsap.to(icon.position, { x: basePositions[i].x, y: basePositions[i].y, z: basePositions[i].z, duration: 0.6, ease: "power2.out" });
-                        gsap.to(icon.rotation, { x: 0, y: 0, z: 0, duration: 0.6 });
-                    });
+                const animateIconIn = (index) => {
+                    const icon = icons[index];
+                    if(!icon) return;
+                    // UPDATED: Move icon to LEFT (x: -3.5) to clear space for the card on the right
+                    // Responsive check: if mobile width, position icon differently
+                    const isMobile = window.innerWidth < 768;
+                    const targetX = isMobile ? 0 : -3.5; 
+                    const targetY = isMobile ? 2.5 : 0; 
+
+                    gsap.to(icon.position, { x: targetX, y: targetY, duration: 1.2, ease: "power3.out", overwrite: true });
+                    gsap.to(icon.scale, { x: 1.1, y: 1.1, z: 1.1, duration: 1.2, ease: "elastic.out(1, 0.8)", overwrite: true });
+                    gsap.to(icon.rotation, { x: 0, y: 0.2, z: 0, duration: 1.2, overwrite: true });
                 };
 
-                // Initialize Lenis for smooth scrolling
+                const animateIconOut = (index, direction) => {
+                    const icon = icons[index];
+                    if(!icon) return;
+                    const targetY = direction > 0 ? 15 : -15; 
+                    // UPDATED: Exit movement
+                    gsap.to(icon.position, { y: targetY, x: 0, duration: 0.8, ease: "power3.in", overwrite: true });
+                    gsap.to(icon.scale, { x: 0.5, y: 0.5, z: 0.5, duration: 0.8, overwrite: true });
+                };
+
                 const initLenis = () => {
                     lenis = new Lenis({
-                        duration: 1.2,
+                        duration: 2.0, 
                         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                         direction: 'vertical',
                         gestureDirection: 'vertical',
                         smooth: true,
-                        mouseMultiplier: 1,
+                        mouseMultiplier: 0.8,
                         smoothTouch: false,
                         touchMultiplier: 2,
                     });
-
                     function raf(time) {
                         lenis.raf(time);
+                        // FIXED: Explicitly update ScrollTrigger during smooth scroll loop to handle fast jumps
+                        ScrollTrigger.update();
                         requestAnimationFrame(raf);
                     }
-
                     requestAnimationFrame(raf);
                 };
 
@@ -1083,21 +966,15 @@
                             loader.value.style.opacity = '0';
                             setTimeout(() => { loader.value.style.display = 'none'; }, 500);
                         }
-                        gsap.from(".reveal-text", { y: 100, opacity: 0, duration: 1.2, stagger: 0.1, ease: "power4.out", delay: 0.5 });
-                        // Initialize Magnetic Logo after intro
+                        gsap.from(".hero-text-container", { opacity: 0, duration: 2, ease: "power4.out", delay: 0.5 });
                         initMagneticLogo();
                     }, 1500);
-
                     lucide.createIcons();
                     resolveTheme(); 
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
                     initThreeJS();
                     initCursor();
-                    initLenis(); // Start Lenis
-                    
-                    // Use Lenis scroll event for progress update
-                    // Note: window scroll event still fires but Lenis is recommended hook
-                    // We keep window listener as fallback/standard, Lenis syncs with it.
+                    initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
                 });
                 
@@ -1108,24 +985,8 @@
                 });
 
                 return {
-                    isSidebarOpen,
-                    themeMode,
-                    activeTheme,
-                    scrollProgress,
-                    activeSection,
-                    isCapsuleOpen,
-                    capsulePerimeter,
-                    capsuleDashOffset,
-                    toggleSidebar,
-                    toggleCapsuleNav,
-                    cycleTheme,
-                    loader,
-                    canvasContainer,
-                    hoverApp,
-                    resetApp,
-                    apps,
-                    systemLinks,
-                    textureError
+                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks,
+                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight
                 };
             }
         }).mount('#app');
