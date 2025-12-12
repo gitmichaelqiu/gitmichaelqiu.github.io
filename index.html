@@ -219,11 +219,11 @@
         <nav ref="navBar" class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none">
             
             <!-- Left: Sidebar Trigger -->
-            <!-- :class binds dynamic color calculated in JS -->
+            <!-- Independent color calculation -->
             <button @click="toggleSidebar" 
                     ref="navBtnLeft"
                     class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform"
-                    :class="navTextColor">
+                    :class="navLeftColor">
                 <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
                     <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
                     <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
@@ -238,7 +238,7 @@
                      @mouseenter="isCapsuleOpen = true" 
                      @mouseleave="isCapsuleOpen = false">
                     <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
-                         :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navTextColor]">
+                         :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navCapsuleColor]">
                         
                         <div class="w-full h-full flex items-center justify-center">
                             <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
@@ -256,7 +256,7 @@
                         </div>
                     </div>
                     <!-- Progress Ring -->
-                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navTextColor">
+                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
                         <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
                          <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
                               :stroke-dasharray="capsulePerimeter" :stroke-dashoffset="capsuleDashOffset"
@@ -270,7 +270,7 @@
                 <button @click="cycleTheme" 
                         ref="navBtnRight"
                         class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform"
-                        :class="navTextColor">
+                        :class="navRightColor">
                     <div class="flex items-center justify-center w-full h-full">
                         <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
                         <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
@@ -487,11 +487,14 @@
                 const loader = ref(null);
                 const canvasContainer = ref(null);
                 
-                // Real-time Nav Color State
-                const navTextColor = ref('text-white');
+                // Real-time Nav Color State - Separate for each button
+                const navLeftColor = ref('text-white');
+                const navCapsuleColor = ref('text-white');
+                const navRightColor = ref('text-white');
+                
                 const navBtnLeft = ref(null);
                 const navCapsule = ref(null);
-                const navBtnRight = ref(null); // Fixed: Declared missing ref
+                const navBtnRight = ref(null);
                 
                 const systemLinks = [
                     { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
@@ -549,40 +552,32 @@
                     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
                 };
 
-                // Real-time Contrast Check
-                const checkNavContrast = () => {
-                   if (!navCapsule.value) return;
-
-                   // Sample point: Center of the nav capsule
-                   const rect = navCapsule.value.getBoundingClientRect();
-                   const x = rect.left + rect.width / 2;
-                   const y = rect.top + rect.height / 2;
-
-                   // Get all elements at this point
-                   const elements = document.elementsFromPoint(x, y);
-                   
-                   // Find the first element that is NOT the nav or its children and has a background color
-                   let bgLuminance = 0; // Default to dark (so text becomes white)
-                   
-                   for (let el of elements) {
-                        // Skip nav elements
-                        if (el.tagName === 'NAV' || el.closest('nav') || el.classList.contains('cursor-dot')) continue;
-                        
-                        const style = window.getComputedStyle(el);
+                // Check contrast for a specific element
+                const checkElementContrast = (el) => {
+                    if (!el) return 'text-white';
+                    const rect = el.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2;
+                    const y = rect.top + rect.height / 2;
+                    const elements = document.elementsFromPoint(x, y);
+                    let bgLuminance = 0; // Default to dark (so text becomes white)
+                    
+                    for (let e of elements) {
+                        if (e.tagName === 'NAV' || e.closest('nav') || e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) continue;
+                        const style = window.getComputedStyle(e);
                         const bgColor = style.backgroundColor;
-                        
-                        // Check if transparent
                         if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') continue;
-
-                        // Found a background!
                         bgLuminance = getLuminance(bgColor);
                         break;
-                   }
-                   
-                   // Threshold: 128 is mid-grey. 
-                   // If > 128 (Light background) -> Use Black text.
-                   // If < 128 (Dark background) -> Use White text.
-                   navTextColor.value = bgLuminance > 128 ? 'text-black' : 'text-white';
+                    }
+                    
+                    return bgLuminance > 128 ? 'text-black' : 'text-white';
+                };
+
+                // Real-time Contrast Check for all buttons
+                const updateNavColors = () => {
+                    navLeftColor.value = checkElementContrast(navBtnLeft.value);
+                    navCapsuleColor.value = checkElementContrast(navCapsule.value);
+                    navRightColor.value = checkElementContrast(navBtnRight.value);
                 };
 
                 const updateScrollProgress = () => {
@@ -610,7 +605,7 @@
                     }
 
                     // --- NAV COLOR UPDATE ---
-                    checkNavContrast();
+                    updateNavColors();
                     
                     // --- ANIMATION LOGIC ---
                     const magContainer = document.getElementById('magnetic-container');
@@ -952,7 +947,7 @@
 
                 return {
                     isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks,
-                    navTextColor, navCapsule, navBtnLeft, navBtnRight
+                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight
                 };
             }
         }).mount('#app');
