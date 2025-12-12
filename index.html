@@ -119,7 +119,7 @@
         .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
 
         /* Loader */
-        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #002FA7; z-index: 20000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .loader { position: fixed; bottom: 40px; left: 0; width: 100%; z-index: 20000; display: flex; justify-content: center; align-items: center; pointer-events: none; }
         
         .capsule-nav { transition: width 0.3s ease, background-color 0.3s ease, color 0.3s ease; }
 
@@ -231,13 +231,9 @@
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
 
+        <!-- NEW LOADER: Just text, transparency handled by main layout -->
         <div class="loader" ref="loader">
-            <div class="flex items-end gap-1 mb-4">
-                <div class="w-2 h-8 bg-white animate-bounce" style="animation-delay: 0s"></div>
-                <div class="w-2 h-12 bg-white/50 animate-bounce" style="animation-delay: 0.1s"></div>
-                <div class="w-2 h-6 bg-white animate-bounce" style="animation-delay: 0.2s"></div>
-            </div>
-            <div class="font-mono text-sm tracking-[0.3em] text-white">SYSTEM_BOOT</div>
+            <div class="font-mono text-xs tracking-[0.5em] text-white/70 animate-pulse">SYSTEM_BOOT</div>
         </div>
 
         <!-- Navigation Bar -->
@@ -337,7 +333,7 @@
                     <div class="absolute inset-0 z-10 flex flex-col justify-end items-start pointer-events-none">
                         <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-klein-blue/90 via-klein-blue/40 to-transparent pointer-events-none"></div>
                         <!-- Increased pb-32 to push text up on mobile, preventing overlap with browser UI -->
-                        <div class="hero-text-container w-full px-6 md:px-12 pb-32 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20">
+                        <div class="hero-text-container w-full px-6 md:px-12 pb-32 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20 opacity-0">
                             <div class="relative">
                                 <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal whitespace-nowrap" id="hero-name">
                                     MICHAEL QIU
@@ -545,6 +541,9 @@
                 const loader = ref(null);
                 const canvasContainer = ref(null);
                 
+                // Boot State
+                const isBooting = ref(true);
+                
                 // Real-time Nav Color State
                 const navLeftColor = ref('text-white');
                 const navCapsuleColor = ref('text-white');
@@ -568,6 +567,7 @@
                 let icons = []; 
                 let mouseX = 0, mouseY = 0;
                 let lenis;
+                let ballsRef = []; // Store references to balls for animation
 
                 const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
@@ -679,7 +679,7 @@
                     
                     // MODIFICATION 1: Adjusted logic to handle new taller hero section (300vh)
                     if (scrollTop < winHeight * 3.5) {
-                        if(magContainer) {
+                        if(magContainer && !isBooting.value) {
                             const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
                             magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
                             magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
@@ -734,21 +734,32 @@
                 const initMagneticLogo = () => {
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
-                    container.innerHTML = '';
-                    // ... existing logo path logic ...
+                    
+                    // Clear previous
+                    if(ballsRef.length > 0) {
+                        gsap.ticker.remove(rotateBalls);
+                        ballsRef = [];
+                        container.innerHTML = '';
+                    }
+
                     const logoPaths = [
                         "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
                         "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
                         "M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z",
                         "M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"
                     ];
+                    
                     const width = container.clientWidth;
                     const height = container.clientHeight;
+                    
+                    // Setup SVG
                     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     svg.setAttribute("width", "100%");
                     svg.setAttribute("height", "100%");
                     svg.style.overflow = "visible";
                     container.appendChild(svg);
+                    
+                    // Calculate Logo Pixels
                     const canvas = document.createElement('canvas');
                     canvas.width = width;
                     canvas.height = height;
@@ -756,49 +767,104 @@
                     const logoScale = Math.min(width, height) / 500 * 0.9; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
+                    
                     ctx.fillStyle = "black";
                     ctx.save();
                     ctx.translate(offsetX, offsetY);
                     ctx.scale(logoScale, logoScale);
                     logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
+                    
                     const step = 28; 
-                    const balls = [];
                     const mouseRadius = 150; 
+                    
+                    // Create Balls
+                    // Loading Circle Config
+                    const circleRadius = Math.min(width, height) * 0.15;
+                    const centerScreenX = width / 2;
+                    const centerScreenY = height / 2;
+                    
+                    let ballIndex = 0;
+                    
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
                             if (pixel[3] > 128) {
+                                ballIndex++;
+                                
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                                 ball.setAttribute("class", "text-white fill-current magnetic-ball");
-                                ball.setAttribute("cx", x);
-                                ball.setAttribute("cy", y);
                                 ball.setAttribute("r", 5); 
+                                
                                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                                 line.setAttribute("class", "text-white magnetic-ball-line");
-                                line.setAttribute("x1", x);
-                                line.setAttribute("y1", y);
-                                line.setAttribute("x2", x);
-                                line.setAttribute("y2", y);
+                                
                                 svg.appendChild(line);
                                 svg.appendChild(ball);
-                                balls.push({ el: ball, line: line, ori_x: x, ori_y: y });
+                                
+                                // Setup Position Logic
+                                let initialX, initialY;
+                                
+                                if (isBooting.value) {
+                                    // Calculate Loading Position (Circle)
+                                    // Use index to distribute evenly, but since we don't know total yet, use random + index approx
+                                    const angle = (ballIndex * 0.1) + (Math.random() * 0.5);
+                                    const r = circleRadius + (Math.random() * 20 - 10);
+                                    
+                                    initialX = centerScreenX + Math.cos(angle) * r;
+                                    initialY = centerScreenY + Math.sin(angle) * r;
+                                    
+                                    // Store loading state props
+                                    ball.loadAngle = angle;
+                                    ball.loadRadius = r;
+                                    ball.loadSpeed = 0.001 + Math.random() * 0.002;
+                                    
+                                    // Hide line during boot
+                                    line.style.opacity = '0';
+                                } else {
+                                    initialX = x;
+                                    initialY = y;
+                                    line.style.opacity = '0.15';
+                                }
+                                
+                                ball.setAttribute("cx", initialX);
+                                ball.setAttribute("cy", initialY);
+                                line.setAttribute("x1", initialX); line.setAttribute("y1", initialY);
+                                line.setAttribute("x2", initialX); line.setAttribute("y2", initialY);
+                                
+                                ballsRef.push({ 
+                                    el: ball, 
+                                    line: line, 
+                                    ori_x: x, 
+                                    ori_y: y,
+                                    // Boot props
+                                    loadAngle: ball.loadAngle,
+                                    loadRadius: ball.loadRadius,
+                                    loadSpeed: ball.loadSpeed
+                                });
                             }
                         }
                     }
+                    
+                    // Interaction Logic
                     container.addEventListener('mousemove', (e) => {
+                        if (isBooting.value) return; // Disable interaction during boot
+                        
                         const rect = container.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
                         const mouseY = e.clientY - rect.top;
-                        balls.forEach(ball => {
+                        
+                        ballsRef.forEach(ball => {
                             const dx = ball.ori_x - mouseX;
                             const dy = ball.ori_y - mouseY;
                             const dist = Math.sqrt(dx * dx + dy * dy);
+                            
                             if (dist < mouseRadius) {
                                 const angle = Math.atan2(dy, dx);
                                 const moveDist = ((mouseRadius - dist) / mouseRadius) * 60; 
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
+                                
                                 if (ball.animater) ball.animater.kill();
                                 ball.animater = gsap.timeline()
                                     .to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3, ease: "power3.out" })
@@ -808,6 +874,59 @@
                             }
                         });
                     });
+
+                    // Start Loop if booting
+                    if(isBooting.value) {
+                        gsap.ticker.add(rotateBalls);
+                    }
+                };
+
+                // Animation Tick Function for Loading Screen
+                function rotateBalls(time, deltaTime, frame) {
+                    if (!isBooting.value || !canvasContainer.value) return;
+                    
+                    const container = document.getElementById('magnetic-container');
+                    if(!container) return;
+                    
+                    const centerX = container.clientWidth / 2;
+                    const centerY = container.clientHeight / 2;
+                    
+                    ballsRef.forEach(ball => {
+                        ball.loadAngle += (ball.loadSpeed * deltaTime);
+                        const x = centerX + Math.cos(ball.loadAngle) * ball.loadRadius;
+                        const y = centerY + Math.sin(ball.loadAngle) * ball.loadRadius;
+                        
+                        ball.el.setAttribute('cx', x);
+                        ball.el.setAttribute('cy', y);
+                    });
+                }
+                
+                const finishBootSequence = () => {
+                    isBooting.value = false;
+                    gsap.ticker.remove(rotateBalls);
+                    
+                    // Hide loader text
+                    if(loader.value) {
+                        gsap.to(loader.value, { opacity: 0, duration: 0.5, onComplete: () => { loader.value.style.display = 'none'; } });
+                    }
+                    
+                    // Animate balls to logo position
+                    ballsRef.forEach(ball => {
+                        gsap.to(ball.el, {
+                            attr: { cx: ball.ori_x, cy: ball.ori_y },
+                            duration: 1.6,
+                            ease: "power4.inOut",
+                            delay: Math.random() * 0.1 // Stagger slightly
+                        });
+                        
+                        // Restore lines
+                        ball.line.setAttribute('x1', ball.ori_x); ball.line.setAttribute('y1', ball.ori_y);
+                        ball.line.setAttribute('x2', ball.ori_x); ball.line.setAttribute('y2', ball.ori_y);
+                        gsap.to(ball.line, { opacity: 0.15, duration: 1, delay: 1 });
+                    });
+                    
+                    // Show Hero Text after logo forms
+                    gsap.to(".hero-text-container", { opacity: 1, duration: 2, ease: "power4.out", delay: 1.0 });
                 };
 
                 const createSquircleShape = (size) => {
@@ -925,6 +1044,9 @@
                         camera.aspect = w / h;
                         camera.updateProjectionMatrix();
                         renderer.setSize(w, h);
+                        
+                        // Handle Logo Resize
+                        initMagneticLogo();
                     });
                     const animate = () => {
                         requestAnimationFrame(animate);
@@ -995,14 +1117,14 @@
                 };
 
                 onMounted(() => {
+                    // Start init immediately to show loading balls
+                    initMagneticLogo();
+                    
+                    // Simulate system boot time
                     setTimeout(() => {
-                        if(loader.value) {
-                            loader.value.style.opacity = '0';
-                            setTimeout(() => { loader.value.style.display = 'none'; }, 500);
-                        }
-                        gsap.from(".hero-text-container", { opacity: 0, duration: 2, ease: "power4.out", delay: 0.5 });
-                        initMagneticLogo();
-                    }, 1500);
+                        finishBootSequence();
+                    }, 2500);
+
                     lucide.createIcons();
                     resolveTheme(); 
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
@@ -1016,6 +1138,7 @@
                     window.removeEventListener('scroll', updateScrollProgress);
                     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', resolveTheme);
                     if(lenis) lenis.destroy();
+                    gsap.ticker.remove(rotateBalls);
                 });
 
                 return {
