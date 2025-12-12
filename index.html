@@ -240,9 +240,9 @@
                 </div>
             </button>
             
-            <!-- Center: Progress Capsule -->
-            <!-- Fixed at bottom on mobile, absolute center top on desktop -->
-            <div class="fixed bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto z-[9995] md:absolute md:bottom-auto md:top-1/2 md:-translate-y-1/2"
+            <!-- Center: Progress Capsule (FIXED: Back to Top + High Z-Index) -->
+            <!-- Added z-50 to ensure it sits ABOVE the right theme toggle when expanded -->
+            <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50"
                  ref="navCapsule"
                  @click="toggleCapsuleNav"
                  @mouseenter="isCapsuleOpen = true" 
@@ -329,9 +329,9 @@
                                 </h1>
                                 <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.3vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
                             </div>
-                            <!-- FIXED: Development text overflow & typo -->
-                            <div class="intro-text opacity-0 mt-6 pl-2 max-w-[85vw] md:max-w-xl transition-opacity duration-500 relative">
-                                <p class="text-base md:text-2xl font-light leading-relaxed break-words">
+                            <!-- FIXED: Development text overflow & typo. Added w-full and explicit right padding -->
+                            <div class="intro-text opacity-0 mt-6 pl-2 w-full max-w-[90vw] md:max-w-xl transition-opacity duration-500 relative pr-4">
+                                <p class="text-base md:text-2xl font-light leading-relaxed break-words whitespace-normal">
                                     Development is not a science; it is an <span class="font-bold italic text-white/90">art</span>.
                                 </p>
                             </div>
@@ -911,8 +911,9 @@
                     sections.forEach((section, index) => {
                         ScrollTrigger.create({
                             trigger: section,
-                            start: "top center",
-                            end: "bottom center",
+                            // UPDATED: Start animation earlier (when top of section is at 75% of viewport height)
+                            start: "top 75%",
+                            end: "bottom 75%",
                             // ADDED overwrite: true to fix stuck icon issue
                             onEnter: () => animateIconIn(index),
                             onEnterBack: () => animateIconIn(index),
