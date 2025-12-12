@@ -241,38 +241,37 @@
             </button>
             
             <!-- Center: Progress Capsule -->
-            <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
-                <div class="relative group cursor-pointer" 
-                     ref="navCapsule"
-                     @click="toggleCapsuleNav"
-                     @mouseenter="isCapsuleOpen = true" 
-                     @mouseleave="isCapsuleOpen = false">
-                    <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
-                         :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navCapsuleColor]">
-                        
-                        <div class="w-full h-full flex items-center justify-center">
-                            <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
-                                {{ activeSection.toUpperCase() }}
-                            </div>
-                            <div v-else class="flex gap-5 font-mono text-[10px] font-bold px-6 animate-fade-in whitespace-nowrap">
-                                <a href="#home" class="hover:opacity-60 transition-opacity">HOME</a>
-                                <span>/</span>
-                                <a href="#profile" class="hover:opacity-60 transition-opacity">PROFILE</a>
-                                <span>/</span>
-                                <a href="#works" class="hover:opacity-60 transition-opacity">WORKS</a>
-                                <span>/</span>
-                                <a href="#connect" class="hover:opacity-60 transition-opacity">CONNECT</a>
-                            </div>
+            <!-- Fixed at bottom on mobile, absolute center top on desktop -->
+            <div class="fixed bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto z-[9995] md:absolute md:bottom-auto md:top-1/2 md:-translate-y-1/2"
+                 ref="navCapsule"
+                 @click="toggleCapsuleNav"
+                 @mouseenter="isCapsuleOpen = true" 
+                 @mouseleave="isCapsuleOpen = false">
+                <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
+                     :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navCapsuleColor]">
+                    
+                    <div class="w-full h-full flex items-center justify-center">
+                        <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
+                            {{ activeSection.toUpperCase() }}
+                        </div>
+                        <div v-else class="flex gap-5 font-mono text-[10px] font-bold px-6 animate-fade-in whitespace-nowrap">
+                            <a href="#home" class="hover:opacity-60 transition-opacity">HOME</a>
+                            <span>/</span>
+                            <a href="#profile" class="hover:opacity-60 transition-opacity">PROFILE</a>
+                            <span>/</span>
+                            <a href="#works" class="hover:opacity-60 transition-opacity">WORKS</a>
+                            <span>/</span>
+                            <a href="#connect" class="hover:opacity-60 transition-opacity">CONNECT</a>
                         </div>
                     </div>
-                    <!-- Progress Ring -->
-                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
-                        <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
-                         <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
-                              :stroke-dasharray="capsulePerimeter" :stroke-dashoffset="capsuleDashOffset"
-                              class="opacity-100" style="transition: stroke-dashoffset 0.1s linear;" />
-                    </svg>
                 </div>
+                <!-- Progress Ring -->
+                <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
+                    <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
+                     <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
+                          :stroke-dasharray="capsulePerimeter" :stroke-dashoffset="capsuleDashOffset"
+                          class="opacity-100" style="transition: stroke-dashoffset 0.1s linear;" />
+                </svg>
             </div>
 
             <!-- Right: Theme Toggle -->
@@ -300,10 +299,9 @@
                 <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-12 w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300 z-50">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
-                <!-- Updated Sidebar Links: Adjusted clamp and padding for 'Total Width' safety -->
+                <!-- Updated Sidebar Links -->
                 <div class="flex flex-col gap-8 relative z-10 mt-48 w-full">
                     <div class="font-mono text-sm text-klein-blue mb-4 tracking-[0.3em] font-bold pl-8 md:pl-12">SYSTEM MAP</div>
-                    <!-- Added pr-12 to reserve space for the arrow, Reduced cqi to 8 to prevent overflow on hover -->
                     <a v-for="(link, index) in systemLinks" :key="link.name" href="#" class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(2rem, 8cqi, 5rem);">
                         <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2" style="font-size: 1rem;">0{{index+1}}</span>
                         <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] break-words">{{ link.name }}</span>
@@ -323,15 +321,17 @@
                     </div>
                     <div class="absolute inset-0 z-10 flex flex-col justify-end items-start pointer-events-none">
                         <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-klein-blue/90 via-klein-blue/40 to-transparent pointer-events-none"></div>
-                        <div class="hero-text-container w-full px-6 md:px-12 pb-12 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20">
+                        <!-- Increased pb-32 to push text up on mobile, preventing overlap with browser UI -->
+                        <div class="hero-text-container w-full px-6 md:px-12 pb-32 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20">
                             <div class="relative">
                                 <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal whitespace-nowrap" id="hero-name">
                                     MICHAEL QIU
                                 </h1>
                                 <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.3vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
                             </div>
-                            <div class="intro-text opacity-0 mt-6 pl-2 max-w-xl transition-opacity duration-500 relative">
-                                <p class="text-xl md:text-2xl font-light leading-relaxed">
+                            <!-- FIXED: Development text overflow & typo -->
+                            <div class="intro-text opacity-0 mt-6 pl-2 max-w-[85vw] md:max-w-xl transition-opacity duration-500 relative">
+                                <p class="text-base md:text-2xl font-light leading-relaxed break-words">
                                     Development is not a science; it is an <span class="font-bold italic text-white/90">art</span>.
                                 </p>
                             </div>
@@ -366,7 +366,7 @@
                              <div class="card-content">
                                  <h3 class="font-mono text-xs text-klein-blue mb-6 tracking-widest border border-klein-blue/30 inline-block px-3 py-1 rounded-full">ABOUT_ME</h3>
                                  <p class="text-2xl md:text-3xl font-light leading-snug text-gray-900 dark:text-gray-100">
-                                     I don't just write code; <span class="font-bold border-b-2 border-klein-blue">I design workflows.</span> My background in C++, Python, and Swift allows me to build solid softwares.
+                                     I don't just write code; <span class="font-bold border-b-2 border-klein-blue">I design workflows.</span> My background in C++ and Python allows me to build rigorous back-end systems.
                                  </p>
                              </div>
                              <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6 card-content">
@@ -444,7 +444,7 @@
                                             <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">SWIFT</span>
                                         </div>
                                         
-                                        <!-- Apple Style Glass Action Button (FIXED: Added Glass Styles) -->
+                                        <!-- Apple Style Glass Action Button -->
                                         <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-white/20 shadow-lg text-gray-900 dark:text-white font-bold text-sm hover:scale-105 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300">
                                             <span>View</span>
                                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -458,7 +458,7 @@
                 </div>
             </section>
             
-            <!-- Connect Section - UPDATED: Perfectly Centered -->
+            <!-- Connect Section -->
             <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30">
                 <div class="max-w-7xl mx-auto w-full">
                     <!-- Title centered -->
@@ -625,13 +625,18 @@
                     window.lastScrollY = scrollTop;
 
                     // Update Active Section
-                    const sections = ['home', 'profile', 'works', 'connect'];
-                    for (const section of sections) {
-                        const el = document.getElementById(section);
-                        if (el) {
-                            const rect = el.getBoundingClientRect();
-                            if (rect.top <= winHeight * 0.5 && rect.bottom >= winHeight * 0.5) {
-                                activeSection.value = section;
+                    // FIX: Ensure 'HOME' shows at top even if 'WORKS' is tall
+                    if (scrollTop < winHeight * 0.5) {
+                        activeSection.value = 'home';
+                    } else {
+                        const sections = ['home', 'profile', 'works', 'connect'];
+                        for (const section of sections) {
+                            const el = document.getElementById(section);
+                            if (el) {
+                                const rect = el.getBoundingClientRect();
+                                if (rect.top <= winHeight * 0.5 && rect.bottom >= winHeight * 0.5) {
+                                    activeSection.value = section;
+                                }
                             }
                         }
                     }
@@ -731,7 +736,7 @@
                     ctx.restore();
                     const step = 28; 
                     const balls = [];
-                    const mouseRadius = 170; 
+                    const mouseRadius = 150; 
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
