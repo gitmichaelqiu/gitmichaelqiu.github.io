@@ -26,6 +26,7 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'marquee': 'marquee 30s linear infinite',
+                        'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -162,6 +163,19 @@
             pointer-events: none;
             z-index: 0;
             filter: blur(100px);
+        }
+
+        /* Ambient Glow for Plain Pages */
+        .ambient-glow {
+            position: absolute;
+            width: 40vmax;
+            height: 40vmax;
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
+            filter: blur(80px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
         }
 
         /* Specific Hover Fixes */
@@ -314,7 +328,8 @@
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
             <!-- Hero Section -->
-            <section id="home" class="relative w-full h-[180vh] bg-klein-blue text-white">
+            <!-- MODIFICATION 1: Increased height from 180vh to 300vh for longer scroll skip -->
+            <section id="home" class="relative w-full h-[300vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
                     <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
                          <div id="magnetic-container" class="w-full h-full relative cursor-crosshair"></div>
@@ -329,8 +344,8 @@
                                 </h1>
                                 <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.3vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
                             </div>
-                            <!-- FIXED: Development text overflow & typo. Added w-full and explicit right padding -->
-                            <div class="intro-text opacity-0 mt-6 pl-2 w-full max-w-[90vw] md:max-w-xl transition-opacity duration-500 relative pr-4">
+                            <!-- MODIFICATION 1 & 2: Dynamic width logic (max-w-[85vw]) and longer scroll needed -->
+                            <div class="intro-text opacity-0 mt-6 pl-2 w-full max-w-[85vw] md:max-w-xl transition-opacity duration-500 relative pr-4">
                                 <p class="text-base md:text-2xl font-light leading-relaxed break-words whitespace-normal">
                                     Development is not a science; it is an <span class="font-bold italic text-white/90">art</span>.
                                 </p>
@@ -354,7 +369,11 @@
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30">
+            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
+                <!-- MODIFICATION 3: Added ambient light sources for vividness -->
+                <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
+                <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
+
                 <div class="max-w-[90vw] mx-auto relative z-10">
                     <div class="flex items-end justify-between mb-24 border-b border-gray-200 dark:border-white/10 pb-8">
                         <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
@@ -407,7 +426,10 @@
                 <div class="absolute bottom-1/4 left-0 works-page-glow"></div>
 
                 <div class="relative z-10">
-                    <div class="min-h-screen flex flex-col justify-center items-center pointer-events-none">
+                    <!-- MODIFICATION 2: Changed justify-center to justify-start and added pt-40.
+                         This removes the blank space jump by positioning the title at the top of the viewport
+                         immediately when the user navigates to #works -->
+                    <div class="min-h-screen flex flex-col justify-start pt-40 md:pt-60 items-center pointer-events-none">
                         <h2 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 mix-blend-difference">WORKS</h2>
                         <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
                     </div>
@@ -459,8 +481,12 @@
             </section>
             
             <!-- Connect Section -->
-            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30">
-                <div class="max-w-7xl mx-auto w-full">
+            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
+                <!-- MODIFICATION 3: Added ambient light sources for vividness -->
+                <div class="ambient-glow top-[10%] left-[10%] opacity-50 bg-[#002FA7]"></div>
+                <div class="ambient-glow bottom-[10%] right-[10%] opacity-30 bg-[#20BEFF] animate-pulse-slow"></div>
+
+                <div class="max-w-7xl mx-auto w-full relative z-10">
                     <!-- Title centered -->
                     <div class="flex items-center justify-center gap-3 mb-16 w-full text-center">
                         <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
@@ -651,14 +677,16 @@
                     const creativeBanner = document.getElementById('creative-banner');
                     const tempUnderline = document.getElementById('temp-underline');
                     
-                    if (scrollTop < winHeight * 2.5) {
+                    // MODIFICATION 1: Adjusted logic to handle new taller hero section (300vh)
+                    if (scrollTop < winHeight * 3.5) {
                         if(magContainer) {
                             const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
                             magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
                             magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
                         }
                         if(heroText) {
-                            const moveProgress = Math.min(1, scrollTop / (winHeight * 0.5)); 
+                            // Slower movement factor (winHeight * 1.5 instead of 0.5)
+                            const moveProgress = Math.min(1, scrollTop / (winHeight * 1.5)); 
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             const targetScale = 1 + (moveProgress * 0.3); 
                             heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
