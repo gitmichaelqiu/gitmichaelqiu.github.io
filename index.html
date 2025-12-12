@@ -417,10 +417,10 @@
                         
                         <!-- Right: The Glass Card (Offset to avoid overlap) -->
                         <div class="w-full md:w-1/2 flex justify-center md:justify-end">
-                            <div class="app-card-glass w-full max-w-2xl rounded-[2.5rem] p-12 relative group overflow-hidden cursor-pointer backdrop-blur-3xl">
+                            <div class="app-card-glass w-full max-w-2xl rounded-[2.5rem] p-8 md:p-12 relative group overflow-hidden cursor-pointer backdrop-blur-3xl">
                                 <div class="card-corner-glow"></div>
 
-                                <div class="card-content flex flex-col gap-8">
+                                <div class="card-content flex flex-col gap-8" style="container-type: inline-size;">
                                     <!-- Header -->
                                     <div class="flex items-center gap-4">
                                         <span class="font-display font-bold text-3xl text-black/20 dark:text-white/30 group-hover:text-klein-blue transition-colors">0{{i+1}}</span>
@@ -429,7 +429,7 @@
                                     
                                     <!-- Body -->
                                     <div>
-                                        <h3 class="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter leading-[0.9]">{{ app.name }}</h3>
+                                        <h3 class="font-black text-gray-900 dark:text-white mb-6 tracking-tighter leading-[0.9] break-words" style="font-size: clamp(2rem, 11cqi, 3.75rem);">{{ app.name }}</h3>
                                         <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed font-light">
                                             {{ app.desc }}
                                         </p>
