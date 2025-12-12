@@ -300,11 +300,12 @@
                 <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-12 w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
-                <div class="flex flex-col gap-8 relative z-10 mt-48 w-full">
+                <!-- Updated Sidebar Links with Dynamic Sizing -->
+                <div class="flex flex-col gap-8 relative z-10 mt-48 w-full" style="container-type: inline-size;">
                     <div class="font-mono text-sm text-klein-blue mb-4 tracking-[0.3em] font-bold">SYSTEM MAP</div>
-                    <a v-for="(link, index) in systemLinks" :key="link.name" href="#" class="group flex items-center gap-6 text-[clamp(2.5rem,5vw,4rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 p-2 pr-4 block w-full leading-none" style="-webkit-text-stroke: 1px rgba(128,128,128,0.2);">
+                    <a v-for="(link, index) in systemLinks" :key="link.name" href="#" class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 p-2 pr-4 block w-full leading-none" style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(2rem, 10cqi, 4rem);">
                         <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2">0{{index+1}}</span>
-                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]">{{ link.name }}</span>
+                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] break-words">{{ link.name }}</span>
                         <span class="opacity-0 -ml-8 group-hover:ml-0 group-hover:opacity-100 transition-all duration-500 delay-100"><i data-lucide="arrow-right" class="w-8 h-8 text-klein-blue"></i></span>
                     </a>
                 </div>
