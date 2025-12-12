@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michael Qiu | Workspace Architect</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             darkMode: 'class', 
@@ -40,16 +42,22 @@
         }
     </script>
     
+    <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
+    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
+    <!-- Lenis (Smooth Scroll) -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -77,7 +85,7 @@
 
         /* Custom Cursor - FIXED VISIBILITY */
         @media (hover: hover) and (pointer: fine) {
-            body, button, a, input, [role="button"] { cursor: none !important; }
+            body, button, a, input, [role="button"], .cursor-pointer { cursor: none !important; }
             .cursor-dot, .cursor-outline { display: block; }
         }
         .cursor-dot, .cursor-outline {
@@ -117,20 +125,14 @@
         .magnetic-ball { transition: opacity 0.1s ease; }
         .magnetic-ball-line { stroke: currentColor; stroke-width: 1; opacity: 0.15; }
         
-        /* Nav Uniform Styles - NEW ADAPTIVE GLASS */
+        /* Nav Uniform Styles */
         .nav-glass {
-            background: rgba(125, 125, 125, 0.05); /* Ultra subtle base */
-            backdrop-filter: blur(12px); /* Blur content beneath */
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Blend Mode for Real-time Color Calculation */
-        .blend-content {
-            mix-blend-mode: difference;
-            color: white;
+            background: rgba(150, 150, 150, 0.1); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: width 0.3s ease, background 0.3s ease, color 0.2s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         /* Work Gallery & Card Glows */
@@ -162,7 +164,7 @@
             filter: blur(100px);
         }
 
-        /* Specific Hover Fixes - SOLID COLOR */
+        /* Specific Hover Fixes */
         .hover-solid-blue:hover { 
             background-color: #002FA7 !important; 
             color: white !important; 
@@ -177,6 +179,24 @@
         
         /* Ensure card content sits above glow */
         .card-content { position: relative; z-index: 10; }
+        
+        /* FIX: DesktopRenamer Blur
+           Added translateZ(0) to force layer promotion (GPU), ensuring backdrop-filter paints immediately.
+           Increased opacity slightly for visibility.
+        */
+        .app-card-glass {
+            background-color: rgba(20, 20, 20, 0.5); /* Dark mode default, slightly more opaque */
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateZ(0); /* Force GPU layer for blur */
+        }
+        
+        html:not(.dark) .app-card-glass {
+            background-color: rgba(255, 255, 255, 0.5); /* Light mode equivalent */
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
     </style>
 </head>
 <body>
@@ -194,24 +214,33 @@
             <div class="font-mono text-sm tracking-[0.3em] text-white">SYSTEM_BOOT</div>
         </div>
 
-        <nav class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none">
+        <!-- Navigation Bar -->
+        <!-- Ref added for Real-time color calculation -->
+        <nav ref="navBar" class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none">
             
+            <!-- Left: Sidebar Trigger -->
+            <!-- :class binds dynamic color calculated in JS -->
             <button @click="toggleSidebar" 
-                    class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:bg-white/10">
-                <div class="blend-content flex flex-col items-center justify-center gap-1.5 w-full h-full">
+                    ref="navBtnLeft"
+                    class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform"
+                    :class="navTextColor">
+                <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
                     <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
                     <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
                 </div>
             </button>
             
+            <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                 <div class="relative group cursor-pointer" 
+                     ref="navCapsule"
                      @click="toggleCapsuleNav"
                      @mouseenter="isCapsuleOpen = true" 
                      @mouseleave="isCapsuleOpen = false">
                     <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
-                         :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]']">
-                        <div class="blend-content w-full h-full flex items-center justify-center">
+                         :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navTextColor]">
+                        
+                        <div class="w-full h-full flex items-center justify-center">
                             <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
                                 {{ activeSection.toUpperCase() }}
                             </div>
@@ -226,19 +255,23 @@
                             </div>
                         </div>
                     </div>
-                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;">
+                    <!-- Progress Ring -->
+                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navTextColor">
                         <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
                          <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
                               :stroke-dasharray="capsulePerimeter" :stroke-dashoffset="capsuleDashOffset"
-                              class="text-klein-blue blend-content" style="transition: stroke-dashoffset 0.1s linear; opacity: 1; mix-blend-mode: normal;" /> 
-                              </svg>
+                              class="opacity-100" style="transition: stroke-dashoffset 0.1s linear;" />
+                    </svg>
                 </div>
             </div>
 
+            <!-- Right: Theme Toggle -->
             <div class="pointer-events-auto">
                 <button @click="cycleTheme" 
-                        class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:bg-white/10">
-                    <div class="blend-content flex items-center justify-center w-full h-full">
+                        ref="navBtnRight"
+                        class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform"
+                        :class="navTextColor">
+                    <div class="flex items-center justify-center w-full h-full">
                         <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
                         <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
                         <span v-show="themeMode === 'auto'" class="animate-fade-in"><i data-lucide="monitor" class="w-5 h-5"></i></span>
@@ -247,6 +280,7 @@
             </div>
         </nav>
 
+        <!-- Sidebar -->
         <transition name="backdrop">
             <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[10000]"></div>
         </transition>
@@ -269,6 +303,7 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
+            <!-- Hero Section -->
             <section id="home" class="relative w-full h-[180vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
                     <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
@@ -297,6 +332,7 @@
                 </div>
             </section>
 
+            <!-- About Banner -->
             <section class="w-full h-[120vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
                 <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
                     <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
@@ -305,6 +341,7 @@
                 </div>
             </section>
 
+            <!-- Profile Section -->
             <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30">
                 <div class="max-w-[90vw] mx-auto relative z-10">
                     <div class="flex items-end justify-between mb-24 border-b border-gray-200 dark:border-white/10 pb-8">
@@ -348,6 +385,7 @@
                 </div>
             </section>
 
+            <!-- Works Section -->
             <section id="works" class="relative bg-[#050505] z-30">
                 <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden z-0">
                     <div class="w-full h-full" ref="canvasContainer"></div>
@@ -363,7 +401,8 @@
                     </div>
 
                     <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center justify-center md:justify-end px-6 md:px-24" :data-index="i">
-                        <div class="max-w-md w-full bg-black/40 backdrop-blur-2xl border border-white/10 p-10 rounded-3xl transition-colors shadow-2xl relative group overflow-hidden hover:border-white/20 cursor-pointer">
+                        <!-- DesktopRenamer Blur & Transparency Fix -->
+                        <div class="app-card-glass max-w-md w-full rounded-3xl transition-colors shadow-2xl relative group overflow-hidden hover:border-white/20 cursor-pointer p-10">
                             <div class="card-corner-glow"></div>
 
                             <div class="card-content">
@@ -388,6 +427,7 @@
                 </div>
             </section>
             
+            <!-- Connect Section -->
             <section id="connect" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30">
                 <div class="max-w-7xl mx-auto">
                     <div class="flex items-center gap-3 mb-16">
@@ -396,6 +436,7 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         
+                        <!-- Github -->
                         <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
                             <div class="card-corner-glow"></div>
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
@@ -407,6 +448,7 @@
                             </div>
                         </a>
 
+                        <!-- Kaggle (FIXED GLOW COLOR) -->
                         <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
                             <div class="card-corner-glow" style="background: radial-gradient(circle at 100% 0%, rgba(32, 190, 255, 0.6) 0%, transparent 60%);"></div>
 
@@ -444,10 +486,13 @@
                 const isCapsuleOpen = ref(false);
                 const loader = ref(null);
                 const canvasContainer = ref(null);
-                const textureError = ref(false);
                 
-                // Nav Color Logic removed (Handled by CSS blend modes)
-
+                // Real-time Nav Color State
+                const navTextColor = ref('text-white');
+                const navBtnLeft = ref(null);
+                const navCapsule = ref(null);
+                const navBtnRight = ref(null); // Fixed: Declared missing ref
+                
                 const systemLinks = [
                     { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
                 ];
@@ -493,6 +538,53 @@
                     resolveTheme();
                 };
 
+                // Helper to get luminance of color string
+                const getLuminance = (colorStr) => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = 1; canvas.height = 1;
+                    const ctx = canvas.getContext("2d");
+                    ctx.fillStyle = colorStr;
+                    ctx.fillRect(0, 0, 1, 1);
+                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+                    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                };
+
+                // Real-time Contrast Check
+                const checkNavContrast = () => {
+                   if (!navCapsule.value) return;
+
+                   // Sample point: Center of the nav capsule
+                   const rect = navCapsule.value.getBoundingClientRect();
+                   const x = rect.left + rect.width / 2;
+                   const y = rect.top + rect.height / 2;
+
+                   // Get all elements at this point
+                   const elements = document.elementsFromPoint(x, y);
+                   
+                   // Find the first element that is NOT the nav or its children and has a background color
+                   let bgLuminance = 0; // Default to dark (so text becomes white)
+                   
+                   for (let el of elements) {
+                        // Skip nav elements
+                        if (el.tagName === 'NAV' || el.closest('nav') || el.classList.contains('cursor-dot')) continue;
+                        
+                        const style = window.getComputedStyle(el);
+                        const bgColor = style.backgroundColor;
+                        
+                        // Check if transparent
+                        if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') continue;
+
+                        // Found a background!
+                        bgLuminance = getLuminance(bgColor);
+                        break;
+                   }
+                   
+                   // Threshold: 128 is mid-grey. 
+                   // If > 128 (Light background) -> Use Black text.
+                   // If < 128 (Dark background) -> Use White text.
+                   navTextColor.value = bgLuminance > 128 ? 'text-black' : 'text-white';
+                };
+
                 const updateScrollProgress = () => {
                     const scrollTop = window.scrollY || document.documentElement.scrollTop;
                     const docHeight = document.documentElement.scrollHeight;
@@ -516,8 +608,11 @@
                             }
                         }
                     }
+
+                    // --- NAV COLOR UPDATE ---
+                    checkNavContrast();
                     
-                    // --- HOME PAGE ANIMATION LOGIC ---
+                    // --- ANIMATION LOGIC ---
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
                     const introText = document.querySelector('.intro-text');
@@ -549,7 +644,6 @@
                         }
                     }
 
-                    // --- CREATIVE BANNER LOGIC ---
                     if(creativeBanner) {
                         const bannerRect = document.getElementById('creative-banner').parentNode.getBoundingClientRect();
                         const triggerPoint = winHeight * 0.8; 
@@ -581,6 +675,7 @@
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
                     container.innerHTML = '';
+                    // ... existing logo path logic ...
                     const logoPaths = [
                         "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
                         "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
@@ -786,6 +881,7 @@
                             trigger: section,
                             start: "top center",
                             end: "bottom center",
+                            // ADDED overwrite: true to fix stuck icon issue
                             onEnter: () => animateIconIn(index),
                             onEnterBack: () => animateIconIn(index),
                             onLeave: () => animateIconOut(index, 1),
@@ -797,17 +893,17 @@
                 const animateIconIn = (index) => {
                     const icon = icons[index];
                     if(!icon) return;
-                    gsap.to(icon.position, { y: 0, duration: 1, ease: "power3.out" });
-                    gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 1, ease: "elastic.out(1, 0.8)" });
-                    gsap.to(icon.rotation, { x: 0, y: 0, z: 0, duration: 1 });
+                    gsap.to(icon.position, { y: 0, duration: 1, ease: "power3.out", overwrite: true });
+                    gsap.to(icon.scale, { x: 1, y: 1, z: 1, duration: 1, ease: "elastic.out(1, 0.8)", overwrite: true });
+                    gsap.to(icon.rotation, { x: 0, y: 0, z: 0, duration: 1, overwrite: true });
                 };
 
                 const animateIconOut = (index, direction) => {
                     const icon = icons[index];
                     if(!icon) return;
                     const targetY = direction > 0 ? 10 : -10; 
-                    gsap.to(icon.position, { y: targetY, duration: 0.8, ease: "power3.in" });
-                    gsap.to(icon.scale, { x: 0.5, y: 0.5, z: 0.5, duration: 0.8 });
+                    gsap.to(icon.position, { y: targetY, duration: 0.8, ease: "power3.in", overwrite: true });
+                    gsap.to(icon.scale, { x: 0.5, y: 0.5, z: 0.5, duration: 0.8, overwrite: true });
                 };
 
                 const initLenis = () => {
@@ -823,6 +919,8 @@
                     });
                     function raf(time) {
                         lenis.raf(time);
+                        // FIXED: Explicitly update ScrollTrigger during smooth scroll loop to handle fast jumps
+                        ScrollTrigger.update();
                         requestAnimationFrame(raf);
                     }
                     requestAnimationFrame(raf);
@@ -853,7 +951,8 @@
                 });
 
                 return {
-                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, textureError
+                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks,
+                    navTextColor, navCapsule, navBtnLeft, navBtnRight
                 };
             }
         }).mount('#app');
