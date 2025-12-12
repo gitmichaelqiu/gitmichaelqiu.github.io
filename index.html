@@ -423,27 +423,27 @@
                                 <div class="card-content flex flex-col gap-8">
                                     <!-- Header -->
                                     <div class="flex items-center gap-4">
-                                        <span class="font-display font-bold text-3xl text-white/30 group-hover:text-klein-blue transition-colors">0{{i+1}}</span>
-                                        <span class="font-mono text-[10px] tracking-[0.2em] text-gray-400 uppercase">System Utility</span>
+                                        <span class="font-display font-bold text-3xl text-black/20 dark:text-white/30 group-hover:text-klein-blue transition-colors">0{{i+1}}</span>
+                                        <span class="font-mono text-[10px] tracking-[0.2em] text-gray-600 dark:text-gray-400 uppercase">System Utility</span>
                                     </div>
                                     
                                     <!-- Body -->
                                     <div>
-                                        <h3 class="text-5xl md:text-6xl font-black text-white mb-6 tracking-tighter leading-[0.9]">{{ app.name }}</h3>
-                                        <p class="text-gray-400 text-lg leading-relaxed font-light">
+                                        <h3 class="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter leading-[0.9]">{{ app.name }}</h3>
+                                        <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed font-light">
                                             {{ app.desc }}
                                         </p>
                                     </div>
                                     
                                     <!-- Footer / Actions -->
-                                    <div class="pt-6 mt-4 border-t border-white/5 flex items-center justify-between">
+                                    <div class="pt-6 mt-4 border-t border-black/10 dark:border-white/5 flex items-center justify-between">
                                         <div class="flex gap-2">
-                                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-mono text-gray-400">MACOS</span>
-                                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-mono text-gray-400">SWIFT</span>
+                                            <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">MACOS</span>
+                                            <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">SWIFT</span>
                                         </div>
                                         
                                         <!-- Apple Style Action Button -->
-                                        <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-bold text-sm hover:scale-105 transition-transform duration-300">
+                                        <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-black text-white dark:bg-white dark:text-black font-bold text-sm hover:scale-105 transition-transform duration-300">
                                             <span>View</span>
                                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
                                         </button>
@@ -456,9 +456,9 @@
                 </div>
             </section>
             
-            <!-- Connect Section -->
-            <section id="connect" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30">
-                <div class="max-w-7xl mx-auto">
+            <!-- Connect Section - UPDATED: Full Height -->
+            <section id="connect" class="w-full min-h-screen flex flex-col justify-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30">
+                <div class="max-w-7xl mx-auto w-full">
                     <div class="flex items-center gap-3 mb-16">
                         <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
                         <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
@@ -918,7 +918,8 @@
                     const icon = icons[index];
                     if(!icon) return;
                     // UPDATED: Move icon to LEFT (x: -4.5) to clear space for the card on the right
-                    gsap.to(icon.position, { x: -4.5, y: 0, duration: 1.2, ease: "power3.out", overwrite: true });
+                    // Changed from -4.5 to -7 per request to balance margins
+                    gsap.to(icon.position, { x: -3.5, y: 0, duration: 1.2, ease: "power3.out", overwrite: true });
                     gsap.to(icon.scale, { x: 1.1, y: 1.1, z: 1.1, duration: 1.2, ease: "elastic.out(1, 0.8)", overwrite: true });
                     gsap.to(icon.rotation, { x: 0, y: 0.2, z: 0, duration: 1.2, overwrite: true });
                 };
