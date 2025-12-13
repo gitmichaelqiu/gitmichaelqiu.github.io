@@ -231,6 +231,21 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
+        /* --- LOADER STYLES --- */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            z-index: 50000; /* Above everything */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
     </style>
 </head>
 <body>
@@ -1443,17 +1458,17 @@
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
-                        duration: 10, 
+                        duration: 25, // Much slower entry
                         ease: "power3.out" 
                     });
 
                     // 6. Staggered Card Entries
                     photoCards.forEach((card, index) => {
-                        const offset = index * 2; 
+                        const offset = index * 3; // More spacing between cards
                         photosTimeline.fromTo(card, 
-                            { opacity: 0, y: 100 },
-                            { opacity: 1, y: 0, duration: 5, ease: "power3.out" },
-                            `>-${9 - offset}`
+                            { opacity: 0, y: 150 }, // Slightly more travel distance
+                            { opacity: 1, y: 0, duration: 12, ease: "power3.out" }, // Slower duration
+                            `>-${22 - offset}` // Adjust overlap based on new durations
                         );
                     });
 
