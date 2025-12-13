@@ -1460,19 +1460,34 @@
                          }
                     }, null, "capture-=0.1");
 
-                    // 6. Title Reveal (28% -> 35%)
+                    // 6. Title Reveal (Shutter Open)
                     photosTimeline.to(".gallery-title", { 
                         scaleY: 1, 
                         scale: 1, 
                         filter: "blur(0px)",
                         clipPath: "inset(0 0 0 0)", 
                         opacity: 1,
-                        duration: 7, 
+                        duration: 5, 
                         ease: "power2.out" 
-                    }, "capture+=1");
+                    }, "capture+=0.5");
 
-                    // 7. Quote Reveal (35% -> 40%)
-                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 5 });
+                    // 7. Transition to Quote (The Ghost Effect)
+                    // Title blurs and fades out to become a background element
+                    photosTimeline.to(".gallery-title", { 
+                        opacity: 0.1, 
+                        filter: "blur(10px)",
+                        scale: 1.05,
+                        duration: 5,
+                        ease: "power1.inOut"
+                    }, "+=1"); // Short pause after title reveal
+
+                    // Quote fades in simultaneously
+                    photosTimeline.to(".gallery-quote", { 
+                        opacity: 1, 
+                        y: 0, // Ensure it settles
+                        duration: 5,
+                        ease: "power1.out"
+                    }, "<"); 
 
                     // 8. Transition to Grid (40% -> 50%)
                     photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 5 }, "+=2");
