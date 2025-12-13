@@ -1340,7 +1340,116 @@
                     await nextTick();
 
                     // --- CONSOLIDATED PHOTOS TIMELINE (AUTOMATIC FLOW) ---
-                    const waves = document.querySelector('a-waves');
+                    // Wrapping in a slight delay ensures the Custom Element has fully hydrated the DOM
+                    setTimeout(() => {
+                        const waves = document.querySelector('a-waves');
+                        
+                        // 1. Force Wave Initialization to guarantee paths exist
+                        if (waves && waves.setLines) {
+                            waves.setSize();
+                            waves.setLines();
+                        }
+
+                        // 2. Re-query the lines NOW that we are sure they exist
+                        const lines = document.querySelectorAll('.js-line');
+                        
+                        // 3. Set up the Timeline
+                        if (lines.length > 0) {
+                            // Ensure lines start hidden
+                            gsap.set(lines, { strokeDashoffset: 6000 });
+
+                            photosTimeline = gsap.timeline({
+                                scrollTrigger: {
+                                    id: "photos-trigger",
+                                    trigger: "#photos",
+                                    start: "top top",
+                                    end: "+=5000",
+                                    pin: true,
+                                    scrub: 1, 
+                                }
+                            });
+
+                            // Animation: Draw the lines (Dashoffset 6000 -> 0)
+                            photosTimeline.to(lines, { 
+                                strokeDashoffset: 0, 
+                                duration: 20, 
+                                ease: "power1.inOut",
+                                stagger: {
+                                    amount: 15, 
+                                    from: "random"
+                                }
+                            });
+
+                            // The rest of your animation sequence...
+                            const photoCards = document.querySelectorAll('.photo-card-vertical');
+
+                            photosTimeline.addLabel("reveal");
+
+                            // Trigger Background Change
+                            photosTimeline.call(() => {
+                                photosActive.value = true;
+                            }, null, "reveal");
+
+                            photosTimeline.call(() => {
+                                 if (photosTimeline.scrollTrigger.direction < 0) {
+                                     photosActive.value = false;
+                                 }
+                            }, null, "reveal-=0.1");
+
+                            // Animate Title
+                            photosTimeline.to(".gallery-title", { 
+                                scaleY: 1, 
+                                opacity: 0.12, 
+                                filter: "blur(0px)",
+                                duration: 35, 
+                                ease: "power2.out" 
+                            }, "reveal");
+
+                            // Quote Appear
+                            photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
+
+                            // Transition to Grid
+                            photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
+                            photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
+                            
+                            // Grid Entry
+                            photosTimeline.to(".photos-grid", { 
+                                y: 0, 
+                                opacity: 1, 
+                                duration: 10, 
+                                ease: "power3.out" 
+                            });
+
+                            // Staggered Card Entries
+                            photoCards.forEach((card, index) => {
+                                const offset = index * 2; 
+                                photosTimeline.fromTo(card, 
+                                    { opacity: 0, y: 100 },
+                                    { opacity: 1, y: 0, duration: 5, ease: "power3.out" },
+                                    `>-${9 - offset}`
+                                );
+                            });
+
+                            // Grid Scroll
+                            photosTimeline.to(".photos-grid", {
+                                y: "-50%", 
+                                duration: 35,
+                                ease: "none" 
+                            });
+
+                            // Exit
+                            photosTimeline.to(".photos-grid", {
+                                y: "-150%", 
+                                opacity: 0,
+                                filter: "blur(20px)",
+                                scale: 0.8,
+                                duration: 10,
+                                ease: "power4.in"
+                            });
+                        } else {
+                            console.warn("Wave lines not found during initialization.");
+                        }
+                    }, 100); // 100ms delay to allow DOM painting
                     
                     // FORCE WAVE INITIALIZATION
                     // This ensures lines exist before GSAP tries to find them
