@@ -258,6 +258,7 @@
             <div class="font-mono text-xs tracking-[0.5em] text-white/70 animate-pulse">SYSTEM_BOOT</div>
         </div>
 
+        <!-- ... existing nav code ... -->
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
              :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
@@ -334,8 +335,7 @@
         </transition>
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
-            
-            <!-- Hero Section -->
+            <!-- ... existing sections: home, profile, works ... -->
             <section id="home" class="relative w-full h-[300vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
                     <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
@@ -1458,17 +1458,17 @@
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
-                        duration: 25, // Much slower entry
+                        duration: 35, // Slower grid entry (was 25)
                         ease: "power3.out" 
                     });
 
                     // 6. Staggered Card Entries
                     photoCards.forEach((card, index) => {
-                        const offset = index * 3; // More spacing between cards
+                        const offset = index * 4; // More spacing between cards
                         photosTimeline.fromTo(card, 
-                            { opacity: 0, y: 150 }, // Slightly more travel distance
-                            { opacity: 1, y: 0, duration: 12, ease: "power3.out" }, // Slower duration
-                            `>-${22 - offset}` // Adjust overlap based on new durations
+                            { opacity: 0, y: 150 }, 
+                            { opacity: 1, y: 0, duration: 20, ease: "power3.out" }, // Slower entry per card (was 12)
+                            `>-${30 - offset}` // Adjusted overlap
                         );
                     });
 
