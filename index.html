@@ -66,7 +66,7 @@
         body {
             background-color: #F2F2F7;
             color: #111;
-            transition: background 0.5s ease, color 0.5s ease;
+            transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             width: 100vw;
             overflow-x: hidden;
         }
@@ -189,7 +189,7 @@
             transition: stroke 0.5s ease;
             stroke-dasharray: 6000; 
             /* Initialize invisible */
-            stroke-dashoffset: 0; 
+            stroke-dashoffset: 6000; 
         }
         
         /* Wave Stroke Colors */
@@ -604,7 +604,17 @@
         }
 
         // --- Wave Component Class ---
+        // Enhanced to support internal "progress" state for robust GSAP animation
         class AWaves extends HTMLElement {
+            constructor() {
+                super();
+                this._progress = 0; 
+            }
+
+            // Expose 'progress' property for GSAP to animate
+            get progress() { return this._progress; }
+            set progress(val) { this._progress = val; }
+
             connectedCallback() {
                 this.svg = this.querySelector('.js-svg');
                 if (!this.svg) {
@@ -618,7 +628,6 @@
                 };
 
                 this.lines = [];
-                // Initialize paths array
                 this.paths = [];
                 this.noise = new Noise(Math.random());
                 
@@ -676,7 +685,7 @@
 
             setSize() {
                 this.bounding = this.getBoundingClientRect();
-                // Ensure non-zero size to prevent layout issues
+                // Ensure non-zero dimensions
                 if (this.bounding.width === 0) this.bounding.width = window.innerWidth;
                 if (this.bounding.height === 0) this.bounding.height = window.innerHeight;
                 
@@ -686,9 +695,9 @@
 
             setLines() {
                 const { width, height } = this.bounding;
-                this.lines = [];
                 
-                // Clear existing paths to ensure no stale state
+                // Clear state
+                this.lines = [];
                 this.svg.innerHTML = '';
                 this.paths = [];
                 
@@ -712,14 +721,23 @@
                             cursor: { x: 0, y: 0, vx: 0, vy: 0 } 
                         });
                     }
-                    this.lines.push(points);
+                    
+                    // Assign random speed and threshold per line for vine effect
+                    // Speed: 0.5 to 1.5 multiplier
+                    // Threshold: 0 to 0.3 delay before starting
+                    const speed = 0.8 + Math.random() * 0.4;
+                    const threshold = Math.random() * 0.2;
+                    
+                    this.lines.push({ points, speed, threshold });
                     
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.classList.add('a__line');
                     path.classList.add('js-line');
-                    // Explicitly set initial dash properties to ensure visibility logic works
+                    
+                    // Set dasharray large enough to cover max length
+                    // We will manipulate dashoffset in JS
                     path.style.strokeDasharray = "6000";
-                    path.style.strokeDashoffset = "6000";
+                    path.style.strokeDashoffset = "6000"; // Start hidden
                     
                     this.svg.appendChild(path);
                     this.paths.push(path);
@@ -728,10 +746,10 @@
 
             movePoints(time) {
                 const { lines, mouse, noise } = this;
-                const amp = this.amplitude; // Use dynamic amplitude controlled by GSAP
+                const amp = this.amplitude; 
 
-                lines.forEach((points) => {
-                    points.forEach((p) => {
+                lines.forEach((lineObj) => {
+                    lineObj.points.forEach((p) => {
                         const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
                         p.wave.x = Math.cos(move) * 32 * amp;
                         p.wave.y = Math.sin(move) * 16 * amp;
@@ -770,23 +788,35 @@
 
             drawLines() {
                 const { lines, moved, paths } = this;
-                lines.forEach((points, lIndex) => {
-                    // Iterate backwards (bottom to top) to create vine growing effect
-                    // when stroke-dashoffset animates
-                    
+                
+                lines.forEach((lineObj, lIndex) => {
+                    const points = lineObj.points;
                     const lastIdx = points.length - 1;
-                    if (lastIdx < 0) return;
-
-                    let pStart = moved(points[lastIdx], false); // Start at bottom
+                    
+                    // Draw Bottom to Top (reverse order)
+                    let pStart = moved(points[lastIdx], false); 
                     let d = `M ${pStart.x} ${pStart.y}`;
                     
                     for (let i = lastIdx; i >= 0; i--) {
-                        // Apply cursor force unless it's the anchor point (though logic allows both)
-                        // Original code used !isLast. Here we can use i !== lastIdx or just always true except first point
                         const p = moved(points[i], true); 
                         d += `L ${p.x} ${p.y}`;
                     }
-                    if (paths[lIndex]) paths[lIndex].setAttribute('d', d);
+                    
+                    if (paths[lIndex]) {
+                        paths[lIndex].setAttribute('d', d);
+                        
+                        // --- VINE GROWTH LOGIC ---
+                        // Calculate offset based on Component Progress + Random Line Factors
+                        // Formula: (GlobalProgress - LineStartThreshold) * LineSpeed
+                        // Clamp between 0 and 1
+                        let localProgress = (this._progress - lineObj.threshold) / (1 - lineObj.threshold);
+                        localProgress = Math.max(0, Math.min(1, localProgress));
+                        
+                        // Map localProgress 0->1 to DashOffset 6000->0
+                        // Since we draw Bottom->Top, 0 offset reveals the full line from Start (Bottom)
+                        const offset = 6000 * (1 - localProgress);
+                        paths[lIndex].style.strokeDashoffset = offset;
+                    }
                 });
             }
 
@@ -840,9 +870,8 @@
                 const navCapsule = ref(null);
                 const navBtnRight = ref(null);
 
-                // Camera Interaction Refs
                 const photosActive = ref(false);
-                let photosTimeline = null; // Store main timeline ref
+                let photosTimeline = null; 
                 
                 const systemLinks = [
                     { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
@@ -1325,7 +1354,7 @@
                     requestAnimationFrame(raf);
                 };
 
-                onMounted(async () => {
+                onMounted(() => {
                     setTimeout(() => { finishBootSequence(); }, 2500);
                     initMagneticLogo();
                     lucide.createIcons();
@@ -1336,123 +1365,10 @@
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
 
-                    // Wait for DOM updates to ensure custom element children are rendered
-                    await nextTick();
-
                     // --- CONSOLIDATED PHOTOS TIMELINE (AUTOMATIC FLOW) ---
-                    // Wrapping in a slight delay ensures the Custom Element has fully hydrated the DOM
-                    setTimeout(() => {
-                        const waves = document.querySelector('a-waves');
-                        
-                        // 1. Force Wave Initialization to guarantee paths exist
-                        if (waves && waves.setLines) {
-                            waves.setSize();
-                            waves.setLines();
-                        }
-
-                        // 2. Re-query the lines NOW that we are sure they exist
-                        const lines = document.querySelectorAll('.js-line');
-                        
-                        // 3. Set up the Timeline
-                        if (lines.length > 0) {
-                            // Ensure lines start hidden
-                            gsap.set(lines, { strokeDashoffset: 6000 });
-
-                            photosTimeline = gsap.timeline({
-                                scrollTrigger: {
-                                    id: "photos-trigger",
-                                    trigger: "#photos",
-                                    start: "top top",
-                                    end: "+=5000",
-                                    pin: true,
-                                    scrub: 1, 
-                                }
-                            });
-
-                            // Animation: Draw the lines (Dashoffset 6000 -> 0)
-                            photosTimeline.to(lines, { 
-                                strokeDashoffset: 0, 
-                                duration: 20, 
-                                ease: "power1.inOut",
-                                stagger: {
-                                    amount: 15, 
-                                    from: "random"
-                                }
-                            });
-
-                            // The rest of your animation sequence...
-                            const photoCards = document.querySelectorAll('.photo-card-vertical');
-
-                            photosTimeline.addLabel("reveal");
-
-                            // Trigger Background Change
-                            photosTimeline.call(() => {
-                                photosActive.value = true;
-                            }, null, "reveal");
-
-                            photosTimeline.call(() => {
-                                 if (photosTimeline.scrollTrigger.direction < 0) {
-                                     photosActive.value = false;
-                                 }
-                            }, null, "reveal-=0.1");
-
-                            // Animate Title
-                            photosTimeline.to(".gallery-title", { 
-                                scaleY: 1, 
-                                opacity: 0.12, 
-                                filter: "blur(0px)",
-                                duration: 35, 
-                                ease: "power2.out" 
-                            }, "reveal");
-
-                            // Quote Appear
-                            photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
-
-                            // Transition to Grid
-                            photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
-                            photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
-                            
-                            // Grid Entry
-                            photosTimeline.to(".photos-grid", { 
-                                y: 0, 
-                                opacity: 1, 
-                                duration: 10, 
-                                ease: "power3.out" 
-                            });
-
-                            // Staggered Card Entries
-                            photoCards.forEach((card, index) => {
-                                const offset = index * 2; 
-                                photosTimeline.fromTo(card, 
-                                    { opacity: 0, y: 100 },
-                                    { opacity: 1, y: 0, duration: 5, ease: "power3.out" },
-                                    `>-${9 - offset}`
-                                );
-                            });
-
-                            // Grid Scroll
-                            photosTimeline.to(".photos-grid", {
-                                y: "-50%", 
-                                duration: 35,
-                                ease: "none" 
-                            });
-
-                            // Exit
-                            photosTimeline.to(".photos-grid", {
-                                y: "-150%", 
-                                opacity: 0,
-                                filter: "blur(20px)",
-                                scale: 0.8,
-                                duration: 10,
-                                ease: "power4.in"
-                            });
-                        } else {
-                            console.warn("Wave lines not found during initialization.");
-                        }
-                    }, 100); // 100ms delay to allow DOM painting
+                    const waves = document.querySelector('a-waves');
                     
-                    // FORCE WAVE INITIALIZATION
-                    // This ensures lines exist before GSAP tries to find them
+                    // Force initial calculation
                     if (waves) {
                         waves.setSize();
                         waves.setLines();
@@ -1465,63 +1381,48 @@
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=5000", // Adjusted length for smooth auto-flow
+                            end: "+=5000", 
                             pin: true,
                             scrub: 1, 
                         }
                     });
 
                     // 1. Vines/Lines Grow Smoother with Stagger (0% -> 20%)
-                    // Selecting all lines individually to stagger their growth
-                    // Use a query selector string for GSAP to handle potential re-renders or direct nodelist if stable
-                    const lines = document.querySelectorAll('.js-line');
-                    
-                    // Force initial state explicitly to be invisible (offset = array length)
-                    // We rely on CSS initially but setting it via GSAP ensures logic holds
-                    if(lines.length > 0) {
-                        gsap.set(lines, { strokeDashoffset: 6000 });
+                    // IMPORTANT: Animate the 'progress' property of the Custom Element itself.
+                    // This is robust against re-renders.
+                    if (waves) {
+                        // Start wave amplitude so they are wavy as they grow
+                        gsap.to(waves, { amplitude: 1, duration: 5 });
+                        
+                        // Animate the internal progress property from 0 to 1
+                        photosTimeline.to(waves, { 
+                            progress: 1, 
+                            duration: 20, 
+                            ease: "power1.inOut"
+                        });
                     }
-                    
-                    // Start amplitude animation immediately so lines are wavy as they grow (no static straight lines)
-                    if(waves) gsap.to(waves, { amplitude: 1, duration: 5 });
-
-                    photosTimeline.to(lines, { 
-                        strokeDashoffset: 0, 
-                        duration: 20, 
-                        ease: "power1.inOut",
-                        stagger: {
-                            amount: 15, // Creates a random delay spread across the duration
-                            from: "random"
-                        }
-                    });
 
                     // 2. THE GHOST REVEAL & BACKGROUND CHANGE (20% -> 35%)
-                    // The title goes from High (scaleY 3) to Normal (scaleY 1)
-                    // At the same time, the background switches to light mode
-                    
                     photosTimeline.addLabel("reveal");
 
                     // Trigger Background Change
                     photosTimeline.call(() => {
-                        // Forward: Active (Light)
                         photosActive.value = true;
                     }, null, "reveal");
 
                     photosTimeline.call(() => {
-                         // Reverse: Inactive (Dark)
                          if (photosTimeline.scrollTrigger.direction < 0) {
                              photosActive.value = false;
                          }
-                    }, null, "reveal-=0.1"); // Check slightly before to ensure reverse toggles back
+                    }, null, "reveal-=0.1"); 
 
                     // Animate Title: "Ghost" effect condensing into readable text
-                    // From blurry stretched -> sharp normal
                     photosTimeline.to(".gallery-title", { 
                         scaleY: 1, 
-                        opacity: 0.12, // Reduced opacity to allow text readability
+                        opacity: 0.12, 
                         filter: "blur(0px)",
-                        duration: 35, // Significantly increased duration for better capture/visibility
-                        ease: "power2.out" // Slightly softer ease for observation
+                        duration: 35, 
+                        ease: "power2.out"
                     }, "reveal");
 
                     // 3. Quote Appear (35% -> 45%)
