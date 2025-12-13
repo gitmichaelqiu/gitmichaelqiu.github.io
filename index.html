@@ -231,21 +231,6 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- LOADER STYLES --- */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #050505;
-            z-index: 50000; /* Above everything */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease;
-        }
-
     </style>
 </head>
 <body>
@@ -254,9 +239,7 @@
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
         
-        <div class="loader" ref="loader">
-            <div class="font-mono text-xs tracking-[0.5em] text-white/70 animate-pulse">SYSTEM_BOOT</div>
-        </div>
+        <!-- Loader removed to reveal rotating balls as the loading screen -->
 
         <!-- ... existing nav code ... -->
         <nav ref="navBar" 
@@ -1116,7 +1099,10 @@
                                 svg.appendChild(line);
                                 svg.appendChild(ball);
                                 let initialX, initialY;
+                                
+                                // --- CRITICAL LOADING SCREEN LOGIC FROM WORK.HTML ---
                                 if (isBooting.value) {
+                                    // FORCE CIRCLE FORMATION
                                     const angle = (ballIndex * 0.1) + (Math.random() * 0.5);
                                     const r = circleRadius + (Math.random() * 20 - 10);
                                     initialX = centerScreenX + Math.cos(angle) * r;
@@ -1129,6 +1115,8 @@
                                     initialX = x; initialY = y;
                                     line.style.opacity = '0.15';
                                 }
+                                // ---------------------------------------------------
+
                                 ball.setAttribute("cx", initialX); ball.setAttribute("cy", initialY);
                                 line.setAttribute("x1", initialX); line.setAttribute("y1", initialY);
                                 line.setAttribute("x2", initialX); line.setAttribute("y2", initialY);
