@@ -48,6 +48,7 @@
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
 
     <!-- Lenis (Smooth Scroll) -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
@@ -140,7 +141,7 @@
         
         /* Theme Transition - Default to Intro State (Dark) */
         #photos { 
-            transition: background-color 0.1s ease; 
+            transition: background-color 0.5s ease; /* Smoother transition */
             background-color: #050505; /* Start Dark for Intro */
             color: #ffffff;
         }
@@ -172,7 +173,6 @@
             z-index: 0;
         }
         
-        /* Removed the Blue Ball (Pseudo-element) */
         a-waves:before {
             content: none !important;
             display: none !important;
@@ -217,6 +217,8 @@
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             transform: translateY(0);
             border: 1px solid transparent;
+            /* Important for JS manipulation: */
+            will-change: transform, opacity;
         }
         
         .gallery-title {
@@ -504,8 +506,8 @@
                         <div class="camera-corner bl"></div>
                         <div class="camera-corner br"></div>
                         
-                        <!-- Fix: Added ref to button container for animation -->
-                        <div class="camera-btn-container" ref="cameraBtn" @click="captureReality">
+                        <!-- Camera Button -->
+                        <div class="camera-btn-container" ref="cameraBtn" @click="handleCaptureClick">
                             <div class="camera-btn-inner">
                                 <div class="camera-btn-dot"></div>
                             </div>
@@ -654,10 +656,8 @@
         }
 
         // --- Wave Component Class ---
-        // COMPLETELY TRANSFERRED FROM SCRIPT.JS (With fix for scrolling)
         class AWaves extends HTMLElement {
             connectedCallback() {
-                // Ensure SVG element exists
                 this.svg = this.querySelector('.js-svg');
                 if (!this.svg) {
                     this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -673,8 +673,8 @@
                 this.paths = [];
                 this.noise = new Noise(Math.random());
                 
-                // New: Amplitude control for interaction
-                this.amplitude = 0; // Start with straight lines (0 noise)
+                // Controlled by GSAP
+                this.amplitude = 0; 
 
                 this.setSize();
                 this.setLines();
@@ -702,7 +702,6 @@
             }
 
             onMouseMove(e) {
-                // Pass CLIENT coordinates (viewport relative) to handle scrolling correctly
                 this.updateMousePosition(e.clientX, e.clientY);
             }
 
@@ -713,10 +712,7 @@
             }
 
             updateMousePosition(x, y) {
-                // Calculate position relative to the element dynamically
-                // This fixes the issue where sticky/scrolling elements had wrong coordinates
                 const rect = this.getBoundingClientRect();
-                
                 this.mouse.x = x - rect.left;
                 this.mouse.y = y - rect.top;
 
@@ -741,7 +737,6 @@
                 this.paths.forEach(p => p.remove());
                 this.paths = [];
                 
-                // Config from script.js
                 const xGap = 10; 
                 const yGap = 32; 
 
@@ -764,7 +759,6 @@
                     }
                     
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    // Add classes from script.js
                     path.classList.add('a__line');
                     path.classList.add('js-line');
                     
@@ -776,16 +770,14 @@
 
             movePoints(time) {
                 const { lines, mouse, noise } = this;
-                const amp = this.amplitude; // Use dynamic amplitude
+                const amp = this.amplitude; // Use dynamic amplitude controlled by GSAP
 
                 lines.forEach((points) => {
                     points.forEach((p) => {
-                        // Wave movement - Scaled by amplitude
                         const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
                         p.wave.x = Math.cos(move) * 32 * amp;
                         p.wave.y = Math.sin(move) * 16 * amp;
 
-                        // Mouse effect
                         const dx = p.x - mouse.sx;
                         const dy = p.y - mouse.sy;
                         const d = Math.hypot(dx, dy);
@@ -805,7 +797,6 @@
                         p.cursor.x += p.cursor.vx * 2; 
                         p.cursor.y += p.cursor.vy * 2;
                         
-                        // Clamp
                         p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); 
                         p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
                     });
@@ -828,7 +819,6 @@
                     points.forEach((p1, pIndex) => {
                         const isLast = pIndex === points.length - 1;
                         p1 = moved(p1, !isLast);
-                        // Original code used L (Line)
                         d += `L ${p1.x} ${p1.y}`;
                     });
                     paths[lIndex].setAttribute('d', d);
@@ -838,7 +828,6 @@
             tick(time) {
                 const { mouse } = this;
                 
-                // Smooth mouse movement
                 mouse.sx += (mouse.x - mouse.sx) * 0.1;
                 mouse.sy += (mouse.y - mouse.sy) * 0.1;
                 
@@ -854,7 +843,6 @@
                 mouse.ly = mouse.y;
                 mouse.a = Math.atan2(dy, dx);
                 
-                // Update CSS variables for dot
                 this.style.setProperty('--x', `${mouse.sx}px`);
                 this.style.setProperty('--y', `${mouse.sy}px`);
                 
@@ -891,6 +879,7 @@
                 const photosActive = ref(false);
                 const flashOverlay = ref(null);
                 const cameraBtn = ref(null);
+                let photosTimeline = null; // Store main timeline ref
                 
                 const systemLinks = [
                     { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
@@ -915,7 +904,6 @@
                 let mouseX = 0, mouseY = 0;
                 let lenis;
                 let ballsRef = []; 
-                let photosTimeline = null; // Store main timeline to control play
 
                 const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
@@ -1375,32 +1363,27 @@
                 };
 
                 // --- NEW: Camera Interaction Logic ---
-                const captureReality = () => {
-                    if (photosActive.value) return;
-                    photosActive.value = true;
-
-                    const waves = document.querySelector('a-waves');
-                    const tl = gsap.timeline();
-
-                    // 1. Flash
-                    tl.to(flashOverlay.value, { opacity: 1, duration: 0.05, ease: "power4.in" })
-                      .to(flashOverlay.value, { opacity: 0, duration: 0.5, ease: "power4.out" });
-
-                    // 2. Distort Lines (Amplitude 0 -> 1)
-                    if (waves) {
-                        gsap.to(waves, { amplitude: 1, duration: 1.5, ease: "elastic.out(1, 0.5)" });
-                    }
-
-                    // 3. Hide HUD
-                    // Fix: Ensure pointer-events are disabled immediately to prevent double clicks
-                    gsap.to('.camera-hud', { opacity: 0, duration: 0.3, pointerEvents: 'none' });
-
-                    // 4. Reveal Title (Start normal timeline flow)
-                    // We modify the next timeline parts to run automatically or be scrollable?
-                    // Actually, since we paused visual progress, we just unlock visual state.
-                    // The main ScrollTrigger below handles the rest based on scroll position.
-                    // But if user hasn't scrolled enough, we might want to auto-scroll or just let them discover.
-                    // Let's assume the user is at the "Wait" point.
+                // We no longer trigger state here directly. We just scroll to the timeline point.
+                const handleCaptureClick = () => {
+                   if (!photosTimeline) return;
+                   
+                   // Find the start time of the capture label or approximation
+                   // 25% of the total scroll distance of the pinned element
+                   // The pinned element is #photos, duration is +=6000
+                   const trigger = ScrollTrigger.getById("photos-trigger");
+                   if(trigger) {
+                       const start = trigger.start;
+                       const end = trigger.end;
+                       const distance = end - start;
+                       // We want to scroll to 26% of the way through the trigger
+                       const targetScroll = start + (distance * 0.26);
+                       
+                       gsap.to(window, {
+                           scrollTo: targetScroll,
+                           duration: 1.5,
+                           ease: "power3.inOut"
+                       });
+                   }
                 };
 
                 onMounted(() => {
@@ -1414,104 +1397,122 @@
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
 
-                    // --- VERTICAL PHOTOS ANIMATION ---
+                    // --- CONSOLIDATED PHOTOS TIMELINE ---
+                    const waves = document.querySelector('a-waves');
+                    const photoCards = document.querySelectorAll('.photo-card-vertical');
                     
-                    const tl = gsap.timeline({
+                    photosTimeline = gsap.timeline({
                         scrollTrigger: {
+                            id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=6000", // Even longer for the intro
+                            end: "+=6000",
                             pin: true,
-                            scrub: 1,
+                            scrub: 1, // Smooth scrubbing
+                            onUpdate: (self) => {
+                                // Fallback logic if needed
+                            }
                         }
                     });
 
-                    // 1. Lines Grow (Vines effect) - 0% to 10% scroll
-                    // Staggered for organic vine effect
-                    // Fix: Use CSS variable for dash offset animation
-                    tl.to("a-waves", { 
+                    // 1. Vines/Lines Grow (0% -> 10%)
+                    photosTimeline.to("a-waves", { 
                         "--dash-offset": 0, 
-                        duration: 5, 
-                        ease: "power2.inOut",
-                        onUpdate: function() {
-                            // Force redraw/update of variable usage if needed, though CSS var should handle it
-                        }
+                        duration: 10, 
+                        ease: "power2.inOut"
                     });
 
-                    // 2. HUD Appear - 10% to 15% scroll
-                    tl.to(".camera-hud", { opacity: 1, duration: 1 });
+                    // 2. HUD Appears (10% -> 20%)
+                    photosTimeline.to(".camera-hud", { opacity: 1, duration: 10 });
 
-                    // 3. "Wait" Phase - 15% to 25% scroll (User interaction window)
-                    // We just add empty duration. If user clicks, HUD vanishes.
-                    // If user scrolls past 25% without clicking, we force trigger.
-                    tl.addLabel("capture_window");
-                    tl.to({}, { duration: 3 }); 
+                    // 3. User Decision Window (Wait) (20% -> 25%)
+                    photosTimeline.to({}, { duration: 5 }); 
 
-                    // 4. Force Capture if skipped
-                    tl.call(() => {
-                        if (!photosActive.value) captureReality();
-                    });
+                    // 4. THE CAPTURE MOMENT (25%)
+                    photosTimeline.addLabel("capture");
+                    
+                    // Flash: Fast flash then fade
+                    photosTimeline.to(flashOverlay.value, { opacity: 1, duration: 0.5, ease: "power4.in" }, "capture");
+                    photosTimeline.to(flashOverlay.value, { opacity: 0, duration: 2, ease: "power4.out" }, "capture+=0.5");
+                    
+                    // Distortion: Amplitude spikes then settles
+                    if (waves) {
+                        photosTimeline.to(waves, { amplitude: 1, duration: 2, ease: "elastic.out(1, 0.3)" }, "capture");
+                    }
+                    
+                    // HUD Disappears
+                    photosTimeline.to(".camera-hud", { opacity: 0, pointerEvents: "none", duration: 2 }, "capture");
 
-                    // 5. Title Reveal (Shutter Effect) - Starts after interaction point
-                    tl.to(".gallery-title", { 
+                    // 5. State Change Logic (Using callbacks to ensure it reverses properly)
+                    photosTimeline.call(() => {
+                        // Forward direction: Active
+                        photosActive.value = true;
+                    }, null, "capture+=0.1");
+
+                    // Need a way to reset when going back BEFORE capture
+                    // We insert a callback slightly before the capture point
+                    photosTimeline.call(() => {
+                         // Check direction, if we are reversing past this point
+                         if (photosTimeline.scrollTrigger.direction < 0) {
+                             photosActive.value = false;
+                             // Reset amplitude on reverse if scrubbing doesn't catch it perfectly
+                             if(waves) waves.amplitude = 0; 
+                         }
+                    }, null, "capture-=0.1");
+
+                    // 6. Title Reveal (28% -> 35%)
+                    photosTimeline.to(".gallery-title", { 
                         scaleY: 1, 
                         scale: 1, 
                         filter: "blur(0px)",
                         clipPath: "inset(0 0 0 0)", 
                         opacity: 1,
-                        duration: 4, 
+                        duration: 7, 
                         ease: "power2.out" 
-                    });
+                    }, "capture+=1");
 
-                    // 6. Quote Fade In
-                    tl.to(".gallery-quote", { opacity: 1, duration: 2 }, "-=1");
+                    // 7. Quote Reveal (35% -> 40%)
+                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 5 });
+
+                    // 8. Transition to Grid (40% -> 50%)
+                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 5 }, "+=2");
+                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 5 }, "<");
                     
-                    // 7. Quote Fade Out & Grid Rise
-                    tl.to(".gallery-quote", { opacity: 0, y: -50, duration: 2, delay: 1 });
-                    tl.to(".gallery-title", { opacity: 0, y: -100, duration: 2 }, "<"); 
-                    
-                    // 8. Grid Entry (Move to view)
-                    tl.to(".photos-grid", { 
+                    // 9. Grid Entry (50% -> 60%)
+                    photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
-                        duration: 4, 
+                        duration: 10, 
                         ease: "power3.out" 
-                    }, "-=1");
-                    
-                    // 9. Grid Scroll (Scroll through content)
-                    tl.to(".photos-grid", {
+                    });
+
+                    // 10. Staggered Card Entries (Embedded in timeline)
+                    // We animate them IN as the grid moves up
+                    photoCards.forEach((card, index) => {
+                        // Offset the start time for staggering
+                        const offset = index * 2; 
+                        photosTimeline.fromTo(card, 
+                            { opacity: 0, y: 100 },
+                            { opacity: 1, y: 0, duration: 5, ease: "power3.out" },
+                            `>-${8 - offset}` // Overlap with grid entry
+                        );
+                    });
+
+                    // 11. Grid Scroll (60% -> 90%)
+                    photosTimeline.to(".photos-grid", {
                         y: "-50%", 
-                        duration: 6,
+                        duration: 30,
                         ease: "none" 
                     });
 
-                    // 10. Exit Animation (Warp Speed)
-                    tl.to(".photos-grid", {
+                    // 12. Exit (90% -> 100%)
+                    photosTimeline.to(".photos-grid", {
                         y: "-150%", 
                         opacity: 0,
                         filter: "blur(20px)",
                         scale: 0.8,
-                        duration: 2,
+                        duration: 10,
                         ease: "power4.in"
-                    });
-
-                    // Trigger individual cards entry
-                    const verticalCards = document.querySelectorAll('.photo-card-vertical');
-                    verticalCards.forEach((card, i) => {
-                        gsap.fromTo(card, 
-                            { opacity: 0, y: 100 },
-                            {
-                                opacity: 1,
-                                y: 0,
-                                duration: 1,
-                                ease: "power3.out",
-                                scrollTrigger: {
-                                    trigger: card,
-                                    start: "top 95%",
-                                    toggleActions: "play none none reverse"
-                                }
-                            }
-                        );
                     });
 
                 });
@@ -1526,7 +1527,7 @@
                 return {
                     isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
                     navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight,
-                    photosActive, captureReality, flashOverlay, cameraBtn
+                    photosActive, handleCaptureClick, flashOverlay, cameraBtn
                 };
             }
         }).mount('#app');
