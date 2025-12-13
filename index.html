@@ -144,6 +144,7 @@
         /* Light Theme */
         html:not(.dark) #photos { background-color: #ffffff; color: #002FA7; }
         html:not(.dark) .gallery-title { color: #002FA7; opacity: 0.15; }
+        html:not(.dark) .gallery-quote { color: #002FA7; }
         
         /* Dark Theme */
         html.dark #photos { background-color: #020412; color: #ffffff; }
@@ -454,7 +455,7 @@
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
                     <!-- Background Wave Effect -->
                     <a-waves class="absolute inset-0 z-0 js-waves-container">
-                        <!-- SVG injected by JS -->
+                        <svg class="js-svg"></svg>
                     </a-waves>
 
                     <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center pointer-events-none">
