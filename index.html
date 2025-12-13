@@ -17,27 +17,21 @@
                         'klein-blue': '#002FA7',
                         'bg-dark': '#050505',
                         'bg-light': '#F2F2F7', 
-                        'deep-navy': '#020412', // For Dark Mode Photos
+                        'deep-navy': '#020412',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                         display: ['Syncopate', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'], // Added for Quote
+                        serif: ['Playfair Display', 'serif'],
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'marquee': 'marquee 30s linear infinite',
-                        'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        marquee: {
-                            '0%': { transform: 'translateX(0%)' },
-                            '100%': { transform: 'translateX(-100%)' },
                         }
                     }
                 }
@@ -72,6 +66,8 @@
             background-color: #F2F2F7;
             color: #111;
             transition: background 0.5s ease, color 0.5s ease;
+            width: 100vw;
+            overflow-x: hidden;
         }
 
         html.dark body {
@@ -102,173 +98,97 @@
 
         /* Typography */
         .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5); }
-        .text-stroke-black { -webkit-text-stroke: 1px rgba(0,0,0,0.8); }
         
         /* Glass Cards */
         .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
         html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
         .glass-card:hover { border-color: var(--klein-blue); background: rgba(0, 47, 167, 0.05); }
 
-        /* Marquee */
-        .marquee-container { overflow: hidden; white-space: nowrap; display: flex; }
-        .marquee-content { display: flex; flex-shrink: 0; }
-        .animate-marquee { animation: marquee 30s linear infinite; }
-
-        /* Transitions */
-        .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-        .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
-        .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.4s ease; }
-        .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
-
-        /* Loader */
-        .loader { position: fixed; bottom: 40px; left: 0; width: 100%; z-index: 20000; display: flex; justify-content: center; align-items: center; pointer-events: none; }
-        
-        .capsule-nav { transition: width 0.3s ease, background-color 0.3s ease, color 0.3s ease; }
-
-        .magnetic-ball { transition: opacity 0.1s ease; }
-        .magnetic-ball-line { stroke: currentColor; stroke-width: 1; opacity: 0.15; }
-        
-        /* Nav Uniform Styles */
-        .nav-glass {
-            background: rgba(150, 150, 150, 0.1); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: width 0.3s ease, background 0.3s ease, color 0.2s ease;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Work Gallery & Card Glows */
+        /* Card Glows */
         .card-corner-glow {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 300px;
-            /* Enhanced Blue Glow */
+            position: absolute; top: 0; right: 0; width: 300px; height: 300px;
             background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            pointer-events: none;
-            z-index: 0;
+            opacity: 0; transition: opacity 0.6s ease; pointer-events: none; z-index: 0;
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
-        /* Background Glow for Works Page */
-        .works-page-glow {
-            position: absolute;
-            width: 80vw;
-            height: 80vw;
-            /* Blue ambient light for page background */
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            filter: blur(100px);
-        }
-
-        /* Ambient Glow for Plain Pages */
+        /* Ambient Glow */
         .ambient-glow {
-            position: absolute;
-            width: 40vmax;
-            height: 40vmax;
+            position: absolute; width: 40vmax; height: 40vmax;
             background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
-            filter: blur(80px);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.6;
+            filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
         }
 
-        /* Specific Hover Fixes */
-        .hover-solid-blue:hover { 
-            background-color: #002FA7 !important; 
-            color: white !important; 
-            border-color: #002FA7 !important;
-        }
-        
-        .hover-solid-gray:hover { 
-            background-color: gray !important; 
-            color: white !important; 
-            border-color: gray !important;
-        }
-        
-        /* Ensure card content sits above glow */
-        .card-content { position: relative; z-index: 10; }
-        
-        /* FIX: Polished Card Blur & Aesthetic (Apple Style) */
+        /* App Card Styles */
         .app-card-glass {
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
-            backdrop-filter: blur(60px) saturate(180%);
-            -webkit-backdrop-filter: blur(60px) saturate(180%);
+            backdrop-filter: blur(60px) saturate(180%); -webkit-backdrop-filter: blur(60px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 30px 60px -10px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(255,255,255,0.2);
-            transform: translateZ(0); 
-            will-change: transform, backdrop-filter;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); /* Apple easing */
+            transform: translateZ(0); will-change: transform, backdrop-filter;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
         html.dark .app-card-glass {
-            /* Deeper dark glass */
             background: linear-gradient(180deg, rgba(30, 30, 35, 0.7) 0%, rgba(10, 10, 15, 0.6) 100%);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 40px 80px -15px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
         }
-        
-        .app-card-glass:hover {
-            transform: translateY(-8px) scale(1.01) translateZ(0);
-            box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.25);
-        }
-        
-        html.dark .app-card-glass:hover {
-             border-color: rgba(255, 255, 255, 0.2);
-             box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3);
-        }
+        .app-card-glass:hover { transform: translateY(-8px) scale(1.01) translateZ(0); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.25); }
+        html.dark .app-card-glass:hover { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3); }
 
-        /* Photo Gallery Styles & Waves */
+        /* --- PHOTOS SECTION STYLES --- */
         
-        /* Theme Transition for Photos Section */
-        #photos {
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
+        /* Theme Transition */
+        #photos { transition: background-color 0.5s ease, color 0.5s ease; }
+        
         /* Light Theme */
-        html:not(.dark) #photos {
-            background-color: #ffffff;
-            color: #002FA7; 
-        }
-        html:not(.dark) .gallery-title {
-            color: #002FA7;
-            opacity: 0.1; /* High transparency for light mode background text */
-        }
-        html:not(.dark) .gallery-quote p {
-            color: #002FA7;
-        }
-
+        html:not(.dark) #photos { background-color: #ffffff; color: #002FA7; }
+        html:not(.dark) .gallery-title { color: #002FA7; opacity: 0.15; }
+        
         /* Dark Theme */
-        html.dark #photos {
-            background-color: #020412; /* Deep Navy */
-            color: #ffffff;
-        }
-        html.dark .gallery-title {
-            color: rgba(255, 255, 255, 0.1);
-        }
+        html.dark #photos { background-color: #020412; color: #ffffff; }
+        html.dark .gallery-title { color: rgba(255, 255, 255, 0.1); }
 
+        /* Wave Component Styles from style.css */
         a-waves {
+            --x: -0.5rem;
+            --y: 50%;
             position: absolute;
             top: 0;
             left: 0;
+            margin: 0;
+            padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            pointer-events: none; /* Let clicks pass through to photos */
+            pointer-events: none; /* Default to none, but we need events for the component to track mouse */
             z-index: 0;
-            opacity: 0; /* Hidden initially for fly-in animation */
         }
+        
+        /* The pseudo-element dot cursor from original CSS */
+        a-waves:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0.5rem;
+            height: 0.5rem;
+            background: currentColor; /* Adapted to use current text color */
+            border-radius: 50%;
+            transform: translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0);
+            will-change: transform;
+            content: "";
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.5;
+        }
+
         a-waves svg {
             display: block;
             width: 100%;
             height: 100%;
+            pointer-events: auto; /* Allow SVG to capture mouse events for the effect */
         }
+
         a-waves svg path {
             fill: none;
             stroke-width: 1px;
@@ -276,29 +196,34 @@
             transition: stroke 0.5s ease;
         }
         
-        /* Wave Colors per Theme */
-        html:not(.dark) a-waves svg path {
-            stroke: rgba(0, 47, 167, 0.15); /* Klein Blue Lines */
-        }
-        html.dark a-waves svg path {
-            stroke: rgba(255, 255, 255, 0.15); /* White Lines */
-        }
+        /* Wave Stroke Colors */
+        html:not(.dark) a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
+        html.dark a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
 
+        /* Photo Cards */
         .photo-card-vertical {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            opacity: 0; /* Initial state for GSAP */
-            transform: translateY(100px);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+            transform: translateY(0); /* Default state for visual check, GSAP will override */
         }
         .photo-card-vertical:hover {
-            transform: translateY(-10px) scale(1.02) !important; /* Override GSAP transform on hover */
-            z-index: 10;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            transform: translateY(-15px) scale(1.03) !important; 
+            z-index: 20;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
         
-        /* HUGE Gallery Title */
+        /* Gallery Title Animation Base */
         .gallery-title {
             transform-origin: center center;
-            will-change: transform;
+            will-change: transform, opacity, filter;
+        }
+
+        .nav-glass {
+            background: rgba(150, 150, 150, 0.1); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: width 0.3s ease, background 0.3s ease, color 0.2s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
     </style>
@@ -309,28 +234,21 @@
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
 
-        <!-- NEW LOADER: Just text, transparency handled by main layout -->
         <div class="loader" ref="loader">
             <div class="font-mono text-xs tracking-[0.5em] text-white/70 animate-pulse">SYSTEM_BOOT</div>
         </div>
 
-        <!-- Navigation Bar -->
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
              :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
             
-            <!-- Left: Sidebar Trigger -->
-            <button @click="toggleSidebar" 
-                    ref="navBtnLeft"
-                    class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform"
-                    :class="navLeftColor">
+            <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
                 <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
                     <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
                     <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
                 </div>
             </button>
             
-            <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50"
                  ref="navCapsule"
                  @click="toggleCapsuleNav"
@@ -356,7 +274,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Progress Ring -->
                 <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
                     <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
                      <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
@@ -365,12 +282,8 @@
                 </svg>
             </div>
 
-            <!-- Right: Theme Toggle -->
             <div class="pointer-events-auto">
-                <button @click="cycleTheme" 
-                        ref="navBtnRight"
-                        class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform"
-                        :class="navRightColor">
+                <button @click="cycleTheme" ref="navBtnRight" class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform" :class="navRightColor">
                     <div class="flex items-center justify-center w-full h-full">
                         <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
                         <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
@@ -380,7 +293,6 @@
             </div>
         </nav>
 
-        <!-- Sidebar -->
         <transition name="backdrop">
             <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[10000]"></div>
         </transition>
@@ -390,7 +302,6 @@
                 <button @click="toggleSidebar" class="absolute top-8 left-8 md:left-12 w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300 z-50">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
-                <!-- Updated Sidebar Links -->
                 <div class="flex flex-col gap-8 relative z-10 mt-48 w-full">
                     <div class="font-mono text-sm text-klein-blue mb-4 tracking-[0.3em] font-bold pl-8 md:pl-12">SYSTEM MAP</div>
                     <a v-for="(link, index) in systemLinks" :key="link.name" href="#" class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(2rem, 8cqi, 5rem);">
@@ -543,15 +454,15 @@
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
                     <!-- Background Wave Effect -->
                     <a-waves class="absolute inset-0 z-0 js-waves-container">
-                        <!-- Removed manual SVG insertion here, let component handle it -->
+                        <!-- SVG injected by JS -->
                     </a-waves>
 
-                    <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center">
+                    <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center pointer-events-none">
                         
                         <!-- Phase 1 & 2: HUGE Title -->
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-                            <!-- Removed mix-blend-difference, adjusted colors in CSS -->
-                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center" style="transform: scaleY(4);">
+                            <!-- Adjusted Scale: 2.5 instead of 4, added blur filter -->
+                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center" style="transform: scaleY(2.5); filter: blur(4px);">
                                 GALLERY
                             </h2>
                         </div>
@@ -565,7 +476,7 @@
                         </div>
 
                         <!-- Phase 4: Vertical Masonry Grid -->
-                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full translate-y-[100vh] opacity-0 relative z-10 mt-32 md:mt-0" style="padding-top: 20vh;">
+                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full translate-y-[100vh] opacity-0 relative z-10 mt-32 md:mt-0 pointer-events-auto" style="padding-top: 20vh;">
                             
                             <!-- Col 1 -->
                             <div class="flex flex-col gap-12 mt-0">
@@ -687,6 +598,7 @@
         }
 
         // --- Wave Component Class ---
+        // EXACT RE-IMPLEMENTATION OF SCRIPT.JS LOGIC
         class AWaves extends HTMLElement {
             connectedCallback() {
                 // Ensure SVG element exists
@@ -717,20 +629,33 @@
                 this.onMouseMove = this.onMouseMove.bind(this);
                 window.addEventListener('resize', this.onResize);
                 window.addEventListener('mousemove', this.onMouseMove);
+                this.addEventListener('touchmove', this.onTouchMove.bind(this));
             }
             onResize() { this.setSize(); this.setLines(); }
             onMouseMove(e) { this.updateMousePosition(e.pageX, e.pageY); }
+            onTouchMove(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                this.updateMousePosition(touch.clientX, touch.clientY);
+            }
             updateMousePosition(x, y) {
-                const rect = this.bounding;
-                // Fix: Check if bounding rect exists to avoid errors on quick reloads
-                if(rect) {
-                    this.mouse.x = x - rect.left;
-                    this.mouse.y = y - rect.top; 
-                    if (!this.mouse.set) {
-                        this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y;
-                        this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y;
-                        this.mouse.set = true;
-                    }
+                // FIXED: Check if bounding box is valid
+                if(!this.bounding) return;
+                
+                this.mouse.x = x - this.bounding.left;
+                // Important: Account for scrollY as per script.js logic
+                // But since we are inside a specific section, we might need relative offset
+                // The original script did: y - this.bounding.top + window.scrollY
+                // Let's try relative to viewport first which is usually standard for canvas/svg effects
+                // Actually, script.js used: mouse.y = y - this.bounding.top + window.scrollY
+                // This implies it tracks mouse relative to the DOCUMENT if the element is absolute?
+                // Let's use standard client coordinates relative to element for robustness in this layout
+                this.mouse.y = y - this.bounding.top + window.scrollY;
+
+                if (!this.mouse.set) {
+                    this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y;
+                    this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y;
+                    this.mouse.set = true;
                 }
             }
             setSize() {
@@ -743,8 +668,8 @@
                 this.lines = [];
                 this.paths.forEach(p => p.remove());
                 this.paths = [];
-                const xGap = 20; 
-                const yGap = 40; 
+                const xGap = 10; // Restored from script.js
+                const yGap = 32; // Restored from script.js
                 const oWidth = width + 200;
                 const oHeight = height + 30;
                 const totalLines = Math.ceil(oWidth / xGap);
@@ -800,6 +725,7 @@
                     points.forEach((p1, pIndex) => {
                         const isLast = pIndex === points.length - 1;
                         p1 = moved(p1, !isLast);
+                        const p2 = moved(points[pIndex + 1] || points[points.length - 1], !isLast);
                         d += `L ${p1.x} ${p1.y}`;
                     });
                     paths[lIndex].setAttribute('d', d);
@@ -817,6 +743,8 @@
                 mouse.vs = Math.min(100, mouse.vs);
                 mouse.lx = mouse.x; mouse.ly = mouse.y;
                 mouse.a = Math.atan2(dy, dx);
+                this.style.setProperty('--x', `${mouse.sx}px`);
+                this.style.setProperty('--y', `${mouse.sy}px`);
                 this.movePoints(time);
                 this.drawLines();
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
@@ -1338,7 +1266,6 @@
                     window.addEventListener('scroll', updateScrollProgress);
 
                     // --- VERTICAL PHOTOS ANIMATION ---
-                    
                     // Create a timeline for the entire Photos sequence
                     // We pin the #photos section initially to play the Intro Animation
                     
@@ -1357,10 +1284,11 @@
                     // Let's tween opacity here linked to scroll start
                     tl.to(".js-waves-container", { opacity: 1, duration: 2 });
 
-                    // 2. Title Scale Animation: HUGE -> Normal
+                    // 2. Title Scale Animation: HUGE -> Normal (ADJUSTED TO 2.5)
                     tl.to(".gallery-title", { 
                         scaleY: 1, 
-                        scale: 1, // Ensure both axes normalize if we mess with them
+                        scale: 1, 
+                        filter: "blur(0px)", // Focus effect
                         duration: 4, 
                         ease: "power2.inOut" 
                     }, "<");
@@ -1372,12 +1300,33 @@
                     tl.to(".gallery-quote", { opacity: 0, y: -50, duration: 2, delay: 1 });
                     tl.to(".gallery-title", { opacity: 0, y: -100, duration: 2 }, "<"); // Move title away too
                     
+                    // Explicitly fade in the grid container first
                     tl.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
                         duration: 4, 
                         ease: "power3.out" 
                     }, "-=1");
+                    
+                    // Trigger individual cards
+                    const verticalCards = document.querySelectorAll('.photo-card-vertical');
+                    verticalCards.forEach((card, i) => {
+                        // Use fromTo to strictly enforce visibility start and end states
+                        gsap.fromTo(card, 
+                            { opacity: 0, y: 100 },
+                            {
+                                opacity: 1,
+                                y: 0,
+                                duration: 1,
+                                ease: "power3.out",
+                                scrollTrigger: {
+                                    trigger: card,
+                                    start: "top 95%", // Start earlier
+                                    toggleActions: "play none none reverse"
+                                }
+                            }
+                        );
+                    });
 
                 });
                 
