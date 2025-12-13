@@ -159,8 +159,6 @@
         a-waves {
             --x: -0.5rem;
             --y: 50%;
-            /* Fix: Initialize variable for dash offset */
-            --dash-offset: 4000;
             position: absolute;
             top: 0;
             left: 0;
@@ -189,9 +187,9 @@
             stroke-width: 1px;
             vector-effect: non-scaling-stroke;
             transition: stroke 0.5s ease;
-            stroke-dasharray: 4000; 
+            stroke-dasharray: 6000; 
             /* Initialize invisible */
-            stroke-dashoffset: 4000; 
+            stroke-dashoffset: 6000; 
         }
         
         /* Wave Stroke Colors */
@@ -620,6 +618,7 @@
                 };
 
                 this.lines = [];
+                // Initialize paths array
                 this.paths = [];
                 this.noise = new Noise(Math.random());
                 
@@ -677,12 +676,21 @@
 
             setSize() {
                 this.bounding = this.getBoundingClientRect();
+                // Ensure non-zero size to prevent layout issues
+                if (this.bounding.width === 0) this.bounding.width = window.innerWidth;
+                if (this.bounding.height === 0) this.bounding.height = window.innerHeight;
+                
                 this.svg.style.width = `${this.bounding.width}px`;
                 this.svg.style.height = `${this.bounding.height}px`;
             }
 
             setLines() {
                 const { width, height } = this.bounding;
+                this.lines = [];
+                
+                // Clear existing paths to ensure no stale state
+                this.svg.innerHTML = '';
+                this.paths = [];
                 
                 const xGap = 10; 
                 const yGap = 32; 
@@ -694,18 +702,6 @@
                 const xStart = (width - xGap * totalLines) / 2;
                 const yStart = (height - yGap * totalPoints) / 2;
 
-                // Ensure we have enough path elements in the pool
-                while (this.paths.length <= totalLines) {
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.classList.add('a__line');
-                    path.classList.add('js-line');
-                    this.svg.appendChild(path);
-                    this.paths.push(path);
-                }
-
-                // Reset lines data array
-                this.lines = [];
-
                 for (let i = 0; i <= totalLines; i++) {
                     const points = [];
                     for (let j = 0; j <= totalPoints; j++) {
@@ -716,16 +712,17 @@
                             cursor: { x: 0, y: 0, vx: 0, vy: 0 } 
                         });
                     }
-                    
-                    // Reuse existing path from pool
-                    const path = this.paths[i];
-                    path.style.display = 'block'; // Make sure it's visible
                     this.lines.push(points);
-                }
-
-                // Hide any excess paths that aren't needed for current width
-                for (let i = totalLines + 1; i < this.paths.length; i++) {
-                    this.paths[i].style.display = 'none';
+                    
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.classList.add('a__line');
+                    path.classList.add('js-line');
+                    // Explicitly set initial dash properties to ensure visibility logic works
+                    path.style.strokeDasharray = "6000";
+                    path.style.strokeDashoffset = "6000";
+                    
+                    this.svg.appendChild(path);
+                    this.paths.push(path);
                 }
             }
 
@@ -778,6 +775,8 @@
                     // when stroke-dashoffset animates
                     
                     const lastIdx = points.length - 1;
+                    if (lastIdx < 0) return;
+
                     let pStart = moved(points[lastIdx], false); // Start at bottom
                     let d = `M ${pStart.x} ${pStart.y}`;
                     
@@ -787,7 +786,7 @@
                         const p = moved(points[i], true); 
                         d += `L ${p.x} ${p.y}`;
                     }
-                    paths[lIndex].setAttribute('d', d);
+                    if (paths[lIndex]) paths[lIndex].setAttribute('d', d);
                 });
             }
 
@@ -1342,6 +1341,14 @@
 
                     // --- CONSOLIDATED PHOTOS TIMELINE (AUTOMATIC FLOW) ---
                     const waves = document.querySelector('a-waves');
+                    
+                    // FORCE WAVE INITIALIZATION
+                    // This ensures lines exist before GSAP tries to find them
+                    if (waves) {
+                        waves.setSize();
+                        waves.setLines();
+                    }
+
                     const photoCards = document.querySelectorAll('.photo-card-vertical');
                     
                     photosTimeline = gsap.timeline({
@@ -1363,7 +1370,7 @@
                     // Force initial state explicitly to be invisible (offset = array length)
                     // We rely on CSS initially but setting it via GSAP ensures logic holds
                     if(lines.length > 0) {
-                        gsap.set(lines, { strokeDashoffset: 4000 });
+                        gsap.set(lines, { strokeDashoffset: 6000 });
                     }
                     
                     // Start amplitude animation immediately so lines are wavy as they grow (no static straight lines)
