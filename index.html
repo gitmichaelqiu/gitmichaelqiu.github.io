@@ -683,9 +683,6 @@
 
             setLines() {
                 const { width, height } = this.bounding;
-                this.lines = [];
-                this.paths.forEach(p => p.remove());
-                this.paths = [];
                 
                 const xGap = 10; 
                 const yGap = 32; 
@@ -696,6 +693,18 @@
                 const totalPoints = Math.ceil(oHeight / yGap);
                 const xStart = (width - xGap * totalLines) / 2;
                 const yStart = (height - yGap * totalPoints) / 2;
+
+                // Ensure we have enough path elements in the pool
+                while (this.paths.length <= totalLines) {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.classList.add('a__line');
+                    path.classList.add('js-line');
+                    this.svg.appendChild(path);
+                    this.paths.push(path);
+                }
+
+                // Reset lines data array
+                this.lines = [];
 
                 for (let i = 0; i <= totalLines; i++) {
                     const points = [];
@@ -708,13 +717,15 @@
                         });
                     }
                     
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.classList.add('a__line');
-                    path.classList.add('js-line');
-                    
-                    this.svg.appendChild(path);
-                    this.paths.push(path);
+                    // Reuse existing path from pool
+                    const path = this.paths[i];
+                    path.style.display = 'block'; // Make sure it's visible
                     this.lines.push(points);
+                }
+
+                // Hide any excess paths that aren't needed for current width
+                for (let i = totalLines + 1; i < this.paths.length; i++) {
+                    this.paths[i].style.display = 'none';
                 }
             }
 
