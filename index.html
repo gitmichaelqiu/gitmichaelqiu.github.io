@@ -1315,7 +1315,7 @@
                     requestAnimationFrame(raf);
                 };
 
-                onMounted(() => {
+                onMounted(async () => {
                     setTimeout(() => { finishBootSequence(); }, 2500);
                     initMagneticLogo();
                     lucide.createIcons();
@@ -1325,6 +1325,9 @@
                     initCursor();
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
+
+                    // Wait for DOM updates to ensure custom element children are rendered
+                    await nextTick();
 
                     // --- CONSOLIDATED PHOTOS TIMELINE (AUTOMATIC FLOW) ---
                     const waves = document.querySelector('a-waves');
@@ -1343,7 +1346,14 @@
 
                     // 1. Vines/Lines Grow Smoother with Stagger (0% -> 20%)
                     // Selecting all lines individually to stagger their growth
+                    // Use a query selector string for GSAP to handle potential re-renders or direct nodelist if stable
                     const lines = document.querySelectorAll('.js-line');
+                    
+                    // Force initial state explicitly to be invisible (offset = array length)
+                    // We rely on CSS initially but setting it via GSAP ensures logic holds
+                    if(lines.length > 0) {
+                        gsap.set(lines, { strokeDashoffset: 4000 });
+                    }
                     
                     // Start amplitude animation immediately so lines are wavy as they grow (no static straight lines)
                     if(waves) gsap.to(waves, { amplitude: 1, duration: 5 });
