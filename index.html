@@ -141,7 +141,7 @@
         
         /* Theme Transition - Default to Intro State (Dark) */
         #photos { 
-            transition: background-color 0.5s ease; /* Smoother transition */
+            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
             background-color: #050505; /* Start Dark for Intro */
             color: #ffffff;
         }
@@ -226,37 +226,6 @@
             will-change: transform, opacity, filter, clip-path;
         }
 
-        /* --- HUD & FLASH --- */
-        .camera-hud { pointer-events: none; transition: opacity 0.5s ease; }
-        .camera-corner {
-            position: absolute; width: 40px; height: 40px;
-            border-color: rgba(255, 255, 255, 0.7); border-style: solid;
-            transition: all 0.5s ease;
-        }
-        .tl { top: 40px; left: 40px; border-width: 2px 0 0 2px; }
-        .tr { top: 40px; right: 40px; border-width: 2px 2px 0 0; }
-        .bl { bottom: 40px; left: 40px; border-width: 0 0 2px 2px; }
-        .br { bottom: 40px; right: 40px; border-width: 0 2px 2px 0; }
-        
-        .camera-btn-container {
-            pointer-events: auto; cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-        }
-        .camera-btn-container:hover { transform: scale(1.1); }
-        .camera-btn-inner {
-            width: 60px; height: 60px; border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2); border: 2px solid white;
-            display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-        .camera-btn-dot { width: 48px; height: 48px; background: #fff; border-radius: 50%; transition: background 0.3s; }
-        .camera-btn-container:hover .camera-btn-dot { background: #002FA7; }
-        
-        .flash-overlay {
-            position: fixed; inset: 0; background: white; z-index: 10000;
-            pointer-events: none; opacity: 0; mix-blend-mode: overlay;
-        }
-
         .nav-glass {
             background: rgba(150, 150, 150, 0.1); 
             backdrop-filter: blur(16px);
@@ -274,9 +243,6 @@
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
         
-        <!-- Flash Overlay -->
-        <div class="flash-overlay" ref="flashOverlay"></div>
-
         <div class="loader" ref="loader">
             <div class="font-mono text-xs tracking-[0.5em] text-white/70 animate-pulse">SYSTEM_BOOT</div>
         </div>
@@ -499,28 +465,12 @@
                         <svg class="js-svg"></svg>
                     </a-waves>
 
-                    <!-- Camera HUD -->
-                    <div class="camera-hud absolute inset-0 z-40 flex flex-col items-center justify-center opacity-0" :class="{'pointer-events-none': photosActive}">
-                        <div class="camera-corner tl"></div>
-                        <div class="camera-corner tr"></div>
-                        <div class="camera-corner bl"></div>
-                        <div class="camera-corner br"></div>
-                        
-                        <!-- Camera Button -->
-                        <div class="camera-btn-container" ref="cameraBtn" @click="handleCaptureClick">
-                            <div class="camera-btn-inner">
-                                <div class="camera-btn-dot"></div>
-                            </div>
-                            <div class="mt-4 font-mono text-xs tracking-widest text-white/50 text-center">CAPTURE</div>
-                        </div>
-                    </div>
-
                     <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center pointer-events-none">
                         
                         <!-- Phase 1 & 2: HUGE Title -->
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
                             <!-- Adjusted Scale and added clip-path for shutter effect -->
-                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center opacity-0" style="transform: scaleY(3); filter: blur(10px); clip-path: inset(0 100% 0 100%);">
+                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center opacity-0" style="transform: scaleY(3); filter: blur(10px);">
                                 GALLERY
                             </h2>
                         </div>
@@ -877,8 +827,6 @@
 
                 // Camera Interaction Refs
                 const photosActive = ref(false);
-                const flashOverlay = ref(null);
-                const cameraBtn = ref(null);
                 let photosTimeline = null; // Store main timeline ref
                 
                 const systemLinks = [
@@ -1362,30 +1310,6 @@
                     requestAnimationFrame(raf);
                 };
 
-                // --- NEW: Camera Interaction Logic ---
-                // We no longer trigger state here directly. We just scroll to the timeline point.
-                const handleCaptureClick = () => {
-                   if (!photosTimeline) return;
-                   
-                   // Find the start time of the capture label or approximation
-                   // 25% of the total scroll distance of the pinned element
-                   // The pinned element is #photos, duration is +=6000
-                   const trigger = ScrollTrigger.getById("photos-trigger");
-                   if(trigger) {
-                       const start = trigger.start;
-                       const end = trigger.end;
-                       const distance = end - start;
-                       // We want to scroll to 26% of the way through the trigger
-                       const targetScroll = start + (distance * 0.26);
-                       
-                       gsap.to(window, {
-                           scrollTo: targetScroll,
-                           duration: 1.5,
-                           ease: "power3.inOut"
-                       });
-                   }
-                };
-
                 onMounted(() => {
                     setTimeout(() => { finishBootSequence(); }, 2500);
                     initMagneticLogo();
@@ -1397,7 +1321,7 @@
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
 
-                    // --- CONSOLIDATED PHOTOS TIMELINE ---
+                    // --- CONSOLIDATED PHOTOS TIMELINE (AUTOMATIC FLOW) ---
                     const waves = document.querySelector('a-waves');
                     const photoCards = document.querySelectorAll('.photo-card-vertical');
                     
@@ -1406,94 +1330,60 @@
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=6000",
+                            end: "+=5000", // Adjusted length for smooth auto-flow
                             pin: true,
-                            scrub: 1, // Smooth scrubbing
-                            onUpdate: (self) => {
-                                // Fallback logic if needed
-                            }
+                            scrub: 1, 
                         }
                     });
 
-                    // 1. Vines/Lines Grow (0% -> 10%)
+                    // 1. Vines/Lines Grow Smoother (0% -> 15%)
+                    // Using power2.inOut for a more organic feel
                     photosTimeline.to("a-waves", { 
                         "--dash-offset": 0, 
-                        duration: 10, 
-                        ease: "power2.inOut"
+                        duration: 15, 
+                        ease: "power2.inOut",
+                        onStart: () => {
+                            if(waves) gsap.to(waves, { amplitude: 1, duration: 2 });
+                        }
                     });
 
-                    // 2. HUD Appears (10% -> 20%)
-                    photosTimeline.to(".camera-hud", { opacity: 1, duration: 10 });
-
-                    // 3. User Decision Window (Wait) (20% -> 25%)
-                    photosTimeline.to({}, { duration: 5 }); 
-
-                    // 4. THE CAPTURE MOMENT (25%)
-                    photosTimeline.addLabel("capture");
+                    // 2. THE GHOST REVEAL & BACKGROUND CHANGE (15% -> 25%)
+                    // The title goes from High (scaleY 3) to Normal (scaleY 1)
+                    // At the same time, the background switches to light mode
                     
-                    // Flash: Fast flash then fade
-                    photosTimeline.to(flashOverlay.value, { opacity: 1, duration: 0.5, ease: "power4.in" }, "capture");
-                    photosTimeline.to(flashOverlay.value, { opacity: 0, duration: 2, ease: "power4.out" }, "capture+=0.5");
-                    
-                    // Distortion: Amplitude spikes then settles
-                    if (waves) {
-                        photosTimeline.to(waves, { amplitude: 1, duration: 2, ease: "elastic.out(1, 0.3)" }, "capture");
-                    }
-                    
-                    // HUD Disappears
-                    photosTimeline.to(".camera-hud", { opacity: 0, pointerEvents: "none", duration: 2 }, "capture");
+                    photosTimeline.addLabel("reveal");
 
-                    // 5. State Change Logic (Using callbacks to ensure it reverses properly)
+                    // Trigger Background Change
                     photosTimeline.call(() => {
-                        // Forward direction: Active
+                        // Forward: Active (Light)
                         photosActive.value = true;
-                    }, null, "capture+=0.1");
+                    }, null, "reveal");
 
-                    // Need a way to reset when going back BEFORE capture
-                    // We insert a callback slightly before the capture point
                     photosTimeline.call(() => {
-                         // Check direction, if we are reversing past this point
+                         // Reverse: Inactive (Dark)
                          if (photosTimeline.scrollTrigger.direction < 0) {
                              photosActive.value = false;
-                             // Reset amplitude on reverse if scrubbing doesn't catch it perfectly
-                             if(waves) waves.amplitude = 0; 
                          }
-                    }, null, "capture-=0.1");
+                    }, null, "reveal-=0.1"); // Check slightly before to ensure reverse toggles back
 
-                    // 6. Title Reveal (Shutter Open)
+                    // Animate Title: "Ghost" effect condensing into readable text
+                    // From blurry stretched -> sharp normal
                     photosTimeline.to(".gallery-title", { 
                         scaleY: 1, 
-                        scale: 1, 
-                        filter: "blur(0px)",
-                        clipPath: "inset(0 0 0 0)", 
                         opacity: 1,
-                        duration: 5, 
-                        ease: "power2.out" 
-                    }, "capture+=0.5");
+                        filter: "blur(0px)",
+                        duration: 10,
+                        ease: "power3.out" // Snap into place
+                    }, "reveal");
 
-                    // 7. Transition to Quote (The Ghost Effect)
-                    // Title blurs and fades out to become a background element
-                    photosTimeline.to(".gallery-title", { 
-                        opacity: 0.1, 
-                        filter: "blur(10px)",
-                        scale: 1.05,
-                        duration: 5,
-                        ease: "power1.inOut"
-                    }, "+=1"); // Short pause after title reveal
+                    // 3. Quote Appear (25% -> 35%)
+                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
 
-                    // Quote fades in simultaneously
-                    photosTimeline.to(".gallery-quote", { 
-                        opacity: 1, 
-                        y: 0, // Ensure it settles
-                        duration: 5,
-                        ease: "power1.out"
-                    }, "<"); 
-
-                    // 8. Transition to Grid (40% -> 50%)
-                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 5 }, "+=2");
-                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 5 }, "<");
+                    // 4. Transition to Grid (35% -> 45%)
+                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
+                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
                     
-                    // 9. Grid Entry (50% -> 60%)
+                    // 5. Grid Entry (45% -> 55%)
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
@@ -1501,26 +1391,24 @@
                         ease: "power3.out" 
                     });
 
-                    // 10. Staggered Card Entries (Embedded in timeline)
-                    // We animate them IN as the grid moves up
+                    // 6. Staggered Card Entries
                     photoCards.forEach((card, index) => {
-                        // Offset the start time for staggering
                         const offset = index * 2; 
                         photosTimeline.fromTo(card, 
                             { opacity: 0, y: 100 },
                             { opacity: 1, y: 0, duration: 5, ease: "power3.out" },
-                            `>-${8 - offset}` // Overlap with grid entry
+                            `>-${9 - offset}`
                         );
                     });
 
-                    // 11. Grid Scroll (60% -> 90%)
+                    // 7. Grid Scroll (55% -> 90%)
                     photosTimeline.to(".photos-grid", {
                         y: "-50%", 
-                        duration: 30,
+                        duration: 35,
                         ease: "none" 
                     });
 
-                    // 12. Exit (90% -> 100%)
+                    // 8. Exit (90% -> 100%)
                     photosTimeline.to(".photos-grid", {
                         y: "-150%", 
                         opacity: 0,
@@ -1542,7 +1430,7 @@
                 return {
                     isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
                     navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight,
-                    photosActive, handleCaptureClick, flashOverlay, cameraBtn
+                    photosActive
                 };
             }
         }).mount('#app');
