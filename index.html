@@ -158,6 +158,8 @@
         a-waves {
             --x: -0.5rem;
             --y: 50%;
+            /* NEW: Variable for dash offset to handle dynamic redraws */
+            --dash-offset: 4000; 
             position: absolute;
             top: 0;
             left: 0;
@@ -187,8 +189,9 @@
             stroke-width: 1px;
             vector-effect: non-scaling-stroke;
             transition: stroke 0.5s ease;
-            stroke-dasharray: 2000; /* For "Vines" growth effect */
-            stroke-dashoffset: 2000;
+            /* Update to use CSS Variable so new paths inherit the state */
+            stroke-dasharray: 4000; 
+            stroke-dashoffset: var(--dash-offset);
         }
         
         /* Wave Stroke Colors */
@@ -1421,7 +1424,8 @@
                     });
 
                     // 1. Lines Grow (Vines effect) - 0% to 10% scroll
-                    tl.to("a-waves svg path", { strokeDashoffset: 0, duration: 2 });
+                    // FIX: Animate CSS variable on container to handle redraws
+                    tl.to("a-waves", { "--dash-offset": 0, duration: 2, ease: "power2.inOut" });
 
                     // 2. HUD Appear - 10% to 15% scroll
                     tl.to(".camera-hud", { opacity: 1, duration: 1 });
