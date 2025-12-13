@@ -162,11 +162,11 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            pointer-events: none; /* Default to none, but we need events for the component to track mouse */
+            pointer-events: none; /* Keep none so clicks pass through, JS handles window events */
             z-index: 0;
         }
         
-        /* The pseudo-element dot cursor from original CSS */
+        /* The pseudo-element dot cursor */
         a-waves:before {
             position: absolute;
             top: 0;
@@ -187,7 +187,6 @@
             display: block;
             width: 100%;
             height: 100%;
-            pointer-events: auto; /* Allow SVG to capture mouse events for the effect */
         }
 
         a-waves svg path {
@@ -445,12 +444,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="h-[50vh]"></div>
+                    <!-- REMOVED THE EMPTY SPACE DIV HERE TO HELP WITH GAP ISSUE -->
                 </div>
             </section>
 
             <!-- NEW PHOTOS SECTION -->
-            <section id="photos" class="relative z-30 overflow-hidden min-h-[300vh]">
+            <!-- Changed from min-h-[300vh] to h-screen to remove blank space at bottom -->
+            <section id="photos" class="relative z-30 overflow-hidden h-screen">
                 <!-- Sticky Container -->
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
                     <!-- Background Wave Effect -->
@@ -599,32 +599,37 @@
         }
 
         // --- Wave Component Class ---
-        // EXACT RE-IMPLEMENTATION OF SCRIPT.JS LOGIC
+        // COMPLETELY TRANSFERRED FROM SCRIPT.JS (With fix for scrolling)
         class AWaves extends HTMLElement {
             connectedCallback() {
                 // Ensure SVG element exists
-                let svg = this.querySelector('.js-svg');
-                if (!svg) {
-                    svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    svg.classList.add("js-svg");
-                    this.appendChild(svg);
+                this.svg = this.querySelector('.js-svg');
+                if (!this.svg) {
+                    this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    this.svg.classList.add("js-svg");
+                    this.appendChild(this.svg);
                 }
-                this.svg = svg;
 
-                this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
+                this.mouse = {
+                    x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false
+                };
+
                 this.lines = [];
                 this.paths = [];
                 this.noise = new Noise(Math.random());
+
                 this.setSize();
                 this.setLines();
                 this.bindEvents();
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
             }
+
             disconnectedCallback() {
                 cancelAnimationFrame(this.rafId);
                 window.removeEventListener('resize', this.onResize);
                 window.removeEventListener('mousemove', this.onMouseMove);
             }
+
             bindEvents() {
                 this.onResize = this.onResize.bind(this);
                 this.onMouseMove = this.onMouseMove.bind(this);
@@ -632,122 +637,170 @@
                 window.addEventListener('mousemove', this.onMouseMove);
                 this.addEventListener('touchmove', this.onTouchMove.bind(this));
             }
-            onResize() { this.setSize(); this.setLines(); }
-            onMouseMove(e) { this.updateMousePosition(e.pageX, e.pageY); }
+
+            onResize() {
+                this.setSize();
+                this.setLines();
+            }
+
+            onMouseMove(e) {
+                // Pass CLIENT coordinates (viewport relative) to handle scrolling correctly
+                this.updateMousePosition(e.clientX, e.clientY);
+            }
+
             onTouchMove(e) {
                 e.preventDefault();
                 const touch = e.touches[0];
                 this.updateMousePosition(touch.clientX, touch.clientY);
             }
+
             updateMousePosition(x, y) {
-                // FIXED: Check if bounding box is valid
-                if(!this.bounding) return;
+                // Calculate position relative to the element dynamically
+                // This fixes the issue where sticky/scrolling elements had wrong coordinates
+                const rect = this.getBoundingClientRect();
                 
-                this.mouse.x = x - this.bounding.left;
-                // Important: Account for scrollY as per script.js logic
-                // But since we are inside a specific section, we might need relative offset
-                // The original script did: y - this.bounding.top + window.scrollY
-                // Let's try relative to viewport first which is usually standard for canvas/svg effects
-                // Actually, script.js used: mouse.y = y - this.bounding.top + window.scrollY
-                // This implies it tracks mouse relative to the DOCUMENT if the element is absolute?
-                // Let's use standard client coordinates relative to element for robustness in this layout
-                this.mouse.y = y - this.bounding.top + window.scrollY;
+                this.mouse.x = x - rect.left;
+                this.mouse.y = y - rect.top;
 
                 if (!this.mouse.set) {
-                    this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y;
-                    this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y;
+                    this.mouse.sx = this.mouse.x;
+                    this.mouse.sy = this.mouse.y;
+                    this.mouse.lx = this.mouse.x;
+                    this.mouse.ly = this.mouse.y;
                     this.mouse.set = true;
                 }
             }
+
             setSize() {
                 this.bounding = this.getBoundingClientRect();
                 this.svg.style.width = `${this.bounding.width}px`;
                 this.svg.style.height = `${this.bounding.height}px`;
             }
+
             setLines() {
                 const { width, height } = this.bounding;
                 this.lines = [];
                 this.paths.forEach(p => p.remove());
                 this.paths = [];
-                const xGap = 10; // Restored from script.js
-                const yGap = 32; // Restored from script.js
+                
+                // Config from script.js
+                const xGap = 10; 
+                const yGap = 32; 
+
                 const oWidth = width + 200;
                 const oHeight = height + 30;
                 const totalLines = Math.ceil(oWidth / xGap);
                 const totalPoints = Math.ceil(oHeight / yGap);
                 const xStart = (width - xGap * totalLines) / 2;
                 const yStart = (height - yGap * totalPoints) / 2;
+
                 for (let i = 0; i <= totalLines; i++) {
                     const points = [];
                     for (let j = 0; j <= totalPoints; j++) {
-                        points.push({ x: xStart + xGap * i, y: yStart + yGap * j, wave: { x: 0, y: 0 }, cursor: { x: 0, y: 0, vx: 0, vy: 0 } });
+                        points.push({ 
+                            x: xStart + xGap * i, 
+                            y: yStart + yGap * j, 
+                            wave: { x: 0, y: 0 }, 
+                            cursor: { x: 0, y: 0, vx: 0, vy: 0 } 
+                        });
                     }
+                    
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    // Add classes from script.js
+                    path.classList.add('a__line');
+                    path.classList.add('js-line');
+                    
                     this.svg.appendChild(path);
                     this.paths.push(path);
                     this.lines.push(points);
                 }
             }
+
             movePoints(time) {
                 const { lines, mouse, noise } = this;
                 lines.forEach((points) => {
                     points.forEach((p) => {
+                        // Wave movement
                         const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
                         p.wave.x = Math.cos(move) * 32;
                         p.wave.y = Math.sin(move) * 16;
+
+                        // Mouse effect
                         const dx = p.x - mouse.sx;
                         const dy = p.y - mouse.sy;
                         const d = Math.hypot(dx, dy);
                         const l = Math.max(175, mouse.vs);
+
                         if (d < l) {
                             const s = 1 - d / l;
                             const f = Math.cos(d * 0.001) * s;
                             p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00065;
                             p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00065;
                         }
-                        p.cursor.vx += (0 - p.cursor.x) * 0.005; p.cursor.vy += (0 - p.cursor.y) * 0.005;
-                        p.cursor.vx *= 0.925; p.cursor.vy *= 0.925;
-                        p.cursor.x += p.cursor.vx * 2; p.cursor.y += p.cursor.vy * 2;
-                        p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
+
+                        p.cursor.vx += (0 - p.cursor.x) * 0.005; 
+                        p.cursor.vy += (0 - p.cursor.y) * 0.005;
+                        p.cursor.vx *= 0.925; 
+                        p.cursor.vy *= 0.925;
+                        p.cursor.x += p.cursor.vx * 2; 
+                        p.cursor.y += p.cursor.vy * 2;
+                        
+                        // Clamp
+                        p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); 
+                        p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
                     });
                 });
             }
+
             moved(point, withCursorForce = true) {
                 return {
                     x: Math.round((point.x + point.wave.x + (withCursorForce ? point.cursor.x : 0)) * 10) / 10,
                     y: Math.round((point.y + point.wave.y + (withCursorForce ? point.cursor.y : 0)) * 10) / 10
                 };
             }
+
             drawLines() {
                 const { lines, moved, paths } = this;
                 lines.forEach((points, lIndex) => {
                     let p1 = moved(points[0], false);
                     let d = `M ${p1.x} ${p1.y}`;
+                    
                     points.forEach((p1, pIndex) => {
                         const isLast = pIndex === points.length - 1;
                         p1 = moved(p1, !isLast);
-                        const p2 = moved(points[pIndex + 1] || points[points.length - 1], !isLast);
+                        // Original code used L (Line)
                         d += `L ${p1.x} ${p1.y}`;
                     });
                     paths[lIndex].setAttribute('d', d);
                 });
             }
+
             tick(time) {
                 const { mouse } = this;
+                
+                // Smooth mouse movement
                 mouse.sx += (mouse.x - mouse.sx) * 0.1;
                 mouse.sy += (mouse.y - mouse.sy) * 0.1;
+                
                 const dx = mouse.x - mouse.lx;
                 const dy = mouse.y - mouse.ly;
                 const d = Math.hypot(dx, dy);
+                
                 mouse.v = d;
                 mouse.vs += (d - mouse.vs) * 0.1;
                 mouse.vs = Math.min(100, mouse.vs);
-                mouse.lx = mouse.x; mouse.ly = mouse.y;
+                
+                mouse.lx = mouse.x; 
+                mouse.ly = mouse.y;
                 mouse.a = Math.atan2(dy, dx);
+                
+                // Update CSS variables for dot
                 this.style.setProperty('--x', `${mouse.sx}px`);
                 this.style.setProperty('--y', `${mouse.sy}px`);
+                
                 this.movePoints(time);
                 this.drawLines();
+                
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
             }
         }
