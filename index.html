@@ -223,17 +223,41 @@
              box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3);
         }
 
-        /* Photo Gallery Styles */
-        .photo-card {
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+        /* Photo Gallery Styles & Waves */
+        a-waves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none; /* Let clicks pass through to photos */
+            z-index: 0;
         }
-        .photos-wrapper:hover .photo-card:not(:hover) {
-            filter: grayscale(100%) opacity(0.4);
-            transform: scale(0.95);
+        a-waves svg {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
-        .photo-card:hover {
-            transform: scale(1.05);
+        a-waves svg path {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1); /* Subtle white lines */
+            stroke-width: 1px;
+            vector-effect: non-scaling-stroke;
+        }
+        html.dark a-waves svg path {
+            stroke: rgba(255, 255, 255, 0.15);
+        }
+
+        .photo-card-vertical {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0; /* Initial state for GSAP */
+            transform: translateY(50px);
+        }
+        .photo-card-vertical:hover {
+            transform: translateY(-10px) scale(1.02);
             z-index: 10;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
     </style>
@@ -250,7 +274,6 @@
         </div>
 
         <!-- Navigation Bar -->
-        <!-- MODIFICATION: Added dynamic class binding to hide nav during boot -->
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
              :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
@@ -266,8 +289,7 @@
                 </div>
             </button>
             
-            <!-- Center: Progress Capsule (FIXED: Back to Top + High Z-Index) -->
-            <!-- Added z-50 to ensure it sits ABOVE the right theme toggle when expanded -->
+            <!-- Center: Progress Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50"
                  ref="navCapsule"
                  @click="toggleCapsuleNav"
@@ -342,7 +364,6 @@
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
             <!-- Hero Section -->
-            <!-- MODIFICATION 1: Increased height from 180vh to 300vh for longer scroll skip -->
             <section id="home" class="relative w-full h-[300vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
                     <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
@@ -350,7 +371,6 @@
                     </div>
                     <div class="absolute inset-0 z-10 flex flex-col justify-end items-start pointer-events-none">
                         <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-klein-blue/90 via-klein-blue/40 to-transparent pointer-events-none"></div>
-                        <!-- Increased pb-32 to push text up on mobile, preventing overlap with browser UI -->
                         <div class="hero-text-container w-full px-6 md:px-12 pb-32 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20 opacity-0">
                             <div class="relative">
                                 <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal whitespace-nowrap" id="hero-name">
@@ -358,7 +378,6 @@
                                 </h1>
                                 <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.3vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
                             </div>
-                            <!-- MODIFICATION 1 & 2: Dynamic width logic (max-w-[85vw]) and longer scroll needed -->
                             <div class="intro-text opacity-0 mt-6 pl-2 w-full max-w-[85vw] md:max-w-xl transition-opacity duration-500 relative pr-4">
                                 <p class="text-base md:text-2xl font-light leading-relaxed break-words whitespace-normal">
                                     Development is not a science; it is an <span class="font-bold italic text-white/90">art</span>.
@@ -384,7 +403,6 @@
 
             <!-- Profile Section -->
             <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
-                <!-- MODIFICATION 3: Added ambient light sources for vividness -->
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
 
@@ -440,9 +458,6 @@
                 <div class="absolute bottom-1/4 left-0 works-page-glow"></div>
 
                 <div class="relative z-10">
-                    <!-- MODIFICATION 2: Changed justify-center to justify-start and added pt-40.
-                         This removes the blank space jump by positioning the title at the top of the viewport
-                         immediately when the user navigates to #works -->
                     <div class="min-h-screen flex flex-col justify-start pt-40 md:pt-60 items-center pointer-events-none">
                         <h2 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 mix-blend-difference">WORKS</h2>
                         <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
@@ -450,37 +465,24 @@
 
                     <!-- App Sections -->
                     <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center px-6 md:px-24" :data-index="i">
-                        <!-- Left: Reserved for 3D Icon -->
                         <div class="hidden md:block w-1/2 h-full"></div>
-                        
-                        <!-- Right: The Glass Card -->
                         <div class="w-full md:w-1/2 flex justify-center md:justify-end">
                             <div class="app-card-glass w-full max-w-2xl rounded-[2.5rem] p-8 md:p-12 relative group overflow-hidden cursor-pointer backdrop-blur-3xl">
                                 <div class="card-corner-glow"></div>
-
                                 <div class="card-content flex flex-col gap-8" style="container-type: inline-size;">
-                                    <!-- Header -->
                                     <div class="flex items-center gap-4">
                                         <span class="font-display font-bold text-3xl text-black/20 dark:text-white/30 group-hover:text-klein-blue transition-colors">0{{i+1}}</span>
                                         <span class="font-mono text-[10px] tracking-[0.2em] text-gray-600 dark:text-gray-400 uppercase">System Utility</span>
                                     </div>
-                                    
-                                    <!-- Body -->
                                     <div>
                                         <h3 class="font-black text-gray-900 dark:text-white mb-6 tracking-tighter leading-[0.9] break-words" style="font-size: clamp(2rem, 11cqi, 3.75rem);">{{ app.name }}</h3>
-                                        <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed font-light">
-                                            {{ app.desc }}
-                                        </p>
+                                        <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed font-light">{{ app.desc }}</p>
                                     </div>
-                                    
-                                    <!-- Footer / Actions -->
                                     <div class="pt-6 mt-4 border-t border-black/10 dark:border-white/5 flex items-center justify-between">
                                         <div class="flex gap-2">
                                             <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">MACOS</span>
                                             <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">SWIFT</span>
                                         </div>
-                                        
-                                        <!-- Apple Style Glass Action Button -->
                                         <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-white/20 shadow-lg text-gray-900 dark:text-white font-bold text-sm hover:scale-105 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300">
                                             <span>View</span>
                                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -495,56 +497,84 @@
             </section>
 
             <!-- NEW PHOTOS SECTION -->
-            <section id="photos" class="relative z-30 bg-[#020202] text-white" style="height: 400vh;">
-                <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center" id="photos-container">
-                    
-                    <div class="absolute top-10 left-6 md:left-12 z-20 mix-blend-difference">
-                        <div class="flex items-center gap-3">
-                            <span class="w-3 h-3 bg-white rounded-full"></span>
-                            <span class="font-display font-bold tracking-widest text-xl">PHOTOS</span>
+            <section id="photos" class="relative z-30 bg-[#080808] text-white overflow-hidden py-32">
+                <!-- Background Wave Effect -->
+                <a-waves class="absolute inset-0 z-0">
+                    <svg class="js-svg"></svg>
+                </a-waves>
+
+                <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto">
+                    <!-- Section Header -->
+                    <div class="flex flex-col items-center justify-center mb-32 mix-blend-difference pointer-events-none">
+                        <h2 class="text-[15vw] md:text-[8vw] font-black tracking-tighter leading-none text-white/10 absolute top-20 select-none">GALLERY</h2>
+                        <div class="flex items-center gap-3 relative z-10">
+                            <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
+                            <span class="font-display font-bold tracking-widest text-xl md:text-3xl">PHOTOS</span>
                         </div>
-                        <p class="font-mono text-xs text-gray-400 mt-2 tracking-widest">CAPTURED MOMENTS</p>
+                        <p class="font-mono text-xs text-gray-400 mt-4 tracking-widest relative z-10">VISUAL ARCHIVE & EXPLORATIONS</p>
                     </div>
 
-                    <div class="photos-wrapper flex gap-8 md:gap-16 pl-[10vw] items-center h-[60vh]" ref="photosWrapper">
-                        <!-- Photo Cards -->
-                        <div v-for="(photo, index) in photos" :key="index" class="photo-card relative flex-shrink-0 w-[70vw] md:w-[35vw] aspect-[3/4] rounded-sm overflow-hidden group grayscale hover:grayscale-0 transition-all duration-500 cursor-pointer">
-                            <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="Gallery Image">
-                            <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <span class="font-mono text-xs tracking-widest text-klein-blue">{{ photo.date }}</span>
-                                <h3 class="font-bold text-xl mt-1">{{ photo.title }}</h3>
+                    <!-- Vertical Masonry Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full">
+                        
+                        <!-- Col 1 -->
+                        <div class="flex flex-col gap-12 mt-0">
+                            <div v-for="(photo, index) in photos.slice(0, 2)" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900">
+                                <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery Image">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                    <span class="font-mono text-xs tracking-widest text-klein-blue mb-2">{{ photo.date }}</span>
+                                    <h3 class="font-bold text-2xl tracking-tight leading-none">{{ photo.title }}</h3>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Gallery Entry Card -->
-                        <a href="#" class="photo-card relative flex-shrink-0 w-[70vw] md:w-[25vw] aspect-[3/4] bg-[#111] border border-white/10 flex flex-col items-center justify-center group hover:bg-klein-blue hover:border-klein-blue transition-colors duration-500">
-                            <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <i data-lucide="arrow-right" class="w-8 h-8"></i>
+                        <!-- Col 2 (Offset) -->
+                        <div class="flex flex-col gap-12 md:mt-24">
+                            <div v-for="(photo, index) in photos.slice(2, 4)" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900">
+                                <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery Image">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                    <span class="font-mono text-xs tracking-widest text-klein-blue mb-2">{{ photo.date }}</span>
+                                    <h3 class="font-bold text-2xl tracking-tight leading-none">{{ photo.title }}</h3>
+                                </div>
                             </div>
-                            <h3 class="font-display text-2xl font-bold tracking-tighter">VIEW GALLERY</h3>
-                            <p class="font-mono text-xs text-gray-500 mt-2 group-hover:text-white/80">EXPLORE FULL ARCHIVE</p>
-                        </a>
-                        
-                        <div class="w-[10vw] flex-shrink-0"></div> <!-- Spacer -->
+                        </div>
+
+                        <!-- Col 3 (More Offset + Entry) -->
+                        <div class="flex flex-col gap-12 md:mt-48">
+                            <div v-for="(photo, index) in photos.slice(4, 5)" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900">
+                                <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery Image">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                    <span class="font-mono text-xs tracking-widest text-klein-blue mb-2">{{ photo.date }}</span>
+                                    <h3 class="font-bold text-2xl tracking-tight leading-none">{{ photo.title }}</h3>
+                                </div>
+                            </div>
+
+                            <!-- View Full Gallery Entry -->
+                            <a href="#" class="photo-card-vertical group relative w-full aspect-square bg-[#111] border border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue transition-colors duration-500">
+                                <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
+                                <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300 relative z-10">
+                                    <i data-lucide="arrow-right" class="w-8 h-8"></i>
+                                </div>
+                                <h3 class="font-display text-2xl font-bold tracking-tighter relative z-10">VIEW ALL</h3>
+                                <p class="font-mono text-xs text-gray-500 mt-2 group-hover:text-white/80 relative z-10">ENTER GALLERY</p>
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </section>
             
             <!-- Connect Section -->
             <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
-                <!-- MODIFICATION 3: Added ambient light sources for vividness -->
                 <div class="ambient-glow top-[10%] left-[10%] opacity-50 bg-[#002FA7]"></div>
                 <div class="ambient-glow bottom-[10%] right-[10%] opacity-30 bg-[#20BEFF] animate-pulse-slow"></div>
 
                 <div class="max-w-7xl mx-auto w-full relative z-10">
-                    <!-- Title centered -->
                     <div class="flex items-center justify-center gap-3 mb-16 w-full text-center">
                         <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
                         <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        
-                        <!-- Github -->
                         <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
                             <div class="card-corner-glow"></div>
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
@@ -555,11 +585,8 @@
                                 <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-klein-blue transition-colors text-xl">Explore source code</p></div>
                             </div>
                         </a>
-
-                        <!-- Kaggle -->
                         <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
                             <div class="card-corner-glow" style="background: radial-gradient(circle at 100% 0%, rgba(32, 190, 255, 0.6) 0%, transparent 60%);"></div>
-
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
                                 <div class="flex justify-between items-start">
                                     <div class="text-4xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
@@ -584,6 +611,157 @@
     <script>
         const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
 
+        // --- Perlin Noise Implementation (Self-contained) ---
+        class Noise {
+            constructor(seed) {
+                this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
+                this.p = [];
+                for (var i=0; i<256; i++) { this.p[i] = Math.floor(Math.random()*256); }
+                this.perm = []; 
+                for(var i=0; i<512; i++) { this.perm[i]=this.p[i & 255]; }
+            }
+            dot(g, x, y) { return g[0]*x + g[1]*y; }
+            mix(a, b, t) { return (1-t)*a + t*b; }
+            fade(t) { return t*t*t*(t*(t*6-15)+10); }
+            perlin2(x, y) {
+                var X = Math.floor(x), Y = Math.floor(y);
+                x = x - X; y = y - Y;
+                X = X & 255; Y = Y & 255;
+                var n00 = this.dot(this.grad3[this.perm[X+this.perm[Y]] % 12], x, y);
+                var n01 = this.dot(this.grad3[this.perm[X+this.perm[Y+1]] % 12], x, y-1);
+                var n10 = this.dot(this.grad3[this.perm[X+1+this.perm[Y]] % 12], x-1, y);
+                var n11 = this.dot(this.grad3[this.perm[X+1+this.perm[Y+1]] % 12], x-1, y-1);
+                var u = this.fade(x); return this.mix(this.mix(n00, n10, u), this.mix(n01, n11, u), this.fade(y));
+            }
+        }
+
+        // --- Wave Component Class ---
+        class AWaves extends HTMLElement {
+            connectedCallback() {
+                this.svg = this.querySelector('.js-svg');
+                this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
+                this.lines = [];
+                this.paths = [];
+                this.noise = new Noise(Math.random());
+                this.setSize();
+                this.setLines();
+                this.bindEvents();
+                this.rafId = requestAnimationFrame(this.tick.bind(this));
+            }
+            disconnectedCallback() {
+                cancelAnimationFrame(this.rafId);
+                window.removeEventListener('resize', this.onResize);
+                window.removeEventListener('mousemove', this.onMouseMove);
+            }
+            bindEvents() {
+                this.onResize = this.onResize.bind(this);
+                this.onMouseMove = this.onMouseMove.bind(this);
+                window.addEventListener('resize', this.onResize);
+                window.addEventListener('mousemove', this.onMouseMove);
+            }
+            onResize() { this.setSize(); this.setLines(); }
+            onMouseMove(e) { this.updateMousePosition(e.pageX, e.pageY); }
+            updateMousePosition(x, y) {
+                const rect = this.bounding;
+                this.mouse.x = x - rect.left;
+                this.mouse.y = y - rect.top; // Relative to container, not viewport + scroll for effect consistency
+                if (!this.mouse.set) {
+                    this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y;
+                    this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y;
+                    this.mouse.set = true;
+                }
+            }
+            setSize() {
+                this.bounding = this.getBoundingClientRect();
+                this.svg.style.width = `${this.bounding.width}px`;
+                this.svg.style.height = `${this.bounding.height}px`;
+            }
+            setLines() {
+                const { width, height } = this.bounding;
+                this.lines = [];
+                this.paths.forEach(p => p.remove());
+                this.paths = [];
+                const xGap = 20; // Wider gap for cleaner look
+                const yGap = 40; 
+                const oWidth = width + 200;
+                const oHeight = height + 30;
+                const totalLines = Math.ceil(oWidth / xGap);
+                const totalPoints = Math.ceil(oHeight / yGap);
+                const xStart = (width - xGap * totalLines) / 2;
+                const yStart = (height - yGap * totalPoints) / 2;
+                for (let i = 0; i <= totalLines; i++) {
+                    const points = [];
+                    for (let j = 0; j <= totalPoints; j++) {
+                        points.push({ x: xStart + xGap * i, y: yStart + yGap * j, wave: { x: 0, y: 0 }, cursor: { x: 0, y: 0, vx: 0, vy: 0 } });
+                    }
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    this.svg.appendChild(path);
+                    this.paths.push(path);
+                    this.lines.push(points);
+                }
+            }
+            movePoints(time) {
+                const { lines, mouse, noise } = this;
+                lines.forEach((points) => {
+                    points.forEach((p) => {
+                        const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
+                        p.wave.x = Math.cos(move) * 32;
+                        p.wave.y = Math.sin(move) * 16;
+                        const dx = p.x - mouse.sx;
+                        const dy = p.y - mouse.sy;
+                        const d = Math.hypot(dx, dy);
+                        const l = Math.max(175, mouse.vs);
+                        if (d < l) {
+                            const s = 1 - d / l;
+                            const f = Math.cos(d * 0.001) * s;
+                            p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00065;
+                            p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00065;
+                        }
+                        p.cursor.vx += (0 - p.cursor.x) * 0.005; p.cursor.vy += (0 - p.cursor.y) * 0.005;
+                        p.cursor.vx *= 0.925; p.cursor.vy *= 0.925;
+                        p.cursor.x += p.cursor.vx * 2; p.cursor.y += p.cursor.vy * 2;
+                        p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
+                    });
+                });
+            }
+            moved(point, withCursorForce = true) {
+                return {
+                    x: Math.round((point.x + point.wave.x + (withCursorForce ? point.cursor.x : 0)) * 10) / 10,
+                    y: Math.round((point.y + point.wave.y + (withCursorForce ? point.cursor.y : 0)) * 10) / 10
+                };
+            }
+            drawLines() {
+                const { lines, moved, paths } = this;
+                lines.forEach((points, lIndex) => {
+                    let p1 = moved(points[0], false);
+                    let d = `M ${p1.x} ${p1.y}`;
+                    points.forEach((p1, pIndex) => {
+                        const isLast = pIndex === points.length - 1;
+                        p1 = moved(p1, !isLast);
+                        d += `L ${p1.x} ${p1.y}`;
+                    });
+                    paths[lIndex].setAttribute('d', d);
+                });
+            }
+            tick(time) {
+                const { mouse } = this;
+                mouse.sx += (mouse.x - mouse.sx) * 0.1;
+                mouse.sy += (mouse.y - mouse.sy) * 0.1;
+                const dx = mouse.x - mouse.lx;
+                const dy = mouse.y - mouse.ly;
+                const d = Math.hypot(dx, dy);
+                mouse.v = d;
+                mouse.vs += (d - mouse.vs) * 0.1;
+                mouse.vs = Math.min(100, mouse.vs);
+                mouse.lx = mouse.x; mouse.ly = mouse.y;
+                mouse.a = Math.atan2(dy, dx);
+                this.movePoints(time);
+                this.drawLines();
+                this.rafId = requestAnimationFrame(this.tick.bind(this));
+            }
+        }
+        if(!customElements.get('a-waves')) { customElements.define('a-waves', AWaves); }
+
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
@@ -595,11 +773,8 @@
                 const loader = ref(null);
                 const canvasContainer = ref(null);
                 const photosWrapper = ref(null);
-                
-                // Boot State
                 const isBooting = ref(true);
                 
-                // Real-time Nav Color State
                 const navLeftColor = ref('text-white');
                 const navCapsuleColor = ref('text-white');
                 const navRightColor = ref('text-white');
@@ -630,7 +805,7 @@
                 let icons = []; 
                 let mouseX = 0, mouseY = 0;
                 let lenis;
-                let ballsRef = []; // Store references to balls for animation
+                let ballsRef = []; 
 
                 const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
@@ -662,7 +837,6 @@
                     resolveTheme();
                 };
 
-                // Helper to get luminance of color string
                 const getLuminance = (colorStr) => {
                     const canvas = document.createElement("canvas");
                     canvas.width = 1; canvas.height = 1;
@@ -673,14 +847,13 @@
                     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
                 };
 
-                // Check contrast for a specific element
                 const checkElementContrast = (el) => {
                     if (!el) return 'text-white';
                     const rect = el.getBoundingClientRect();
                     const x = rect.left + rect.width / 2;
                     const y = rect.top + rect.height / 2;
                     const elements = document.elementsFromPoint(x, y);
-                    let bgLuminance = 0; // Default to dark (so text becomes white)
+                    let bgLuminance = 0; 
                     
                     for (let e of elements) {
                         if (e.tagName === 'NAV' || e.closest('nav') || e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) continue;
@@ -690,11 +863,9 @@
                         bgLuminance = getLuminance(bgColor);
                         break;
                     }
-                    
                     return bgLuminance > 128 ? 'text-black' : 'text-white';
                 };
 
-                // Real-time Contrast Check for all buttons
                 const updateNavColors = () => {
                     navLeftColor.value = checkElementContrast(navBtnLeft.value);
                     navCapsuleColor.value = checkElementContrast(navCapsule.value);
@@ -713,8 +884,6 @@
                     
                     window.lastScrollY = scrollTop;
 
-                    // Update Active Section
-                    // FIX: Ensure 'HOME' shows at top even if 'WORKS' is tall
                     if (scrollTop < winHeight * 0.5) {
                         activeSection.value = 'home';
                     } else {
@@ -729,18 +898,14 @@
                             }
                         }
                     }
-
-                    // --- NAV COLOR UPDATE ---
                     updateNavColors();
                     
-                    // --- ANIMATION LOGIC ---
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
                     const introText = document.querySelector('.intro-text');
                     const creativeBanner = document.getElementById('creative-banner');
                     const tempUnderline = document.getElementById('temp-underline');
                     
-                    // MODIFICATION 1: Adjusted logic to handle new taller hero section (300vh)
                     if (scrollTop < winHeight * 3.5) {
                         if(magContainer && !isBooting.value) {
                             const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
@@ -748,7 +913,6 @@
                             magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
                         }
                         if(heroText) {
-                            // Slower movement factor (winHeight * 1.5 instead of 0.5)
                             const moveProgress = Math.min(1, scrollTop / (winHeight * 1.5)); 
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             const targetScale = 1 + (moveProgress * 0.3); 
@@ -797,32 +961,20 @@
                 const initMagneticLogo = () => {
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
-                    
-                    // Clear previous
-                    if(ballsRef.length > 0) {
-                        gsap.ticker.remove(rotateBalls);
-                        ballsRef = [];
-                        container.innerHTML = '';
-                    }
-
+                    if(ballsRef.length > 0) { gsap.ticker.remove(rotateBalls); ballsRef = []; container.innerHTML = ''; }
                     const logoPaths = [
                         "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
                         "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
                         "M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z",
                         "M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"
                     ];
-                    
                     const width = container.clientWidth;
                     const height = container.clientHeight;
-                    
-                    // Setup SVG
                     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     svg.setAttribute("width", "100%");
                     svg.setAttribute("height", "100%");
                     svg.style.overflow = "visible";
                     container.appendChild(svg);
-                    
-                    // Calculate Logo Pixels
                     const canvas = document.createElement('canvas');
                     canvas.width = width;
                     canvas.height = height;
@@ -830,104 +982,68 @@
                     const logoScale = Math.min(width, height) / 500 * 0.9; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
-                    
                     ctx.fillStyle = "black";
                     ctx.save();
                     ctx.translate(offsetX, offsetY);
                     ctx.scale(logoScale, logoScale);
                     logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
                     ctx.restore();
-                    
                     const step = 28; 
                     const mouseRadius = 150; 
-                    
-                    // Create Balls
-                    // Loading Circle Config
+                    let ballIndex = 0;
                     const circleRadius = Math.min(width, height) * 0.15;
                     const centerScreenX = width / 2;
                     const centerScreenY = height / 2;
-                    
-                    let ballIndex = 0;
-                    
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
                             const pixel = ctx.getImageData(x, y, 1, 1).data;
                             if (pixel[3] > 128) {
                                 ballIndex++;
-                                
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                                 ball.setAttribute("class", "text-white fill-current magnetic-ball");
                                 ball.setAttribute("r", 5); 
-                                
                                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                                 line.setAttribute("class", "text-white magnetic-ball-line");
-                                
                                 svg.appendChild(line);
                                 svg.appendChild(ball);
-                                
-                                // Setup Position Logic
                                 let initialX, initialY;
-                                
                                 if (isBooting.value) {
-                                    // Calculate Loading Position (Circle)
-                                    // Use index to distribute evenly, but since we don't know total yet, use random + index approx
                                     const angle = (ballIndex * 0.1) + (Math.random() * 0.5);
                                     const r = circleRadius + (Math.random() * 20 - 10);
-                                    
                                     initialX = centerScreenX + Math.cos(angle) * r;
                                     initialY = centerScreenY + Math.sin(angle) * r;
-                                    
-                                    // Store loading state props
                                     ball.loadAngle = angle;
                                     ball.loadRadius = r;
                                     ball.loadSpeed = 0.001 + Math.random() * 0.002;
-                                    
-                                    // Hide line during boot
                                     line.style.opacity = '0';
                                 } else {
-                                    initialX = x;
-                                    initialY = y;
+                                    initialX = x; initialY = y;
                                     line.style.opacity = '0.15';
                                 }
-                                
-                                ball.setAttribute("cx", initialX);
-                                ball.setAttribute("cy", initialY);
+                                ball.setAttribute("cx", initialX); ball.setAttribute("cy", initialY);
                                 line.setAttribute("x1", initialX); line.setAttribute("y1", initialY);
                                 line.setAttribute("x2", initialX); line.setAttribute("y2", initialY);
-                                
                                 ballsRef.push({ 
-                                    el: ball, 
-                                    line: line, 
-                                    ori_x: x, 
-                                    ori_y: y,
-                                    // Boot props
-                                    loadAngle: ball.loadAngle,
-                                    loadRadius: ball.loadRadius,
-                                    loadSpeed: ball.loadSpeed
+                                    el: ball, line: line, ori_x: x, ori_y: y,
+                                    loadAngle: ball.loadAngle, loadRadius: ball.loadRadius, loadSpeed: ball.loadSpeed
                                 });
                             }
                         }
                     }
-                    
-                    // Interaction Logic
                     container.addEventListener('mousemove', (e) => {
-                        if (isBooting.value) return; // Disable interaction during boot
-                        
+                        if (isBooting.value) return; 
                         const rect = container.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
                         const mouseY = e.clientY - rect.top;
-                        
                         ballsRef.forEach(ball => {
                             const dx = ball.ori_x - mouseX;
                             const dy = ball.ori_y - mouseY;
                             const dist = Math.sqrt(dx * dx + dy * dy);
-                            
                             if (dist < mouseRadius) {
                                 const angle = Math.atan2(dy, dx);
                                 const moveDist = ((mouseRadius - dist) / mouseRadius) * 60; 
                                 const tx = ball.ori_x + Math.cos(angle) * moveDist;
                                 const ty = ball.ori_y + Math.sin(angle) * moveDist;
-                                
                                 if (ball.animater) ball.animater.kill();
                                 ball.animater = gsap.timeline()
                                     .to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3, ease: "power3.out" })
@@ -937,29 +1053,19 @@
                             }
                         });
                     });
-
-                    // Start Loop if booting
-                    if(isBooting.value) {
-                        gsap.ticker.add(rotateBalls);
-                    }
+                    if(isBooting.value) { gsap.ticker.add(rotateBalls); }
                 };
 
-                // Animation Tick Function for Loading Screen
                 function rotateBalls(time, deltaTime, frame) {
-                    // FIXED: Removed incorrect check for canvasContainer.value which caused boot failure
                     if (!isBooting.value) return;
-                    
                     const container = document.getElementById('magnetic-container');
                     if(!container) return;
-                    
                     const centerX = container.clientWidth / 2;
                     const centerY = container.clientHeight / 2;
-                    
                     ballsRef.forEach(ball => {
                         ball.loadAngle += (ball.loadSpeed * deltaTime);
                         const x = centerX + Math.cos(ball.loadAngle) * ball.loadRadius;
                         const y = centerY + Math.sin(ball.loadAngle) * ball.loadRadius;
-                        
                         ball.el.setAttribute('cx', x);
                         ball.el.setAttribute('cy', y);
                     });
@@ -968,28 +1074,15 @@
                 const finishBootSequence = () => {
                     isBooting.value = false;
                     gsap.ticker.remove(rotateBalls);
-                    
-                    // Hide loader text
                     if(loader.value) {
                         gsap.to(loader.value, { opacity: 0, duration: 0.5, onComplete: () => { loader.value.style.display = 'none'; } });
                     }
-                    
-                    // Animate balls to logo position
                     ballsRef.forEach(ball => {
-                        gsap.to(ball.el, {
-                            attr: { cx: ball.ori_x, cy: ball.ori_y },
-                            duration: 1.6,
-                            ease: "power4.inOut",
-                            delay: Math.random() * 0.1 // Stagger slightly
-                        });
-                        
-                        // Restore lines
+                        gsap.to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.6, ease: "power4.inOut", delay: Math.random() * 0.1 });
                         ball.line.setAttribute('x1', ball.ori_x); ball.line.setAttribute('y1', ball.ori_y);
                         ball.line.setAttribute('x2', ball.ori_x); ball.line.setAttribute('y2', ball.ori_y);
                         gsap.to(ball.line, { opacity: 0.15, duration: 1, delay: 1 });
                     });
-                    
-                    // Show Hero Text after logo forms
                     gsap.to(".hero-text-container", { opacity: 1, duration: 2, ease: "power4.out", delay: 1.0 });
                 };
 
@@ -1052,9 +1145,6 @@
                     canvasContainer.value.appendChild(renderer.domElement);
                     appsGroup = new THREE.Group();
                     scene.add(appsGroup);
-
-                    // Reverted: Removed Particle Mesh code as requested
-
                     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
                     scene.add(ambientLight);
                     const keyLight = new THREE.SpotLight(0xffffff, 2);
@@ -1101,9 +1191,8 @@
                         icons.push(mesh);
                     });
                     document.addEventListener('mousemove', (event) => {
-                        // Normalize mouse coordinates for Three.js
-                        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-                        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+                        mouseX = (event.clientX - window.innerWidth / 2) * 0.0005;
+                        mouseY = (event.clientY - window.innerHeight / 2) * 0.0005;
                     });
                     window.addEventListener('resize', () => {
                         if(!canvasContainer.value) return;
@@ -1112,11 +1201,8 @@
                         camera.aspect = w / h;
                         camera.updateProjectionMatrix();
                         renderer.setSize(w, h);
-                        
-                        // Handle Logo Resize
                         initMagneticLogo();
                     });
-                    
                     const animate = () => {
                         requestAnimationFrame(animate);
                         icons.forEach((icon, i) => {
@@ -1130,10 +1216,8 @@
                     sections.forEach((section, index) => {
                         ScrollTrigger.create({
                             trigger: section,
-                            // UPDATED: Start animation earlier (when top of section is at 75% of viewport height)
                             start: "top 75%",
                             end: "bottom 75%",
-                            // ADDED overwrite: true to fix stuck icon issue
                             onEnter: () => animateIconIn(index),
                             onEnterBack: () => animateIconIn(index),
                             onLeave: () => animateIconOut(index, 1),
@@ -1145,12 +1229,9 @@
                 const animateIconIn = (index) => {
                     const icon = icons[index];
                     if(!icon) return;
-                    // UPDATED: Move icon to LEFT (x: -3.5) to clear space for the card on the right
-                    // Responsive check: if mobile width, position icon differently
                     const isMobile = window.innerWidth < 768;
                     const targetX = isMobile ? 0 : -3.5; 
                     const targetY = isMobile ? 2.5 : 0; 
-
                     gsap.to(icon.position, { x: targetX, y: targetY, duration: 1.2, ease: "power3.out", overwrite: true });
                     gsap.to(icon.scale, { x: 1.1, y: 1.1, z: 1.1, duration: 1.2, ease: "elastic.out(1, 0.8)", overwrite: true });
                     gsap.to(icon.rotation, { x: 0, y: 0.2, z: 0, duration: 1.2, overwrite: true });
@@ -1160,7 +1241,6 @@
                     const icon = icons[index];
                     if(!icon) return;
                     const targetY = direction > 0 ? 15 : -15; 
-                    // UPDATED: Exit movement
                     gsap.to(icon.position, { y: targetY, x: 0, duration: 0.8, ease: "power3.in", overwrite: true });
                     gsap.to(icon.scale, { x: 0.5, y: 0.5, z: 0.5, duration: 0.8, overwrite: true });
                 };
@@ -1178,7 +1258,6 @@
                     });
                     function raf(time) {
                         lenis.raf(time);
-                        // FIXED: Explicitly update ScrollTrigger during smooth scroll loop to handle fast jumps
                         ScrollTrigger.update();
                         requestAnimationFrame(raf);
                     }
@@ -1186,14 +1265,8 @@
                 };
 
                 onMounted(() => {
-                    // Start init immediately to show loading balls
+                    setTimeout(() => { finishBootSequence(); }, 2500);
                     initMagneticLogo();
-                    
-                    // Simulate system boot time
-                    setTimeout(() => {
-                        finishBootSequence();
-                    }, 2500);
-
                     lucide.createIcons();
                     resolveTheme(); 
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
@@ -1202,24 +1275,22 @@
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
 
-                    // --- PHOTOS SECTION ANIMATION ---
-                    if (photosWrapper.value) {
-                        const wrapper = photosWrapper.value;
-                        const scrollAmount = wrapper.scrollWidth - window.innerWidth + 200; // Extra buffer
-                        
-                        gsap.to(wrapper, {
-                            x: -scrollAmount,
-                            ease: "none",
+                    // --- VERTICAL PHOTOS ANIMATION ---
+                    // Animate items as they scroll into view
+                    const verticalCards = document.querySelectorAll('.photo-card-vertical');
+                    verticalCards.forEach((card, i) => {
+                        gsap.to(card, {
+                            opacity: 1,
+                            y: 0,
+                            duration: 1,
+                            ease: "power3.out",
                             scrollTrigger: {
-                                trigger: "#photos",
-                                start: "top top",
-                                end: "+=3000", // Control speed by increasing/decreasing distance
-                                pin: true,
-                                scrub: 1,
-                                invalidateOnRefresh: true,
+                                trigger: card,
+                                start: "top 85%", // Start animation when card top hits 85% viewport
+                                toggleActions: "play none none reverse"
                             }
                         });
-                    }
+                    });
                 });
                 
                 onUnmounted(() => {
