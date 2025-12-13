@@ -223,6 +223,19 @@
              box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3);
         }
 
+        /* Photo Gallery Styles */
+        .photo-card {
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+        }
+        .photos-wrapper:hover .photo-card:not(:hover) {
+            filter: grayscale(100%) opacity(0.4);
+            transform: scale(0.95);
+        }
+        .photo-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
     </style>
 </head>
 <body>
@@ -237,7 +250,10 @@
         </div>
 
         <!-- Navigation Bar -->
-        <nav ref="navBar" class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none">
+        <!-- MODIFICATION: Added dynamic class binding to hide nav during boot -->
+        <nav ref="navBar" 
+             class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
+             :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
             
             <!-- Left: Sidebar Trigger -->
             <button @click="toggleSidebar" 
@@ -258,7 +274,7 @@
                  @mouseenter="isCapsuleOpen = true" 
                  @mouseleave="isCapsuleOpen = false">
                 <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
-                     :class="[isCapsuleOpen ? 'w-[340px]' : 'w-[140px]', navCapsuleColor]">
+                     :class="[isCapsuleOpen ? 'w-[400px]' : 'w-[160px]', navCapsuleColor]">
                     
                     <div class="w-full h-full flex items-center justify-center">
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
@@ -270,6 +286,8 @@
                             <a href="#profile" class="hover:opacity-60 transition-opacity">PROFILE</a>
                             <span>/</span>
                             <a href="#works" class="hover:opacity-60 transition-opacity">WORKS</a>
+                            <span>/</span>
+                            <a href="#photos" class="hover:opacity-60 transition-opacity">PHOTOS</a>
                             <span>/</span>
                             <a href="#connect" class="hover:opacity-60 transition-opacity">CONNECT</a>
                         </div>
@@ -475,6 +493,42 @@
                     <div class="h-[50vh]"></div>
                 </div>
             </section>
+
+            <!-- NEW PHOTOS SECTION -->
+            <section id="photos" class="relative z-30 bg-[#020202] text-white" style="height: 400vh;">
+                <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center" id="photos-container">
+                    
+                    <div class="absolute top-10 left-6 md:left-12 z-20 mix-blend-difference">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 bg-white rounded-full"></span>
+                            <span class="font-display font-bold tracking-widest text-xl">PHOTOS</span>
+                        </div>
+                        <p class="font-mono text-xs text-gray-400 mt-2 tracking-widest">CAPTURED MOMENTS</p>
+                    </div>
+
+                    <div class="photos-wrapper flex gap-8 md:gap-16 pl-[10vw] items-center h-[60vh]" ref="photosWrapper">
+                        <!-- Photo Cards -->
+                        <div v-for="(photo, index) in photos" :key="index" class="photo-card relative flex-shrink-0 w-[70vw] md:w-[35vw] aspect-[3/4] rounded-sm overflow-hidden group grayscale hover:grayscale-0 transition-all duration-500 cursor-pointer">
+                            <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" alt="Gallery Image">
+                            <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <span class="font-mono text-xs tracking-widest text-klein-blue">{{ photo.date }}</span>
+                                <h3 class="font-bold text-xl mt-1">{{ photo.title }}</h3>
+                            </div>
+                        </div>
+
+                        <!-- Gallery Entry Card -->
+                        <a href="#" class="photo-card relative flex-shrink-0 w-[70vw] md:w-[25vw] aspect-[3/4] bg-[#111] border border-white/10 flex flex-col items-center justify-center group hover:bg-klein-blue hover:border-klein-blue transition-colors duration-500">
+                            <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <i data-lucide="arrow-right" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="font-display text-2xl font-bold tracking-tighter">VIEW GALLERY</h3>
+                            <p class="font-mono text-xs text-gray-500 mt-2 group-hover:text-white/80">EXPLORE FULL ARCHIVE</p>
+                        </a>
+                        
+                        <div class="w-[10vw] flex-shrink-0"></div> <!-- Spacer -->
+                    </div>
+                </div>
+            </section>
             
             <!-- Connect Section -->
             <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
@@ -540,6 +594,7 @@
                 const isCapsuleOpen = ref(false);
                 const loader = ref(null);
                 const canvasContainer = ref(null);
+                const photosWrapper = ref(null);
                 
                 // Boot State
                 const isBooting = ref(true);
@@ -561,6 +616,14 @@
                     { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/DesktopRenamer.png' },
                     { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/OptClicker.png' },
                     { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/SpaceSwitcher.png' }
+                ];
+
+                const photos = [
+                    { url: 'https://images.unsplash.com/photo-1480796927426-f609979314bd?q=80&w=1000&auto=format&fit=crop', title: 'Urban Geometry', date: 'TOKYO, 2023' },
+                    { url: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1000&auto=format&fit=crop', title: 'Structures', date: 'SEOUL, 2024' },
+                    { url: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=1000&auto=format&fit=crop', title: 'Mountain Path', date: 'ALPS, 2023' },
+                    { url: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1000&auto=format&fit=crop', title: 'Concert Hall', date: 'VIENNA, 2022' },
+                    { url: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1000&auto=format&fit=crop', title: 'City Lights', date: 'CHICAGO, 2024' }
                 ];
 
                 let scene, camera, renderer, appsGroup;
@@ -655,7 +718,7 @@
                     if (scrollTop < winHeight * 0.5) {
                         activeSection.value = 'home';
                     } else {
-                        const sections = ['home', 'profile', 'works', 'connect'];
+                        const sections = ['home', 'profile', 'works', 'photos', 'connect'];
                         for (const section of sections) {
                             const el = document.getElementById(section);
                             if (el) {
@@ -883,7 +946,8 @@
 
                 // Animation Tick Function for Loading Screen
                 function rotateBalls(time, deltaTime, frame) {
-                    if (!isBooting.value || !canvasContainer.value) return;
+                    // FIXED: Removed incorrect check for canvasContainer.value which caused boot failure
+                    if (!isBooting.value) return;
                     
                     const container = document.getElementById('magnetic-container');
                     if(!container) return;
@@ -988,6 +1052,9 @@
                     canvasContainer.value.appendChild(renderer.domElement);
                     appsGroup = new THREE.Group();
                     scene.add(appsGroup);
+
+                    // Reverted: Removed Particle Mesh code as requested
+
                     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
                     scene.add(ambientLight);
                     const keyLight = new THREE.SpotLight(0xffffff, 2);
@@ -1034,8 +1101,9 @@
                         icons.push(mesh);
                     });
                     document.addEventListener('mousemove', (event) => {
-                        mouseX = (event.clientX - window.innerWidth / 2) * 0.0005;
-                        mouseY = (event.clientY - window.innerHeight / 2) * 0.0005;
+                        // Normalize mouse coordinates for Three.js
+                        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
                     });
                     window.addEventListener('resize', () => {
                         if(!canvasContainer.value) return;
@@ -1048,11 +1116,12 @@
                         // Handle Logo Resize
                         initMagneticLogo();
                     });
+                    
                     const animate = () => {
                         requestAnimationFrame(animate);
                         icons.forEach((icon, i) => {
-                            icon.rotation.x += 0.05 * (mouseY * 2 - icon.rotation.x);
-                            icon.rotation.y += 0.05 * (mouseX * 2 - icon.rotation.y);
+                            icon.rotation.x += 0.05 * (mouseY * 0.5 - icon.rotation.x);
+                            icon.rotation.y += 0.05 * (mouseX * 0.5 - icon.rotation.y);
                         });
                         renderer.render(scene, camera);
                     };
@@ -1132,6 +1201,25 @@
                     initCursor();
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
+
+                    // --- PHOTOS SECTION ANIMATION ---
+                    if (photosWrapper.value) {
+                        const wrapper = photosWrapper.value;
+                        const scrollAmount = wrapper.scrollWidth - window.innerWidth + 200; // Extra buffer
+                        
+                        gsap.to(wrapper, {
+                            x: -scrollAmount,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: "#photos",
+                                start: "top top",
+                                end: "+=3000", // Control speed by increasing/decreasing distance
+                                pin: true,
+                                scrub: 1,
+                                invalidateOnRefresh: true,
+                            }
+                        });
+                    }
                 });
                 
                 onUnmounted(() => {
@@ -1142,7 +1230,7 @@
                 });
 
                 return {
-                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks,
+                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
                     navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight
                 };
             }
