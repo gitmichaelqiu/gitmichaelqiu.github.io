@@ -236,10 +236,21 @@
             background-color: #ffffff;
             color: #002FA7; 
         }
+        html:not(.dark) .gallery-title {
+            color: #002FA7;
+            opacity: 0.1; /* High transparency for light mode background text */
+        }
+        html:not(.dark) .gallery-quote p {
+            color: #002FA7;
+        }
+
         /* Dark Theme */
         html.dark #photos {
             background-color: #020412; /* Deep Navy */
             color: #ffffff;
+        }
+        html.dark .gallery-title {
+            color: rgba(255, 255, 255, 0.1);
         }
 
         a-waves {
@@ -532,14 +543,15 @@
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
                     <!-- Background Wave Effect -->
                     <a-waves class="absolute inset-0 z-0 js-waves-container">
-                        <svg class="js-svg"></svg>
+                        <!-- Removed manual SVG insertion here, let component handle it -->
                     </a-waves>
 
                     <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center">
                         
                         <!-- Phase 1 & 2: HUGE Title -->
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20 mix-blend-difference">
-                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none text-white origin-center" style="transform: scaleY(4);">
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                            <!-- Removed mix-blend-difference, adjusted colors in CSS -->
+                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center" style="transform: scaleY(4);">
                                 GALLERY
                             </h2>
                         </div>
@@ -677,12 +689,15 @@
         // --- Wave Component Class ---
         class AWaves extends HTMLElement {
             connectedCallback() {
-                this.svg = this.querySelector('.js-svg');
-                if (!this.svg) {
-                    this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    this.svg.classList.add("js-svg");
-                    this.appendChild(this.svg);
+                // Ensure SVG element exists
+                let svg = this.querySelector('.js-svg');
+                if (!svg) {
+                    svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    svg.classList.add("js-svg");
+                    this.appendChild(svg);
                 }
+                this.svg = svg;
+
                 this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
                 this.lines = [];
                 this.paths = [];
@@ -707,12 +722,15 @@
             onMouseMove(e) { this.updateMousePosition(e.pageX, e.pageY); }
             updateMousePosition(x, y) {
                 const rect = this.bounding;
-                this.mouse.x = x - rect.left;
-                this.mouse.y = y - rect.top; // Relative to container, not viewport + scroll for effect consistency
-                if (!this.mouse.set) {
-                    this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y;
-                    this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y;
-                    this.mouse.set = true;
+                // Fix: Check if bounding rect exists to avoid errors on quick reloads
+                if(rect) {
+                    this.mouse.x = x - rect.left;
+                    this.mouse.y = y - rect.top; 
+                    if (!this.mouse.set) {
+                        this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y;
+                        this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y;
+                        this.mouse.set = true;
+                    }
                 }
             }
             setSize() {
@@ -725,7 +743,7 @@
                 this.lines = [];
                 this.paths.forEach(p => p.remove());
                 this.paths = [];
-                const xGap = 20; // Wider gap for cleaner look
+                const xGap = 20; 
                 const yGap = 40; 
                 const oWidth = width + 200;
                 const oHeight = height + 30;
