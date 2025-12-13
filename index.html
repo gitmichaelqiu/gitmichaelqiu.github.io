@@ -531,7 +531,9 @@
                 <!-- Sticky Container -->
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
                     <!-- Background Wave Effect -->
-                    <a-waves class="absolute inset-0 z-0 js-waves-container"></a-waves>
+                    <a-waves class="absolute inset-0 z-0 js-waves-container">
+                        <svg class="js-svg"></svg>
+                    </a-waves>
 
                     <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center">
                         
@@ -676,6 +678,11 @@
         class AWaves extends HTMLElement {
             connectedCallback() {
                 this.svg = this.querySelector('.js-svg');
+                if (!this.svg) {
+                    this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    this.svg.classList.add("js-svg");
+                    this.appendChild(this.svg);
+                }
                 this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
                 this.lines = [];
                 this.paths = [];
