@@ -200,21 +200,35 @@
         html:not(.dark) a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
         html.dark a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
 
-        /* Photo Cards */
-        .photo-card-vertical {
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
-            transform: translateY(0); /* Default state for visual check, GSAP will override */
+        /* --- NEW HOVER EFFECTS --- */
+        
+        /* Spotlight Effect Container */
+        .photos-grid:hover .photo-card-vertical {
+            opacity: 0.2;
+            filter: grayscale(100%) blur(2px);
+            transform: scale(0.98);
         }
-        .photo-card-vertical:hover {
-            transform: translateY(-15px) scale(1.03) !important; 
-            z-index: 20;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+
+        /* Individual Card Hover Override */
+        .photos-grid .photo-card-vertical:hover {
+            opacity: 1;
+            filter: grayscale(0%) blur(0px);
+            transform: scale(1.05) translateY(-10px);
+            z-index: 50;
+            box-shadow: 0 40px 80px rgba(0, 47, 167, 0.3); /* Klein Blue Glow */
+            border-color: rgba(0, 47, 167, 0.8);
+        }
+
+        .photo-card-vertical {
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(0);
+            border: 1px solid transparent;
         }
         
         /* Gallery Title Animation Base */
         .gallery-title {
             transform-origin: center center;
-            will-change: transform, opacity, filter;
+            will-change: transform, opacity, filter, clip-path;
         }
 
         .nav-glass {
@@ -444,12 +458,10 @@
                             </div>
                         </div>
                     </div>
-                    <!-- REMOVED THE EMPTY SPACE DIV HERE TO HELP WITH GAP ISSUE -->
                 </div>
             </section>
 
             <!-- NEW PHOTOS SECTION -->
-            <!-- Changed from min-h-[300vh] to h-screen to remove blank space at bottom -->
             <section id="photos" class="relative z-30 overflow-hidden h-screen">
                 <!-- Sticky Container -->
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
@@ -462,8 +474,8 @@
                         
                         <!-- Phase 1 & 2: HUGE Title -->
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-                            <!-- Adjusted Scale: 2.5 instead of 4, added blur filter -->
-                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center" style="transform: scaleY(2.5); filter: blur(4px);">
+                            <!-- Adjusted Scale and added clip-path for shutter effect -->
+                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center" style="transform: scaleY(3); filter: blur(10px); clip-path: inset(0 100% 0 100%);">
                                 GALLERY
                             </h2>
                         </div>
@@ -477,7 +489,7 @@
                         </div>
 
                         <!-- Phase 4: Vertical Masonry Grid -->
-                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full translate-y-[100vh] opacity-0 relative z-10 mt-32 md:mt-0 pointer-events-auto" style="padding-top: 20vh;">
+                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full translate-y-[150vh] opacity-0 relative z-10 mt-32 md:mt-0 pointer-events-auto" style="padding-top: 20vh;">
                             
                             <!-- Col 1 -->
                             <div class="flex flex-col gap-12 mt-0">
@@ -1327,24 +1339,23 @@
                         scrollTrigger: {
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=2000", // Length of the intro sequence
+                            end: "+=4000", // Increased duration for full scroll
                             pin: true,
                             scrub: 1,
-                            onLeave: () => console.log("Intro done, showing grid")
                         }
                     });
 
-                    // 1. Lines Fly In (handled by CSS transition or simple tween on mount? 
-                    // Let's tween opacity here linked to scroll start
+                    // 1. Lines Fly In
                     tl.to(".js-waves-container", { opacity: 1, duration: 2 });
 
-                    // 2. Title Scale Animation: HUGE -> Normal (ADJUSTED TO 2.5)
+                    // 2. Title Reveal (Shutter Effect)
                     tl.to(".gallery-title", { 
                         scaleY: 1, 
                         scale: 1, 
-                        filter: "blur(0px)", // Focus effect
+                        filter: "blur(0px)",
+                        clipPath: "inset(0 0 0 0)", // Open the shutter
                         duration: 4, 
-                        ease: "power2.inOut" 
+                        ease: "power2.out" 
                     }, "<");
 
                     // 3. Quote Fade In
@@ -1352,9 +1363,9 @@
                     
                     // 4. Quote Fade Out & Grid Rise
                     tl.to(".gallery-quote", { opacity: 0, y: -50, duration: 2, delay: 1 });
-                    tl.to(".gallery-title", { opacity: 0, y: -100, duration: 2 }, "<"); // Move title away too
+                    tl.to(".gallery-title", { opacity: 0, y: -100, duration: 2 }, "<"); 
                     
-                    // Explicitly fade in the grid container first
+                    // 5. Grid Entry (Move to view)
                     tl.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
@@ -1362,10 +1373,27 @@
                         ease: "power3.out" 
                     }, "-=1");
                     
-                    // Trigger individual cards
+                    // 6. Grid Scroll (Scroll through content)
+                    // Move the grid UP so we see the bottom photos
+                    tl.to(".photos-grid", {
+                        y: "-50%", // Scroll up by 50% of its height
+                        duration: 6,
+                        ease: "none" // Linear for scrolling feel
+                    });
+
+                    // 7. Exit Animation (Warp Speed)
+                    tl.to(".photos-grid", {
+                        y: "-150%", // Fly off screen
+                        opacity: 0,
+                        filter: "blur(20px)",
+                        scale: 0.8,
+                        duration: 2,
+                        ease: "power4.in"
+                    });
+
+                    // Trigger individual cards entry
                     const verticalCards = document.querySelectorAll('.photo-card-vertical');
                     verticalCards.forEach((card, i) => {
-                        // Use fromTo to strictly enforce visibility start and end states
                         gsap.fromTo(card, 
                             { opacity: 0, y: 100 },
                             {
@@ -1375,7 +1403,7 @@
                                 ease: "power3.out",
                                 scrollTrigger: {
                                     trigger: card,
-                                    start: "top 95%", // Start earlier
+                                    start: "top 95%",
                                     toggleActions: "play none none reverse"
                                 }
                             }
