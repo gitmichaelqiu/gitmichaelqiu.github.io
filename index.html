@@ -138,19 +138,23 @@
 
         /* --- PHOTOS SECTION STYLES --- */
         
-        /* Theme Transition */
-        #photos { transition: background-color 0.5s ease, color 0.5s ease; }
+        /* Theme Transition - Default to Intro State (Dark) */
+        #photos { 
+            transition: background-color 0.1s ease; 
+            background-color: #050505; /* Start Dark for Intro */
+            color: #ffffff;
+        }
         
-        /* Light Theme */
-        html:not(.dark) #photos { background-color: #ffffff; color: #002FA7; }
-        html:not(.dark) .gallery-title { color: #002FA7; opacity: 0.15; }
-        html:not(.dark) .gallery-quote { color: #002FA7; }
+        /* Active Photo State - Applied via JS after capture */
+        #photos.photos-active.light-mode { background-color: #ffffff; color: #002FA7; }
+        #photos.photos-active.dark-mode { background-color: #020412; color: #ffffff; }
         
-        /* Dark Theme */
-        html.dark #photos { background-color: #020412; color: #ffffff; }
-        html.dark .gallery-title { color: rgba(255, 255, 255, 0.1); }
+        /* Text Colors based on active state */
+        #photos.photos-active.light-mode .gallery-title { color: #002FA7; opacity: 0.15; }
+        #photos.photos-active.light-mode .gallery-quote { color: #002FA7; }
+        #photos.photos-active.dark-mode .gallery-title { color: rgba(255, 255, 255, 0.1); }
 
-        /* Wave Component Styles from style.css */
+        /* Wave Component Styles */
         a-waves {
             --x: -0.5rem;
             --y: 50%;
@@ -162,25 +166,14 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            pointer-events: none; /* Keep none so clicks pass through, JS handles window events */
+            pointer-events: none; 
             z-index: 0;
         }
         
-        /* The pseudo-element dot cursor */
+        /* Removed the Blue Ball (Pseudo-element) */
         a-waves:before {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0.5rem;
-            height: 0.5rem;
-            background: currentColor; /* Adapted to use current text color */
-            border-radius: 50%;
-            transform: translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0);
-            will-change: transform;
-            content: "";
-            pointer-events: none;
-            z-index: 10;
-            opacity: 0.5;
+            content: none !important;
+            display: none !important;
         }
 
         a-waves svg {
@@ -194,41 +187,69 @@
             stroke-width: 1px;
             vector-effect: non-scaling-stroke;
             transition: stroke 0.5s ease;
+            stroke-dasharray: 2000; /* For "Vines" growth effect */
+            stroke-dashoffset: 2000;
         }
         
         /* Wave Stroke Colors */
-        html:not(.dark) a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
-        html.dark a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
+        #photos.photos-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
+        /* Default / Dark Mode stroke */
+        a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
 
         /* --- NEW HOVER EFFECTS --- */
-        
-        /* Spotlight Effect Container */
         .photos-grid:hover .photo-card-vertical {
             opacity: 0.2;
             filter: grayscale(100%) blur(2px);
             transform: scale(0.98);
         }
-
-        /* Individual Card Hover Override */
         .photos-grid .photo-card-vertical:hover {
             opacity: 1;
             filter: grayscale(0%) blur(0px);
             transform: scale(1.05) translateY(-10px);
             z-index: 50;
-            box-shadow: 0 40px 80px rgba(0, 47, 167, 0.3); /* Klein Blue Glow */
+            box-shadow: 0 40px 80px rgba(0, 47, 167, 0.3);
             border-color: rgba(0, 47, 167, 0.8);
         }
-
         .photo-card-vertical {
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             transform: translateY(0);
             border: 1px solid transparent;
         }
         
-        /* Gallery Title Animation Base */
         .gallery-title {
             transform-origin: center center;
             will-change: transform, opacity, filter, clip-path;
+        }
+
+        /* --- HUD & FLASH --- */
+        .camera-hud { pointer-events: none; }
+        .camera-corner {
+            position: absolute; width: 40px; height: 40px;
+            border-color: rgba(255, 255, 255, 0.7); border-style: solid;
+            transition: all 0.5s ease;
+        }
+        .tl { top: 40px; left: 40px; border-width: 2px 0 0 2px; }
+        .tr { top: 40px; right: 40px; border-width: 2px 2px 0 0; }
+        .bl { bottom: 40px; left: 40px; border-width: 0 0 2px 2px; }
+        .br { bottom: 40px; right: 40px; border-width: 0 2px 2px 0; }
+        
+        .camera-btn-container {
+            pointer-events: auto; cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .camera-btn-container:hover { transform: scale(1.1); }
+        .camera-btn-inner {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2); border: 2px solid white;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .camera-btn-dot { width: 48px; height: 48px; background: #fff; border-radius: 50%; transition: background 0.3s; }
+        .camera-btn-container:hover .camera-btn-dot { background: #002FA7; }
+        
+        .flash-overlay {
+            position: fixed; inset: 0; background: white; z-index: 10000;
+            pointer-events: none; opacity: 0; mix-blend-mode: overlay;
         }
 
         .nav-glass {
@@ -247,6 +268,9 @@
         
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
+        
+        <!-- Flash Overlay -->
+        <div class="flash-overlay" ref="flashOverlay"></div>
 
         <div class="loader" ref="loader">
             <div class="font-mono text-xs tracking-[0.5em] text-white/70 animate-pulse">SYSTEM_BOOT</div>
@@ -462,7 +486,7 @@
             </section>
 
             <!-- NEW PHOTOS SECTION -->
-            <section id="photos" class="relative z-30 overflow-hidden h-screen">
+            <section id="photos" class="relative z-30 overflow-hidden h-screen" :class="[photosActive ? 'photos-active' : '', activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
                 <!-- Sticky Container -->
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
                     <!-- Background Wave Effect -->
@@ -470,12 +494,27 @@
                         <svg class="js-svg"></svg>
                     </a-waves>
 
+                    <!-- Camera HUD -->
+                    <div class="camera-hud absolute inset-0 z-40 flex flex-col items-center justify-center opacity-0">
+                        <div class="camera-corner tl"></div>
+                        <div class="camera-corner tr"></div>
+                        <div class="camera-corner bl"></div>
+                        <div class="camera-corner br"></div>
+                        
+                        <div class="camera-btn-container" @click="captureReality">
+                            <div class="camera-btn-inner">
+                                <div class="camera-btn-dot"></div>
+                            </div>
+                            <div class="mt-4 font-mono text-xs tracking-widest text-white/50 text-center">CAPTURE</div>
+                        </div>
+                    </div>
+
                     <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center pointer-events-none">
                         
                         <!-- Phase 1 & 2: HUGE Title -->
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
                             <!-- Adjusted Scale and added clip-path for shutter effect -->
-                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center" style="transform: scaleY(3); filter: blur(10px); clip-path: inset(0 100% 0 100%);">
+                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center opacity-0" style="transform: scaleY(3); filter: blur(10px); clip-path: inset(0 100% 0 100%);">
                                 GALLERY
                             </h2>
                         </div>
@@ -629,6 +668,9 @@
                 this.lines = [];
                 this.paths = [];
                 this.noise = new Noise(Math.random());
+                
+                // New: Amplitude control for interaction
+                this.amplitude = 0; // Start with straight lines (0 noise)
 
                 this.setSize();
                 this.setLines();
@@ -730,12 +772,14 @@
 
             movePoints(time) {
                 const { lines, mouse, noise } = this;
+                const amp = this.amplitude; // Use dynamic amplitude
+
                 lines.forEach((points) => {
                     points.forEach((p) => {
-                        // Wave movement
+                        // Wave movement - Scaled by amplitude
                         const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
-                        p.wave.x = Math.cos(move) * 32;
-                        p.wave.y = Math.sin(move) * 16;
+                        p.wave.x = Math.cos(move) * 32 * amp;
+                        p.wave.y = Math.sin(move) * 16 * amp;
 
                         // Mouse effect
                         const dx = p.x - mouse.sx;
@@ -835,9 +879,9 @@
                 const navCapsuleColor = ref('text-white');
                 const navRightColor = ref('text-white');
                 
-                const navBtnLeft = ref(null);
-                const navCapsule = ref(null);
-                const navBtnRight = ref(null);
+                // Camera Interaction Refs
+                const photosActive = ref(false);
+                const flashOverlay = ref(null);
                 
                 const systemLinks = [
                     { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
@@ -862,6 +906,7 @@
                 let mouseX = 0, mouseY = 0;
                 let lenis;
                 let ballsRef = []; 
+                let photosTimeline = null; // Store main timeline to control play
 
                 const capsulePerimeter = 360; 
                 const capsuleDashOffset = computed(() => {
@@ -1320,6 +1365,34 @@
                     requestAnimationFrame(raf);
                 };
 
+                // --- NEW: Camera Interaction Logic ---
+                const captureReality = () => {
+                    if (photosActive.value) return;
+                    photosActive.value = true;
+
+                    const waves = document.querySelector('a-waves');
+                    const tl = gsap.timeline();
+
+                    // 1. Flash
+                    tl.to(flashOverlay.value, { opacity: 1, duration: 0.05, ease: "power4.in" })
+                      .to(flashOverlay.value, { opacity: 0, duration: 0.5, ease: "power4.out" });
+
+                    // 2. Distort Lines (Amplitude 0 -> 1)
+                    if (waves) {
+                        gsap.to(waves, { amplitude: 1, duration: 1.5, ease: "elastic.out(1, 0.5)" });
+                    }
+
+                    // 3. Hide HUD
+                    gsap.to('.camera-hud', { opacity: 0, duration: 0.3 });
+
+                    // 4. Reveal Title (Start normal timeline flow)
+                    // We modify the next timeline parts to run automatically or be scrollable?
+                    // Actually, since we paused visual progress, we just unlock visual state.
+                    // The main ScrollTrigger below handles the rest based on scroll position.
+                    // But if user hasn't scrolled enough, we might want to auto-scroll or just let them discover.
+                    // Let's assume the user is at the "Wait" point.
+                };
+
                 onMounted(() => {
                     setTimeout(() => { finishBootSequence(); }, 2500);
                     initMagneticLogo();
@@ -1332,40 +1405,49 @@
                     window.addEventListener('scroll', updateScrollProgress);
 
                     // --- VERTICAL PHOTOS ANIMATION ---
-                    // Create a timeline for the entire Photos sequence
-                    // We pin the #photos section initially to play the Intro Animation
                     
                     const tl = gsap.timeline({
                         scrollTrigger: {
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=4000", // Increased duration for full scroll
+                            end: "+=5000", // Even longer for the intro
                             pin: true,
                             scrub: 1,
                         }
                     });
 
-                    // 1. Lines Fly In
-                    tl.to(".js-waves-container", { opacity: 1, duration: 2 });
+                    // 1. Lines Grow (Vines effect) - 0% to 10% scroll
+                    tl.to("a-waves svg path", { strokeDashoffset: 0, duration: 2 });
 
-                    // 2. Title Reveal (Shutter Effect)
+                    // 2. HUD Appear - 10% to 15% scroll
+                    tl.to(".camera-hud", { opacity: 1, duration: 1 });
+
+                    // 3. "Wait" Phase - 15% to 25% scroll (User interaction window)
+                    // We just add empty duration. If user clicks, HUD vanishes.
+                    // If user scrolls past 25% without clicking, we force trigger.
+                    tl.to({}, { duration: 2, onComplete: () => {
+                        if (!photosActive.value) captureReality();
+                    }});
+
+                    // 4. Title Reveal (Shutter Effect) - Starts after interaction point
                     tl.to(".gallery-title", { 
                         scaleY: 1, 
                         scale: 1, 
                         filter: "blur(0px)",
-                        clipPath: "inset(0 0 0 0)", // Open the shutter
+                        clipPath: "inset(0 0 0 0)", 
+                        opacity: 1,
                         duration: 4, 
                         ease: "power2.out" 
-                    }, "<");
+                    });
 
-                    // 3. Quote Fade In
+                    // 5. Quote Fade In
                     tl.to(".gallery-quote", { opacity: 1, duration: 2 }, "-=1");
                     
-                    // 4. Quote Fade Out & Grid Rise
+                    // 6. Quote Fade Out & Grid Rise
                     tl.to(".gallery-quote", { opacity: 0, y: -50, duration: 2, delay: 1 });
                     tl.to(".gallery-title", { opacity: 0, y: -100, duration: 2 }, "<"); 
                     
-                    // 5. Grid Entry (Move to view)
+                    // 7. Grid Entry (Move to view)
                     tl.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
@@ -1373,17 +1455,16 @@
                         ease: "power3.out" 
                     }, "-=1");
                     
-                    // 6. Grid Scroll (Scroll through content)
-                    // Move the grid UP so we see the bottom photos
+                    // 8. Grid Scroll (Scroll through content)
                     tl.to(".photos-grid", {
-                        y: "-50%", // Scroll up by 50% of its height
+                        y: "-50%", 
                         duration: 6,
-                        ease: "none" // Linear for scrolling feel
+                        ease: "none" 
                     });
 
-                    // 7. Exit Animation (Warp Speed)
+                    // 9. Exit Animation (Warp Speed)
                     tl.to(".photos-grid", {
-                        y: "-150%", // Fly off screen
+                        y: "-150%", 
                         opacity: 0,
                         filter: "blur(20px)",
                         scale: 0.8,
@@ -1421,7 +1502,8 @@
 
                 return {
                     isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
-                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight
+                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight,
+                    photosActive, captureReality, flashOverlay
                 };
             }
         }).mount('#app');
