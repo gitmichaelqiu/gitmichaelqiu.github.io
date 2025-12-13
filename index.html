@@ -126,6 +126,26 @@
             filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
         }
 
+        /* Hover Solid Effects */
+        .hover-solid-blue:hover {
+            background-color: var(--klein-blue) !important;
+            border-color: var(--klein-blue) !important;
+        }
+        
+        .hover-solid-gray:hover {
+            background-color: #333 !important;
+            border-color: #333 !important;
+        }
+        html.dark .hover-solid-gray:hover {
+            background-color: #eee !important;
+            border-color: #eee !important;
+        }
+        html.dark .hover-solid-gray:hover h3, 
+        html.dark .hover-solid-gray:hover i,
+        html.dark .hover-solid-gray:hover p {
+            color: black !important;
+        }
+
         /* App Card Styles */
         .app-card-glass {
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
@@ -535,7 +555,7 @@
                     </div>
                 </div>
             </section>
-            
+
             <!-- Connect Section -->
             <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
                 <div class="ambient-glow top-[10%] left-[10%] opacity-50 bg-[#002FA7]"></div>
@@ -1444,11 +1464,11 @@
                     }, "reveal");
 
                     // 3. Quote Appear (35% -> 45%)
-                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 35 }, "+=2");
+                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
 
                     // 4. Transition to Grid (45% -> 55%)
-                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 25 }, "+=5");
-                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 25 }, "<");
+                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
+                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
                     
                     // 5. Grid Entry (55% -> 65%)
                     photosTimeline.to(".photos-grid", { 
