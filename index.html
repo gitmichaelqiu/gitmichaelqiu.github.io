@@ -158,8 +158,6 @@
         a-waves {
             --x: -0.5rem;
             --y: 50%;
-            /* NEW: Variable for dash offset to handle dynamic redraws */
-            --dash-offset: 4000; 
             position: absolute;
             top: 0;
             left: 0;
@@ -189,9 +187,8 @@
             stroke-width: 1px;
             vector-effect: non-scaling-stroke;
             transition: stroke 0.5s ease;
-            /* Update to use CSS Variable so new paths inherit the state */
-            stroke-dasharray: 4000; 
-            stroke-dashoffset: var(--dash-offset);
+            stroke-dasharray: 4000; /* Increased for high-res screens */
+            stroke-dashoffset: 4000; /* Start hidden */
         }
         
         /* Wave Stroke Colors */
@@ -1417,15 +1414,23 @@
                         scrollTrigger: {
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=5000", // Even longer for the intro
+                            end: "+=6000", // Even longer for the intro
                             pin: true,
                             scrub: 1,
                         }
                     });
 
                     // 1. Lines Grow (Vines effect) - 0% to 10% scroll
-                    // FIX: Animate CSS variable on container to handle redraws
-                    tl.to("a-waves", { "--dash-offset": 0, duration: 2, ease: "power2.inOut" });
+                    // Staggered for organic vine effect
+                    tl.to("a-waves svg path", { 
+                        strokeDashoffset: 0, 
+                        duration: 5, 
+                        stagger: { 
+                            amount: 2, 
+                            from: "random" 
+                        },
+                        ease: "power2.inOut"
+                    });
 
                     // 2. HUD Appear - 10% to 15% scroll
                     tl.to(".camera-hud", { opacity: 1, duration: 1 });
@@ -1433,11 +1438,13 @@
                     // 3. "Wait" Phase - 15% to 25% scroll (User interaction window)
                     // We just add empty duration. If user clicks, HUD vanishes.
                     // If user scrolls past 25% without clicking, we force trigger.
-                    tl.to({}, { duration: 2, onComplete: () => {
-                        if (!photosActive.value) captureReality();
-                    }});
+                    tl.addLabel("capture_window");
+                    tl.to({}, { duration: 3 }); 
 
-                    // 4. Title Reveal (Shutter Effect) - Starts after interaction point
+                    // 4. Force Capture if skipped
+                    tl.add(() => captureReality());
+
+                    // 5. Title Reveal (Shutter Effect) - Starts after interaction point
                     tl.to(".gallery-title", { 
                         scaleY: 1, 
                         scale: 1, 
@@ -1448,14 +1455,14 @@
                         ease: "power2.out" 
                     });
 
-                    // 5. Quote Fade In
+                    // 6. Quote Fade In
                     tl.to(".gallery-quote", { opacity: 1, duration: 2 }, "-=1");
                     
-                    // 6. Quote Fade Out & Grid Rise
+                    // 7. Quote Fade Out & Grid Rise
                     tl.to(".gallery-quote", { opacity: 0, y: -50, duration: 2, delay: 1 });
                     tl.to(".gallery-title", { opacity: 0, y: -100, duration: 2 }, "<"); 
                     
-                    // 7. Grid Entry (Move to view)
+                    // 8. Grid Entry (Move to view)
                     tl.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
@@ -1463,14 +1470,14 @@
                         ease: "power3.out" 
                     }, "-=1");
                     
-                    // 8. Grid Scroll (Scroll through content)
+                    // 9. Grid Scroll (Scroll through content)
                     tl.to(".photos-grid", {
                         y: "-50%", 
                         duration: 6,
                         ease: "none" 
                     });
 
-                    // 9. Exit Animation (Warp Speed)
+                    // 10. Exit Animation (Warp Speed)
                     tl.to(".photos-grid", {
                         y: "-150%", 
                         opacity: 0,
