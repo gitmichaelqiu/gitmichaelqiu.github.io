@@ -190,8 +190,8 @@
             vector-effect: non-scaling-stroke;
             transition: stroke 0.5s ease;
             stroke-dasharray: 4000; 
-            /* Fix: Bind to CSS Variable so animation persists across redraws */
-            stroke-dashoffset: var(--dash-offset); 
+            /* Initialize invisible */
+            stroke-dashoffset: 4000; 
         }
         
         /* Wave Stroke Colors */
@@ -1341,18 +1341,24 @@
                         }
                     });
 
-                    // 1. Vines/Lines Grow Smoother (0% -> 15%)
-                    // Using power2.inOut for a more organic feel
-                    photosTimeline.to("a-waves", { 
-                        "--dash-offset": 0, 
-                        duration: 15, 
-                        ease: "power2.inOut",
-                        onStart: () => {
-                            if(waves) gsap.to(waves, { amplitude: 1, duration: 2 });
+                    // 1. Vines/Lines Grow Smoother with Stagger (0% -> 20%)
+                    // Selecting all lines individually to stagger their growth
+                    const lines = document.querySelectorAll('.js-line');
+                    
+                    // Start amplitude animation immediately so lines are wavy as they grow (no static straight lines)
+                    if(waves) gsap.to(waves, { amplitude: 1, duration: 5 });
+
+                    photosTimeline.to(lines, { 
+                        strokeDashoffset: 0, 
+                        duration: 20, 
+                        ease: "power1.inOut",
+                        stagger: {
+                            amount: 15, // Creates a random delay spread across the duration
+                            from: "random"
                         }
                     });
 
-                    // 2. THE GHOST REVEAL & BACKGROUND CHANGE (15% -> 25%)
+                    // 2. THE GHOST REVEAL & BACKGROUND CHANGE (20% -> 35%)
                     // The title goes from High (scaleY 3) to Normal (scaleY 1)
                     // At the same time, the background switches to light mode
                     
@@ -1377,18 +1383,18 @@
                         scaleY: 1, 
                         opacity: 0.12, // Reduced opacity to allow text readability
                         filter: "blur(0px)",
-                        duration: 10,
-                        ease: "power3.out" // Snap into place
+                        duration: 35, // Significantly increased duration for better capture/visibility
+                        ease: "power2.out" // Slightly softer ease for observation
                     }, "reveal");
 
-                    // 3. Quote Appear (25% -> 35%)
+                    // 3. Quote Appear (35% -> 45%)
                     photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
 
-                    // 4. Transition to Grid (35% -> 45%)
+                    // 4. Transition to Grid (45% -> 55%)
                     photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
                     photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
                     
-                    // 5. Grid Entry (45% -> 55%)
+                    // 5. Grid Entry (55% -> 65%)
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
@@ -1406,7 +1412,7 @@
                         );
                     });
 
-                    // 7. Grid Scroll (55% -> 90%)
+                    // 7. Grid Scroll (65% -> 90%)
                     photosTimeline.to(".photos-grid", {
                         y: "-50%", 
                         duration: 35,
