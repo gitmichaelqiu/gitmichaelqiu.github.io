@@ -723,7 +723,7 @@
                     }
                     
                     // Assign random speed and threshold per line for vine effect
-                    // Speed: 0.5 to 1.5 multiplier
+                    // Speed: 0.5 to 1.5 multiplier (controls how fast this individual line grows)
                     // Threshold: 0 to 0.3 delay before starting
                     const speed = 0.8 + Math.random() * 0.4;
                     const threshold = Math.random() * 0.2;
@@ -807,9 +807,16 @@
                         
                         // --- VINE GROWTH LOGIC ---
                         // Calculate offset based on Component Progress + Random Line Factors
-                        // Formula: (GlobalProgress - LineStartThreshold) * LineSpeed
-                        // Clamp between 0 and 1
-                        let localProgress = (this._progress - lineObj.threshold) / (1 - lineObj.threshold);
+                        // Formula: ((GlobalProgress - Threshold) / (1 - Threshold)) * Speed
+                        // This allows some lines to grow faster than others even at same global progress
+                        
+                        // 1. Normalize progress relative to start threshold
+                        let relativeProgress = (this._progress - lineObj.threshold) / (1 - lineObj.threshold);
+                        
+                        // 2. Apply individual line speed variance
+                        // Lines with speed > 1 will finish faster, < 1 slower
+                        // We clamp the result between 0 and 1
+                        let localProgress = relativeProgress * lineObj.speed;
                         localProgress = Math.max(0, Math.min(1, localProgress));
                         
                         // Map localProgress 0->1 to DashOffset 6000->0
@@ -1354,7 +1361,7 @@
                     requestAnimationFrame(raf);
                 };
 
-                onMounted(() => {
+                onMounted(async () => {
                     setTimeout(() => { finishBootSequence(); }, 2500);
                     initMagneticLogo();
                     lucide.createIcons();
@@ -1364,6 +1371,9 @@
                     initCursor();
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
+
+                    // Wait for DOM updates to ensure custom element children are rendered
+                    await nextTick();
 
                     // --- CONSOLIDATED PHOTOS TIMELINE (AUTOMATIC FLOW) ---
                     const waves = document.querySelector('a-waves');
@@ -1381,7 +1391,7 @@
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=5000", 
+                            end: "+=5000", // Adjusted length for smooth auto-flow
                             pin: true,
                             scrub: 1, 
                         }
@@ -1397,7 +1407,7 @@
                         // Animate the internal progress property from 0 to 1
                         photosTimeline.to(waves, { 
                             progress: 1, 
-                            duration: 20, 
+                            duration: 100, // Increased from 20 to make growth slower
                             ease: "power1.inOut"
                         });
                     }
@@ -1421,7 +1431,7 @@
                         scaleY: 1, 
                         opacity: 0.12, 
                         filter: "blur(0px)",
-                        duration: 35, 
+                        duration: 25, 
                         ease: "power2.out"
                     }, "reveal");
 
