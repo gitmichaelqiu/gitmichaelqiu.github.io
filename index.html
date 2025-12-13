@@ -187,9 +187,7 @@
             stroke-width: 1px;
             vector-effect: non-scaling-stroke;
             transition: stroke 0.5s ease;
-            stroke-dasharray: 6000; 
-            /* Initialize invisible */
-            stroke-dashoffset: 6000; 
+            /* Dasharray set in JS for dynamic length */
         }
         
         /* Wave Stroke Colors */
@@ -608,7 +606,8 @@
         class AWaves extends HTMLElement {
             constructor() {
                 super();
-                this._progress = 0; 
+                this._progress = 0;
+                this.maxLength = 6000; // Default fallback
             }
 
             // Expose 'progress' property for GSAP to animate
@@ -689,6 +688,10 @@
                 if (this.bounding.width === 0) this.bounding.width = window.innerWidth;
                 if (this.bounding.height === 0) this.bounding.height = window.innerHeight;
                 
+                // DYNAMIC LENGTH CALCULATION
+                // Set maxLength based on height + buffer for wiggles
+                this.maxLength = Math.max(this.bounding.height, window.innerHeight) * 1.5;
+
                 this.svg.style.width = `${this.bounding.width}px`;
                 this.svg.style.height = `${this.bounding.height}px`;
             }
@@ -723,7 +726,7 @@
                     }
                     
                     // Assign random speed and threshold per line for vine effect
-                    // Speed: 0.5 to 1.5 multiplier (controls how fast this individual line grows)
+                    // Speed: 0.5 to 1.5 multiplier
                     // Threshold: 0 to 0.3 delay before starting
                     const speed = 0.8 + Math.random() * 0.4;
                     const threshold = Math.random() * 0.2;
@@ -734,10 +737,9 @@
                     path.classList.add('a__line');
                     path.classList.add('js-line');
                     
-                    // Set dasharray large enough to cover max length
-                    // We will manipulate dashoffset in JS
-                    path.style.strokeDasharray = "6000";
-                    path.style.strokeDashoffset = "6000"; // Start hidden
+                    // Set dasharray based on calculated maxLength
+                    path.style.strokeDasharray = `${this.maxLength}`;
+                    path.style.strokeDashoffset = `${this.maxLength}`; // Start hidden
                     
                     this.svg.appendChild(path);
                     this.paths.push(path);
@@ -807,21 +809,16 @@
                         
                         // --- VINE GROWTH LOGIC ---
                         // Calculate offset based on Component Progress + Random Line Factors
-                        // Formula: ((GlobalProgress - Threshold) / (1 - Threshold)) * Speed
-                        // This allows some lines to grow faster than others even at same global progress
                         
                         // 1. Normalize progress relative to start threshold
                         let relativeProgress = (this._progress - lineObj.threshold) / (1 - lineObj.threshold);
                         
                         // 2. Apply individual line speed variance
-                        // Lines with speed > 1 will finish faster, < 1 slower
-                        // We clamp the result between 0 and 1
                         let localProgress = relativeProgress * lineObj.speed;
                         localProgress = Math.max(0, Math.min(1, localProgress));
                         
-                        // Map localProgress 0->1 to DashOffset 6000->0
-                        // Since we draw Bottom->Top, 0 offset reveals the full line from Start (Bottom)
-                        const offset = 6000 * (1 - localProgress);
+                        // Map localProgress 0->1 to DashOffset maxLength->0
+                        const offset = this.maxLength * (1 - localProgress);
                         paths[lIndex].style.strokeDashoffset = offset;
                     }
                 });
@@ -1391,7 +1388,7 @@
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=5000", // Adjusted length for smooth auto-flow
+                            end: "+=4000", // Reduced from 5000 to tighten interval
                             pin: true,
                             scrub: 1, 
                         }
@@ -1431,7 +1428,7 @@
                         scaleY: 1, 
                         opacity: 0.12, 
                         filter: "blur(0px)",
-                        duration: 25, 
+                        duration: 35, 
                         ease: "power2.out"
                     }, "reveal");
 
