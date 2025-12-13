@@ -70,6 +70,12 @@
             width: 100vw;
             overflow-x: hidden;
         }
+        
+        /* Prevent scrolling during boot */
+        body.is-booting {
+            overflow: hidden;
+            height: 100vh;
+        }
 
         html.dark body {
             background-color: #050505;
@@ -233,7 +239,7 @@
 
     </style>
 </head>
-<body>
+<body :class="{ 'is-booting': isBooting }">
     <div id="app" class="relative min-h-screen selection:bg-white selection:text-klein-blue">
         
         <div class="cursor-dot hidden md:block"></div>
@@ -241,7 +247,7 @@
         
         <!-- Loader removed to reveal rotating balls as the loading screen -->
 
-        <!-- ... existing nav code ... -->
+        <!-- Navigation - Hidden during boot -->
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
              :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
@@ -339,7 +345,9 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse z-20">
+                        <!-- Scroll hint hidden initially -->
+                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-0 z-20"
+                             :class="{'animate-pulse opacity-70': !isBooting}">
                             <span>SCROLL TO BEGIN</span>
                             <i data-lucide="arrow-down" class="w-4 h-4"></i>
                         </div>
