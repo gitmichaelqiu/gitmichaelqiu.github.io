@@ -158,6 +158,8 @@
         a-waves {
             --x: -0.5rem;
             --y: 50%;
+            /* Fix: Initialize variable for dash offset */
+            --dash-offset: 4000;
             position: absolute;
             top: 0;
             left: 0;
@@ -187,8 +189,9 @@
             stroke-width: 1px;
             vector-effect: non-scaling-stroke;
             transition: stroke 0.5s ease;
-            stroke-dasharray: 4000; /* Increased for high-res screens */
-            stroke-dashoffset: 4000; /* Start hidden */
+            stroke-dasharray: 4000; 
+            /* Fix: Bind to CSS Variable so animation persists across redraws */
+            stroke-dashoffset: var(--dash-offset); 
         }
         
         /* Wave Stroke Colors */
@@ -222,7 +225,7 @@
         }
 
         /* --- HUD & FLASH --- */
-        .camera-hud { pointer-events: none; }
+        .camera-hud { pointer-events: none; transition: opacity 0.5s ease; }
         .camera-corner {
             position: absolute; width: 40px; height: 40px;
             border-color: rgba(255, 255, 255, 0.7); border-style: solid;
@@ -235,7 +238,7 @@
         
         .camera-btn-container {
             pointer-events: auto; cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
         }
         .camera-btn-container:hover { transform: scale(1.1); }
         .camera-btn-inner {
@@ -495,13 +498,14 @@
                     </a-waves>
 
                     <!-- Camera HUD -->
-                    <div class="camera-hud absolute inset-0 z-40 flex flex-col items-center justify-center opacity-0">
+                    <div class="camera-hud absolute inset-0 z-40 flex flex-col items-center justify-center opacity-0" :class="{'pointer-events-none': photosActive}">
                         <div class="camera-corner tl"></div>
                         <div class="camera-corner tr"></div>
                         <div class="camera-corner bl"></div>
                         <div class="camera-corner br"></div>
                         
-                        <div class="camera-btn-container" @click="captureReality">
+                        <!-- Fix: Added ref to button container for animation -->
+                        <div class="camera-btn-container" ref="cameraBtn" @click="captureReality">
                             <div class="camera-btn-inner">
                                 <div class="camera-btn-dot"></div>
                             </div>
@@ -886,6 +890,7 @@
                 // Camera Interaction Refs
                 const photosActive = ref(false);
                 const flashOverlay = ref(null);
+                const cameraBtn = ref(null);
                 
                 const systemLinks = [
                     { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
@@ -1387,7 +1392,8 @@
                     }
 
                     // 3. Hide HUD
-                    gsap.to('.camera-hud', { opacity: 0, duration: 0.3 });
+                    // Fix: Ensure pointer-events are disabled immediately to prevent double clicks
+                    gsap.to('.camera-hud', { opacity: 0, duration: 0.3, pointerEvents: 'none' });
 
                     // 4. Reveal Title (Start normal timeline flow)
                     // We modify the next timeline parts to run automatically or be scrollable?
@@ -1422,14 +1428,14 @@
 
                     // 1. Lines Grow (Vines effect) - 0% to 10% scroll
                     // Staggered for organic vine effect
-                    tl.to("a-waves svg path", { 
-                        strokeDashoffset: 0, 
+                    // Fix: Use CSS variable for dash offset animation
+                    tl.to("a-waves", { 
+                        "--dash-offset": 0, 
                         duration: 5, 
-                        stagger: { 
-                            amount: 2, 
-                            from: "random" 
-                        },
-                        ease: "power2.inOut"
+                        ease: "power2.inOut",
+                        onUpdate: function() {
+                            // Force redraw/update of variable usage if needed, though CSS var should handle it
+                        }
                     });
 
                     // 2. HUD Appear - 10% to 15% scroll
@@ -1442,7 +1448,9 @@
                     tl.to({}, { duration: 3 }); 
 
                     // 4. Force Capture if skipped
-                    tl.add(() => captureReality());
+                    tl.call(() => {
+                        if (!photosActive.value) captureReality();
+                    });
 
                     // 5. Title Reveal (Shutter Effect) - Starts after interaction point
                     tl.to(".gallery-title", { 
@@ -1518,7 +1526,7 @@
                 return {
                     isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
                     navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight,
-                    photosActive, captureReality, flashOverlay
+                    photosActive, captureReality, flashOverlay, cameraBtn
                 };
             }
         }).mount('#app');
