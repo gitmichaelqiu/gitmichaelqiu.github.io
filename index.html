@@ -270,6 +270,30 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
+        /* --- MISSING SIDEBAR ANIMATIONS --- */
+        
+        /* Sidebar Slide Transition */
+        .sidebar-enter-active,
+        .sidebar-leave-active {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .sidebar-enter-from,
+        .sidebar-leave-to {
+            transform: translateX(-100%);
+        }
+
+        /* Backdrop Fade Transition */
+        .backdrop-enter-active,
+        .backdrop-leave-active {
+            transition: opacity 0.5s ease;
+        }
+
+        .backdrop-enter-from,
+        .backdrop-leave-to {
+            opacity: 0;
+        }
+
     </style>
 </head>
 <body :class="{ 'is-booting': isBooting }">
