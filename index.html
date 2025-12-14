@@ -107,12 +107,11 @@
         /* Typography */
         .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5); }
         
-        /* Glass Cards - Updated Transition to match Works Section */
+        /* Glass Cards */
         .glass-card { 
             background: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(20px); 
             border: 1px solid rgba(0, 0, 0, 0.1); 
-            /* Updated timing function for premium feel */
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
             will-change: transform, box-shadow;
         }
@@ -133,7 +132,6 @@
         }
         .connect-card:hover {
             border-color: var(--klein-blue);
-            /* Important: Do not set background here to keep it solid */
             transform: translateY(-8px) scale(1.01);
             box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
             z-index: 20;
@@ -224,43 +222,47 @@
         a-waves:before { content: none !important; display: none !important; }
         a-waves svg { display: block; width: 100%; height: 100%; }
         a-waves svg path {
-            fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
+            fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 1s ease;
         }
-        /* Fainter lines when photos are active */
-        #photos.photos-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.05); }
-        #photos.photos-active a-waves svg path { stroke: rgba(255, 255, 255, 0.05); }
-        /* Default lines for other sections/intro */
+        
+        /* Line Opacity Logic */
+        /* 1. Default (Intro/Home/Works): Normal opacity */
         a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
+        
+        /* 2. Light Mode Intro (Title/Quote): Blue lines, normal opacity */
+        #photos.photos-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
+        
+        /* 3. Grid Active (The actual photos part): Fainter lines */
+        /* Used to reduce noise when photos are displayed */
+        #photos.grid-active a-waves svg path { stroke: rgba(255, 255, 255, 0.05); }
+        #photos.grid-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.05); }
 
         /* --- PHOTO CARD HOVER EFFECTS (SPOTLIGHT) --- */
         
-        /* Default: Normal state */
+        /* Wrapper handles Layout + Entry Animation. 
+           It must NOT clip the child if we want the child to zoom out of bounds. */
+        .photo-card-wrapper {
+            will-change: transform, opacity;
+            position: relative;
+            /* No overflow: hidden here, so the child can zoom out */
+        }
+
+        /* Inner Card handles Look + Hover Interaction */
         .photo-card-vertical {
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            transform: translateY(0);
+            transform: scale(1); /* Default scale */
             border: none;
-            will-change: transform, opacity;
-            filter: grayscale(0%) blur(0px);
-            opacity: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 10;
         }
 
-        /* Using :has() to dim NON-hovered items only when one IS hovered.
-           If the grid has a hovered child, select children that are NOT hovered.
-        */
-        .photos-grid:has(.photo-card-vertical:hover) .photo-card-vertical:not(:hover) {
-            opacity: 0.3;
-            filter: grayscale(100%) blur(4px);
-            transform: scale(0.95);
-        }
-
-        /* The hovered card itself */
+        /* Hover Zoom Effect - Applied to Inner Card */
         .photo-card-vertical:hover {
-            opacity: 1;
-            filter: grayscale(0%) blur(0px);
-            transform: scale(1.1) translateY(-10px); /* Larger zoom */
-            z-index: 50;
+            transform: scale(1.1); /* Zoom the container */
+            z-index: 50; /* Bring to front */
             box-shadow: 0 50px 100px rgba(0, 47, 167, 0.4);
-            /* border: none; is implied/inherited, no border added */
         }
         
         .gallery-title {
@@ -406,7 +408,6 @@
             </section>
 
             <!-- Profile Section -->
-            <!-- Reduced vertical padding to py-12 for smoother flow -->
             <section id="profile" class="w-full py-12 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
@@ -416,7 +417,6 @@
                         <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
                     </div>
 
-                    <!-- Tighter gap (gap-5) -->
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 auto-rows-[minmax(220px,auto)]">
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
                              <div class="card-corner-glow"></div>
@@ -499,7 +499,7 @@
             </section>
 
             <!-- PHOTOS SECTION -->
-            <section id="photos" class="relative z-30 overflow-hidden h-screen" :class="[photosActive ? 'photos-active' : '', activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
+            <section id="photos" class="relative z-30 overflow-hidden h-screen" :class="[photosActive ? 'photos-active' : '', gridActive ? 'grid-active' : '', activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-start pt-24 overflow-hidden">
                     <!-- Background Wave Effect -->
                     <a-waves class="absolute inset-0 z-0 js-waves-container">
@@ -523,48 +523,56 @@
                         </div>
 
                         <!-- Phase 4: Vertical Masonry Grid -->
-                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-32">
+                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-24 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-64">
                             
                             <!-- Col 1 -->
-                            <div class="flex flex-col gap-8 mt-0 photo-col">
-                                <div v-for="(photo, index) in photoColumns[0]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                            <div class="flex flex-col gap-12 md:gap-20 mt-0 photo-col">
+                                <div v-for="(photo, index) in photoColumns[0]" :key="index" class="photo-card-wrapper">
+                                    <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                        <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                            <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
+                                            <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Col 2 -->
-                            <div class="flex flex-col gap-8 md:mt-24 photo-col">
-                                <div v-for="(photo, index) in photoColumns[1]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                            <div class="flex flex-col gap-12 md:gap-20 md:mt-24 photo-col">
+                                <div v-for="(photo, index) in photoColumns[1]" :key="index" class="photo-card-wrapper">
+                                    <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                        <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                            <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
+                                            <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Col 3 -->
-                            <div class="flex flex-col gap-8 md:mt-48 photo-col">
-                                <div v-for="(photo, index) in photoColumns[2]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                            <div class="flex flex-col gap-12 md:gap-20 md:mt-48 photo-col">
+                                <div v-for="(photo, index) in photoColumns[2]" :key="index" class="photo-card-wrapper">
+                                    <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                        <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                            <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
+                                            <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- View Full Gallery Entry -->
-                                <a href="#" class="photo-card-vertical group relative w-full aspect-square bg-[#111] border border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue transition-colors duration-500 shadow-2xl">
-                                    <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
-                                    <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300 relative z-10">
-                                        <i data-lucide="arrow-right" class="w-8 h-8 text-white"></i>
+                                <a href="#" class="photo-card-wrapper block">
+                                    <div class="photo-card-vertical group relative w-full aspect-square bg-[#111] border border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue transition-colors duration-500 shadow-2xl">
+                                        <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
+                                        <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300 relative z-10">
+                                            <i data-lucide="arrow-right" class="w-8 h-8 text-white"></i>
+                                        </div>
+                                        <h3 class="font-display text-2xl font-bold tracking-tighter relative z-10 text-white">VIEW ALL</h3>
+                                        <p class="font-mono text-xs text-gray-500 mt-2 group-hover:text-white/80 relative z-10">ENTER GALLERY</p>
                                     </div>
-                                    <h3 class="font-display text-2xl font-bold tracking-tighter relative z-10 text-white">VIEW ALL</h3>
-                                    <p class="font-mono text-xs text-gray-500 mt-2 group-hover:text-white/80 relative z-10">ENTER GALLERY</p>
                                 </a>
                             </div>
 
@@ -574,7 +582,6 @@
             </section>
 
             <!-- Connect Section -->
-            <!-- Reduced padding to py-12 for smoother flow -->
             <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-12 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
                 <div class="ambient-glow top-[10%] left-[10%] opacity-50 bg-[#002FA7]"></div>
                 <div class="ambient-glow bottom-[10%] right-[10%] opacity-30 bg-[#20BEFF] animate-pulse-slow"></div>
@@ -585,7 +592,6 @@
                         <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Connect Cards: Added 'connect-card' class to enforce new hover physics -->
                         <a href="https://github.com/gitmichaelqiu/" target="_blank" class="connect-card group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
                             <div class="card-corner-glow"></div>
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
@@ -622,7 +628,7 @@
     <script>
         const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
 
-        // --- Perlin Noise Implementation (Self-contained) ---
+        // ... (Noise and AWaves classes unchanged) ...
         class Noise {
             constructor(seed) {
                 this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
@@ -646,18 +652,14 @@
             }
         }
 
-        // --- Wave Component Class ---
         class AWaves extends HTMLElement {
             constructor() {
                 super();
                 this._progress = 0;
-                this.maxLength = 6000; // Default fallback
+                this.maxLength = 6000;
             }
-
-            // Expose 'progress' property for GSAP to animate
             get progress() { return this._progress; }
             set progress(val) { this._progress = val; }
-
             connectedCallback() {
                 this.svg = this.querySelector('.js-svg');
                 if (!this.svg) {
@@ -665,30 +667,17 @@
                     this.svg.classList.add("js-svg");
                     this.appendChild(this.svg);
                 }
-
-                this.mouse = {
-                    x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false
-                };
-
-                this.lines = [];
-                this.paths = [];
-                this.noise = new Noise(Math.random());
-                
-                // Controlled by GSAP
+                this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
+                this.lines = []; this.paths = []; this.noise = new Noise(Math.random());
                 this.amplitude = 0; 
-
-                this.setSize();
-                this.setLines();
-                this.bindEvents();
+                this.setSize(); this.setLines(); this.bindEvents();
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
             }
-
             disconnectedCallback() {
                 cancelAnimationFrame(this.rafId);
                 window.removeEventListener('resize', this.onResize);
                 window.removeEventListener('mousemove', this.onMouseMove);
             }
-
             bindEvents() {
                 this.onResize = this.onResize.bind(this);
                 this.onMouseMove = this.onMouseMove.bind(this);
@@ -696,139 +685,69 @@
                 window.addEventListener('mousemove', this.onMouseMove);
                 this.addEventListener('touchmove', this.onTouchMove.bind(this));
             }
-
-            onResize() {
-                this.setSize();
-                this.setLines();
-            }
-
-            onMouseMove(e) {
-                this.updateMousePosition(e.clientX, e.clientY);
-            }
-
-            onTouchMove(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                this.updateMousePosition(touch.clientX, touch.clientY);
-            }
-
+            onResize() { this.setSize(); this.setLines(); }
+            onMouseMove(e) { this.updateMousePosition(e.clientX, e.clientY); }
+            onTouchMove(e) { e.preventDefault(); const touch = e.touches[0]; this.updateMousePosition(touch.clientX, touch.clientY); }
             updateMousePosition(x, y) {
                 const rect = this.getBoundingClientRect();
-                this.mouse.x = x - rect.left;
-                this.mouse.y = y - rect.top;
-
-                if (!this.mouse.set) {
-                    this.mouse.sx = this.mouse.x;
-                    this.mouse.sy = this.mouse.y;
-                    this.mouse.lx = this.mouse.x;
-                    this.mouse.ly = this.mouse.y;
-                    this.mouse.set = true;
-                }
+                this.mouse.x = x - rect.left; this.mouse.y = y - rect.top;
+                if (!this.mouse.set) { this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y; this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y; this.mouse.set = true; }
             }
-
             setSize() {
                 this.bounding = this.getBoundingClientRect();
                 if (this.bounding.width === 0) this.bounding.width = window.innerWidth;
                 if (this.bounding.height === 0) this.bounding.height = window.innerHeight;
                 this.maxLength = Math.max(this.bounding.height, window.innerHeight) * 1.5;
-                this.svg.style.width = `${this.bounding.width}px`;
-                this.svg.style.height = `${this.bounding.height}px`;
+                this.svg.style.width = `${this.bounding.width}px`; this.svg.style.height = `${this.bounding.height}px`;
             }
-
             setLines() {
                 const { width, height } = this.bounding;
-                this.lines = [];
-                this.svg.innerHTML = '';
-                this.paths = [];
-                
-                const xGap = 10; 
-                const yGap = 32; 
-
-                const oWidth = width + 200;
-                const oHeight = height + 30;
-                const totalLines = Math.ceil(oWidth / xGap);
-                const totalPoints = Math.ceil(oHeight / yGap);
-                const xStart = (width - xGap * totalLines) / 2;
-                const yStart = (height - yGap * totalPoints) / 2;
-
+                this.lines = []; this.svg.innerHTML = ''; this.paths = [];
+                const xGap = 10; const yGap = 32; 
+                const oWidth = width + 200; const oHeight = height + 30;
+                const totalLines = Math.ceil(oWidth / xGap); const totalPoints = Math.ceil(oHeight / yGap);
+                const xStart = (width - xGap * totalLines) / 2; const yStart = (height - yGap * totalPoints) / 2;
                 for (let i = 0; i <= totalLines; i++) {
                     const points = [];
                     for (let j = 0; j <= totalPoints; j++) {
-                        points.push({ 
-                            x: xStart + xGap * i, 
-                            y: yStart + yGap * j, 
-                            wave: { x: 0, y: 0 }, 
-                            cursor: { x: 0, y: 0, vx: 0, vy: 0 } 
-                        });
+                        points.push({ x: xStart + xGap * i, y: yStart + yGap * j, wave: { x: 0, y: 0 }, cursor: { x: 0, y: 0, vx: 0, vy: 0 } });
                     }
-                    const speed = 0.8 + Math.random() * 0.4;
-                    const threshold = Math.random() * 0.2;
+                    const speed = 0.8 + Math.random() * 0.4; const threshold = Math.random() * 0.2;
                     this.lines.push({ points, speed, threshold });
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.classList.add('a__line');
-                    path.classList.add('js-line');
-                    path.style.strokeDasharray = `${this.maxLength}`;
-                    path.style.strokeDashoffset = `${this.maxLength}`; 
-                    this.svg.appendChild(path);
-                    this.paths.push(path);
+                    path.classList.add('a__line'); path.classList.add('js-line');
+                    path.style.strokeDasharray = `${this.maxLength}`; path.style.strokeDashoffset = `${this.maxLength}`; 
+                    this.svg.appendChild(path); this.paths.push(path);
                 }
             }
-
             movePoints(time) {
-                const { lines, mouse, noise } = this;
-                const amp = this.amplitude; 
-
+                const { lines, mouse, noise } = this; const amp = this.amplitude; 
                 lines.forEach((lineObj) => {
                     lineObj.points.forEach((p) => {
                         const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
-                        p.wave.x = Math.cos(move) * 32 * amp;
-                        p.wave.y = Math.sin(move) * 16 * amp;
-
-                        const dx = p.x - mouse.sx;
-                        const dy = p.y - mouse.sy;
-                        const d = Math.hypot(dx, dy);
-                        const l = Math.max(175, mouse.vs);
-
+                        p.wave.x = Math.cos(move) * 32 * amp; p.wave.y = Math.sin(move) * 16 * amp;
+                        const dx = p.x - mouse.sx; const dy = p.y - mouse.sy;
+                        const d = Math.hypot(dx, dy); const l = Math.max(175, mouse.vs);
                         if (d < l) {
-                            const s = 1 - d / l;
-                            const f = Math.cos(d * 0.001) * s;
-                            p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00065;
-                            p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00065;
+                            const s = 1 - d / l; const f = Math.cos(d * 0.001) * s;
+                            p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00065; p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00065;
                         }
-
-                        p.cursor.vx += (0 - p.cursor.x) * 0.005; 
-                        p.cursor.vy += (0 - p.cursor.y) * 0.005;
-                        p.cursor.vx *= 0.925; 
-                        p.cursor.vy *= 0.925;
-                        p.cursor.x += p.cursor.vx * 2; 
-                        p.cursor.y += p.cursor.vy * 2;
-                        p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); 
-                        p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
+                        p.cursor.vx += (0 - p.cursor.x) * 0.005; p.cursor.vy += (0 - p.cursor.y) * 0.005;
+                        p.cursor.vx *= 0.925; p.cursor.vy *= 0.925;
+                        p.cursor.x += p.cursor.vx * 2; p.cursor.y += p.cursor.vy * 2;
+                        p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
                     });
                 });
             }
-
             moved(point, withCursorForce = true) {
-                return {
-                    x: Math.round((point.x + point.wave.x + (withCursorForce ? point.cursor.x : 0)) * 10) / 10,
-                    y: Math.round((point.y + point.wave.y + (withCursorForce ? point.cursor.y : 0)) * 10) / 10
-                };
+                return { x: Math.round((point.x + point.wave.x + (withCursorForce ? point.cursor.x : 0)) * 10) / 10, y: Math.round((point.y + point.wave.y + (withCursorForce ? point.cursor.y : 0)) * 10) / 10 };
             }
-
             drawLines() {
                 const { lines, moved, paths } = this;
-                
                 lines.forEach((lineObj, lIndex) => {
-                    const points = lineObj.points;
-                    const lastIdx = points.length - 1;
-                    let pStart = moved(points[lastIdx], false); 
-                    let d = `M ${pStart.x} ${pStart.y}`;
-                    
-                    for (let i = lastIdx; i >= 0; i--) {
-                        const p = moved(points[i], true); 
-                        d += `L ${p.x} ${p.y}`;
-                    }
-                    
+                    const points = lineObj.points; const lastIdx = points.length - 1;
+                    let pStart = moved(points[lastIdx], false); let d = `M ${pStart.x} ${pStart.y}`;
+                    for (let i = lastIdx; i >= 0; i--) { const p = moved(points[i], true); d += `L ${p.x} ${p.y}`; }
                     if (paths[lIndex]) {
                         paths[lIndex].setAttribute('d', d);
                         let relativeProgress = (this._progress - lineObj.threshold) / (1 - lineObj.threshold);
@@ -839,31 +758,14 @@
                     }
                 });
             }
-
             tick(time) {
                 const { mouse } = this;
-                
-                mouse.sx += (mouse.x - mouse.sx) * 0.1;
-                mouse.sy += (mouse.y - mouse.sy) * 0.1;
-                
-                const dx = mouse.x - mouse.lx;
-                const dy = mouse.y - mouse.ly;
-                const d = Math.hypot(dx, dy);
-                
-                mouse.v = d;
-                mouse.vs += (d - mouse.vs) * 0.1;
-                mouse.vs = Math.min(100, mouse.vs);
-                
-                mouse.lx = mouse.x; 
-                mouse.ly = mouse.y;
-                mouse.a = Math.atan2(dy, dx);
-                
-                this.style.setProperty('--x', `${mouse.sx}px`);
-                this.style.setProperty('--y', `${mouse.sy}px`);
-                
-                this.movePoints(time);
-                this.drawLines();
-                
+                mouse.sx += (mouse.x - mouse.sx) * 0.1; mouse.sy += (mouse.y - mouse.sy) * 0.1;
+                const dx = mouse.x - mouse.lx; const dy = mouse.y - mouse.ly; const d = Math.hypot(dx, dy);
+                mouse.v = d; mouse.vs += (d - mouse.vs) * 0.1; mouse.vs = Math.min(100, mouse.vs);
+                mouse.lx = mouse.x; mouse.ly = mouse.y; mouse.a = Math.atan2(dy, dx);
+                this.style.setProperty('--x', `${mouse.sx}px`); this.style.setProperty('--y', `${mouse.sy}px`);
+                this.movePoints(time); this.drawLines();
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
             }
         }
@@ -891,6 +793,7 @@
                 const navBtnRight = ref(null);
 
                 const photosActive = ref(false);
+                const gridActive = ref(false); // Added for line opacity control
                 let photosTimeline = null; 
                 
                 const systemLinks = [
@@ -1128,9 +1031,7 @@
                                 svg.appendChild(ball);
                                 let initialX, initialY;
                                 
-                                // --- CRITICAL LOADING SCREEN LOGIC FROM WORK.HTML ---
                                 if (isBooting.value) {
-                                    // FORCE CIRCLE FORMATION
                                     const angle = (ballIndex * 0.1) + (Math.random() * 0.5);
                                     const r = circleRadius + (Math.random() * 20 - 10);
                                     initialX = centerScreenX + Math.cos(angle) * r;
@@ -1143,7 +1044,6 @@
                                     initialX = x; initialY = y;
                                     line.style.opacity = '0.15';
                                 }
-                                // ---------------------------------------------------
 
                                 ball.setAttribute("cx", initialX); ball.setAttribute("cy", initialY);
                                 line.setAttribute("x1", initialX); line.setAttribute("y1", initialY);
@@ -1476,18 +1376,29 @@
                     photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 5 }, "<");
                     
                     // 5. Grid Entry (Faster: 25)
+                    photosTimeline.addLabel("gridEntry");
+                    
+                    // Toggle gridActive state for line opacity. 
+                    // Set to TRUE when grid enters.
+                    photosTimeline.call(() => { gridActive.value = true; }, null, "gridEntry");
+                    // Revert to FALSE if scrubbing backwards past this point
+                    photosTimeline.call(() => { 
+                        if(photosTimeline.scrollTrigger.direction < 0) gridActive.value = false; 
+                    }, null, "gridEntry-=0.1");
+
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
                         duration: 25, 
                         ease: "power3.out" 
-                    });
+                    }, "gridEntry");
 
                     // 6. Staggered Card Entries
+                    // Target the WRAPPER for entry, so the inner card is free for hover
                     if (sortedPhotoCards.length > 0) {
-                        sortedPhotoCards.forEach((card, index) => {
+                        sortedPhotoCards.forEach((wrapper, index) => {
                             const offset = index * 2; 
-                            photosTimeline.fromTo(card, 
+                            photosTimeline.fromTo(wrapper, 
                                 { opacity: 0, y: 150 }, 
                                 { opacity: 1, y: 0, duration: 20, ease: "power3.out" }, 
                                 `>-${18 - offset}` 
@@ -1504,6 +1415,9 @@
                         duration: 80, 
                         ease: "none" 
                     });
+                    
+                    // Added Margin Pause before Exit (Extra Duration: 40)
+                    photosTimeline.to({}, { duration: 40 });
 
                     // 9. Exit
                     photosTimeline.to(".photos-grid", {
@@ -1527,7 +1441,7 @@
                 return {
                     isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
                     navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight,
-                    photosActive, photoColumns
+                    photosActive, photoColumns, gridActive
                 };
             }
         }).mount('#app');
