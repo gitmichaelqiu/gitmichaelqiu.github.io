@@ -118,11 +118,23 @@
         }
         html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
         
-        /* Unified Hover Effect */
-        .glass-card:hover, .connect-card:hover { 
+        /* Profile Hover Effect */
+        .glass-card:hover { 
             border-color: var(--klein-blue); 
             background: rgba(0, 47, 167, 0.05); 
-            transform: translateY(-8px) scale(1.01); /* Matches works section scale */
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
+            z-index: 20;
+        }
+
+        /* Connect Card - Separate hover to preserve opacity */
+        .connect-card {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .connect-card:hover {
+            border-color: var(--klein-blue);
+            /* Important: Do not set background here to keep it solid */
+            transform: translateY(-8px) scale(1.01);
             box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
             z-index: 20;
         }
@@ -189,12 +201,6 @@
         .app-card-glass:hover { transform: translateY(-8px) scale(1.01) translateZ(0); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.25); }
         html.dark .app-card-glass:hover { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3); }
 
-        /* Connect Card Specifics (inherits glass-card logic via utility/JS, or explicit CSS below) */
-        .connect-card {
-            /* Copied from glass-card for consistency */
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
         /* --- PHOTOS SECTION STYLES --- */
         #photos { 
             transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
@@ -220,29 +226,41 @@
         a-waves svg path {
             fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
         }
-        #photos.photos-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
+        /* Fainter lines when photos are active */
+        #photos.photos-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.05); }
+        #photos.photos-active a-waves svg path { stroke: rgba(255, 255, 255, 0.05); }
+        /* Default lines for other sections/intro */
         a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
 
-        /* --- PHOTO CARD HOVER EFFECTS --- */
-        .photos-grid:hover .photo-card-vertical {
-            opacity: 0.4; /* Slightly more visible than before */
-            filter: grayscale(100%) blur(2px);
-            transform: scale(0.98);
-        }
-        .photos-grid .photo-card-vertical:hover {
-            opacity: 1;
-            filter: grayscale(0%) blur(0px);
-            /* Updated to match site-wide feel */
-            transform: scale(1.02) translateY(-8px);
-            z-index: 50;
-            box-shadow: 0 40px 80px rgba(0, 47, 167, 0.3);
-            border-color: rgba(0, 47, 167, 0.8);
-        }
+        /* --- PHOTO CARD HOVER EFFECTS (SPOTLIGHT) --- */
+        
+        /* Default: Normal state */
         .photo-card-vertical {
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             transform: translateY(0);
-            border: 1px solid transparent;
+            border: none;
             will-change: transform, opacity;
+            filter: grayscale(0%) blur(0px);
+            opacity: 1;
+        }
+
+        /* Using :has() to dim NON-hovered items only when one IS hovered.
+           If the grid has a hovered child, select children that are NOT hovered.
+        */
+        .photos-grid:has(.photo-card-vertical:hover) .photo-card-vertical:not(:hover) {
+            opacity: 0.3;
+            filter: grayscale(100%) blur(4px);
+            transform: scale(0.95);
+        }
+
+        /* The hovered card itself */
+        .photo-card-vertical:hover {
+            opacity: 1;
+            filter: grayscale(0%) blur(0px);
+            transform: scale(1.1) translateY(-10px); /* Larger zoom */
+            z-index: 50;
+            box-shadow: 0 50px 100px rgba(0, 47, 167, 0.4);
+            /* border: none; is implied/inherited, no border added */
         }
         
         .gallery-title {
