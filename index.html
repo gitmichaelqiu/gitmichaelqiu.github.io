@@ -544,10 +544,10 @@
                             
                             <!-- Col 1 -->
                             <div class="flex flex-col gap-12 mt-0">
-                                <div v-for="(photo, index) in photos.slice(0, 2)" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery Image">
+                                <div v-for="(photo, index) in photoColumns[0]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-klein-blue mb-2">{{ photo.date }}</span>
+                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
                                         <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
                                     </div>
                                 </div>
@@ -555,10 +555,10 @@
 
                             <!-- Col 2 (Offset) -->
                             <div class="flex flex-col gap-12 md:mt-24">
-                                <div v-for="(photo, index) in photos.slice(2, 4)" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery Image">
+                                <div v-for="(photo, index) in photoColumns[1]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-klein-blue mb-2">{{ photo.date }}</span>
+                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
                                         <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
                                     </div>
                                 </div>
@@ -566,10 +566,10 @@
 
                             <!-- Col 3 (More Offset + Entry) -->
                             <div class="flex flex-col gap-12 md:mt-48">
-                                <div v-for="(photo, index) in photos.slice(4, 5)" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Gallery Image">
+                                <div v-for="(photo, index) in photoColumns[2]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-klein-blue mb-2">{{ photo.date }}</span>
+                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
                                         <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
                                     </div>
                                 </div>
@@ -967,6 +967,14 @@
                 const capsuleDashOffset = computed(() => {
                     const progress = Math.min(100, Math.max(0, scrollProgress.value));
                     return Math.max(0, capsulePerimeter - (progress / 100) * capsulePerimeter);
+                });
+
+                const photoColumns = computed(() => {
+                    const cols = [[], [], []];
+                    photos.forEach((photo, i) => {
+                        cols[i % 3].push(photo);
+                    });
+                    return cols;
                 });
 
                 const toggleCapsuleNav = () => { isCapsuleOpen.value = !isCapsuleOpen.value; };
@@ -1553,7 +1561,7 @@
                 return {
                     isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
                     navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight,
-                    photosActive
+                    photosActive, photoColumns
                 };
             }
         }).mount('#app');
