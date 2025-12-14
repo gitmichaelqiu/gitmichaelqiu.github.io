@@ -107,20 +107,22 @@
         /* Typography */
         .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5); }
         
-        /* Glass Cards */
+        /* Glass Cards - Updated Transition to match Works Section */
         .glass-card { 
             background: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(20px); 
             border: 1px solid rgba(0, 0, 0, 0.1); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            /* Updated timing function for premium feel */
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
             will-change: transform, box-shadow;
         }
         html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
         
-        .glass-card:hover { 
+        /* Unified Hover Effect */
+        .glass-card:hover, .connect-card:hover { 
             border-color: var(--klein-blue); 
             background: rgba(0, 47, 167, 0.05); 
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-8px) scale(1.01); /* Matches works section scale */
             box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
             z-index: 20;
         }
@@ -140,13 +142,11 @@
             filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
         }
 
-        /* Card Content Z-Index Fix (Added) */
         .card-content {
             position: relative;
             z-index: 10;
         }
 
-        /* Magnetic Logo Lines (Restored) */
         .magnetic-ball-line {
             stroke: currentColor;
             stroke-width: 1px;
@@ -189,83 +189,59 @@
         .app-card-glass:hover { transform: translateY(-8px) scale(1.01) translateZ(0); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.25); }
         html.dark .app-card-glass:hover { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3); }
 
+        /* Connect Card Specifics (inherits glass-card logic via utility/JS, or explicit CSS below) */
+        .connect-card {
+            /* Copied from glass-card for consistency */
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         /* --- PHOTOS SECTION STYLES --- */
-        
-        /* Theme Transition - Default to Intro State (Dark) */
         #photos { 
             transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
             background-color: #050505; /* Start Dark for Intro */
             color: #ffffff;
         }
         
-        /* Active Photo State - Applied via JS after capture */
         #photos.photos-active.light-mode { background-color: #ffffff; color: #002FA7; }
         #photos.photos-active.dark-mode { background-color: #020412; color: #ffffff; }
         
-        /* Text Colors based on active state */
         #photos.photos-active.light-mode .gallery-title { color: #002FA7; opacity: 0.15; }
         #photos.photos-active.light-mode .gallery-quote { color: #002FA7; }
         #photos.photos-active.dark-mode .gallery-title { color: rgba(255, 255, 255, 0.1); }
 
-        /* Wave Component Styles */
         a-waves {
             --x: -0.5rem;
             --y: 50%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none; 
-            z-index: 0;
+            position: absolute; top: 0; left: 0; margin: 0; padding: 0;
+            width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 0;
         }
-        
-        a-waves:before {
-            content: none !important;
-            display: none !important;
-        }
-
-        a-waves svg {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
+        a-waves:before { content: none !important; display: none !important; }
+        a-waves svg { display: block; width: 100%; height: 100%; }
         a-waves svg path {
-            fill: none;
-            stroke-width: 1px;
-            vector-effect: non-scaling-stroke;
-            transition: stroke 0.5s ease;
-            /* Dasharray set in JS for dynamic length */
+            fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
         }
-        
-        /* Wave Stroke Colors */
         #photos.photos-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
-        /* Default / Dark Mode stroke */
         a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
 
-        /* --- NEW HOVER EFFECTS --- */
+        /* --- PHOTO CARD HOVER EFFECTS --- */
         .photos-grid:hover .photo-card-vertical {
-            opacity: 0.2;
+            opacity: 0.4; /* Slightly more visible than before */
             filter: grayscale(100%) blur(2px);
             transform: scale(0.98);
         }
         .photos-grid .photo-card-vertical:hover {
             opacity: 1;
             filter: grayscale(0%) blur(0px);
-            transform: scale(1.05) translateY(-10px);
+            /* Updated to match site-wide feel */
+            transform: scale(1.02) translateY(-8px);
             z-index: 50;
             box-shadow: 0 40px 80px rgba(0, 47, 167, 0.3);
             border-color: rgba(0, 47, 167, 0.8);
         }
         .photo-card-vertical {
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             transform: translateY(0);
             border: 1px solid transparent;
-            /* Important for JS manipulation: */
             will-change: transform, opacity;
         }
         
@@ -283,30 +259,11 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- MISSING SIDEBAR ANIMATIONS --- */
-        
-        /* Sidebar Slide Transition */
-        .sidebar-enter-active,
-        .sidebar-leave-active {
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .sidebar-enter-from,
-        .sidebar-leave-to {
-            transform: translateX(-100%);
-        }
+        .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
 
-        /* Backdrop Fade Transition */
-        .backdrop-enter-active,
-        .backdrop-leave-active {
-            transition: opacity 0.5s ease;
-        }
-
-        .backdrop-enter-from,
-        .backdrop-leave-to {
-            opacity: 0;
-        }
-
+        .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.5s ease; }
+        .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
     </style>
 </head>
 <body :class="{ 'is-booting': isBooting }">
@@ -314,10 +271,8 @@
         
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
-        
-        <!-- Loader removed to reveal rotating balls as the loading screen -->
 
-        <!-- Navigation - Hidden during boot -->
+        <!-- Navigation -->
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
              :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
@@ -336,7 +291,6 @@
                  @mouseleave="isCapsuleOpen = false">
                 <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
                      :class="[isCapsuleOpen ? 'w-[400px]' : 'w-[160px]', navCapsuleColor]">
-                    
                     <div class="w-full h-full flex items-center justify-center">
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
                             {{ activeSection.toUpperCase() }}
@@ -394,7 +348,7 @@
         </transition>
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
-            <!-- ... existing sections: home, profile, works ... -->
+            
             <section id="home" class="relative w-full h-[300vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
                     <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
@@ -415,7 +369,6 @@
                                 </p>
                             </div>
                         </div>
-                        <!-- Scroll hint hidden initially -->
                         <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-0 z-20"
                              :class="{'animate-pulse opacity-70': !isBooting}">
                             <span>SCROLL TO BEGIN</span>
@@ -435,16 +388,18 @@
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-20 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
+            <!-- Reduced vertical padding to py-12 for smoother flow -->
+            <section id="profile" class="w-full py-12 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
 
                 <div class="max-w-[90vw] mx-auto relative z-10">
-                    <div class="flex items-end justify-between mb-16 border-b border-gray-200 dark:border-white/10 pb-8">
+                    <div class="flex items-end justify-between mb-12 border-b border-gray-200 dark:border-white/10 pb-8">
                         <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(220px,auto)]">
+                    <!-- Tighter gap (gap-5) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 auto-rows-[minmax(220px,auto)]">
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
                              <div class="card-corner-glow"></div>
                              <div class="card-content">
@@ -525,9 +480,8 @@
                 </div>
             </section>
 
-            <!-- NEW PHOTOS SECTION -->
+            <!-- PHOTOS SECTION -->
             <section id="photos" class="relative z-30 overflow-hidden h-screen" :class="[photosActive ? 'photos-active' : '', activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
-                <!-- Sticky Container - Changed justify-center to justify-start and added pt to fix cut-off issues -->
                 <div class="sticky top-0 h-screen w-full flex flex-col justify-start pt-24 overflow-hidden">
                     <!-- Background Wave Effect -->
                     <a-waves class="absolute inset-0 z-0 js-waves-container">
@@ -536,28 +490,25 @@
 
                     <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col items-center pointer-events-none">
                         
-                        <!-- Phase 1 & 2: HUGE Title - Centered absolutely to ignore flex start -->
+                        <!-- Phase 1 & 2: HUGE Title -->
                         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none z-20">
-                            <!-- Adjusted Scale and added clip-path for shutter effect -->
                             <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center opacity-0" style="transform: scaleY(3); filter: blur(10px);">
                                 GALLERY
                             </h2>
                         </div>
 
-                        <!-- Phase 3: Quote - Centered absolutely -->
-                        <div class="gallery-quote absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 text-center opacity-0 max-w-2xl px-6">
-                            <p class="font-serif italic text-3xl md:text-5xl leading-tight mb-6">
-                                "Photography is the story I fail to put into words."
+                        <!-- Phase 3: Quote -->
+                        <div class="gallery-quote absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 text-center opacity-0 max-w-3xl px-6 w-full">
+                            <p class="font-serif italic text-3xl md:text-5xl leading-tight mb-2">
+                                "Code creates the logic. Photography captures the soul."
                             </p>
-                            <p class="font-mono text-xs tracking-[0.3em] uppercase opacity-60">— Destin Sparks</p>
                         </div>
 
                         <!-- Phase 4: Vertical Masonry Grid -->
-                        <!-- Removed fixed padding-top here as container handles it, simplified offsets -->
-                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-32">
+                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-32">
                             
                             <!-- Col 1 -->
-                            <div class="flex flex-col gap-12 mt-0 photo-col">
+                            <div class="flex flex-col gap-8 mt-0 photo-col">
                                 <div v-for="(photo, index) in photoColumns[0]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                     <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
@@ -567,8 +518,8 @@
                                 </div>
                             </div>
 
-                            <!-- Col 2 (Offset) -->
-                            <div class="flex flex-col gap-12 md:mt-24 photo-col">
+                            <!-- Col 2 -->
+                            <div class="flex flex-col gap-8 md:mt-24 photo-col">
                                 <div v-for="(photo, index) in photoColumns[1]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                     <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
@@ -578,8 +529,8 @@
                                 </div>
                             </div>
 
-                            <!-- Col 3 (More Offset + Entry) -->
-                            <div class="flex flex-col gap-12 md:mt-48 photo-col">
+                            <!-- Col 3 -->
+                            <div class="flex flex-col gap-8 md:mt-48 photo-col">
                                 <div v-for="(photo, index) in photoColumns[2]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                     <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
@@ -605,17 +556,19 @@
             </section>
 
             <!-- Connect Section -->
-            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-20 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
+            <!-- Reduced padding to py-12 for smoother flow -->
+            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-12 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
                 <div class="ambient-glow top-[10%] left-[10%] opacity-50 bg-[#002FA7]"></div>
                 <div class="ambient-glow bottom-[10%] right-[10%] opacity-30 bg-[#20BEFF] animate-pulse-slow"></div>
 
                 <div class="max-w-7xl mx-auto w-full relative z-10">
-                    <div class="flex items-center justify-center gap-3 mb-16 w-full text-center">
+                    <div class="flex items-center justify-center gap-3 mb-12 w-full text-center">
                         <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
                         <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Connect Cards: Added 'connect-card' class to enforce new hover physics -->
+                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="connect-card group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
                             <div class="card-corner-glow"></div>
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
                                 <div class="flex justify-between items-start">
@@ -625,7 +578,7 @@
                                 <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-klein-blue transition-colors text-xl">Explore source code</p></div>
                             </div>
                         </a>
-                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
+                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="connect-card group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
                             <div class="card-corner-glow" style="background: radial-gradient(circle at 100% 0%, rgba(32, 190, 255, 0.6) 0%, transparent 60%);"></div>
                             <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
                                 <div class="flex justify-between items-start">
@@ -639,7 +592,7 @@
                 </div>
             </section>
 
-            <footer class="w-full py-16 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
+            <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
                 <p>&copy; 2025 MICHAEL QIU.</p>
                 <div class="flex gap-8 mt-6 md:mt-0">
                     <a href="#home" class="hover:text-klein-blue transition-colors">BACK TO TOP</a>
@@ -676,7 +629,6 @@
         }
 
         // --- Wave Component Class ---
-        // Enhanced to support internal "progress" state for robust GSAP animation
         class AWaves extends HTMLElement {
             constructor() {
                 super();
@@ -758,22 +710,15 @@
 
             setSize() {
                 this.bounding = this.getBoundingClientRect();
-                // Ensure non-zero dimensions
                 if (this.bounding.width === 0) this.bounding.width = window.innerWidth;
                 if (this.bounding.height === 0) this.bounding.height = window.innerHeight;
-                
-                // DYNAMIC LENGTH CALCULATION
-                // Set maxLength based on height + buffer for wiggles
                 this.maxLength = Math.max(this.bounding.height, window.innerHeight) * 1.5;
-
                 this.svg.style.width = `${this.bounding.width}px`;
                 this.svg.style.height = `${this.bounding.height}px`;
             }
 
             setLines() {
                 const { width, height } = this.bounding;
-                
-                // Clear state
                 this.lines = [];
                 this.svg.innerHTML = '';
                 this.paths = [];
@@ -798,23 +743,14 @@
                             cursor: { x: 0, y: 0, vx: 0, vy: 0 } 
                         });
                     }
-                    
-                    // Assign random speed and threshold per line for vine effect
-                    // Speed: 0.5 to 1.5 multiplier
-                    // Threshold: 0 to 0.3 delay before starting
                     const speed = 0.8 + Math.random() * 0.4;
                     const threshold = Math.random() * 0.2;
-                    
                     this.lines.push({ points, speed, threshold });
-                    
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.classList.add('a__line');
                     path.classList.add('js-line');
-                    
-                    // Set dasharray based on calculated maxLength
                     path.style.strokeDasharray = `${this.maxLength}`;
-                    path.style.strokeDashoffset = `${this.maxLength}`; // Start hidden
-                    
+                    path.style.strokeDashoffset = `${this.maxLength}`; 
                     this.svg.appendChild(path);
                     this.paths.push(path);
                 }
@@ -848,7 +784,6 @@
                         p.cursor.vy *= 0.925;
                         p.cursor.x += p.cursor.vx * 2; 
                         p.cursor.y += p.cursor.vy * 2;
-                        
                         p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); 
                         p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
                     });
@@ -868,8 +803,6 @@
                 lines.forEach((lineObj, lIndex) => {
                     const points = lineObj.points;
                     const lastIdx = points.length - 1;
-                    
-                    // Draw Bottom to Top (reverse order)
                     let pStart = moved(points[lastIdx], false); 
                     let d = `M ${pStart.x} ${pStart.y}`;
                     
@@ -880,18 +813,9 @@
                     
                     if (paths[lIndex]) {
                         paths[lIndex].setAttribute('d', d);
-                        
-                        // --- VINE GROWTH LOGIC ---
-                        // Calculate offset based on Component Progress + Random Line Factors
-                        
-                        // 1. Normalize progress relative to start threshold
                         let relativeProgress = (this._progress - lineObj.threshold) / (1 - lineObj.threshold);
-                        
-                        // 2. Apply individual line speed variance
                         let localProgress = relativeProgress * lineObj.speed;
                         localProgress = Math.max(0, Math.min(1, localProgress));
-                        
-                        // Map localProgress 0->1 to DashOffset maxLength->0
                         const offset = this.maxLength * (1 - localProgress);
                         paths[lIndex].style.strokeDashoffset = offset;
                     }
@@ -1458,36 +1382,25 @@
                     initLenis(); 
                     window.addEventListener('scroll', updateScrollProgress);
 
-                    // Wait for DOM updates to ensure custom element children are rendered
                     await nextTick();
 
-                    // --- CONSOLIDATED PHOTOS TIMELINE (AUTOMATIC FLOW) ---
                     const waves = document.querySelector('a-waves');
-                    
-                    // Force initial calculation
                     if (waves) {
                         waves.setSize();
                         waves.setLines();
                     }
 
-                    // --- REORDER LOGIC: INTERLEAVE COLUMNS FOR VISUAL ROW ORDER ---
                     const getOrderedCards = () => {
                         const cols = document.querySelectorAll('.photo-col');
                         const ordered = [];
                         if (cols.length === 0) return [];
-                        
-                        // Assuming 3 columns max based on HTML structure
-                        // Find max length
                         let maxLen = 0;
                         cols.forEach(col => {
                             maxLen = Math.max(maxLen, col.children.length);
                         });
-
                         for (let i = 0; i < maxLen; i++) {
                             cols.forEach(col => {
-                                if (col.children[i]) {
-                                    ordered.push(col.children[i]);
-                                }
+                                if (col.children[i]) ordered.push(col.children[i]);
                             });
                         }
                         return ordered;
@@ -1500,13 +1413,13 @@
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=4000", // Slightly increased to allow pause
+                            end: "+=4000", 
                             pin: true,
                             scrub: 1, 
                         }
                     });
 
-                    // 1. Vines/Lines Grow Smoother with Stagger (0% -> 20%)
+                    // 1. Vines/Lines (0% -> ~2%)
                     if (waves) {
                         gsap.to(waves, { amplitude: 1, duration: 5 });
                         photosTimeline.to(waves, { 
@@ -1516,8 +1429,8 @@
                         });
                     }
 
-                    // 2. THE GHOST REVEAL & BACKGROUND CHANGE (20% -> 35%)
-                    photosTimeline.addLabel("reveal", "-=60"); // Overlap with waves growing
+                    // 2. Reveal Title (Faster Duration: 20)
+                    photosTimeline.addLabel("reveal", "-=80");
 
                     photosTimeline.call(() => {
                         photosActive.value = true;
@@ -1533,32 +1446,28 @@
                         scaleY: 1, 
                         opacity: 0.12, 
                         filter: "blur(0px)",
-                        duration: 35, 
+                        duration: 20, 
                         ease: "power2.out"
                     }, "reveal");
 
-                    // 3. Quote Appear (35% -> 45%)
-                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "-=15");
+                    // 3. Quote Appear (Reduced: 10)
+                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "-=5");
 
-                    // 4. Transition to Grid (45% -> 55%)
-                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
-                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
+                    // 4. Transition to Grid
+                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 5 }, "+=5");
+                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 5 }, "<");
                     
-                    // 5. Grid Entry (55% -> 65%)
-                    // Move from bottom (150vh) to natural position (0)
-                    // The CSS grid is now top-aligned with padding, so 0 is perfect.
+                    // 5. Grid Entry (Faster: 25)
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
-                        duration: 35, 
+                        duration: 25, 
                         ease: "power3.out" 
                     });
 
-                    // 6. Staggered Card Entries (Visual Row Order)
-                    // Animate sorted cards
+                    // 6. Staggered Card Entries
                     if (sortedPhotoCards.length > 0) {
                         sortedPhotoCards.forEach((card, index) => {
-                            // Reduced stagger time to make them appear faster as a group
                             const offset = index * 2; 
                             photosTimeline.fromTo(card, 
                                 { opacity: 0, y: 150 }, 
@@ -1568,18 +1477,17 @@
                         });
                     }
 
-                    // ADDED PAUSE: Let user see the top rows before scrolling
-                    photosTimeline.to({}, { duration: 25 });
+                    // 7. PAUSE to view content (Increased to 60)
+                    photosTimeline.to({}, { duration: 60 });
 
-                    // 7. Grid Scroll (65% -> 90%)
-                    // Move up to reveal bottom items
+                    // 8. Grid Scroll (Slower scroll: 80)
                     photosTimeline.to(".photos-grid", {
-                        y: "-40%", // Reduced from -50% to be less aggressive given the new top alignment
-                        duration: 40,
+                        y: "-40%",
+                        duration: 80, 
                         ease: "none" 
                     });
 
-                    // 8. Exit (90% -> 100%)
+                    // 9. Exit
                     photosTimeline.to(".photos-grid", {
                         y: "-100%", 
                         opacity: 0,
