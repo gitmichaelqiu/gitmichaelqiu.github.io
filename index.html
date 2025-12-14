@@ -108,9 +108,22 @@
         .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5); }
         
         /* Glass Cards */
-        .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(0, 0, 0, 0.1); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            will-change: transform, box-shadow;
+        }
         html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card:hover { border-color: var(--klein-blue); background: rgba(0, 47, 167, 0.05); }
+        
+        .glass-card:hover { 
+            border-color: var(--klein-blue); 
+            background: rgba(0, 47, 167, 0.05); 
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
+            z-index: 20;
+        }
 
         /* Card Glows */
         .card-corner-glow {
@@ -422,12 +435,12 @@
             </section>
 
             <!-- Profile Section -->
-            <section id="profile" class="w-full py-32 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
+            <section id="profile" class="w-full py-20 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
 
                 <div class="max-w-[90vw] mx-auto relative z-10">
-                    <div class="flex items-end justify-between mb-24 border-b border-gray-200 dark:border-white/10 pb-8">
+                    <div class="flex items-end justify-between mb-16 border-b border-gray-200 dark:border-white/10 pb-8">
                         <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
                     </div>
 
@@ -475,7 +488,7 @@
                 </div>
 
                 <div class="relative z-10">
-                    <div class="min-h-screen flex flex-col justify-start pt-40 md:pt-60 items-center pointer-events-none">
+                    <div class="min-h-screen flex flex-col justify-start pt-32 items-center pointer-events-none">
                         <h2 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 mix-blend-difference">WORKS</h2>
                         <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
                     </div>
@@ -514,25 +527,25 @@
 
             <!-- NEW PHOTOS SECTION -->
             <section id="photos" class="relative z-30 overflow-hidden h-screen" :class="[photosActive ? 'photos-active' : '', activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
-                <!-- Sticky Container -->
-                <div class="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
+                <!-- Sticky Container - Changed justify-center to justify-start and added pt to fix cut-off issues -->
+                <div class="sticky top-0 h-screen w-full flex flex-col justify-start pt-24 overflow-hidden">
                     <!-- Background Wave Effect -->
                     <a-waves class="absolute inset-0 z-0 js-waves-container">
                         <svg class="js-svg"></svg>
                     </a-waves>
 
-                    <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col justify-center items-center pointer-events-none">
+                    <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col items-center pointer-events-none">
                         
-                        <!-- Phase 1 & 2: HUGE Title -->
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                        <!-- Phase 1 & 2: HUGE Title - Centered absolutely to ignore flex start -->
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none z-20">
                             <!-- Adjusted Scale and added clip-path for shutter effect -->
                             <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center opacity-0" style="transform: scaleY(3); filter: blur(10px);">
                                 GALLERY
                             </h2>
                         </div>
 
-                        <!-- Phase 3: Quote -->
-                        <div class="gallery-quote absolute z-30 text-center opacity-0 max-w-2xl px-6">
+                        <!-- Phase 3: Quote - Centered absolutely -->
+                        <div class="gallery-quote absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 text-center opacity-0 max-w-2xl px-6">
                             <p class="font-serif italic text-3xl md:text-5xl leading-tight mb-6">
                                 "Photography is the story I fail to put into words."
                             </p>
@@ -540,10 +553,11 @@
                         </div>
 
                         <!-- Phase 4: Vertical Masonry Grid -->
-                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full translate-y-[150vh] opacity-0 relative z-10 mt-32 md:mt-0 pointer-events-auto" style="padding-top: 20vh;">
+                        <!-- Removed fixed padding-top here as container handles it, simplified offsets -->
+                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-32">
                             
                             <!-- Col 1 -->
-                            <div class="flex flex-col gap-12 mt-0">
+                            <div class="flex flex-col gap-12 mt-0 photo-col">
                                 <div v-for="(photo, index) in photoColumns[0]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                     <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
@@ -554,7 +568,7 @@
                             </div>
 
                             <!-- Col 2 (Offset) -->
-                            <div class="flex flex-col gap-12 md:mt-24">
+                            <div class="flex flex-col gap-12 md:mt-24 photo-col">
                                 <div v-for="(photo, index) in photoColumns[1]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                     <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
@@ -565,7 +579,7 @@
                             </div>
 
                             <!-- Col 3 (More Offset + Entry) -->
-                            <div class="flex flex-col gap-12 md:mt-48">
+                            <div class="flex flex-col gap-12 md:mt-48 photo-col">
                                 <div v-for="(photo, index) in photoColumns[2]" :key="index" class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                     <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
@@ -591,7 +605,7 @@
             </section>
 
             <!-- Connect Section -->
-            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
+            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-20 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
                 <div class="ambient-glow top-[10%] left-[10%] opacity-50 bg-[#002FA7]"></div>
                 <div class="ambient-glow bottom-[10%] right-[10%] opacity-30 bg-[#20BEFF] animate-pulse-slow"></div>
 
@@ -1456,38 +1470,55 @@
                         waves.setLines();
                     }
 
-                    const photoCards = document.querySelectorAll('.photo-card-vertical');
+                    // --- REORDER LOGIC: INTERLEAVE COLUMNS FOR VISUAL ROW ORDER ---
+                    const getOrderedCards = () => {
+                        const cols = document.querySelectorAll('.photo-col');
+                        const ordered = [];
+                        if (cols.length === 0) return [];
+                        
+                        // Assuming 3 columns max based on HTML structure
+                        // Find max length
+                        let maxLen = 0;
+                        cols.forEach(col => {
+                            maxLen = Math.max(maxLen, col.children.length);
+                        });
+
+                        for (let i = 0; i < maxLen; i++) {
+                            cols.forEach(col => {
+                                if (col.children[i]) {
+                                    ordered.push(col.children[i]);
+                                }
+                            });
+                        }
+                        return ordered;
+                    };
+
+                    const sortedPhotoCards = getOrderedCards();
                     
                     photosTimeline = gsap.timeline({
                         scrollTrigger: {
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=4000", // Reduced from 5000 to tighten interval
+                            end: "+=4000", // Slightly increased to allow pause
                             pin: true,
                             scrub: 1, 
                         }
                     });
 
                     // 1. Vines/Lines Grow Smoother with Stagger (0% -> 20%)
-                    // IMPORTANT: Animate the 'progress' property of the Custom Element itself.
-                    // This is robust against re-renders.
                     if (waves) {
-                        // Start wave amplitude so they are wavy as they grow
                         gsap.to(waves, { amplitude: 1, duration: 5 });
-                        
-                        // Animate the internal progress property from 0 to 1
                         photosTimeline.to(waves, { 
                             progress: 1, 
-                            duration: 100, // Increased from 20 to make growth slower
+                            duration: 100, 
                             ease: "power1.inOut"
                         });
                     }
 
                     // 2. THE GHOST REVEAL & BACKGROUND CHANGE (20% -> 35%)
-                    photosTimeline.addLabel("reveal");
+                    photosTimeline.addLabel("reveal", "-=60"); // Overlap with waves growing
 
-                    // Trigger Background Change
                     photosTimeline.call(() => {
                         photosActive.value = true;
                     }, null, "reveal");
@@ -1498,7 +1529,6 @@
                          }
                     }, null, "reveal-=0.1"); 
 
-                    // Animate Title: "Ghost" effect condensing into readable text
                     photosTimeline.to(".gallery-title", { 
                         scaleY: 1, 
                         opacity: 0.12, 
@@ -1508,40 +1538,50 @@
                     }, "reveal");
 
                     // 3. Quote Appear (35% -> 45%)
-                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
+                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "-=15");
 
                     // 4. Transition to Grid (45% -> 55%)
                     photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
                     photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
                     
                     // 5. Grid Entry (55% -> 65%)
+                    // Move from bottom (150vh) to natural position (0)
+                    // The CSS grid is now top-aligned with padding, so 0 is perfect.
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
-                        duration: 35, // Slower grid entry (was 25)
+                        duration: 35, 
                         ease: "power3.out" 
                     });
 
-                    // 6. Staggered Card Entries
-                    photoCards.forEach((card, index) => {
-                        const offset = index * 4; // More spacing between cards
-                        photosTimeline.fromTo(card, 
-                            { opacity: 0, y: 150 }, 
-                            { opacity: 1, y: 0, duration: 20, ease: "power3.out" }, // Slower entry per card (was 12)
-                            `>-${30 - offset}` // Adjusted overlap
-                        );
-                    });
+                    // 6. Staggered Card Entries (Visual Row Order)
+                    // Animate sorted cards
+                    if (sortedPhotoCards.length > 0) {
+                        sortedPhotoCards.forEach((card, index) => {
+                            // Reduced stagger time to make them appear faster as a group
+                            const offset = index * 2; 
+                            photosTimeline.fromTo(card, 
+                                { opacity: 0, y: 150 }, 
+                                { opacity: 1, y: 0, duration: 20, ease: "power3.out" }, 
+                                `>-${18 - offset}` 
+                            );
+                        });
+                    }
+
+                    // ADDED PAUSE: Let user see the top rows before scrolling
+                    photosTimeline.to({}, { duration: 25 });
 
                     // 7. Grid Scroll (65% -> 90%)
+                    // Move up to reveal bottom items
                     photosTimeline.to(".photos-grid", {
-                        y: "-50%", 
-                        duration: 35,
+                        y: "-40%", // Reduced from -50% to be less aggressive given the new top alignment
+                        duration: 40,
                         ease: "none" 
                     });
 
                     // 8. Exit (90% -> 100%)
                     photosTimeline.to(".photos-grid", {
-                        y: "-150%", 
+                        y: "-100%", 
                         opacity: 0,
                         filter: "blur(20px)",
                         scale: 0.8,
