@@ -27,6 +27,7 @@
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -124,6 +125,18 @@
             position: absolute; width: 40vmax; height: 40vmax;
             background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
             filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
+        }
+
+        /* Card Content Z-Index Fix (Added) */
+        .card-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Magnetic Logo Lines (Restored) */
+        .magnetic-ball-line {
+            stroke: currentColor;
+            stroke-width: 1px;
         }
 
         /* Hover Solid Effects */
@@ -436,9 +449,6 @@
                 <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden z-0">
                     <div class="w-full h-full" ref="canvasContainer"></div>
                 </div>
-                
-                <div class="absolute top-1/4 right-0 works-page-glow"></div>
-                <div class="absolute bottom-1/4 left-0 works-page-glow"></div>
 
                 <div class="relative z-10">
                     <div class="min-h-screen flex flex-col justify-start pt-40 md:pt-60 items-center pointer-events-none">
