@@ -131,7 +131,7 @@
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .connect-card:hover {
-            border-color: var(--klein-blue);
+            border-color: var(--klein-blue); 
             transform: translateY(-8px) scale(1.01);
             box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
             z-index: 20;
@@ -213,16 +213,22 @@
         #photos.photos-active.light-mode .gallery-quote { color: #002FA7; }
         #photos.photos-active.dark-mode .gallery-title { color: rgba(255, 255, 255, 0.1); }
 
+        /* Wave Component Styles */
         a-waves {
             --x: -0.5rem;
             --y: 50%;
+            /* Initialize variable for dash offset (from work.html) */
+            --dash-offset: 4000;
             position: absolute; top: 0; left: 0; margin: 0; padding: 0;
             width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 0;
         }
         a-waves:before { content: none !important; display: none !important; }
         a-waves svg { display: block; width: 100%; height: 100%; }
         a-waves svg path {
-            fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 1s ease;
+            fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
+            stroke-dasharray: 4000;
+            /* Bind to CSS Variable (from work.html) */
+            stroke-dashoffset: var(--dash-offset);
         }
         
         /* Line Opacity Logic */
@@ -369,7 +375,7 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
-            <section id="home" class="relative w-full h-[300vh] bg-klein-blue text-white">
+            <section id="home" class="relative w-full h-[250vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
                     <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
                          <div id="magnetic-container" class="w-full h-full relative cursor-crosshair"></div>
@@ -389,8 +395,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-0 z-20"
-                             :class="{'animate-pulse opacity-70': !isBooting}">
+                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse z-20">
                             <span>SCROLL TO BEGIN</span>
                             <i data-lucide="arrow-down" class="w-4 h-4"></i>
                         </div>
@@ -398,8 +403,7 @@
                 </div>
             </section>
 
-            <!-- About Banner -->
-            <section class="w-full h-[120vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
+            <section class="w-full h-[60vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
                 <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
                     <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
                         ABOUT<br>ME
@@ -461,7 +465,8 @@
                 </div>
 
                 <div class="relative z-10">
-                    <div class="min-h-screen flex flex-col justify-start pt-32 items-center pointer-events-none">
+                    <!-- CHANGED: Compact Title Area (h-[50vh] centered) -->
+                    <div class="h-[50vh] flex flex-col justify-center items-center pointer-events-none">
                         <h2 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 mix-blend-difference">WORKS</h2>
                         <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
                     </div>
@@ -523,10 +528,12 @@
                         </div>
 
                         <!-- Phase 4: Vertical Masonry Grid -->
-                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-24 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-64">
+                        <!-- CHANGED: Reduced gap from gap-12/gap-24 to gap-6/gap-8 for denser feel -->
+                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-64">
                             
                             <!-- Col 1 -->
-                            <div class="flex flex-col gap-12 md:gap-20 mt-0 photo-col">
+                            <!-- CHANGED: Reduced vertical gap -->
+                            <div class="flex flex-col gap-6 md:gap-10 mt-0 photo-col">
                                 <div v-for="(photo, index) in photoColumns[0]" :key="index" class="photo-card-wrapper">
                                     <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                         <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
@@ -539,7 +546,7 @@
                             </div>
 
                             <!-- Col 2 -->
-                            <div class="flex flex-col gap-12 md:gap-20 md:mt-24 photo-col">
+                            <div class="flex flex-col gap-6 md:gap-10 md:mt-24 photo-col">
                                 <div v-for="(photo, index) in photoColumns[1]" :key="index" class="photo-card-wrapper">
                                     <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                         <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
@@ -552,7 +559,7 @@
                             </div>
 
                             <!-- Col 3 -->
-                            <div class="flex flex-col gap-12 md:gap-20 md:mt-48 photo-col">
+                            <div class="flex flex-col gap-6 md:gap-10 md:mt-48 photo-col">
                                 <div v-for="(photo, index) in photoColumns[2]" :key="index" class="photo-card-wrapper">
                                     <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
                                         <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
@@ -716,7 +723,9 @@
                     this.lines.push({ points, speed, threshold });
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.classList.add('a__line'); path.classList.add('js-line');
-                    path.style.strokeDasharray = `${this.maxLength}`; path.style.strokeDashoffset = `${this.maxLength}`; 
+                    path.style.strokeDasharray = `4000`; 
+                    // CHANGE: Use CSS variable for dash offset
+                    path.style.strokeDashoffset = `var(--dash-offset, 4000)`; 
                     this.svg.appendChild(path); this.paths.push(path);
                 }
             }
@@ -750,11 +759,8 @@
                     for (let i = lastIdx; i >= 0; i--) { const p = moved(points[i], true); d += `L ${p.x} ${p.y}`; }
                     if (paths[lIndex]) {
                         paths[lIndex].setAttribute('d', d);
-                        let relativeProgress = (this._progress - lineObj.threshold) / (1 - lineObj.threshold);
-                        let localProgress = relativeProgress * lineObj.speed;
-                        localProgress = Math.max(0, Math.min(1, localProgress));
-                        const offset = this.maxLength * (1 - localProgress);
-                        paths[lIndex].style.strokeDashoffset = offset;
+                        // CHANGE: Remove manual dash offset calculation here, rely on CSS variable
+                        // The offset logic is handled by GSAP timeline animating --dash-offset on the container
                     }
                 });
             }
@@ -936,13 +942,15 @@
                             magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
                         }
                         if(heroText) {
-                            const moveProgress = Math.min(1, scrollTop / (winHeight * 1.5)); 
+                            // CHANGED: Tuned progress calculation to complete animation faster
+                            const moveProgress = Math.min(1, scrollTop / (winHeight * 1.2)); 
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             const targetScale = 1 + (moveProgress * 0.3); 
                             heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
                             if(introText) {
-                                if (moveProgress > 0.8) {
-                                    const textFade = (moveProgress - 0.8) / 0.2;
+                                // CHANGED: Fade in significantly earlier (at 0.1 progress)
+                                if (moveProgress > 0.1) {
+                                    const textFade = (moveProgress - 0.1) / 0.4; // Fades in quickly between 0.1 and 0.5
                                     introText.style.opacity = textFade;
                                 } else {
                                     introText.style.opacity = 0;
@@ -1290,7 +1298,8 @@
                 };
 
                 onMounted(async () => {
-                    setTimeout(() => { finishBootSequence(); }, 2500);
+                    // CHANGED: Reduced from 2500 to 1500 for faster boot
+                    setTimeout(() => { finishBootSequence(); }, 1500);
                     initMagneticLogo();
                     lucide.createIcons();
                     resolveTheme(); 
@@ -1331,24 +1340,26 @@
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            end: "+=4000", 
+                            // CHANGED: Match work.html
+                            end: "+=5000", 
                             pin: true,
+                            // CHANGED: Match work.html
                             scrub: 1, 
                         }
                     });
 
-                    // 1. Vines/Lines (0% -> ~2%)
-                    if (waves) {
-                        gsap.to(waves, { amplitude: 1, duration: 5 });
-                        photosTimeline.to(waves, { 
-                            progress: 1, 
-                            duration: 100, 
-                            ease: "power1.inOut"
-                        });
-                    }
+                    // 1. Vines/Lines - Match work.html logic using CSS variables
+                    photosTimeline.to("a-waves", { 
+                        "--dash-offset": 0, 
+                        duration: 15, 
+                        ease: "power2.inOut",
+                        onStart: () => {
+                            if(waves) gsap.to(waves, { amplitude: 1, duration: 2 });
+                        }
+                    });
 
-                    // 2. Reveal Title (Faster Duration: 20)
-                    photosTimeline.addLabel("reveal", "-=80");
+                    // 2. Reveal Title - Match work.html pacing
+                    photosTimeline.addLabel("reveal", "-=12");
 
                     photosTimeline.call(() => {
                         photosActive.value = true;
@@ -1364,24 +1375,21 @@
                         scaleY: 1, 
                         opacity: 0.12, 
                         filter: "blur(0px)",
-                        duration: 20, 
-                        ease: "power2.out"
+                        duration: 10, // Match work.html
+                        ease: "power3.out"
                     }, "reveal");
 
-                    // 3. Quote Appear (Reduced: 10)
-                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "-=5");
+                    // 3. Quote Appear - Match work.html
+                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
 
-                    // 4. Transition to Grid
-                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 5 }, "+=5");
-                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 5 }, "<");
+                    // 4. Transition to Grid - Match work.html
+                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
+                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
                     
-                    // 5. Grid Entry (Faster: 25)
+                    // 5. Grid Entry - Match work.html
                     photosTimeline.addLabel("gridEntry");
                     
-                    // Toggle gridActive state for line opacity. 
-                    // Set to TRUE when grid enters.
                     photosTimeline.call(() => { gridActive.value = true; }, null, "gridEntry");
-                    // Revert to FALSE if scrubbing backwards past this point
                     photosTimeline.call(() => { 
                         if(photosTimeline.scrollTrigger.direction < 0) gridActive.value = false; 
                     }, null, "gridEntry-=0.1");
@@ -1389,39 +1397,32 @@
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
-                        duration: 25, 
+                        duration: 10, // Match work.html
                         ease: "power3.out" 
                     }, "gridEntry");
 
-                    // 6. Staggered Card Entries
-                    // Target the WRAPPER for entry, so the inner card is free for hover
+                    // 6. Staggered Card Entries - Match work.html logic but applied to wrappers
                     if (sortedPhotoCards.length > 0) {
                         sortedPhotoCards.forEach((wrapper, index) => {
-                            const offset = index * 2; 
+                            const offset = index * 2; // Match work.html
                             photosTimeline.fromTo(wrapper, 
-                                { opacity: 0, y: 150 }, 
-                                { opacity: 1, y: 0, duration: 20, ease: "power3.out" }, 
-                                `>-${18 - offset}` 
+                                { opacity: 0, y: 100 }, // Match work.html values
+                                { opacity: 1, y: 0, duration: 5, ease: "power3.out" }, // Match work.html duration
+                                `>-${9 - offset}` // Match work.html offset logic
                             );
                         });
                     }
 
-                    // 7. PAUSE to view content (Increased to 60)
-                    photosTimeline.to({}, { duration: 60 });
-
-                    // 8. Grid Scroll (Slower scroll: 80)
+                    // 7. Grid Scroll - Match work.html
                     photosTimeline.to(".photos-grid", {
-                        y: "-40%",
-                        duration: 80, 
+                        y: "-50%",
+                        duration: 35, // Match work.html
                         ease: "none" 
                     });
                     
-                    // Added Margin Pause before Exit (Extra Duration: 40)
-                    photosTimeline.to({}, { duration: 40 });
-
-                    // 9. Exit
+                    // 8. Exit - Match work.html
                     photosTimeline.to(".photos-grid", {
-                        y: "-100%", 
+                        y: "-150%",  // Match work.html
                         opacity: 0,
                         filter: "blur(20px)",
                         scale: 0.8,
