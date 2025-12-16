@@ -178,8 +178,9 @@
         #photos-wrapper.light-mode { background-color: #ffffff; color: #002FA7; }
         #photos-wrapper.dark-mode { background-color: #020412; color: #ffffff; }
 
-        /* Wave Component */
+        /* Wave Component - FIX APPLIED HERE */
         a-waves {
+            /* Changed from 4000 to 20000 for long page support */
             --x: -0.5rem; --y: 50%; --dash-offset: 20000;
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 0;
@@ -187,7 +188,9 @@
         a-waves svg { display: block; width: 100%; height: 100%; }
         a-waves svg path {
             fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
-            stroke-dasharray: 20000; stroke-dashoffset: var(--dash-offset);
+            /* Changed from 4000 to 20000 */
+            stroke-dasharray: 20000; 
+            stroke-dashoffset: var(--dash-offset);
         }
         /* Mode-based Stroke Colors */
         a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
@@ -583,6 +586,7 @@
             }
         }
 
+        /* --- FIXED AWAVES CLASS --- */
         class AWaves extends HTMLElement {
             constructor() {
                 super();
@@ -600,12 +604,24 @@
                 }
                 this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
                 this.lines = []; this.paths = []; this.noise = new Noise(Math.random());
-                this.amplitude = 1; /* Always active now */
+                this.amplitude = 1; 
+
                 this.setSize(); this.setLines(); this.bindEvents();
+                
+                // Add ResizeObserver to handle content expansion (e.g. photos loading)
+                this.resizeObserver = new ResizeObserver(entries => {
+                    if(this.resizeTimer) clearTimeout(this.resizeTimer);
+                    this.resizeTimer = setTimeout(() => {
+                        this.onResize();
+                    }, 100);
+                });
+                this.resizeObserver.observe(this);
+
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
             }
             disconnectedCallback() {
                 cancelAnimationFrame(this.rafId);
+                if(this.resizeObserver) this.resizeObserver.disconnect();
                 window.removeEventListener('resize', this.onResize);
                 window.removeEventListener('mousemove', this.onMouseMove);
             }
@@ -628,7 +644,6 @@
                 this.bounding = this.getBoundingClientRect();
                 if (this.bounding.width === 0) this.bounding.width = window.innerWidth;
                 if (this.bounding.height === 0) this.bounding.height = window.innerHeight;
-                this.maxLength = Math.max(this.bounding.height, window.innerHeight) * 1.5;
                 this.svg.style.width = `${this.bounding.width}px`; this.svg.style.height = `${this.bounding.height}px`;
             }
             setLines() {
@@ -638,32 +653,23 @@
                 const oWidth = width + 200; const oHeight = height + 30;
                 const totalLines = Math.ceil(oWidth / xGap); const totalPoints = Math.ceil(oHeight / yGap);
                 const xStart = (width - xGap * totalLines) / 2; const yStart = (height - yGap * totalPoints) / 2;
-                const pathLength = Math.max(20000, height + 1000);
+                
+                // Set pathLength equal to a safe maximum to prevent cutoff
+                const pathLength = 20000;
+
                 for (let i = 0; i <= totalLines; i++) {
-                            const points = [];
-                            for (let j = 0; j <= totalPoints; j++) {
-                                points.push({ 
-                                    x: xStart + xGap * i, 
-                                    y: yStart + yGap * j, 
-                                    wave: { x: 0, y: 0 }, 
-                                    cursor: { x: 0, y: 0, vx: 0, vy: 0 } 
-                                });
-                            }
-                            const speed = 0.8 + Math.random() * 0.4; 
-                            const threshold = Math.random() * 0.2;
-                            this.lines.push({ points, speed, threshold });
-                            
-                            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                            path.classList.add('a__line'); 
-                            path.classList.add('js-line');
-                            
-                            // Set dynamic lengths
-                            path.style.strokeDasharray = `${pathLength}`; 
-                            path.style.strokeDashoffset = `var(--dash-offset, ${pathLength})`; 
-                            
-                            this.svg.appendChild(path); 
-                            this.paths.push(path);
-                        }
+                    const points = [];
+                    for (let j = 0; j <= totalPoints; j++) {
+                        points.push({ x: xStart + xGap * i, y: yStart + yGap * j, wave: { x: 0, y: 0 }, cursor: { x: 0, y: 0, vx: 0, vy: 0 } });
+                    }
+                    const speed = 0.8 + Math.random() * 0.4; const threshold = Math.random() * 0.2;
+                    this.lines.push({ points, speed, threshold });
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.classList.add('a__line'); path.classList.add('js-line');
+                    path.style.strokeDasharray = `${pathLength}`; 
+                    path.style.strokeDashoffset = `var(--dash-offset, ${pathLength})`; 
+                    this.svg.appendChild(path); this.paths.push(path);
+                }
             }
             movePoints(time) {
                 const { lines, mouse, noise } = this; const amp = this.amplitude; 
@@ -1044,7 +1050,7 @@
                     shape.lineTo( x, y + height - r );
                     shape.quadraticCurveTo( x, y + height, x + r, y + height );
                     shape.lineTo( x + width - r, y + height );
-                    shape.quadraticCurveTo( x + width, y + height, x + width, y + height - r );
+                    shape.quadraticCurveTo( x + width, y, x + width, y + height - r );
                     shape.lineTo( x + width, y + r );
                     shape.quadraticCurveTo( x + width, y, x + width - r, y );
                     shape.lineTo( x + r, y );
