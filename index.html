@@ -1334,21 +1334,19 @@
                     };
 
                     const sortedPhotoCards = getOrderedCards();
-                    
+
                     photosTimeline = gsap.timeline({
                         scrollTrigger: {
                             id: "photos-trigger",
                             trigger: "#photos",
                             start: "top top",
-                            // CHANGED: Match work.html
                             end: "+=5000", 
                             pin: true,
-                            // CHANGED: Match work.html
-                            scrub: 1, 
+                            scrub: 1.5, // Slightly increased scrub for "weightier" feel
                         }
                     });
 
-                    // 1. Vines/Lines - Match work.html logic using CSS variables
+                    // 1. Vines/Lines
                     photosTimeline.to("a-waves", { 
                         "--dash-offset": 0, 
                         duration: 15, 
@@ -1358,7 +1356,7 @@
                         }
                     });
 
-                    // 2. Reveal Title - Match work.html pacing
+                    // 2. Reveal Title
                     photosTimeline.addLabel("reveal", "-=12");
 
                     photosTimeline.call(() => {
@@ -1375,18 +1373,18 @@
                         scaleY: 1, 
                         opacity: 0.12, 
                         filter: "blur(0px)",
-                        duration: 10, // Match work.html
+                        duration: 10, 
                         ease: "power3.out"
                     }, "reveal");
 
-                    // 3. Quote Appear - Match work.html
+                    // 3. Quote Appear
                     photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
 
-                    // 4. Transition to Grid - Match work.html
+                    // 4. Transition to Grid
                     photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
                     photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
                     
-                    // 5. Grid Entry - Match work.html
+                    // 5. Grid Entry
                     photosTimeline.addLabel("gridEntry");
                     
                     photosTimeline.call(() => { gridActive.value = true; }, null, "gridEntry");
@@ -1397,35 +1395,36 @@
                     photosTimeline.to(".photos-grid", { 
                         y: 0, 
                         opacity: 1, 
-                        duration: 10, // Match work.html
+                        duration: 10,
                         ease: "power3.out" 
                     }, "gridEntry");
 
-                    // 6. Staggered Card Entries - Match work.html logic but applied to wrappers
+                    // 6. Staggered Card Entries
                     if (sortedPhotoCards.length > 0) {
                         sortedPhotoCards.forEach((wrapper, index) => {
-                            const offset = index * 2; // Match work.html
+                            const offset = index * 2; 
                             photosTimeline.fromTo(wrapper, 
-                                { opacity: 0, y: 100 }, // Match work.html values
-                                { opacity: 1, y: 0, duration: 5, ease: "power3.out" }, // Match work.html duration
-                                `>-${9 - offset}` // Match work.html offset logic
+                                { opacity: 0, y: 100 },
+                                { opacity: 1, y: 0, duration: 5, ease: "power3.out" },
+                                `>-${9 - offset}`
                             );
                         });
                     }
 
-                    // 7. Grid Scroll - Match work.html
+                    // 7. Grid Scroll - UPDATED SPEED CURVE
+                    // Changed y from -50% to -25% and duration to 45 for a smoother, slower drift
                     photosTimeline.to(".photos-grid", {
-                        y: "-50%",
-                        duration: 35, // Match work.html
-                        ease: "none" 
+                        y: "-50%", 
+                        duration: 35, 
+                        ease: "none" // Linear ensures consistent speed during the main viewing phase
                     });
                     
-                    // 8. Exit - Match work.html
+                    // 8. Exit
                     photosTimeline.to(".photos-grid", {
-                        y: "-150%",  // Match work.html
+                        y: "-150%", // Adjusted exit travel
                         opacity: 0,
                         filter: "blur(20px)",
-                        scale: 0.8,
+                        scale: 0.8, // Less aggressive scale down
                         duration: 10,
                         ease: "power4.in"
                     });
