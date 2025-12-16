@@ -72,7 +72,6 @@
             overflow-x: hidden;
         }
         
-        /* Prevent scrolling during boot */
         body.is-booting {
             overflow: hidden;
             height: 100vh;
@@ -90,7 +89,7 @@
         .lenis.lenis-stopped { overflow: hidden; }
         .lenis.lenis-scrolling iframe { pointer-events: none; }
 
-        /* Custom Cursor - FIXED VISIBILITY */
+        /* Custom Cursor */
         @media (hover: hover) and (pointer: fine) {
             body, button, a, input, [role="button"], .cursor-pointer { cursor: none !important; }
             .cursor-dot, .cursor-outline { display: block; }
@@ -104,10 +103,6 @@
         .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
         body:hover .cursor-outline { width: 30px; height: 30px; }
 
-        /* Typography */
-        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5); }
-        
-        /* Glass Cards */
         .glass-card { 
             background: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(20px); 
@@ -117,7 +112,6 @@
         }
         html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
         
-        /* Profile Hover Effect */
         .glass-card:hover { 
             border-color: var(--klein-blue); 
             background: rgba(0, 47, 167, 0.05); 
@@ -126,7 +120,6 @@
             z-index: 20;
         }
 
-        /* Connect Card - Separate hover to preserve opacity */
         .connect-card {
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -137,7 +130,6 @@
             z-index: 20;
         }
 
-        /* Card Glows */
         .card-corner-glow {
             position: absolute; top: 0; right: 0; width: 300px; height: 300px;
             background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
@@ -145,44 +137,20 @@
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
-        /* Ambient Glow */
         .ambient-glow {
             position: absolute; width: 40vmax; height: 40vmax;
             background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
             filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
         }
 
-        .card-content {
-            position: relative;
-            z-index: 10;
-        }
+        .card-content { position: relative; z-index: 10; }
+        .magnetic-ball-line { stroke: currentColor; stroke-width: 1px; }
 
-        .magnetic-ball-line {
-            stroke: currentColor;
-            stroke-width: 1px;
-        }
+        .hover-solid-blue:hover { background-color: var(--klein-blue) !important; border-color: var(--klein-blue) !important; }
+        .hover-solid-gray:hover { background-color: #333 !important; border-color: #333 !important; }
+        html.dark .hover-solid-gray:hover { background-color: #eee !important; border-color: #eee !important; }
+        html.dark .hover-solid-gray:hover h3, html.dark .hover-solid-gray:hover i, html.dark .hover-solid-gray:hover p { color: black !important; }
 
-        /* Hover Solid Effects */
-        .hover-solid-blue:hover {
-            background-color: var(--klein-blue) !important;
-            border-color: var(--klein-blue) !important;
-        }
-        
-        .hover-solid-gray:hover {
-            background-color: #333 !important;
-            border-color: #333 !important;
-        }
-        html.dark .hover-solid-gray:hover {
-            background-color: #eee !important;
-            border-color: #eee !important;
-        }
-        html.dark .hover-solid-gray:hover h3, 
-        html.dark .hover-solid-gray:hover i,
-        html.dark .hover-solid-gray:hover p {
-            color: black !important;
-        }
-
-        /* App Card Styles */
         .app-card-glass {
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
             backdrop-filter: blur(60px) saturate(180%); -webkit-backdrop-filter: blur(60px) saturate(180%);
@@ -199,95 +167,59 @@
         .app-card-glass:hover { transform: translateY(-8px) scale(1.01) translateZ(0); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.25); }
         html.dark .app-card-glass:hover { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3); }
 
-        /* --- PHOTOS SECTION STYLES --- */
-        #photos { 
-            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
-            background-color: #050505; /* Start Dark for Intro */
+        /* --- PHOTOS SECTION REDESIGN --- */
+        /* Wrapper Context */
+        #photos-wrapper {
+            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            background-color: #050505;
             color: #ffffff;
+            position: relative;
         }
-        
-        #photos.photos-active.light-mode { background-color: #ffffff; color: #002FA7; }
-        #photos.photos-active.dark-mode { background-color: #020412; color: #ffffff; }
-        
-        #photos.photos-active.light-mode .gallery-title { color: #002FA7; opacity: 0.15; }
-        #photos.photos-active.light-mode .gallery-quote { color: #002FA7; }
-        #photos.photos-active.dark-mode .gallery-title { color: rgba(255, 255, 255, 0.1); }
+        #photos-wrapper.light-mode { background-color: #ffffff; color: #002FA7; }
+        #photos-wrapper.dark-mode { background-color: #020412; color: #ffffff; }
 
-        /* Wave Component Styles */
+        /* Wave Component */
         a-waves {
-            --x: -0.5rem;
-            --y: 50%;
-            /* Initialize variable for dash offset (from work.html) */
-            --dash-offset: 4000;
-            position: absolute; top: 0; left: 0; margin: 0; padding: 0;
-            width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 0;
+            --x: -0.5rem; --y: 50%; --dash-offset: 4000;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
         }
-        a-waves:before { content: none !important; display: none !important; }
         a-waves svg { display: block; width: 100%; height: 100%; }
         a-waves svg path {
             fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
-            stroke-dasharray: 4000;
-            /* Bind to CSS Variable (from work.html) */
-            stroke-dashoffset: var(--dash-offset);
+            stroke-dasharray: 4000; stroke-dashoffset: var(--dash-offset);
         }
-        
-        /* Line Opacity Logic */
-        /* 1. Default (Intro/Home/Works): Normal opacity */
-        a-waves svg path { stroke: rgba(255, 255, 255, 0.2); }
-        
-        /* 2. Light Mode Intro (Title/Quote): Blue lines, normal opacity */
-        #photos.photos-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.2); }
-        
-        /* 3. Grid Active (The actual photos part): Fainter lines */
-        /* Used to reduce noise when photos are displayed */
-        #photos.grid-active a-waves svg path { stroke: rgba(255, 255, 255, 0.05); }
-        #photos.grid-active.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.05); }
+        /* Mode-based Stroke Colors */
+        a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
+        #photos-wrapper.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.15); }
 
-        /* --- PHOTO CARD HOVER EFFECTS (SPOTLIGHT) --- */
-        
-        /* Wrapper handles Layout + Entry Animation. 
-           It must NOT clip the child if we want the child to zoom out of bounds. */
+        /* Photo Cards */
         .photo-card-wrapper {
+            opacity: 0; transform: translateY(50px); /* Initial State for Batch Reveal */
             will-change: transform, opacity;
-            position: relative;
-            /* No overflow: hidden here, so the child can zoom out */
         }
 
-        /* Inner Card handles Look + Hover Interaction */
         .photo-card-vertical {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            transform: scale(1); /* Default scale */
-            border: none;
-            width: 100%;
-            height: 100%;
-            position: relative;
-            z-index: 10;
+            transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+            transform: scale(1);
+            width: 100%; height: 100%; position: relative; z-index: 10;
         }
-
-        /* Hover Zoom Effect - Applied to Inner Card */
         .photo-card-vertical:hover {
-            transform: scale(1.1); /* Zoom the container */
-            z-index: 50; /* Bring to front */
-            box-shadow: 0 50px 100px rgba(0, 47, 167, 0.4);
-        }
-        
-        .gallery-title {
-            transform-origin: center center;
-            will-change: transform, opacity, filter, clip-path;
+            transform: scale(1.03); 
+            z-index: 50; 
+            box-shadow: 0 20px 40px rgba(0, 47, 167, 0.3);
         }
 
+        /* Nav & Layout */
         .nav-glass {
             background: rgba(150, 150, 150, 0.1); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             transition: width 0.3s ease, background 0.3s ease, color 0.2s ease;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-
         .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
-
         .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.5s ease; }
         .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
     </style>
@@ -465,13 +397,11 @@
                 </div>
 
                 <div class="relative z-10">
-                    <!-- CHANGED: Compact Title Area (h-[50vh] centered) -->
                     <div class="h-[50vh] flex flex-col justify-center items-center pointer-events-none">
                         <h2 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 mix-blend-difference">WORKS</h2>
                         <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
                     </div>
 
-                    <!-- App Sections -->
                     <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center px-6 md:px-24" :data-index="i">
                         <div class="hidden md:block w-1/2 h-full"></div>
                         <div class="w-full md:w-1/2 flex justify-center md:justify-end">
@@ -503,90 +433,85 @@
                 </div>
             </section>
 
-            <!-- PHOTOS SECTION -->
-            <section id="photos" class="relative z-30 overflow-hidden h-screen" :class="[photosActive ? 'photos-active' : '', gridActive ? 'grid-active' : '', activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
-                <div class="sticky top-0 h-screen w-full flex flex-col justify-start pt-24 overflow-hidden">
-                    <!-- Background Wave Effect -->
-                    <a-waves class="absolute inset-0 z-0 js-waves-container">
-                        <svg class="js-svg"></svg>
-                    </a-waves>
+            <!-- PHOTOS SECTION (REFACTORED) -->
+            <div id="photos-wrapper" :class="[activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
+                <!-- Background Waves (Fixed relative to wrapper) -->
+                <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                     <a-waves class="w-full h-full"></a-waves>
+                </div>
 
-                    <div class="relative z-10 px-6 md:px-12 max-w-[95vw] mx-auto w-full h-full flex flex-col items-center pointer-events-none">
-                        
-                        <!-- Phase 1 & 2: HUGE Title -->
-                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none z-20">
-                            <h2 class="gallery-title text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none origin-center opacity-0" style="transform: scaleY(3); filter: blur(10px);">
-                                GALLERY
-                            </h2>
-                        </div>
-
-                        <!-- Phase 3: Quote -->
-                        <div class="gallery-quote absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 text-center opacity-0 max-w-3xl px-6 w-full">
+                <!-- Intro Sequence (Pinned) -->
+                <section id="photos-intro" class="h-screen flex items-center justify-center relative z-10 sticky top-0 overflow-hidden">
+                    <div class="relative w-full h-full flex items-center justify-center pointer-events-none">
+                        <!-- Huge Title -->
+                        <h2 class="gallery-title absolute text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none opacity-0">
+                            GALLERY
+                        </h2>
+                        <!-- Quote -->
+                        <div class="gallery-quote absolute text-center opacity-0 max-w-3xl px-6 w-full transform translate-y-12">
                             <p class="font-serif italic text-3xl md:text-5xl leading-tight mb-2">
                                 "Code creates the logic. Photography captures the soul."
                             </p>
                         </div>
+                    </div>
+                </section>
 
-                        <!-- Phase 4: Vertical Masonry Grid -->
-                        <!-- CHANGED: Reduced gap from gap-12/gap-24 to gap-6/gap-8 for denser feel -->
-                        <div class="photos-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full translate-y-[150vh] opacity-0 relative z-10 pointer-events-auto pb-64">
+                <!-- Grid (Natural Scroll) -->
+                <section id="photos" class="relative z-20 pb-32 px-6 md:px-12 w-full max-w-[95vw] mx-auto min-h-screen">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
+                        <!-- Column 1 -->
+                        <div class="flex flex-col gap-6 md:gap-10">
+                            <div v-for="(photo, index) in photoColumns[0]" :key="'c1-'+index" class="photo-card-wrapper">
+                                <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover" loading="lazy" alt="Gallery Image">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
+                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column 2 -->
+                        <div class="flex flex-col gap-6 md:gap-10 md:mt-12">
+                            <div v-for="(photo, index) in photoColumns[1]" :key="'c2-'+index" class="photo-card-wrapper">
+                                <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover" loading="lazy" alt="Gallery Image">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
+                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column 3 -->
+                        <div class="flex flex-col gap-6 md:gap-10 md:mt-24">
+                            <div v-for="(photo, index) in photoColumns[2]" :key="'c3-'+index" class="photo-card-wrapper">
+                                <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
+                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover" loading="lazy" alt="Gallery Image">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
+                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
+                                    </div>
+                                </div>
+                            </div>
                             
-                            <!-- Col 1 -->
-                            <!-- CHANGED: Reduced vertical gap -->
-                            <div class="flex flex-col gap-6 md:gap-10 mt-0 photo-col">
-                                <div v-for="(photo, index) in photoColumns[0]" :key="index" class="photo-card-wrapper">
-                                    <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                        <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                            <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                            <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
-                                        </div>
+                            <!-- Enter Gallery Link -->
+                             <a href="#" class="photo-card-wrapper block">
+                                <div class="photo-card-vertical group relative w-full aspect-square bg-[#111] border border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue transition-colors duration-500 shadow-2xl">
+                                    <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
+                                    <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300 relative z-10">
+                                        <i data-lucide="arrow-right" class="w-8 h-8 text-white"></i>
                                     </div>
+                                    <h3 class="font-display text-2xl font-bold tracking-tighter relative z-10 text-white">VIEW ALL</h3>
+                                    <p class="font-mono text-xs text-gray-500 mt-2 group-hover:text-white/80 relative z-10">ENTER GALLERY</p>
                                 </div>
-                            </div>
-
-                            <!-- Col 2 -->
-                            <div class="flex flex-col gap-6 md:gap-10 md:mt-24 photo-col">
-                                <div v-for="(photo, index) in photoColumns[1]" :key="index" class="photo-card-wrapper">
-                                    <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                        <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                            <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                            <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Col 3 -->
-                            <div class="flex flex-col gap-6 md:gap-10 md:mt-48 photo-col">
-                                <div v-for="(photo, index) in photoColumns[2]" :key="index" class="photo-card-wrapper">
-                                    <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                        <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700" alt="Gallery Image">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                            <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                            <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- View Full Gallery Entry -->
-                                <a href="#" class="photo-card-wrapper block">
-                                    <div class="photo-card-vertical group relative w-full aspect-square bg-[#111] border border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue transition-colors duration-500 shadow-2xl">
-                                        <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
-                                        <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300 relative z-10">
-                                            <i data-lucide="arrow-right" class="w-8 h-8 text-white"></i>
-                                        </div>
-                                        <h3 class="font-display text-2xl font-bold tracking-tighter relative z-10 text-white">VIEW ALL</h3>
-                                        <p class="font-mono text-xs text-gray-500 mt-2 group-hover:text-white/80 relative z-10">ENTER GALLERY</p>
-                                    </div>
-                                </a>
-                            </div>
-
+                            </a>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
             <!-- Connect Section -->
             <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-12 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
@@ -635,7 +560,6 @@
     <script>
         const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
 
-        // ... (Noise and AWaves classes unchanged) ...
         class Noise {
             constructor(seed) {
                 this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
@@ -676,7 +600,7 @@
                 }
                 this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
                 this.lines = []; this.paths = []; this.noise = new Noise(Math.random());
-                this.amplitude = 0; 
+                this.amplitude = 1; /* Always active now */
                 this.setSize(); this.setLines(); this.bindEvents();
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
             }
@@ -724,7 +648,6 @@
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.classList.add('a__line'); path.classList.add('js-line');
                     path.style.strokeDasharray = `4000`; 
-                    // CHANGE: Use CSS variable for dash offset
                     path.style.strokeDashoffset = `var(--dash-offset, 4000)`; 
                     this.svg.appendChild(path); this.paths.push(path);
                 }
@@ -757,11 +680,7 @@
                     const points = lineObj.points; const lastIdx = points.length - 1;
                     let pStart = moved(points[lastIdx], false); let d = `M ${pStart.x} ${pStart.y}`;
                     for (let i = lastIdx; i >= 0; i--) { const p = moved(points[i], true); d += `L ${p.x} ${p.y}`; }
-                    if (paths[lIndex]) {
-                        paths[lIndex].setAttribute('d', d);
-                        // CHANGE: Remove manual dash offset calculation here, rely on CSS variable
-                        // The offset logic is handled by GSAP timeline animating --dash-offset on the container
-                    }
+                    if (paths[lIndex]) paths[lIndex].setAttribute('d', d);
                 });
             }
             tick(time) {
@@ -787,7 +706,6 @@
                 const isCapsuleOpen = ref(false);
                 const loader = ref(null);
                 const canvasContainer = ref(null);
-                const photosWrapper = ref(null);
                 const isBooting = ref(true);
                 
                 const navLeftColor = ref('text-white');
@@ -797,10 +715,6 @@
                 const navBtnLeft = ref(null);
                 const navCapsule = ref(null);
                 const navBtnRight = ref(null);
-
-                const photosActive = ref(false);
-                const gridActive = ref(false); // Added for line opacity control
-                let photosTimeline = null; 
                 
                 const systemLinks = [
                     { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
@@ -836,9 +750,7 @@
 
                 const photoColumns = computed(() => {
                     const cols = [[], [], []];
-                    photos.forEach((photo, i) => {
-                        cols[i % 3].push(photo);
-                    });
+                    photos.forEach((photo, i) => { cols[i % 3].push(photo); });
                     return cols;
                 });
 
@@ -883,7 +795,6 @@
                     const y = rect.top + rect.height / 2;
                     const elements = document.elementsFromPoint(x, y);
                     let bgLuminance = 0; 
-                    
                     for (let e of elements) {
                         if (e.tagName === 'NAV' || e.closest('nav') || e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) continue;
                         const style = window.getComputedStyle(e);
@@ -913,51 +824,46 @@
                     
                     window.lastScrollY = scrollTop;
 
-                    if (scrollTop < winHeight * 0.5) {
-                        activeSection.value = 'home';
-                    } else {
-                        const sections = ['home', 'profile', 'works', 'photos', 'connect'];
-                        for (const section of sections) {
-                            const el = document.getElementById(section);
-                            if (el) {
-                                const rect = el.getBoundingClientRect();
-                                if (rect.top <= winHeight * 0.5 && rect.bottom >= winHeight * 0.5) {
-                                    activeSection.value = section;
-                                }
+                    // Update Active Section
+                    const sections = ['home', 'profile', 'works', 'photos', 'connect'];
+                    let current = 'home';
+                    for (const section of sections) {
+                        const el = document.getElementById(section);
+                        if (el) {
+                            const rect = el.getBoundingClientRect();
+                            if (rect.top <= winHeight * 0.5 && rect.bottom >= winHeight * 0.5) {
+                                current = section;
                             }
                         }
                     }
+                    activeSection.value = current;
+
                     updateNavColors();
                     
+                    // Simple Scroll Anim logic (for Home/Intro)
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
                     const introText = document.querySelector('.intro-text');
                     const creativeBanner = document.getElementById('creative-banner');
-                    const tempUnderline = document.getElementById('temp-underline');
                     
-                    if (scrollTop < winHeight * 3.5) {
+                    if (scrollTop < winHeight * 2) {
                         if(magContainer && !isBooting.value) {
                             const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
                             magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
                             magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
                         }
                         if(heroText) {
-                            // CHANGED: Tuned progress calculation to complete animation faster
                             const moveProgress = Math.min(1, scrollTop / (winHeight * 1.2)); 
                             const targetY = -winHeight * 0.45 * moveProgress; 
                             const targetScale = 1 + (moveProgress * 0.3); 
                             heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
                             if(introText) {
-                                // CHANGED: Fade in significantly earlier (at 0.1 progress)
                                 if (moveProgress > 0.1) {
-                                    const textFade = (moveProgress - 0.1) / 0.4; // Fades in quickly between 0.1 and 0.5
+                                    const textFade = (moveProgress - 0.1) / 0.4; 
                                     introText.style.opacity = textFade;
                                 } else {
                                     introText.style.opacity = 0;
                                 }
-                            }
-                            if(tempUnderline) {
-                                tempUnderline.style.opacity = Math.max(0, 1 - moveProgress * 1.5);
                             }
                         }
                     }
@@ -965,7 +871,6 @@
                     if(creativeBanner) {
                         const bannerRect = document.getElementById('creative-banner').parentNode.getBoundingClientRect();
                         const triggerPoint = winHeight * 0.8; 
-                        
                         if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
                             const progress = 1 - (bannerRect.top / triggerPoint);
                             const scale = 0.5 + Math.max(0, progress) * 0.5; 
@@ -1107,9 +1012,6 @@
                 const finishBootSequence = () => {
                     isBooting.value = false;
                     gsap.ticker.remove(rotateBalls);
-                    if(loader.value) {
-                        gsap.to(loader.value, { opacity: 0, duration: 0.5, onComplete: () => { loader.value.style.display = 'none'; } });
-                    }
                     ballsRef.forEach(ball => {
                         gsap.to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.6, ease: "power4.inOut", delay: Math.random() * 0.1 });
                         ball.line.setAttribute('x1', ball.ori_x); ball.line.setAttribute('y1', ball.ori_y);
@@ -1119,6 +1021,7 @@
                     gsap.to(".hero-text-container", { opacity: 1, duration: 2, ease: "power4.out", delay: 1.0 });
                 };
 
+                // ThreeJS Logic (Optimized: Only setup once)
                 const createSquircleShape = (size) => {
                     const shape = new THREE.Shape();
                     const width = size; const height = size;
@@ -1280,12 +1183,12 @@
 
                 const initLenis = () => {
                     lenis = new Lenis({
-                        duration: 2.0, 
+                        duration: 1.5, 
                         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                         direction: 'vertical',
                         gestureDirection: 'vertical',
                         smooth: true,
-                        mouseMultiplier: 0.8,
+                        mouseMultiplier: 1,
                         smoothTouch: false,
                         touchMultiplier: 2,
                     });
@@ -1298,7 +1201,6 @@
                 };
 
                 onMounted(async () => {
-                    // CHANGED: Reduced from 2500 to 1500 for faster boot
                     setTimeout(() => { finishBootSequence(); }, 1500);
                     initMagneticLogo();
                     lucide.createIcons();
@@ -1312,123 +1214,33 @@
                     await nextTick();
 
                     const waves = document.querySelector('a-waves');
-                    if (waves) {
-                        waves.setSize();
-                        waves.setLines();
-                    }
+                    if (waves) { waves.setSize(); waves.setLines(); }
 
-                    const getOrderedCards = () => {
-                        const cols = document.querySelectorAll('.photo-col');
-                        const ordered = [];
-                        if (cols.length === 0) return [];
-                        let maxLen = 0;
-                        cols.forEach(col => {
-                            maxLen = Math.max(maxLen, col.children.length);
-                        });
-                        for (let i = 0; i < maxLen; i++) {
-                            cols.forEach(col => {
-                                if (col.children[i]) ordered.push(col.children[i]);
-                            });
-                        }
-                        return ordered;
-                    };
-
-                    const sortedPhotoCards = getOrderedCards();
-
-                    photosTimeline = gsap.timeline({
+                    /* --- OPTIMIZED PHOTO SCROLLING --- */
+                    // 1. Pinned Intro Animation (Timeline)
+                    const introTl = gsap.timeline({
                         scrollTrigger: {
-                            id: "photos-trigger",
-                            trigger: "#photos",
+                            trigger: "#photos-intro",
                             start: "top top",
-                            end: "+=5000", 
+                            end: "+=2000",
                             pin: true,
-                            scrub: 1.5, // Slightly increased scrub for "weightier" feel
+                            scrub: true,
+                            id: "photos-intro-trigger"
                         }
                     });
 
-                    // 1. Vines/Lines
-                    photosTimeline.to("a-waves", { 
-                        "--dash-offset": 0, 
-                        duration: 15, 
-                        ease: "power2.inOut",
-                        onStart: () => {
-                            if(waves) gsap.to(waves, { amplitude: 1, duration: 2 });
-                        }
+                    introTl
+                        .to("a-waves", { "--dash-offset": 0, duration: 2, ease: "none" })
+                        .to(".gallery-title", { opacity: 1, scale: 1, duration: 1, ease: "power2.out" }, "<")
+                        .to(".gallery-title", { opacity: 0, scale: 1.5, filter: "blur(10px)", duration: 1 }, "+=0.5")
+                        .to(".gallery-quote", { opacity: 1, y: 0, duration: 1 }, "-=0.5")
+                        .to(".gallery-quote", { opacity: 0, y: -50, duration: 1 }, "+=1");
+
+                    // 2. Native Scroll Grid Reveal (Batch)
+                    ScrollTrigger.batch(".photo-card-wrapper", {
+                        onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: "power3.out" }),
+                        start: "top 85%"
                     });
-
-                    // 2. Reveal Title
-                    photosTimeline.addLabel("reveal", "-=12");
-
-                    photosTimeline.call(() => {
-                        photosActive.value = true;
-                    }, null, "reveal");
-
-                    photosTimeline.call(() => {
-                         if (photosTimeline.scrollTrigger.direction < 0) {
-                             photosActive.value = false;
-                         }
-                    }, null, "reveal-=0.1"); 
-
-                    photosTimeline.to(".gallery-title", { 
-                        scaleY: 1, 
-                        opacity: 0.12, 
-                        filter: "blur(0px)",
-                        duration: 10, 
-                        ease: "power3.out"
-                    }, "reveal");
-
-                    // 3. Quote Appear
-                    photosTimeline.to(".gallery-quote", { opacity: 1, duration: 10 }, "+=2");
-
-                    // 4. Transition to Grid
-                    photosTimeline.to(".gallery-quote", { opacity: 0, y: -50, duration: 10 }, "+=5");
-                    photosTimeline.to(".gallery-title", { opacity: 0, y: -100, duration: 10 }, "<");
-                    
-                    // 5. Grid Entry
-                    photosTimeline.addLabel("gridEntry");
-                    
-                    photosTimeline.call(() => { gridActive.value = true; }, null, "gridEntry");
-                    photosTimeline.call(() => { 
-                        if(photosTimeline.scrollTrigger.direction < 0) gridActive.value = false; 
-                    }, null, "gridEntry-=0.1");
-
-                    photosTimeline.to(".photos-grid", { 
-                        y: 0, 
-                        opacity: 1, 
-                        duration: 10,
-                        ease: "power3.out" 
-                    }, "gridEntry");
-
-                    // 6. Staggered Card Entries
-                    if (sortedPhotoCards.length > 0) {
-                        sortedPhotoCards.forEach((wrapper, index) => {
-                            const offset = index * 2; 
-                            photosTimeline.fromTo(wrapper, 
-                                { opacity: 0, y: 100 },
-                                { opacity: 1, y: 0, duration: 5, ease: "power3.out" },
-                                `>-${9 - offset}`
-                            );
-                        });
-                    }
-
-                    // 7. Grid Scroll - UPDATED SPEED CURVE
-                    // Changed y from -50% to -25% and duration to 45 for a smoother, slower drift
-                    photosTimeline.to(".photos-grid", {
-                        y: "-50%", 
-                        duration: 35, 
-                        ease: "none" // Linear ensures consistent speed during the main viewing phase
-                    });
-                    
-                    // 8. Exit
-                    photosTimeline.to(".photos-grid", {
-                        y: "-150%", // Adjusted exit travel
-                        opacity: 0,
-                        filter: "blur(20px)",
-                        scale: 0.8, // Less aggressive scale down
-                        duration: 10,
-                        ease: "power4.in"
-                    });
-
                 });
                 
                 onUnmounted(() => {
@@ -1439,9 +1251,8 @@
                 });
 
                 return {
-                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photosWrapper,
-                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight,
-                    photosActive, photoColumns, gridActive
+                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsulePerimeter, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photoColumns,
+                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight
                 };
             }
         }).mount('#app');
