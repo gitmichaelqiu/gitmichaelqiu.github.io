@@ -31,6 +31,7 @@
                         'float': 'float 10s ease-in-out infinite',
                         'twinkle': 'twinkle 4s ease-in-out infinite',
                         'bounce-subtle': 'bounceSubtle 2s infinite',
+                        'spin-point': 'spinPoint 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
                     },
                     keyframes: {
                         fadeIn: {
@@ -48,6 +49,11 @@
                         bounceSubtle: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-5px)' },
+                        },
+                        spinPoint: {
+                            '0%': { transform: 'rotate(-720deg) scale(0) translate(-50px, -50px)', opacity: '0' },
+                            '60%': { transform: 'rotate(20deg) scale(1.1) translate(0, 0)', opacity: '1' },
+                            '100%': { transform: 'rotate(12deg) scale(1) translate(0, 0)', opacity: '1' },
                         }
                     }
                 }
@@ -103,20 +109,29 @@
 
         /* Glass Cards */
         .glass-card { 
-            background: rgba(255, 255, 255, 0.6); 
+            background: rgba(255, 255, 255, 0.7); 
             backdrop-filter: blur(20px); 
-            border: 1px solid rgba(0, 0, 0, 0.1); 
+            border: 1px solid rgba(0, 0, 0, 0.05); 
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
             will-change: transform, box-shadow;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
-        html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
+        html.dark .glass-card { 
+            background: rgba(20, 20, 20, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: none;
+        }
         
         .glass-card:hover { 
             border-color: var(--klein-blue); 
-            background: rgba(0, 47, 167, 0.05); 
+            background: rgba(255, 255, 255, 0.9);
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.15);
             z-index: 20;
+        }
+        html.dark .glass-card:hover {
+            background: rgba(0, 47, 167, 0.05);
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
         }
 
         .card-corner-glow {
@@ -130,7 +145,7 @@
         .aurora-container {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1;
+            pointer-events: none; z-index: 0;
             overflow: hidden;
         }
         .aurora-blob {
@@ -141,22 +156,29 @@
             mix-blend-mode: screen;
             animation: float 20s infinite ease-in-out;
         }
+        /* Light Mode Aurora - Softer */
+        html:not(.dark) .aurora-blob {
+            mix-blend-mode: multiply;
+            opacity: 0.08;
+            filter: blur(100px);
+        }
+        
         .blob-1 {
             top: -20%; right: -10%;
             width: 70vw; height: 70vw;
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.4), transparent 70%);
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.6), transparent 70%);
             animation-delay: 0s;
         }
         .blob-2 {
             bottom: -20%; left: -10%;
             width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(32, 190, 255, 0.25), transparent 70%);
+            background: radial-gradient(circle, rgba(32, 190, 255, 0.4), transparent 70%);
             animation-delay: -5s;
         }
         .blob-3 {
             top: 40%; right: 20%;
             width: 40vw; height: 40vw;
-            background: radial-gradient(circle, rgba(100, 0, 255, 0.2), transparent 70%);
+            background: radial-gradient(circle, rgba(100, 0, 255, 0.3), transparent 70%);
             animation-delay: -10s;
         }
 
@@ -175,12 +197,14 @@
             animation: twinkle var(--duration) ease-in-out infinite;
             animation-delay: var(--delay);
         }
+        html:not(.dark) .star { background: #002FA7; opacity: 0.3; } /* Blue stars in light mode */
 
         .ambient-glow {
             position: absolute; width: 40vmax; height: 40vmax;
             background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
             filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
         }
+        html:not(.dark) .ambient-glow { opacity: 0.4; mix-blend-mode: multiply; }
 
         .card-content { position: relative; z-index: 10; }
 
@@ -191,11 +215,16 @@
 
         /* Navigation */
         .nav-glass {
-            background: rgba(20, 20, 20, 0.6); 
+            background: rgba(20, 20, 20, 0.7); 
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        html:not(.dark) .nav-glass {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         
         .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -263,7 +292,7 @@
              :class="{ 'opacity-0': isBooting, 'opacity-100': !isBooting }">
             
             <!-- Left: Sidebar Button -->
-            <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform text-white">
+            <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform text-gray-800 dark:text-white">
                 <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
                     <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
                     <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
@@ -272,23 +301,23 @@
             
             <!-- Center: Floating Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto top-6" ref="navCapsule">
-                <div class="nav-glass h-12 rounded-full flex items-center p-1 gap-1 border border-white/20">
+                <div class="nav-glass h-12 rounded-full flex items-center p-1 gap-1 border border-black/5 dark:border-white/20">
                     <!-- Icon + Title -->
-                    <a href="#hero" class="flex items-center gap-3 px-4 py-2 rounded-full hover:bg-white/10 transition-colors">
+                    <a href="#hero" class="flex items-center gap-3 px-4 py-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
                         <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" 
                              class="w-5 h-5 rounded-sm shadow-sm" alt="Icon">
-                        <span class="font-display font-bold text-xs tracking-wide text-white hidden sm:block">DesktopRenamer</span>
+                        <span class="font-display font-bold text-xs tracking-wide text-gray-900 dark:text-white hidden sm:block">DesktopRenamer</span>
                     </a>
                     
                     <!-- Links (Desktop) -->
-                    <div class="hidden md:flex items-center gap-1 border-l border-white/10 px-2 h-6">
-                        <a href="#hero" class="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1">HOME</a>
-                        <a href="#features" class="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1">FEATURES</a>
-                        <a href="#demo" class="text-[10px] font-bold text-white/70 hover:text-white transition-colors px-3 py-1">DEMO</a>
+                    <div class="hidden md:flex items-center gap-1 border-l border-black/10 dark:border-white/10 px-2 h-6">
+                        <a href="#hero" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1">HOME</a>
+                        <a href="#features" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1">FEATURES</a>
+                        <a href="#demo" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1">DEMO</a>
                     </div>
 
                     <!-- Download Button (Capsule inside capsule) -->
-                    <a href="#download" class="hidden md:flex h-10 px-5 items-center gap-2 rounded-full bg-white text-black font-bold text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg ml-1">
+                    <a href="#download" class="hidden md:flex h-9 px-5 items-center gap-2 rounded-full bg-black dark:bg-white text-white dark:text-black font-bold text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg ml-1">
                         <span>DOWNLOAD</span>
                         <i data-lucide="arrow-down" class="w-3 h-3"></i>
                     </a>
@@ -297,7 +326,7 @@
 
             <!-- Right: Theme Only -->
             <div class="flex items-center gap-3 pointer-events-auto">
-                <button @click="cycleTheme" ref="navBtnRight" class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform text-white">
+                <button @click="cycleTheme" ref="navBtnRight" class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform text-gray-800 dark:text-white">
                     <span v-show="themeMode === 'light'"><i data-lucide="sun" class="w-4 h-4"></i></span>
                     <span v-show="themeMode === 'dark'"><i data-lucide="moon" class="w-4 h-4"></i></span>
                     <span v-show="themeMode === 'auto'"><i data-lucide="monitor" class="w-4 h-4"></i></span>
@@ -339,7 +368,7 @@
         <main class="transition-all duration-500" :class="{ 'scale-95 blur-sm grayscale': isSidebarOpen }">
             
             <!-- Hero Section: Updated Asymmetric Layout -->
-            <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-black">
+            <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-white dark:bg-black transition-colors duration-500">
                 <!-- Stars -->
                 <div class="star-field" ref="starField"></div>
 
@@ -360,26 +389,30 @@
                 <!-- Text: Positioned to the Left -->
                 <div class="relative z-20 w-full md:w-[55%] pl-6 md:pl-20 pointer-events-none flex flex-col justify-center h-full">
                     <div class="mix-blend-difference">
-                        <h1 class="hero-title text-[10vw] md:text-[7vw] font-black tracking-tighter text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
+                        <h1 class="hero-title text-[10vw] md:text-[7vw] font-black tracking-tighter text-black dark:text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
                             <span>RENAME</span>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-500">EXPERIENCES</span>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-500">EXPERIENCES</span>
                         </h1>
                         <div class="hero-subtitle mt-8 pl-2 border-l-2 border-klein-blue opacity-0 translate-y-10">
-                            <p class="font-sans text-lg md:text-xl text-gray-300 font-light tracking-wide pl-4">
+                            <p class="font-sans text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light tracking-wide pl-4">
                                 Custom Names for Mission Control Spaces
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="scroll-hint absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-xs text-white/40 animate-pulse z-20">
+                <div class="scroll-hint absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-xs text-black/40 dark:text-white/40 animate-pulse z-20">
                     <span>SCROLL TO EXPLORE</span>
                     <i data-lucide="arrow-down" class="w-4 h-4"></i>
                 </div>
             </section>
 
             <!-- Features Section -->
-            <section id="features" class="w-full py-24 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-20 overflow-hidden">
+            <section id="features" class="w-full py-24 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-20 overflow-hidden transition-colors duration-500">
+                <!-- Light mode background blobs -->
+                <div class="aurora-container opacity-30 dark:opacity-0 transition-opacity">
+                    <div class="aurora-blob blob-2" style="mix-blend-mode: multiply;"></div>
+                </div>
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
 
@@ -454,7 +487,7 @@
                     </div>
                     
                     <!-- Mission Control Bar -->
-                    <div id="mc-top-bar" class="absolute top-0 w-full h-32 z-[60] transform -translate-y-full flex items-center justify-center gap-6 px-10 border-b border-white/5 bg-[#111]/80 backdrop-blur-xl">
+                    <div id="mc-top-bar" class="absolute top-0 w-full h-28 z-[60] transform -translate-y-full flex items-center justify-center gap-6 px-10 border-b border-white/5 bg-[#111]/80 backdrop-blur-xl">
                          <!-- Space 1 (Main) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
                              <div class="h-14 aspect-[16/10] rounded-md border border-white/20 relative mc-thumbnail bg-[#1a1a2e]"></div>
@@ -495,7 +528,7 @@
                                         <span class="text-[10px] font-bold text-white bg-white/20 border border-white/20 px-2 py-0.5 rounded shadow-sm relative z-20">Main Space</span>
                                         
                                         <!-- CUTE ARROW (Shifted left and pointing from outside up to down) -->
-                                        <div class="absolute top-10 right-[120%] w-24 pointer-events-none z-30 animate-bounce-subtle transform rotate-12">
+                                        <div class="absolute top-10 right-[120%] w-24 pointer-events-none z-30 animate-spin-point">
                                             <svg viewBox="0 0 100 100" class="w-full h-full text-white drop-shadow-lg" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
                                                 <!-- Path curving from bottom-left up to top-right -->
                                                 <path d="M10,80 Q40,40 90,10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -603,7 +636,11 @@
             </section>
 
             <!-- Download / Connect Section (Polished) -->
-            <section id="download" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] relative z-30 flex flex-col items-center text-center overflow-hidden">
+            <section id="download" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] relative z-30 flex flex-col items-center text-center overflow-hidden transition-colors duration-500">
+                <!-- Light mode background blobs -->
+                <div class="aurora-container opacity-30 dark:opacity-0 transition-opacity">
+                    <div class="aurora-blob blob-3" style="mix-blend-mode: multiply; left: 20%;"></div>
+                </div>
                 <!-- Background Glow -->
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-klein-blue/10 rounded-full blur-[100px] pointer-events-none"></div>
 
@@ -623,26 +660,26 @@
                     <p class="mb-16 font-mono text-xs text-gray-500">Requires macOS 14.0 or later (Apple Silicon)</p>
 
                     <!-- Gatekeeper Guide -->
-                    <div class="w-full max-w-lg mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md text-left">
-                        <div class="flex items-center gap-3 mb-4 text-yellow-500">
+                    <div class="w-full max-w-lg mx-auto bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl p-6 backdrop-blur-md text-left">
+                        <div class="flex items-center gap-3 mb-4 text-yellow-600 dark:text-yellow-500">
                             <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                             <span class="font-bold text-sm">"Cannot verify developer"?</span>
                         </div>
-                        <p class="text-xs text-gray-400 mb-4 leading-relaxed">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
                             Because this app is not signed with an expensive Apple Developer ID, macOS might block the first launch. To open it:
                         </p>
-                        <div class="bg-black/40 rounded-lg p-3 font-mono text-[10px] text-gray-300 flex flex-col gap-2">
+                        <div class="bg-black/5 dark:bg-black/40 rounded-lg p-3 font-mono text-[10px] text-gray-600 dark:text-gray-300 flex flex-col gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="w-4 h-4 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">1</span>
+                                <span class="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-[8px] text-black dark:text-white">1</span>
                                 <span>System Settings → Privacy & Security</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="w-4 h-4 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">2</span>
+                                <span class="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-[8px] text-black dark:text-white">2</span>
                                 <span>Scroll to bottom</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="w-4 h-4 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">3</span>
-                                <span>Click <span class="text-white font-bold">Open Anyway</span> for DesktopRenamer</span>
+                                <span class="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-[8px] text-black dark:text-white">3</span>
+                                <span>Click <span class="text-black dark:text-white font-bold">Open Anyway</span> for DesktopRenamer</span>
                             </div>
                         </div>
                     </div>
@@ -994,10 +1031,11 @@
                     .fromTo("#label-window-content", { scale: 0.8, y: 30 }, { scale: 1, y: 0, duration: 1, ease: "elastic.out(1, 0.6)" }, "<")
                     .to("#caption-3", { opacity: 1, y: 0, duration: 1 }, "<")
                     
-                    .to("nav", { y: '0%', duration: 0.5, ease: "power2.out" }, "+=0.1")
-                    
                     // Extend end state for longer pause
-                    .to({}, { duration: 5 }); 
+                    .to({}, { duration: 5 })
+                    
+                    // Restore Nav at the very end
+                    .to("nav", { y: '0%', duration: 0.5, ease: "power2.out" }); 
                 };
 
                 onMounted(() => {
