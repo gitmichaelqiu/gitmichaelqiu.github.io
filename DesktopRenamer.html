@@ -16,16 +16,12 @@
                         'klein-blue': '#002FA7',
                         'bg-dark': '#050505',
                         'bg-light': '#F2F2F7', 
-                        'deep-navy': '#020412',
                         'glass': 'rgba(20, 20, 20, 0.6)',
                     },
                     fontFamily: {
                         sans: ['SF Pro Display', 'Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                    }
                 }
             }
         }
@@ -87,34 +83,27 @@
         .mac-screen {
             position: relative;
             background: #000;
-            border-radius: 16px 16px 0 0;
+            border-radius: 12px 12px 0 0;
             border: 1px solid #333;
             border-bottom: none;
             overflow: hidden;
             transform-origin: center top;
             box-shadow: 0 0 0 2px #111, 0 50px 100px -20px rgba(0,0,0,0.7);
         }
-        .mac-notch {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 160px; height: 32px;
-            background: #000;
-            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
-            z-index: 60;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow: hidden;
-        }
-        .mac-notch.expanded {
-            width: 320px; height: 48px;
-            border-radius: 24px;
-            top: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
         
-        .wallpaper-layer {
-            position: absolute; inset: 0; background-size: cover; background-position: center;
-            transition: opacity 0.8s ease; z-index: 1;
+        /* Sliding Track */
+        .desktop-track {
+            display: flex;
+            width: 300%; /* 3 screens wide */
+            height: 100%;
+            will-change: transform;
+        }
+        .desktop-slide {
+            width: 33.333%;
+            height: 100%;
+            position: relative;
+            background-size: cover;
+            background-position: center;
         }
 
         /* Floating Label Window */
@@ -133,7 +122,6 @@
             white-space: nowrap;
         }
         
-        /* Typing Cursor */
         .typing-cursor {
             display: inline-block; width: 2px; height: 1em; background: currentColor;
             margin-left: 2px; animation: blink 1s step-end infinite;
@@ -155,12 +143,12 @@
                 </a>
                 <div class="w-px h-5 bg-white/10 mx-1"></div>
                 <div class="flex items-center gap-3 px-3">
-                    <div class="w-5 h-5 bg-gradient-to-br from-klein-blue to-blue-600 rounded text-[10px] font-bold flex items-center justify-center shadow-lg shadow-blue-500/20">DR</div>
+                    <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-6 h-6 rounded-md shadow-lg">
                     <span class="font-bold text-sm tracking-tight hidden sm:block">DesktopRenamer</span>
                 </div>
                 <div class="w-px h-5 bg-white/10 mx-1 hidden sm:block"></div>
                 <div class="hidden sm:flex items-center gap-1">
-                    <a href="#demo" class="px-4 py-2 text-xs font-medium text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-colors">Demo</a>
+                    <a href="#features" class="px-4 py-2 text-xs font-medium text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-colors">Features</a>
                     <a href="#install" class="px-4 py-2 text-xs font-medium text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-colors">Install</a>
                 </div>
                 <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" class="ml-1 px-5 py-2 bg-white text-black text-xs font-bold rounded-full hover:scale-105 transition-transform flex items-center gap-2">
@@ -186,24 +174,13 @@
         <!-- THE SCROLL DEMO RIG -->
         <section id="demo" class="relative h-[500vh]" ref="demoSection">
             <div class="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-bg-dark">
+                
                 <!-- Mac Screen Container -->
                 <div class="mac-screen-container w-full max-w-[90%] md:max-w-[80%] aspect-[16/10] relative z-20" ref="macScreen">
                     <div class="mac-screen w-full h-full">
-                        <!-- Dynamic Wallpapers -->
-                        <div class="wallpaper-layer opacity-100" style="background-image: url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2940&auto=format&fit=crop')"></div> <!-- Space 1: Coding -->
-                        <div class="wallpaper-layer opacity-0" ref="bg2" style="background-image: url('https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=2940&auto=format&fit=crop')"></div> <!-- Space 2: Creative -->
-                        <div class="wallpaper-layer opacity-0" ref="bg3" style="background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2940&auto=format&fit=crop')"></div> <!-- Space 3: Nature -->
-
-                        <!-- The Notch -->
-                        <div class="mac-notch" :class="{ 'expanded': notchExpanded }">
-                            <div class="flex items-center gap-2 transition-opacity duration-300" :class="notchExpanded ? 'opacity-100' : 'opacity-0'">
-                                <i :data-lucide="notchIcon" class="w-4 h-4 text-klein-blue"></i>
-                                <span class="font-medium text-sm text-white">{{ notchText }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Menubar -->
-                        <div class="absolute top-0 left-0 w-full h-8 flex items-center justify-between px-5 z-50 text-xs font-medium text-white/90 bg-gradient-to-b from-black/60 to-transparent">
+                        
+                        <!-- Menubar (Always on top) -->
+                        <div class="absolute top-0 left-0 w-full h-8 flex items-center justify-between px-5 z-50 text-xs font-medium text-white/90 bg-gradient-to-b from-black/40 to-transparent backdrop-blur-[2px]">
                             <div class="flex items-center gap-4">
                                 <i data-lucide="apple" class="w-3.5 h-3.5 fill-current"></i>
                                 <span class="font-bold">DesktopRenamer</span>
@@ -223,48 +200,98 @@
                             </div>
                         </div>
 
-                        <!-- Space Label Window (Mission Control Style) -->
-                        <div class="space-label-window" ref="labelWindow">
-                            {{ demoText }}
-                        </div>
-
-                        <!-- Final Download Overlay -->
-                        <div class="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black/80 backdrop-blur-xl opacity-0" ref="downloadOverlay">
-                            <div class="scale-0" ref="downloadContent">
-                                <div class="w-24 h-24 bg-white rounded-[2rem] mx-auto mb-8 flex items-center justify-center shadow-2xl shadow-klein-blue/50">
-                                    <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-20 h-20 object-contain">
-                                </div>
-                                <h2 class="text-4xl md:text-5xl font-bold mb-2 text-center">DesktopRenamer</h2>
-                                <p class="text-gray-400 text-center mb-8 font-mono">v1.5.2 • macOS Ventura+</p>
-                                
-                                <div class="flex flex-col gap-4 w-full max-w-sm mx-auto">
-                                    <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" class="flex items-center justify-center gap-3 px-8 py-4 bg-white text-black font-bold rounded-xl hover:scale-105 transition-transform hover:shadow-lg hover:shadow-white/20">
-                                        <i data-lucide="download" class="w-5 h-5"></i>
-                                        <span>Download for macOS</span>
-                                    </a>
-                                    
-                                    <div class="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex gap-3 text-left">
-                                        <i data-lucide="shield-alert" class="w-5 h-5 text-yellow-500 flex-shrink-0"></i>
-                                        <div class="text-xs text-yellow-200/70">
-                                            <strong>Gatekeeper Note:</strong> Go to System Settings > Privacy & Security to open after downloading.
-                                        </div>
-                                    </div>
-
-                                    <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="flex items-center justify-center gap-2 py-3 text-gray-400 hover:text-white transition-colors text-sm group">
-                                        <i data-lucide="github" class="w-4 h-4"></i>
-                                        <span>Source Code available.</span>
-                                        <span class="text-klein-blue group-hover:underline">Please leave a star! ★</span>
-                                    </a>
+                        <!-- Sliding Track -->
+                        <div class="desktop-track" ref="track">
+                            <!-- Space 1: Abstract Dark -->
+                            <div class="desktop-slide" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2864&auto=format&fit=crop')"></div>
+                            
+                            <!-- Space 2: System Color Gradient -->
+                            <div class="desktop-slide" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2940&auto=format&fit=crop')"></div>
+                            
+                            <!-- Space 3: Foggy Landscape -->
+                            <div class="desktop-slide" style="background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2940&auto=format&fit=crop')">
+                                <!-- Label Window inside the last slide, effectively -->
+                                <div class="space-label-window" ref="labelWindow">
+                                    {{ demoText }}
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 
                 <!-- Scroll Hint -->
                 <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-center opacity-0" ref="scrollHint">
-                    <p class="text-xs font-mono text-gray-500 mb-2">SCROLL TO EXPLORE</p>
+                    <p class="text-xs font-mono text-gray-500 mb-2">SCROLL TO SWITCH SPACES</p>
                     <i data-lucide="chevrons-down" class="w-5 h-5 text-gray-500 animate-bounce mx-auto"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section id="features" class="py-32 px-6 relative z-10 bg-black/50 backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-end justify-between mb-16 border-b border-white/10 pb-8">
+                    <h2 class="text-4xl font-display font-bold">Capabilities</h2>
+                    <span class="font-mono text-xs text-klein-blue">V1.5.2 SYSTEM CORE</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Feature Cards (same as before) -->
+                    <div class="glass-panel p-8 rounded-3xl relative group overflow-hidden min-h-[300px] flex flex-col justify-between">
+                        <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-6 bg-white/5">
+                            <i data-lucide="type" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Native Renaming</h3>
+                        <p class="text-gray-400">Seamlessly integrate with the macOS menu bar. Rename any desktop instantly.</p>
+                    </div>
+                    <div class="glass-panel p-8 rounded-3xl relative group overflow-hidden min-h-[300px] flex flex-col justify-between">
+                        <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-6 bg-white/5">
+                            <i data-lucide="layers" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Mission Control</h3>
+                        <p class="text-gray-400">Your custom labels float elegantly above your spaces in Mission Control view.</p>
+                    </div>
+                    <div class="glass-panel p-8 rounded-3xl relative group overflow-hidden min-h-[300px] flex flex-col justify-between border-l-4 border-l-klein-blue">
+                        <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-6 bg-white/5">
+                            <i data-lucide="code" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">SpaceAPI</h3>
+                        <p class="text-gray-400">Built for power users. Query current space IDs and names via HTTP.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section (Separate) -->
+        <section id="install" class="py-32 px-6 relative z-10 bg-black border-t border-white/10">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="inline-block p-4 rounded-[2rem] bg-white/5 border border-white/10 mb-8">
+                    <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-24 h-24 object-contain">
+                </div>
+                <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter">DESKTOP RENAMER</h2>
+                <p class="text-xl text-gray-400 mb-12 font-light">Version 1.5.2 • macOS Ventura+</p>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-12">
+                    <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" class="px-8 py-4 bg-white text-black font-bold text-lg rounded-full hover:scale-105 transition-transform flex items-center gap-3 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]">
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                        <span>Download .DMG</span>
+                    </a>
+                    <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="px-8 py-4 glass-panel border border-white/20 text-white font-bold text-lg rounded-full hover:bg-white/10 transition-all flex items-center gap-3">
+                        <i data-lucide="github" class="w-5 h-5"></i>
+                        <span>Source Code</span>
+                    </a>
+                </div>
+
+                <div class="max-w-lg mx-auto p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex gap-3 text-left items-start">
+                    <i data-lucide="shield-alert" class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5"></i>
+                    <div class="text-sm text-yellow-200/70">
+                        <strong>Gatekeeper Notice:</strong> The app is open-source but unsigned. If it won't open, go to <span class="text-white font-mono bg-white/10 px-1 rounded">System Settings > Privacy & Security</span> to allow it.
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-sm text-gray-500 font-mono animate-pulse">
+                    Please leave a star on GitHub! ★
                 </div>
             </div>
         </section>
@@ -288,18 +315,12 @@
                 const demoText = ref('Desktop 1');
                 const isTyping = ref(true);
                 const timeString = ref('12:00');
-                const notchExpanded = ref(false);
-                const notchText = ref('');
-                const notchIcon = ref('info');
                 
                 // Refs for GSAP
                 const demoSection = ref(null);
                 const macScreen = ref(null);
-                const bg2 = ref(null);
-                const bg3 = ref(null);
+                const track = ref(null);
                 const labelWindow = ref(null);
-                const downloadOverlay = ref(null);
-                const downloadContent = ref(null);
                 const scrollHint = ref(null);
 
                 // Three.js
@@ -311,21 +332,24 @@
                     timeString.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 };
 
-                // Perfect Squircle Shape (Superellipse approximation)
                 const createSquircleShape = (size) => {
                     const shape = new THREE.Shape();
-                    const half = size / 2;
-                    const radius = size * 0.22; // Apple-like curvature
-                    
-                    shape.moveTo(-half, half - radius);
-                    shape.absarc(-half + radius, half - radius, radius, Math.PI, Math.PI * 0.5, true);
-                    shape.lineTo(half - radius, half);
-                    shape.absarc(half - radius, half - radius, radius, Math.PI * 0.5, 0, true);
-                    shape.lineTo(half, -half + radius);
-                    shape.absarc(half - radius, -half + radius, radius, 0, Math.PI * 1.5, true);
-                    shape.lineTo(-half + radius, -half);
-                    shape.absarc(-half + radius, -half + radius, radius, Math.PI * 1.5, Math.PI, true);
-                    
+                    const width = size; 
+                    const height = size;
+                    const radius = size * 0.225; // Adjusted radius for Apple-like look
+                    const x = -width / 2; 
+                    const y = -height / 2;
+
+                    shape.moveTo(x, y + radius);
+                    shape.lineTo(x, y + height - radius);
+                    shape.quadraticCurveTo(x, y + height, x + radius, y + height);
+                    shape.lineTo(x + width - radius, y + height);
+                    shape.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+                    shape.lineTo(x + width, y + radius);
+                    shape.quadraticCurveTo(x + width, y, x + width - radius, y);
+                    shape.lineTo(x + radius, y);
+                    shape.quadraticCurveTo(x, y, x, y + radius);
+
                     return shape;
                 };
 
@@ -345,21 +369,21 @@
                     
                     iconContainer.value.appendChild(renderer.domElement);
 
-                    // Lighting
-                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                    // Lights
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
                     scene.add(ambientLight);
                     
-                    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+                    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
                     dirLight.position.set(5, 5, 10);
                     scene.add(dirLight);
                     
-                    const blueLight = new THREE.PointLight(0x002FA7, 2, 20);
+                    const blueLight = new THREE.PointLight(0x002FA7, 1.5, 20);
                     blueLight.position.set(-5, -5, 5);
                     scene.add(blueLight);
 
                     // Mesh
                     const size = 4;
-                    const extrudeSettings = { depth: 0.8, bevelEnabled: true, bevelSegments: 8, steps: 1, bevelSize: 0.1, bevelThickness: 0.1 };
+                    const extrudeSettings = { depth: 0.5, bevelEnabled: true, bevelSegments: 10, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
                     const shape = createSquircleShape(size);
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
                     geometry.center();
@@ -367,11 +391,13 @@
                     const texLoader = new THREE.TextureLoader();
                     const imgUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png';
                     
-                    const matFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.1 });
-                    const matSide = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.2, metalness: 0.5 });
+                    const matFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+                    const matSide = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.4, metalness: 0.6 });
 
                     texLoader.load(imgUrl, (tex) => {
                         tex.encoding = THREE.sRGBEncoding;
+                        tex.center.set(0.5, 0.5);
+                        tex.rotation = 0; // Ensure no rotation
                         matFront.map = tex;
                         matFront.needsUpdate = true;
                     });
@@ -425,56 +451,36 @@
                             trigger: demoSection.value,
                             start: "top top",
                             end: "bottom bottom",
-                            scrub: 1, // Smooth scrubbing
+                            scrub: 1, 
                             pin: true,
                         }
                     });
 
-                    // 1. Initial State: Small window
+                    // 1. Initial State: Small window -> Full Width
                     tl.set(macScreen.value, { width: '70%' });
-
-                    // 2. Expand Screen & Stop Typing
-                    tl.to(macScreen.value, { width: '100%', duration: 2, ease: "power2.inOut", onComplete: () => { isTyping.value = false; } });
+                    tl.to(macScreen.value, { width: '100%', duration: 1.5, ease: "power2.inOut", onComplete: () => { isTyping.value = false; } });
                     
-                    // 3. Space 1 -> 2
+                    // 2. Slide to Screen 2
+                    tl.to({}, { duration: 0.2 }); // pause
+                    tl.to(track.value, { x: '-33.333%', duration: 1.5, ease: "power3.inOut" });
+                    tl.call(() => { demoText.value = "Creative"; });
+
+                    // 3. Slide to Screen 3
                     tl.to({}, { duration: 0.5 }); // pause
-                    tl.to(bg2.value, { opacity: 1, duration: 1 });
-                    tl.call(() => { 
-                        demoText.value = "Creative"; 
-                        notchText.value = "Space Renamed"; notchIcon.value = "edit-3"; notchExpanded.value = true;
-                        setTimeout(() => notchExpanded.value = false, 1500);
-                        lucide.createIcons();
-                    });
+                    tl.to(track.value, { x: '-66.666%', duration: 1.5, ease: "power3.inOut" });
+                    tl.call(() => { demoText.value = "Deep Focus"; });
 
-                    // 4. Space 2 -> 3
-                    tl.to({}, { duration: 1.5 }); // pause
-                    tl.to(bg3.value, { opacity: 1, duration: 1 });
-                    tl.call(() => { 
-                        demoText.value = "Deep Focus"; 
-                        notchText.value = "Context Switched"; notchIcon.value = "zap"; notchExpanded.value = true;
-                        setTimeout(() => notchExpanded.value = false, 1500);
-                        lucide.createIcons();
-                    });
-
-                    // 5. Space Label Window Drop
+                    // 4. Space Label Window Drop
+                    tl.to({}, { duration: 0.5 });
+                    tl.to(labelWindow.value, { top: '20%', duration: 1.2, ease: "elastic.out(1, 0.7)" });
+                    
+                    // 5. Final Pause before unpinning
                     tl.to({}, { duration: 1 });
-                    tl.to(labelWindow.value, { top: '20%', duration: 1.5, ease: "elastic.out(1, 0.6)" });
-                    tl.call(() => {
-                        notchText.value = "Mission Control"; notchIcon.value = "layers"; notchExpanded.value = true;
-                        setTimeout(() => notchExpanded.value = false, 1500);
-                        lucide.createIcons();
-                    });
-
-                    // 6. Download Overlay
-                    tl.to({}, { duration: 1 });
-                    tl.to(downloadOverlay.value, { opacity: 1, duration: 1 });
-                    tl.to(downloadContent.value, { scale: 1, duration: 1, ease: "back.out(1.7)" });
                 });
 
                 return {
                     iconContainer, demoText, isTyping, timeString, 
-                    notchExpanded, notchText, notchIcon,
-                    demoSection, macScreen, bg2, bg3, labelWindow, downloadOverlay, downloadContent, scrollHint
+                    demoSection, macScreen, track, labelWindow, scrollHint
                 };
             }
         }).mount('#app');
