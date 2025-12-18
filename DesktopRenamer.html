@@ -234,6 +234,14 @@
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
         }
+        
+        .download-btn-gradient {
+            background: linear-gradient(135deg, #002FA7 0%, #0055ff 100%);
+            box-shadow: 0 10px 30px -10px rgba(0, 47, 167, 0.6);
+        }
+        .download-btn-gradient:hover {
+            box-shadow: 0 15px 40px -10px rgba(0, 47, 167, 0.8);
+        }
     </style>
 </head>
 <body :class="{ 'is-booting': isBooting }">
@@ -347,13 +355,13 @@
                     <a-waves class="w-full h-full opacity-30"></a-waves>
                 </div>
                 
-                <!-- 3D Icon: Positioned to the Right -->
-                <div class="absolute top-0 right-0 w-[60%] h-full z-10 pointer-events-auto" ref="canvasContainer"></div>
+                <!-- 3D Icon: Positioned to the Right (Centered in Right 50%) -->
+                <div class="absolute top-0 right-0 w-full md:w-[50%] h-full z-10 pointer-events-auto" ref="canvasContainer"></div>
 
                 <!-- Text: Positioned to the Left -->
-                <div class="relative z-20 w-full pl-6 md:pl-20 pointer-events-none">
+                <div class="relative z-20 w-full md:w-[50%] pl-6 md:pl-20 pointer-events-none">
                     <div class="mix-blend-difference">
-                        <h1 class="hero-title text-[12vw] md:text-[9vw] font-black tracking-tighter text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
+                        <h1 class="hero-title text-[12vw] md:text-[8vw] font-black tracking-tighter text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
                             <span>RENAME</span>
                             <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-500">EXPERIENCES</span>
                         </h1>
@@ -427,7 +435,7 @@
                     <div class="absolute inset-0 z-0 opacity-20" style="background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px); background-size: 40px 40px;"></div>
                     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a10] to-[#050505] z-0"></div>
 
-                    <!-- Captions Container: MOVED TO SIDE/TOP TO AVOID OVERLAP -->
+                    <!-- Captions Container -->
                     <div class="absolute top-32 left-6 md:left-12 w-full max-w-sm z-[40] pointer-events-none text-left">
                         <div class="caption-slide absolute w-full left-0 opacity-0 transform translate-y-10" id="caption-1">
                             <span class="font-mono text-klein-blue text-xs tracking-widest mb-2 block">01 / CONTEXT</span>
@@ -450,17 +458,17 @@
                     <div id="mc-top-bar" class="absolute top-0 w-full h-24 z-[60] transform -translate-y-full flex items-center justify-center gap-4 px-10 border-b border-white/5 bg-[#111]/80 backdrop-blur-xl">
                          <!-- Space 1 (Main) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="h-10 aspect-[16/10] rounded border border-white/20 relative mc-thumbnail bg-[#222]"></div>
+                             <div class="h-10 aspect-[16/10] rounded border border-white/20 relative mc-thumbnail bg-[#1a1a2e]"></div>
                              <span class="text-[9px] font-medium text-gray-400 uppercase tracking-wider">Main</span>
                          </div>
                          <!-- Space 2 (Coding) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="h-10 aspect-[16/10] rounded border border-white/20 relative mc-thumbnail bg-[#222]"></div>
+                             <div class="h-10 aspect-[16/10] rounded border border-white/20 relative mc-thumbnail bg-[#0f172a]"></div>
                              <span class="text-[9px] font-medium text-gray-400 uppercase tracking-wider">Coding</span>
                          </div>
                          <!-- Space 3 (Gaming) - Active -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2">
-                             <div class="h-10 aspect-[16/10] rounded border border-white relative mc-thumbnail active bg-[#333]"></div>
+                             <div class="h-10 aspect-[16/10] rounded border border-white relative mc-thumbnail active bg-[#312e81]"></div>
                              <span class="text-[9px] font-bold text-white uppercase tracking-wider">Gaming</span>
                          </div>
                          <div class="h-10 aspect-square bg-white/5 rounded border border-white/10 flex items-center justify-center">
@@ -468,61 +476,103 @@
                          </div>
                     </div>
 
-                    <!-- The Spaces Container: Lowered to avoid text overlap -->
+                    <!-- The Spaces Container -->
                     <div id="spaces-stage" class="relative w-[85vw] md:w-[65vw] aspect-[16/10] will-change-transform transform translate-y-[-10vh] scale-[0.8] opacity-100 shadow-[0_0_100px_-20px_rgba(0,0,0,0.8)] rounded-xl overflow-hidden border border-white/10 bg-[#080808]">
                         
                         <!-- Main Carousel -->
                         <div id="spaces-carousel" class="absolute inset-0 w-full h-full flex gap-[20vw] will-change-transform">
                             
-                            <!-- Space 1: Main (Minimal) -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#080808] flex items-center justify-center">
-                                <div class="absolute top-4 left-6 right-6 h-px bg-white/10"></div>
-                                <div class="space-minimal-window w-2/3 h-2/3 flex flex-col p-6 gap-4">
+                            <!-- Space 1: Main (Vibrant) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
+                                <!-- Top Bar with Menu -->
+                                <div class="absolute top-0 left-0 w-full h-7 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 z-20 border-b border-white/5">
+                                    <div class="flex items-center gap-4 text-[11px] font-medium text-white/80">
+                                        <i data-lucide="apple" class="w-3 h-3 fill-white text-white"></i>
+                                        <span class="font-bold">Finder</span>
+                                    </div>
+                                    <!-- Custom Name Highlight -->
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-white bg-white/20 border border-white/20 px-2 py-0.5 rounded shadow-sm">Main Space</span>
+                                        <i data-lucide="wifi" class="w-3 h-3 text-white/60"></i>
+                                        <span class="text-[10px] text-white/60">Mon 9:41 AM</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-minimal-window w-2/3 h-2/3 flex flex-col p-6 gap-4 bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl">
                                     <div class="flex gap-2 mb-4">
-                                        <div class="w-3 h-3 rounded-full bg-gray-800"></div>
-                                        <div class="w-3 h-3 rounded-full bg-gray-800"></div>
-                                        <div class="w-3 h-3 rounded-full bg-gray-800"></div>
+                                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
                                     </div>
                                     <div class="flex gap-4 h-full">
-                                        <div class="w-1/4 h-full wireframe-line opacity-20"></div>
+                                        <div class="w-1/4 h-full bg-white/5 rounded-sm"></div>
                                         <div class="w-3/4 h-full flex flex-col gap-3">
-                                            <div class="h-2 w-1/2 wireframe-line"></div>
-                                            <div class="h-2 w-3/4 wireframe-line"></div>
-                                            <div class="h-24 w-full wireframe-line opacity-50 mt-4"></div>
+                                            <div class="h-2 w-1/2 bg-white/20 rounded-sm"></div>
+                                            <div class="h-2 w-3/4 bg-white/10 rounded-sm"></div>
+                                            <div class="h-32 w-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-sm mt-2 border border-white/5"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Space 2: Coding (Minimal) -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#080808] flex items-center justify-center">
-                                <div class="absolute top-4 left-6 right-6 h-px bg-white/10"></div>
-                                <div class="space-minimal-window w-3/4 h-3/4 flex flex-col p-0 overflow-hidden">
-                                    <div class="h-8 bg-white/5 border-b border-white/5 flex items-center px-4">
-                                        <div class="w-20 h-2 bg-white/10 rounded"></div>
+                            <!-- Space 2: Coding (Vibrant) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#0f172a] flex items-center justify-center">
+                                <!-- Top Bar with Menu -->
+                                <div class="absolute top-0 left-0 w-full h-7 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 z-20 border-b border-white/5">
+                                    <div class="flex items-center gap-4 text-[11px] font-medium text-white/80">
+                                        <i data-lucide="apple" class="w-3 h-3 fill-white text-white"></i>
+                                        <span class="font-bold">Code</span>
                                     </div>
-                                    <div class="flex-1 p-6 font-mono text-[10px] text-gray-600 space-y-2">
-                                        <div class="flex gap-4"><span class="text-gray-800">01</span> <span class="text-klein-blue">import</span> SwiftUI</div>
-                                        <div class="flex gap-4"><span class="text-gray-800">02</span> </div>
-                                        <div class="flex gap-4"><span class="text-gray-800">03</span> <span class="text-klein-blue">struct</span> Space: View {</div>
-                                        <div class="flex gap-4"><span class="text-gray-800">04</span>    <span class="text-klein-blue">var</span> body: some View {</div>
-                                        <div class="flex gap-4"><span class="text-gray-800">05</span>       Text(<span class="text-white">"Hello World"</span>)</div>
-                                        <div class="flex gap-4"><span class="text-gray-800">06</span>    }</div>
-                                        <div class="flex gap-4"><span class="text-gray-800">07</span> }</div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-green-300 bg-green-900/40 border border-green-500/30 px-2 py-0.5 rounded shadow-sm">Coding Mode</span>
+                                        <span class="text-[10px] text-white/60">Mon 10:23 AM</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-minimal-window w-3/4 h-3/4 flex flex-col p-0 overflow-hidden bg-[#1e293b] border border-white/10 shadow-2xl">
+                                    <div class="h-8 bg-black/20 border-b border-white/5 flex items-center px-4">
+                                        <div class="flex gap-2">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                                            <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+                                            <div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 p-6 font-mono text-[10px] space-y-2 leading-relaxed">
+                                        <div class="flex gap-4"><span class="text-slate-500">01</span> <span class="text-purple-400">import</span> <span class="text-sky-300">SwiftUI</span></div>
+                                        <div class="flex gap-4"><span class="text-slate-500">02</span> </div>
+                                        <div class="flex gap-4"><span class="text-slate-500">03</span> <span class="text-purple-400">struct</span> <span class="text-yellow-300">Space</span>: <span class="text-sky-300">View</span> {</div>
+                                        <div class="flex gap-4"><span class="text-slate-500">04</span>    <span class="text-purple-400">var</span> body: <span class="text-purple-400">some</span> <span class="text-sky-300">View</span> {</div>
+                                        <div class="flex gap-4"><span class="text-slate-500">05</span>       <span class="text-sky-300">Text</span>(<span class="text-green-400">"Hello World"</span>)</div>
+                                        <div class="flex gap-4"><span class="text-slate-500">06</span>          .padding()</div>
+                                        <div class="flex gap-4"><span class="text-slate-500">07</span>    }</div>
+                                        <div class="flex gap-4"><span class="text-slate-500">08</span> }</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Space 3: Gaming (Minimal) -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#080808] flex items-center justify-center">
-                                <div class="absolute top-4 left-6 right-6 h-px bg-white/10"></div>
-                                <div class="w-full h-full p-12 grid grid-cols-3 gap-6">
-                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
-                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
-                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
-                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
-                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
-                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
+                            <!-- Space 3: Gaming (Vibrant) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#312e81] flex items-center justify-center">
+                                <div class="absolute inset-0 bg-gradient-to-t from-fuchsia-900/40 via-transparent to-transparent"></div>
+                                
+                                <!-- Top Bar with Menu -->
+                                <div class="absolute top-0 left-0 w-full h-7 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 z-20 border-b border-white/5">
+                                    <div class="flex items-center gap-4 text-[11px] font-medium text-white/80">
+                                        <i data-lucide="apple" class="w-3 h-3 fill-white text-white"></i>
+                                        <span class="font-bold">Steam</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-fuchsia-300 bg-fuchsia-900/40 border border-fuchsia-500/30 px-2 py-0.5 rounded shadow-sm">Gaming</span>
+                                        <span class="text-[10px] text-white/60">Mon 8:00 PM</span>
+                                    </div>
+                                </div>
+
+                                <div class="w-full h-full p-12 pt-20 grid grid-cols-3 gap-6 relative z-10">
+                                    <div class="rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg border border-white/10 hover:scale-105 transition-transform"></div>
+                                    <div class="rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 shadow-lg border border-white/10 hover:scale-105 transition-transform"></div>
+                                    <div class="rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg border border-white/10 hover:scale-105 transition-transform"></div>
+                                    <div class="rounded-lg bg-white/5 border border-white/5"></div>
+                                    <div class="rounded-lg bg-white/5 border border-white/5"></div>
+                                    <div class="rounded-lg bg-white/5 border border-white/5"></div>
                                 </div>
                             </div>
 
@@ -540,20 +590,50 @@
                 </div>
             </section>
 
-            <!-- Download / Connect Section -->
-            <section id="download" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] relative z-30 flex flex-col items-center text-center">
-                <div class="max-w-2xl mx-auto">
-                    <h2 class="text-4xl md:text-6xl font-black text-black dark:text-white mb-8 tracking-tighter">
+            <!-- Download / Connect Section (Polished) -->
+            <section id="download" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] relative z-30 flex flex-col items-center text-center overflow-hidden">
+                <!-- Background Glow -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-klein-blue/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div class="max-w-2xl mx-auto relative z-10">
+                    <h2 class="text-5xl md:text-7xl font-black text-black dark:text-white mb-8 tracking-tighter">
                         READY TO<br><span class="text-klein-blue">ORGANIZE?</span>
                     </h2>
                     <p class="text-lg text-gray-600 dark:text-gray-400 mb-12 leading-relaxed">
                         Download DesktopRenamer today and transform how you navigate your digital life. Simple, lightweight, and built for power users.
                     </p>
-                    <a href="#" class="inline-flex items-center gap-3 px-8 py-4 bg-klein-blue text-white rounded-full font-bold tracking-wide hover:scale-105 transition-transform shadow-lg shadow-blue-900/20">
+                    
+                    <a href="#" class="inline-flex items-center gap-3 px-10 py-5 text-white rounded-full font-bold tracking-wide transition-all transform hover:scale-105 download-btn-gradient mb-4">
                         <i data-lucide="download" class="w-5 h-5"></i>
                         <span>DOWNLOAD FOR MACOS</span>
                     </a>
-                    <p class="mt-6 font-mono text-xs text-gray-500">Requires macOS 14.0 or later</p>
+                    
+                    <p class="mb-16 font-mono text-xs text-gray-500">Requires macOS 14.0 or later (Apple Silicon)</p>
+
+                    <!-- Gatekeeper Guide -->
+                    <div class="w-full max-w-lg mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md text-left">
+                        <div class="flex items-center gap-3 mb-4 text-yellow-500">
+                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                            <span class="font-bold text-sm">"Cannot verify developer"?</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mb-4 leading-relaxed">
+                            Because this app is not signed with an expensive Apple Developer ID, macOS might block the first launch. To open it:
+                        </p>
+                        <div class="bg-black/40 rounded-lg p-3 font-mono text-[10px] text-gray-300 flex flex-col gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-4 h-4 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">1</span>
+                                <span>System Settings → Privacy & Security</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-4 h-4 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">2</span>
+                                <span>Scroll to bottom</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-4 h-4 rounded-full bg-gray-700 flex items-center justify-center text-[8px]">3</span>
+                                <span>Click <span class="text-white font-bold">Open Anyway</span> for DesktopRenamer</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
             
@@ -815,10 +895,8 @@
                     iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
                     iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
                     
-                    // Offset the icon mesh for the new asymmetric layout
-                    if (window.innerWidth > 768) {
-                        iconMesh.position.x = 6; 
-                    }
+                    // Center the icon within the container (0,0) as the container itself is offset
+                    iconMesh.position.x = 0;
                     
                     scene.add(iconMesh);
 
@@ -854,11 +932,6 @@
                         renderer.setSize(newW, newH);
                         camera.aspect = newW / newH;
                         camera.updateProjectionMatrix();
-                        
-                        // Responsive position update
-                        if (iconMesh) {
-                            iconMesh.position.x = newW > 768 ? 6 : 0;
-                        }
                     });
                 };
 
