@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesktopRenamer | Redefine Your Space</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#030303',
+                        'glass': 'rgba(255, 255, 255, 0.03)',
+                        'glass-border': 'rgba(255, 255, 255, 0.08)',
+                        'accent': '#2997ff',
+                    },
+                    fontFamily: {
+                        sans: ['SF Pro Display', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #222 1px, transparent 1px), linear-gradient(to bottom, #222 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lenis -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <style>
+        :root { --cursor-size: 20px; }
+        body { background-color: #030303; color: #fff; cursor: none; overflow-x: hidden; }
+        
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot { width: 8px; height: 8px; background: white; }
+        .cursor-outline { 
+            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.5); 
+            transition: width 0.2s, height 0.2s, background-color 0.2s; 
+        }
+        body:hover .cursor-outline { width: 30px; height: 30px; }
+        .hover-active .cursor-outline { 
+            width: 60px; height: 60px; background-color: rgba(255,255,255,0.1); border-color: transparent; 
+        }
+
+        /* Noise Overlay */
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9000; opacity: 0.05;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJnoiPjZmVUdVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZykiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==');
+        }
+
+        /* 3D Perspective Container */
+        .perspective-container { perspective: 1000px; }
+        .tilted-plane {
+            transform: rotateX(20deg) scale(1.1);
+            transform-style: preserve-3d;
+        }
+
+        /* Text Utilities */
+        .text-glow { text-shadow: 0 0 30px rgba(41, 151, 255, 0.3); }
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* Menubar Simulation */
+        .menubar-item { position: relative; overflow: hidden; }
+        .menubar-item::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.1); transform: translateY(100%); transition: transform 0.2s;
+        }
+        .menubar-item:hover::after { transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <div id="app" class="relative min-h-screen">
+        
+        <!-- UI Elements -->
+        <div class="cursor-dot hidden md:block"></div>
+        <div class="cursor-outline hidden md:block" ref="cursorOutline"></div>
+        <div class="noise"></div>
+
+        <!-- Background Grid -->
+        <div class="fixed inset-0 z-0 opacity-20 pointer-events-none perspective-container">
+            <div class="absolute inset-[-50%] w-[200%] h-[200%] bg-grid-pattern bg-[length:40px_40px] tilted-plane animate-grid-flow"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-void via-transparent to-transparent"></div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
+            <div class="font-bold tracking-widest text-sm cursor-pointer hover:text-accent transition-colors" @mouseenter="cursorHover" @mouseleave="cursorLeave">
+                MICHAEL QIU / DESKTOP_RENAMER
+            </div>
+            <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="text-xs font-mono opacity-60 hover:opacity-100 transition-opacity" @mouseenter="cursorHover" @mouseleave="cursorLeave">
+                GITHUB_V1.5.2
+            </a>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="relative z-10 h-screen flex flex-col justify-center items-center px-4 overflow-hidden">
+            <!-- The "Living" Menubar Demo -->
+            <div class="mb-12 scale-100 md:scale-125 transition-transform duration-700" ref="menubarRef">
+                <div class="glass-panel h-10 px-4 rounded-lg flex items-center gap-6 shadow-2xl shadow-blue-900/10">
+                    <i data-lucide="apple" class="w-4 h-4 opacity-80"></i>
+                    <span class="font-bold text-sm">DesktopRenamer</span>
+                    <span class="opacity-50 text-sm">Edit</span>
+                    <span class="opacity-50 text-sm">View</span>
+                    <span class="opacity-50 text-sm">Window</span>
+                    
+                    <!-- The Magic Part -->
+                    <div class="w-px h-4 bg-white/20 mx-2"></div>
+                    <div class="flex items-center gap-2 min-w-[140px]">
+                        <i data-lucide="monitor" class="w-3 h-3 text-accent"></i>
+                        <span class="font-mono text-sm font-bold text-white relative">
+                            {{ currentTypingText }}<span class="animate-pulse">|</span>
+                        </span>
+                    </div>
+                    <div class="w-px h-4 bg-white/20 mx-2"></div>
+                    
+                    <span class="opacity-50 text-sm">100%</span>
+                    <i data-lucide="wifi" class="w-4 h-4 opacity-80"></i>
+                    <span class="text-sm font-mono">{{ timeString }}</span>
+                </div>
+            </div>
+
+            <h1 class="text-5xl md:text-8xl font-black tracking-tighter text-center mb-6 leading-[0.9]">
+                <div class="overflow-hidden h-[1.1em]"><span class="hero-line block translate-y-full">STOP SETTLING</span></div>
+                <div class="overflow-hidden h-[1.1em]"><span class="hero-line block translate-y-full text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-400 to-gray-600">FOR "DESKTOP 1"</span></div>
+            </h1>
+
+            <p class="hero-text opacity-0 mt-6 max-w-xl text-center text-gray-400 text-lg md:text-xl font-light leading-relaxed">
+                Context switching is expensive. Keep your head in the game by naming your spaces. 
+                A tiny utility for massive focus.
+            </p>
+
+            <div class="hero-btn opacity-0 mt-12 flex gap-4">
+                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" class="group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden" @mouseenter="cursorHover" @mouseleave="cursorLeave">
+                    <div class="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                    <span class="relative group-hover:text-white transition-colors flex items-center gap-2">
+                        Download Now <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Feature Showcase (Parallax) -->
+        <section class="relative z-10 py-32 px-6 overflow-hidden">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+                <div class="order-2 md:order-1">
+                    <div class="space-y-16">
+                        <div class="feature-item opacity-20 transition-all duration-500 hover:opacity-100 border-l-2 border-white/10 pl-8 hover:border-accent">
+                            <h3 class="text-3xl font-bold mb-2 text-white">Menu Bar Native</h3>
+                            <p class="text-gray-400">Lightweight. It lives where you work, consuming minimal resources while providing maximum utility.</p>
+                        </div>
+                        <div class="feature-item opacity-20 transition-all duration-500 hover:opacity-100 border-l-2 border-white/10 pl-8 hover:border-accent">
+                            <h3 class="text-3xl font-bold mb-2 text-white">SpaceLabelWindow</h3>
+                            <p class="text-gray-400">Enter Mission Control, and see your custom labels floating above each desktop. Never get lost in your own workflow again.</p>
+                        </div>
+                        <div class="feature-item opacity-20 transition-all duration-500 hover:opacity-100 border-l-2 border-white/10 pl-8 hover:border-accent">
+                            <h3 class="text-3xl font-bold mb-2 text-white">Developer API</h3>
+                            <p class="text-gray-400">Open HTTP endpoints allow you to script your own automations based on your current active space.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-1 md:order-2 relative h-[600px] flex items-center justify-center">
+                    <!-- Parallax Images -->
+                    <div class="absolute w-full max-w-md aspect-video bg-[#1a1a1a] rounded-xl border border-white/10 shadow-2xl overflow-hidden z-20 parallax-img" data-speed="0.05">
+                        <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                            <span class="font-mono text-xs text-accent">FIG 01. MAIN INTERFACE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute top-0 right-0 w-64 aspect-square glass-panel rounded-xl border border-white/10 z-10 parallax-img backdrop-blur-md flex flex-col items-center justify-center p-6" data-speed="0.15">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg shadow-purple-500/20 flex items-center justify-center">
+                            <span class="font-bold text-2xl">DR</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-bold text-lg">System Ready</div>
+                            <div class="text-xs text-gray-400 mt-2">v1.5.2 • Universal Binary</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation / Terminal -->
+        <section class="relative z-10 py-32 px-4 bg-[#050505]">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-end justify-between mb-8 border-b border-white/10 pb-4">
+                    <h2 class="text-4xl font-bold">Installation</h2>
+                    <span class="font-mono text-xs text-gray-500">BASH // ZSH</span>
+                </div>
+
+                <div class="glass-panel rounded-xl overflow-hidden shadow-2xl font-mono text-sm">
+                    <div class="bg-[#1a1a1a] px-4 py-2 flex items-center gap-2 border-b border-white/5">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <div class="ml-4 text-xs text-gray-500">user@macbook:~</div>
+                    </div>
+                    <div class="p-8 space-y-6 text-gray-300">
+                        <div class="group">
+                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> download_package <span class="text-yellow-400">--latest</span>
+                            <div class="mt-2 pl-6 text-gray-500">Downloading DesktopRenamer_v1.5.2.dmg... [100%]</div>
+                            <div class="pl-6 text-white bg-white/5 inline-block px-2 py-1 rounded mt-2 cursor-pointer hover:bg-white/10 transition-colors" @click="openLink('https://github.com/gitmichaelqiu/DesktopRenamer/releases/')">
+                                <i data-lucide="download" class="inline w-3 h-3 mr-1"></i> Click to Download from GitHub Releases
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> drag_to_applications
+                            <div class="mt-2 pl-6 text-gray-500">Moved to /Applications/DesktopRenamer.app</div>
+                        </div>
+
+                        <div>
+                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> security_check <span class="text-red-400">--alert</span>
+                            <div class="mt-2 pl-6 p-4 border-l-2 border-yellow-500 bg-yellow-500/5 text-yellow-200">
+                                WARNING: App not signed by Apple Developer Program.<br>
+                                ACTION REQUIRED: Go to System Settings -> Privacy & Security -> Open Anyway.
+                            </div>
+                        </div>
+                        
+                        <div class="animate-pulse">
+                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> <span class="w-2 h-4 bg-gray-500 inline-block align-middle"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="relative z-10 py-12 border-t border-white/10 flex flex-col items-center justify-center text-center gap-6 bg-void">
+            <h2 class="text-[10vw] font-black leading-none opacity-5 hover:opacity-10 transition-opacity select-none">
+                MICHAEL QIU
+            </h2>
+            <div class="flex gap-8 text-sm font-mono text-gray-500">
+                <a href="#" class="hover:text-white transition-colors">Home</a>
+                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/issues" class="hover:text-white transition-colors">Issues</a>
+                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/wiki" class="hover:text-white transition-colors">Docs</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted, onUnmounted } = Vue;
+
+        createApp({
+            setup() {
+                const currentTypingText = ref('Desktop 1');
+                const timeString = ref('12:00');
+                const words = ["Desktop 1", "Coding", "Spotify", "Meeting", "Chill", "Deep Focus"];
+                const cursorOutline = ref(null);
+
+                const cursorHover = () => {
+                    document.body.classList.add('hover-active');
+                };
+                const cursorLeave = () => {
+                    document.body.classList.remove('hover-active');
+                };
+
+                // Typing Effect Logic
+                let wordIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                
+                const typeEffect = () => {
+                    const currentWord = words[wordIndex];
+                    
+                    if (isDeleting) {
+                        currentTypingText.value = currentWord.substring(0, charIndex - 1);
+                        charIndex--;
+                    } else {
+                        currentTypingText.value = currentWord.substring(0, charIndex + 1);
+                        charIndex++;
+                    }
+
+                    if (!isDeleting && charIndex === currentWord.length) {
+                        isDeleting = true;
+                        setTimeout(typeEffect, 1500); // Pause at end
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
+                        wordIndex = (wordIndex + 1) % words.length;
+                        setTimeout(typeEffect, 500); // Pause before typing new
+                    } else {
+                        setTimeout(typeEffect, isDeleting ? 50 : 100);
+                    }
+                };
+
+                const updateTime = () => {
+                    const now = new Date();
+                    timeString.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                };
+
+                const openLink = (url) => {
+                    window.open(url, '_blank');
+                };
+
+                onMounted(() => {
+                    lucide.createIcons();
+                    
+                    // Init Custom Cursor
+                    window.addEventListener('mousemove', (e) => {
+                        const dot = document.querySelector('.cursor-dot');
+                        const outline = document.querySelector('.cursor-outline');
+                        if (dot && outline) {
+                            dot.style.left = `${e.clientX}px`;
+                            dot.style.top = `${e.clientY}px`;
+                            
+                            // Slight delay for outline
+                            outline.animate({
+                                left: `${e.clientX}px`,
+                                top: `${e.clientY}px`
+                            }, { duration: 500, fill: "forwards" });
+                        }
+                    });
+
+                    // Start Typing
+                    typeEffect();
+                    setInterval(updateTime, 60000);
+                    updateTime();
+
+                    // GSAP Animations
+                    const tl = gsap.timeline();
+                    
+                    tl.to('.hero-line', {
+                        y: 0,
+                        duration: 1.2,
+                        stagger: 0.1,
+                        ease: "power4.out"
+                    })
+                    .to('.hero-text', { opacity: 1, duration: 1 }, "-=0.5")
+                    .to('.hero-btn', { opacity: 1, y: 0, duration: 1 }, "-=0.8");
+
+                    // Parallax Scroll
+                    gsap.utils.toArray('.parallax-img').forEach(layer => {
+                        const speed = layer.getAttribute('data-speed');
+                        gsap.to(layer, {
+                            y: (i, target) => -ScrollTrigger.maxScroll(window) * speed,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: "#features",
+                                start: "top bottom",
+                                end: "bottom top",
+                                scrub: 0
+                            }
+                        });
+                    });
+
+                    // Feature List Highlight
+                    gsap.utils.toArray('.feature-item').forEach(item => {
+                        gsap.to(item, {
+                            opacity: 1,
+                            scrollTrigger: {
+                                trigger: item,
+                                start: "top 70%",
+                                end: "top 30%",
+                                scrub: true,
+                                toggleActions: "play reverse play reverse"
+                            }
+                        })
+                    });
+
+                    // Init Lenis Smooth Scroll
+                    const lenis = new Lenis({
+                        duration: 1.2,
+                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                        smooth: true
+                    });
+                    function raf(time) {
+                        lenis.raf(time);
+                        requestAnimationFrame(raf);
+                    }
+                    requestAnimationFrame(raf);
+                });
+
+                return {
+                    currentTypingText, timeString, cursorHover, cursorLeave, cursorOutline, openLink
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
