@@ -3,246 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DesktopRenamer | Redefine Your Space</title>
+    <title>DesktopRenamer | The Art of Context</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', 
             theme: {
                 extend: {
                     colors: {
-                        'void': '#030303',
-                        'glass': 'rgba(255, 255, 255, 0.03)',
-                        'glass-border': 'rgba(255, 255, 255, 0.08)',
-                        'accent': '#2997ff',
+                        'klein-blue': '#002FA7',
+                        'bg-dark': '#050505',
+                        'bg-light': '#F2F2F7', 
+                        'deep-navy': '#020412',
                     },
                     fontFamily: {
-                        sans: ['SF Pro Display', 'Inter', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Syncopate', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
                     },
-                    backgroundImage: {
-                        'grid-pattern': "linear-gradient(to right, #222 1px, transparent 1px), linear-gradient(to bottom, #222 1px, transparent 1px)",
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
         }
     </script>
-
+    
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <!-- Lenis -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <!-- Lenis (Smooth Scroll) -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
     <style>
-        :root { --cursor-size: 20px; }
-        body { background-color: #030303; color: #fff; cursor: none; overflow-x: hidden; }
-        
+        :root {
+            --klein-blue: #002FA7;
+        }
+
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Lenis */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        .lenis.lenis-scrolling iframe { pointer-events: none; }
+
         /* Custom Cursor */
+        @media (hover: hover) and (pointer: fine) {
+            body, button, a, input, [role="button"], .cursor-pointer { cursor: none !important; }
+            .cursor-dot, .cursor-outline { display: block; }
+        }
         .cursor-dot, .cursor-outline {
-            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 9999; pointer-events: none;
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%); border-radius: 50%;
+            z-index: 20000; pointer-events: none; mix-blend-mode: difference;
         }
-        .cursor-dot { width: 8px; height: 8px; background: white; }
-        .cursor-outline { 
-            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.5); 
-            transition: width 0.2s, height 0.2s, background-color 0.2s; 
-        }
+        .cursor-dot { width: 8px; height: 8px; background-color: white; }
+        .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
         body:hover .cursor-outline { width: 30px; height: 30px; }
-        .hover-active .cursor-outline { 
-            width: 60px; height: 60px; background-color: rgba(255,255,255,0.1); border-color: transparent; 
+
+        /* Shared Glass Styles from Personal Site */
+        .glass-card { 
+            background: rgba(20, 20, 20, 0.4); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: transform, box-shadow;
+        }
+        .glass-card:hover { 
+            border-color: var(--klein-blue); 
+            background: rgba(0, 47, 167, 0.05); 
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
+            z-index: 20;
         }
 
-        /* Noise Overlay */
-        .noise {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9000; opacity: 0.05;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJnoiPjZmVUdVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZykiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==');
+        .card-corner-glow {
+            position: absolute; top: 0; right: 0; width: 300px; height: 300px;
+            background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
+            opacity: 0; transition: opacity 0.6s ease; pointer-events: none; z-index: 0;
         }
-
-        /* 3D Perspective Container */
-        .perspective-container { perspective: 1000px; }
-        .tilted-plane {
-            transform: rotateX(20deg) scale(1.1);
-            transform-style: preserve-3d;
-        }
-
-        /* Text Utilities */
-        .text-glow { text-shadow: 0 0 30px rgba(41, 151, 255, 0.3); }
-        .glass-panel {
-            background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+        .group:hover .card-corner-glow { opacity: 1; }
         
-        /* Menubar Simulation */
-        .menubar-item { position: relative; overflow: hidden; }
-        .menubar-item::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.1); transform: translateY(100%); transition: transform 0.2s;
+        .ambient-glow {
+            position: absolute; width: 40vmax; height: 40vmax;
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
+            filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
         }
-        .menubar-item:hover::after { transform: translateY(0); }
+
+        .nav-glass {
+            background: rgba(10, 10, 10, 0.6); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mac Screen Styles */
+        .mac-screen {
+            background: #000;
+            border-radius: 12px 12px 0 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-bottom: none;
+            box-shadow: 0 0 0 1px #000, 0 0 0 2px #333, 0 20px 50px -10px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        .mac-notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 24px;
+            background: #000;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 50;
+        }
     </style>
 </head>
 <body>
-    <div id="app" class="relative min-h-screen">
+    <div id="app" class="relative min-h-screen selection:bg-white selection:text-klein-blue">
         
-        <!-- UI Elements -->
         <div class="cursor-dot hidden md:block"></div>
-        <div class="cursor-outline hidden md:block" ref="cursorOutline"></div>
-        <div class="noise"></div>
+        <div class="cursor-outline hidden md:block"></div>
 
-        <!-- Background Grid -->
-        <div class="fixed inset-0 z-0 opacity-20 pointer-events-none perspective-container">
-            <div class="absolute inset-[-50%] w-[200%] h-[200%] bg-grid-pattern bg-[length:40px_40px] tilted-plane animate-grid-flow"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-void via-transparent to-transparent"></div>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
-            <div class="font-bold tracking-widest text-sm cursor-pointer hover:text-accent transition-colors" @mouseenter="cursorHover" @mouseleave="cursorLeave">
-                MICHAEL QIU / DESKTOP_RENAMER
+        <!-- Floating Navigation -->
+        <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[9990] flex items-center gap-2 pointer-events-auto">
+            <div class="nav-glass px-2 p-2 rounded-full flex items-center gap-1">
+                <a href="https://michaelqiu.com" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5 text-gray-400"></i>
+                </a>
+                <div class="h-6 w-px bg-white/10 mx-1"></div>
+                <div class="flex items-center gap-3 px-4">
+                    <!-- Mini Logo -->
+                    <div class="w-6 h-6 bg-gradient-to-tr from-klein-blue to-blue-600 rounded-md shadow-lg shadow-blue-500/20"></div>
+                    <span class="font-bold text-sm tracking-tight">DesktopRenamer</span>
+                </div>
+                <div class="h-6 w-px bg-white/10 mx-1"></div>
+                <a href="#features" class="px-4 py-2 text-xs font-mono text-gray-400 hover:text-white transition-colors">FEATURES</a>
+                <a href="#install" class="px-4 py-2 text-xs font-mono text-gray-400 hover:text-white transition-colors">INSTALL</a>
+                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" class="px-5 py-2 bg-white text-black text-xs font-bold rounded-full hover:scale-105 transition-transform flex items-center gap-2">
+                    <span>GET APP</span>
+                    <i data-lucide="arrow-down" class="w-3 h-3"></i>
+                </a>
             </div>
-            <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="text-xs font-mono opacity-60 hover:opacity-100 transition-opacity" @mouseenter="cursorHover" @mouseleave="cursorLeave">
-                GITHUB_V1.5.2
-            </a>
         </nav>
 
         <!-- Hero Section -->
-        <section class="relative z-10 h-screen flex flex-col justify-center items-center px-4 overflow-hidden">
-            <!-- The "Living" Menubar Demo -->
-            <div class="mb-12 scale-100 md:scale-125 transition-transform duration-700" ref="menubarRef">
-                <div class="glass-panel h-10 px-4 rounded-lg flex items-center gap-6 shadow-2xl shadow-blue-900/10">
-                    <i data-lucide="apple" class="w-4 h-4 opacity-80"></i>
-                    <span class="font-bold text-sm">DesktopRenamer</span>
-                    <span class="opacity-50 text-sm">Edit</span>
-                    <span class="opacity-50 text-sm">View</span>
-                    <span class="opacity-50 text-sm">Window</span>
+        <section class="relative min-h-screen flex flex-col justify-center items-center pt-32 pb-16 overflow-hidden">
+            <div class="ambient-glow top-[-20%] left-1/2 -translate-x-1/2 opacity-30"></div>
+            
+            <div class="container mx-auto px-6 relative z-10 flex flex-col items-center">
+                <!-- 3D Icon Container -->
+                <div ref="iconContainer" class="w-48 h-48 mb-8 cursor-grab active:cursor-grabbing"></div>
+
+                <h1 class="text-6xl md:text-8xl font-black text-center tracking-tighter leading-[0.9] mb-8 mix-blend-difference">
+                    RENAME<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-500">YOUR REALITY.</span>
+                </h1>
+
+                <p class="text-gray-400 text-lg md:text-xl font-light text-center max-w-2xl mb-16 leading-relaxed">
+                    The missing layer of macOS customization. Give every Space a purpose, an identity, and a name.
+                </p>
+
+                <!-- Mac Screen Demo -->
+                <div class="relative w-full max-w-4xl mx-auto mac-screen aspect-[16/10] md:aspect-[21/9] bg-cover bg-center group" style="background-image: url('https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=2832&auto=format&fit=crop');">
+                    <div class="mac-notch"></div>
                     
-                    <!-- The Magic Part -->
-                    <div class="w-px h-4 bg-white/20 mx-2"></div>
-                    <div class="flex items-center gap-2 min-w-[140px]">
-                        <i data-lucide="monitor" class="w-3 h-3 text-accent"></i>
-                        <span class="font-mono text-sm font-bold text-white relative">
-                            {{ currentTypingText }}<span class="animate-pulse">|</span>
-                        </span>
-                    </div>
-                    <div class="w-px h-4 bg-white/20 mx-2"></div>
-                    
-                    <span class="opacity-50 text-sm">100%</span>
-                    <i data-lucide="wifi" class="w-4 h-4 opacity-80"></i>
-                    <span class="text-sm font-mono">{{ timeString }}</span>
-                </div>
-            </div>
-
-            <h1 class="text-5xl md:text-8xl font-black tracking-tighter text-center mb-6 leading-[0.9]">
-                <div class="overflow-hidden h-[1.1em]"><span class="hero-line block translate-y-full">STOP SETTLING</span></div>
-                <div class="overflow-hidden h-[1.1em]"><span class="hero-line block translate-y-full text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-400 to-gray-600">FOR "DESKTOP 1"</span></div>
-            </h1>
-
-            <p class="hero-text opacity-0 mt-6 max-w-xl text-center text-gray-400 text-lg md:text-xl font-light leading-relaxed">
-                Context switching is expensive. Keep your head in the game by naming your spaces. 
-                A tiny utility for massive focus.
-            </p>
-
-            <div class="hero-btn opacity-0 mt-12 flex gap-4">
-                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" class="group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden" @mouseenter="cursorHover" @mouseleave="cursorLeave">
-                    <div class="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                    <span class="relative group-hover:text-white transition-colors flex items-center gap-2">
-                        Download Now <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                    </span>
-                </a>
-            </div>
-        </section>
-
-        <!-- Feature Showcase (Parallax) -->
-        <section class="relative z-10 py-32 px-6 overflow-hidden">
-            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-                <div class="order-2 md:order-1">
-                    <div class="space-y-16">
-                        <div class="feature-item opacity-20 transition-all duration-500 hover:opacity-100 border-l-2 border-white/10 pl-8 hover:border-accent">
-                            <h3 class="text-3xl font-bold mb-2 text-white">Menu Bar Native</h3>
-                            <p class="text-gray-400">Lightweight. It lives where you work, consuming minimal resources while providing maximum utility.</p>
+                    <!-- Menubar -->
+                    <div class="absolute top-0 left-0 w-full h-8 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 z-40 text-[11px] font-medium text-white/90">
+                        <div class="flex items-center gap-4">
+                            <i data-lucide="apple" class="w-3 h-3 fill-current"></i>
+                            <span class="font-bold">DesktopRenamer</span>
+                            <span>File</span>
+                            <span>Edit</span>
+                            <span>View</span>
+                            <span>Window</span>
+                            <span>Help</span>
                         </div>
-                        <div class="feature-item opacity-20 transition-all duration-500 hover:opacity-100 border-l-2 border-white/10 pl-8 hover:border-accent">
-                            <h3 class="text-3xl font-bold mb-2 text-white">SpaceLabelWindow</h3>
-                            <p class="text-gray-400">Enter Mission Control, and see your custom labels floating above each desktop. Never get lost in your own workflow again.</p>
-                        </div>
-                        <div class="feature-item opacity-20 transition-all duration-500 hover:opacity-100 border-l-2 border-white/10 pl-8 hover:border-accent">
-                            <h3 class="text-3xl font-bold mb-2 text-white">Developer API</h3>
-                            <p class="text-gray-400">Open HTTP endpoints allow you to script your own automations based on your current active space.</p>
+                        <div class="flex items-center gap-4">
+                            <!-- The Widget -->
+                            <div class="flex items-center gap-2 px-2 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">
+                                <i data-lucide="monitor" class="w-3 h-3"></i>
+                                <span class="font-mono text-xs text-white typing-effect">{{ currentSpaceName }}<span class="animate-pulse">|</span></span>
+                            </div>
+                            <span>100%</span>
+                            <span>{{ timeString }}</span>
                         </div>
                     </div>
-                </div>
-                
-                <div class="order-1 md:order-2 relative h-[600px] flex items-center justify-center">
-                    <!-- Parallax Images -->
-                    <div class="absolute w-full max-w-md aspect-video bg-[#1a1a1a] rounded-xl border border-white/10 shadow-2xl overflow-hidden z-20 parallax-img" data-speed="0.05">
-                        <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                            <span class="font-mono text-xs text-accent">FIG 01. MAIN INTERFACE</span>
-                        </div>
-                    </div>
-                    
-                    <div class="absolute top-0 right-0 w-64 aspect-square glass-panel rounded-xl border border-white/10 z-10 parallax-img backdrop-blur-md flex flex-col items-center justify-center p-6" data-speed="0.15">
-                        <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg shadow-purple-500/20 flex items-center justify-center">
-                            <span class="font-bold text-2xl">DR</span>
-                        </div>
-                        <div class="text-center">
-                            <div class="font-bold text-lg">System Ready</div>
-                            <div class="text-xs text-gray-400 mt-2">v1.5.2 • Universal Binary</div>
+
+                    <!-- Mission Control Overlay (Animated) -->
+                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                        <div class="glass-card p-8 rounded-2xl flex flex-col items-center transform scale-90 group-hover:scale-100 transition-transform duration-500 delay-100">
+                            <h3 class="font-bold text-2xl mb-2">SpaceLabelWindow</h3>
+                            <p class="text-gray-400 font-mono text-sm">Visible in Mission Control</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Installation / Terminal -->
-        <section class="relative z-10 py-32 px-4 bg-[#050505]">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex items-end justify-between mb-8 border-b border-white/10 pb-4">
-                    <h2 class="text-4xl font-bold">Installation</h2>
-                    <span class="font-mono text-xs text-gray-500">BASH // ZSH</span>
+        <!-- Features Grid -->
+        <section id="features" class="py-32 px-6 relative z-10">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-end justify-between mb-16 border-b border-white/10 pb-8">
+                    <h2 class="text-4xl font-display font-bold">Capabilities</h2>
+                    <span class="font-mono text-xs text-klein-blue">V1.5.2 SYSTEM CORE</span>
                 </div>
 
-                <div class="glass-panel rounded-xl overflow-hidden shadow-2xl font-mono text-sm">
-                    <div class="bg-[#1a1a1a] px-4 py-2 flex items-center gap-2 border-b border-white/5">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                        <div class="ml-4 text-xs text-gray-500">user@macbook:~</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Card 1 -->
+                    <div class="glass-card p-8 rounded-3xl relative group overflow-hidden min-h-[300px] flex flex-col justify-between">
+                        <div class="card-corner-glow"></div>
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-6 bg-white/5">
+                                <i data-lucide="type" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">Native Renaming</h3>
+                            <p class="text-gray-400 leading-relaxed">
+                                Seamlessly integrate with the macOS menu bar. Rename any desktop instantly without complex configurations.
+                            </p>
+                        </div>
                     </div>
-                    <div class="p-8 space-y-6 text-gray-300">
-                        <div class="group">
-                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> download_package <span class="text-yellow-400">--latest</span>
-                            <div class="mt-2 pl-6 text-gray-500">Downloading DesktopRenamer_v1.5.2.dmg... [100%]</div>
-                            <div class="pl-6 text-white bg-white/5 inline-block px-2 py-1 rounded mt-2 cursor-pointer hover:bg-white/10 transition-colors" @click="openLink('https://github.com/gitmichaelqiu/DesktopRenamer/releases/')">
-                                <i data-lucide="download" class="inline w-3 h-3 mr-1"></i> Click to Download from GitHub Releases
-                            </div>
-                        </div>
 
-                        <div>
-                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> drag_to_applications
-                            <div class="mt-2 pl-6 text-gray-500">Moved to /Applications/DesktopRenamer.app</div>
-                        </div>
-
-                        <div>
-                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> security_check <span class="text-red-400">--alert</span>
-                            <div class="mt-2 pl-6 p-4 border-l-2 border-yellow-500 bg-yellow-500/5 text-yellow-200">
-                                WARNING: App not signed by Apple Developer Program.<br>
-                                ACTION REQUIRED: Go to System Settings -> Privacy & Security -> Open Anyway.
+                    <!-- Card 2 -->
+                    <div class="glass-card p-8 rounded-3xl relative group overflow-hidden min-h-[300px] flex flex-col justify-between">
+                        <div class="card-corner-glow"></div>
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-6 bg-white/5">
+                                <i data-lucide="layers" class="w-6 h-6 text-white"></i>
                             </div>
+                            <h3 class="text-2xl font-bold mb-4">Mission Control</h3>
+                            <p class="text-gray-400 leading-relaxed">
+                                Your custom labels aren't just for the menu bar. They float elegantly above your spaces in Mission Control view.
+                            </p>
                         </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-card p-8 rounded-3xl relative group overflow-hidden min-h-[300px] flex flex-col justify-between border-l-4 border-l-klein-blue">
+                        <div class="card-corner-glow"></div>
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-6 bg-white/5">
+                                <i data-lucide="code" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">SpaceAPI</h3>
+                            <p class="text-gray-400 leading-relaxed">
+                                Built for power users. Query current space IDs and names via HTTP for your own scripts and automations.
+                            </p>
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer/wiki/DesktopRenamer-API-Guide" class="inline-flex items-center gap-2 text-klein-blue mt-4 font-mono text-xs hover:underline">
+                                READ DOCS <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Section -->
+        <section id="install" class="py-32 px-6 relative z-10 bg-black">
+            <div class="max-w-5xl mx-auto">
+                <div class="glass-card rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
+                    <div class="ambient-glow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20"></div>
+                    
+                    <div class="relative z-10">
+                        <h2 class="text-5xl md:text-7xl font-black mb-8 tracking-tighter">READY TO DEPLOY?</h2>
+                        <p class="text-xl text-gray-400 mb-12 font-light">Install in seconds. No SIP disabling required.</p>
                         
-                        <div class="animate-pulse">
-                            <span class="text-green-400">➜</span> <span class="text-blue-400">~</span> <span class="w-2 h-4 bg-gray-500 inline-block align-middle"></span>
+                        <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" class="px-8 py-4 bg-white text-black font-bold text-lg rounded-full hover:scale-105 transition-transform flex items-center gap-3 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                                <span>Download .DMG</span>
+                            </a>
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer" class="px-8 py-4 glass-card border border-white/20 text-white font-bold text-lg rounded-full hover:bg-white/10 transition-all flex items-center gap-3">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                                <span>Source Code</span>
+                            </a>
+                        </div>
+
+                        <div class="mt-12 p-6 border border-yellow-500/20 bg-yellow-500/5 rounded-2xl max-w-2xl mx-auto text-left flex gap-4">
+                            <i data-lucide="alert-triangle" class="w-6 h-6 text-yellow-500 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-yellow-500 font-bold mb-1">Gatekeeper Notice</h4>
+                                <p class="text-sm text-yellow-200/60 leading-relaxed">
+                                    Since I don't pay the "Apple Tax" (Developer ID), you might see a warning. Simply go to 
+                                    <span class="text-white font-mono bg-white/10 px-1 py-0.5 rounded">System Settings > Privacy & Security</span> 
+                                    to open it securely.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -250,153 +324,174 @@
         </section>
 
         <!-- Footer -->
-        <footer class="relative z-10 py-12 border-t border-white/10 flex flex-col items-center justify-center text-center gap-6 bg-void">
-            <h2 class="text-[10vw] font-black leading-none opacity-5 hover:opacity-10 transition-opacity select-none">
-                MICHAEL QIU
-            </h2>
-            <div class="flex gap-8 text-sm font-mono text-gray-500">
-                <a href="#" class="hover:text-white transition-colors">Home</a>
-                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/issues" class="hover:text-white transition-colors">Issues</a>
-                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/wiki" class="hover:text-white transition-colors">Docs</a>
+        <footer class="w-full py-12 px-6 border-t border-white/10 bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono relative z-30">
+            <p>&copy; 2025 MICHAEL QIU.</p>
+            <div class="flex gap-8 mt-6 md:mt-0">
+                <a href="#" class="hover:text-klein-blue transition-colors">BACK TO TOP</a>
             </div>
         </footer>
 
     </div>
 
     <script>
-        const { createApp, ref, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, onMounted, onUnmounted, nextTick } = Vue;
 
         createApp({
             setup() {
-                const currentTypingText = ref('Desktop 1');
+                const iconContainer = ref(null);
+                const currentSpaceName = ref('Desktop 1');
                 const timeString = ref('12:00');
-                const words = ["Desktop 1", "Coding", "Spotify", "Meeting", "Chill", "Deep Focus"];
-                const cursorOutline = ref(null);
-
-                const cursorHover = () => {
-                    document.body.classList.add('hover-active');
-                };
-                const cursorLeave = () => {
-                    document.body.classList.remove('hover-active');
-                };
-
-                // Typing Effect Logic
-                let wordIndex = 0;
-                let charIndex = 0;
-                let isDeleting = false;
+                const spaceNames = ['Coding', 'Music', 'Focus', 'Meeting', 'Design', 'Desktop 1'];
                 
-                const typeEffect = () => {
-                    const currentWord = words[wordIndex];
-                    
-                    if (isDeleting) {
-                        currentTypingText.value = currentWord.substring(0, charIndex - 1);
-                        charIndex--;
-                    } else {
-                        currentTypingText.value = currentWord.substring(0, charIndex + 1);
-                        charIndex++;
-                    }
-
-                    if (!isDeleting && charIndex === currentWord.length) {
-                        isDeleting = true;
-                        setTimeout(typeEffect, 1500); // Pause at end
-                    } else if (isDeleting && charIndex === 0) {
-                        isDeleting = false;
-                        wordIndex = (wordIndex + 1) % words.length;
-                        setTimeout(typeEffect, 500); // Pause before typing new
-                    } else {
-                        setTimeout(typeEffect, isDeleting ? 50 : 100);
-                    }
-                };
+                // Three.js Variables
+                let scene, camera, renderer, iconMesh;
+                let mouseX = 0, mouseY = 0;
 
                 const updateTime = () => {
                     const now = new Date();
                     timeString.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 };
 
-                const openLink = (url) => {
-                    window.open(url, '_blank');
+                const typeWriterEffect = () => {
+                    let wordIndex = 0;
+                    setInterval(() => {
+                        currentSpaceName.value = spaceNames[wordIndex];
+                        wordIndex = (wordIndex + 1) % spaceNames.length;
+                    }, 2000);
                 };
 
-                onMounted(() => {
-                    lucide.createIcons();
+                // Reused Logic from Index.html
+                const createSquircleShape = (size) => {
+                    const shape = new THREE.Shape();
+                    const width = size; const height = size;
+                    const x = -width / 2; const y = -height / 2;
+                    const r = 0.7; 
+                    shape.moveTo( x, y + r );
+                    shape.lineTo( x, y + height - r );
+                    shape.quadraticCurveTo( x, y + height, x + r, y + height );
+                    shape.lineTo( x + width - r, y + height );
+                    shape.quadraticCurveTo( x + width, y, x + width, y + height - r );
+                    shape.lineTo( x + width, y + r );
+                    shape.quadraticCurveTo( x + width, y, x + width - r, y );
+                    shape.lineTo( x + r, y );
+                    shape.quadraticCurveTo( x, y, x, y + r );
+                    return shape;
+                };
+
+                const initThreeJS = () => {
+                    if (!iconContainer.value) return;
                     
-                    // Init Custom Cursor
+                    const width = iconContainer.value.clientWidth;
+                    const height = iconContainer.value.clientHeight;
+                    
+                    scene = new THREE.Scene();
+                    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+                    camera.position.z = 8;
+                    
+                    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                    renderer.setSize(width, height);
+                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                    renderer.toneMappingExposure = 1.2;
+                    
+                    iconContainer.value.appendChild(renderer.domElement);
+
+                    // Lights
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+                    scene.add(ambientLight);
+                    const keyLight = new THREE.SpotLight(0xffffff, 2);
+                    keyLight.position.set(-10, 10, 10);
+                    scene.add(keyLight);
+                    const backLight = new THREE.DirectionalLight(0x002FA7, 2); // Klein Blue Backlight
+                    backLight.position.set(0, 5, -10);
+                    scene.add(backLight);
+
+                    // Geometry
+                    const size = 4;
+                    const extrudeSettings = { depth: 0.6, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
+                    const shape = createSquircleShape(size);
+                    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    geometry.center();
+
+                    // Texture
+                    const texLoader = new THREE.TextureLoader();
+                    // Using the image from your README/index.html
+                    const imgUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png';
+                    
+                    const frontMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.1 });
+                    const sideMaterial = new THREE.MeshPhysicalMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+
+                    texLoader.load(imgUrl, (texture) => {
+                        texture.encoding = THREE.sRGBEncoding;
+                        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                        frontMaterial.map = texture;
+                        frontMaterial.needsUpdate = true;
+                    });
+
+                    iconMesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial]);
+                    scene.add(iconMesh);
+
+                    // Animation Loop
+                    const animate = () => {
+                        requestAnimationFrame(animate);
+                        if(iconMesh) {
+                            // Gentle floating
+                            iconMesh.position.y = Math.sin(Date.now() * 0.001) * 0.2;
+                            // Mouse interaction
+                            iconMesh.rotation.x += 0.05 * (mouseY * 0.5 - iconMesh.rotation.x);
+                            iconMesh.rotation.y += 0.05 * (mouseX * 0.5 - iconMesh.rotation.y);
+                        }
+                        renderer.render(scene, camera);
+                    };
+                    animate();
+                };
+
+                onMounted(async () => {
+                    lucide.createIcons();
+                    updateTime();
+                    setInterval(updateTime, 60000);
+                    typeWriterEffect();
+
+                    await nextTick();
+                    initThreeJS();
+
+                    // Mouse Move for 3D Icon
                     window.addEventListener('mousemove', (e) => {
+                        mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+                        mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+                        
+                        // Custom Cursor Logic
                         const dot = document.querySelector('.cursor-dot');
                         const outline = document.querySelector('.cursor-outline');
-                        if (dot && outline) {
+                        if(dot && outline) {
                             dot.style.left = `${e.clientX}px`;
                             dot.style.top = `${e.clientY}px`;
-                            
-                            // Slight delay for outline
-                            outline.animate({
-                                left: `${e.clientX}px`,
-                                top: `${e.clientY}px`
-                            }, { duration: 500, fill: "forwards" });
+                            outline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 500, fill: "forwards" });
                         }
                     });
 
-                    // Start Typing
-                    typeEffect();
-                    setInterval(updateTime, 60000);
-                    updateTime();
-
-                    // GSAP Animations
-                    const tl = gsap.timeline();
-                    
-                    tl.to('.hero-line', {
-                        y: 0,
-                        duration: 1.2,
-                        stagger: 0.1,
-                        ease: "power4.out"
-                    })
-                    .to('.hero-text', { opacity: 1, duration: 1 }, "-=0.5")
-                    .to('.hero-btn', { opacity: 1, y: 0, duration: 1 }, "-=0.8");
-
-                    // Parallax Scroll
-                    gsap.utils.toArray('.parallax-img').forEach(layer => {
-                        const speed = layer.getAttribute('data-speed');
-                        gsap.to(layer, {
-                            y: (i, target) => -ScrollTrigger.maxScroll(window) * speed,
-                            ease: "none",
-                            scrollTrigger: {
-                                trigger: "#features",
-                                start: "top bottom",
-                                end: "bottom top",
-                                scrub: 0
-                            }
-                        });
-                    });
-
-                    // Feature List Highlight
-                    gsap.utils.toArray('.feature-item').forEach(item => {
-                        gsap.to(item, {
-                            opacity: 1,
-                            scrollTrigger: {
-                                trigger: item,
-                                start: "top 70%",
-                                end: "top 30%",
-                                scrub: true,
-                                toggleActions: "play reverse play reverse"
-                            }
-                        })
-                    });
-
-                    // Init Lenis Smooth Scroll
+                    // Lenis
                     const lenis = new Lenis({
-                        duration: 1.2,
+                        duration: 1.5,
                         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                         smooth: true
                     });
                     function raf(time) {
                         lenis.raf(time);
+                        ScrollTrigger.update();
                         requestAnimationFrame(raf);
                     }
                     requestAnimationFrame(raf);
+
+                    // GSAP Animations
+                    gsap.from("#features .glass-card", {
+                        y: 100, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out",
+                        scrollTrigger: { trigger: "#features", start: "top 80%" }
+                    });
                 });
 
                 return {
-                    currentTypingText, timeString, cursorHover, cursorLeave, cursorOutline, openLink
+                    iconContainer, currentSpaceName, timeString
                 };
             }
         }).mount('#app');
