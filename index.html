@@ -224,6 +224,16 @@
         .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
         .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.5s ease; }
         .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
+
+        /* --- FIX FOR DISAPPEARING ELEMENTS --- */
+        /* Disable backdrop-filter when main is scaled/blurred/grayscale (sidebar open) */
+        main.grayscale .glass-card, 
+        main.grayscale .app-card-glass,
+        main.grayscale .photo-card-vertical,
+        main.grayscale .nav-glass {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
     </style>
 </head>
 <body :class="{ 'is-booting': isBooting }">
@@ -296,12 +306,12 @@
 
         <transition name="sidebar">
             <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10001] border-r border-gray-200 dark:border-white/10 flex flex-col shadow-2xl overflow-y-auto overflow-x-hidden" style="container-type: inline-size;">
-                <!-- OPTIMIZED: Header layout with Logo -->
-                <div class="absolute top-8 left-8 md:left-12 right-12 flex items-center justify-start gap-4 z-50">
+                <!-- OPTIMIZED: Header layout with Logo to the right -->
+                <div class="absolute top-8 left-8 md:left-12 right-12 flex items-center justify-between z-50">
                     <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
-                    <!-- LOGO ADDED - FULL VERSION -->
+                    <!-- LOGO ADDED - FULL VERSION TO THE RIGHT -->
                     <svg class="h-12 w-auto text-klein-blue" viewBox="0 0 1000 500" fill="currentColor">
                         <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
                         <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
@@ -321,7 +331,7 @@
             </aside>
         </transition>
 
-        <main class="transition-all duration-500" :class="{ 'scale-95 blur-sm pointer-events-none grayscale': isSidebarOpen }">
+        <main class="transition-all duration-500" :class="{ 'scale-95 blur-sm grayscale': isSidebarOpen }">
             
             <section id="home" class="relative w-full h-[250vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
@@ -566,8 +576,22 @@
 
             <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
                 <p>&copy; 2025 MICHAEL QIU.</p>
+                
+                <!-- Logo Centered -->
+                <a href="#home" class="group flex items-center justify-center hover:scale-105 transition-transform duration-300">
+                    <svg class="h-10 w-auto text-gray-400 group-hover:text-klein-blue transition-colors" viewBox="0 0 1000 500" fill="currentColor">
+                        <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
+                        <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
+                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
+                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
+                    </svg>
+                </a>
+
+                <!-- Back to Top Arrow -->
                 <div class="flex gap-8 mt-6 md:mt-0">
-                    <a href="#home" class="hover:text-klein-blue transition-colors">BACK TO TOP</a>
+                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-white/10 hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
+                        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                    </button>
                 </div>
             </footer>
         </main>
@@ -831,63 +855,38 @@
                     resolveTheme();
                 };
 
-                // OPTIMIZED REAL-TIME COLOR DETECTION (Restored Original Canvas Method with Throttling & Alpha Check)
+                // RESTORED ORIGINAL CAPSULE LOGIC
                 const getLuminance = (colorStr) => {
                     const canvas = document.createElement("canvas");
                     canvas.width = 1; canvas.height = 1;
                     const ctx = canvas.getContext("2d");
                     ctx.fillStyle = colorStr;
                     ctx.fillRect(0, 0, 1, 1);
-                    const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
-                    return { r, g, b, a };
+                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+                    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
                 };
 
-                // Throttled contrast checker
-                let lastCheck = 0;
                 const checkElementContrast = (el) => {
                     if (!el) return 'text-white';
-                    
-                    // Optimization: Only run expensive check every 100ms
-                    const now = Date.now();
-                    if (now - lastCheck < 100) return el._lastColor || 'text-white';
-                    
                     const rect = el.getBoundingClientRect();
                     const x = rect.left + rect.width / 2;
                     const y = rect.top + rect.height / 2;
                     
-                    // Early exit if off-screen
+                    // Simple boundary check
                     if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) return 'text-white';
 
                     const elements = document.elementsFromPoint(x, y);
-                    let foundColor = 'text-white';
-
+                    let bgLuminance = 0; 
+                    
                     for (let e of elements) {
-                        // Ignore nav elements and cursor
-                        if (e.tagName === 'NAV' || e.closest('nav') || 
-                            e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) {
-                            continue;
-                        }
-
+                        if (e.tagName === 'NAV' || e.closest('nav') || e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) continue;
                         const style = window.getComputedStyle(e);
                         const bgColor = style.backgroundColor;
-                        
-                        // Check if color is valid and not transparent
-                        if (bgColor && bgColor !== 'transparent' && !bgColor.includes('rgba(0, 0, 0, 0)')) {
-                            // Use the canvas method to accurately get RGBA
-                            const { r, g, b, a } = getLuminance(bgColor);
-                            
-                            // FIX: Check alpha channel. If < 50 (out of 255), treat as transparent/invisible
-                            if (a < 50) continue;
-
-                            const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-                            foundColor = lum > 128 ? 'text-black' : 'text-white';
-                            break; // Stop at the first visible element
-                        }
+                        if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') continue;
+                        bgLuminance = getLuminance(bgColor);
+                        break;
                     }
-                    
-                    el._lastColor = foundColor;
-                    lastCheck = now;
-                    return foundColor;
+                    return bgLuminance > 128 ? 'text-black' : 'text-white';
                 };
 
                 const updateNavColors = () => {
