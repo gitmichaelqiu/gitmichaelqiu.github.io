@@ -269,13 +269,14 @@
                     </div>
                 </div>
                 <!-- FIX: Added pathLength="100" to decouple progress from geometry -->
+                <!-- Removed 'transition' from style to fix laggy/broken feel -->
                 <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
                     <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
                      <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
                           pathLength="100"
                           :stroke-dasharray="100" 
                           :stroke-dashoffset="capsuleDashOffset"
-                          class="opacity-100" style="transition: stroke-dashoffset 0.1s linear;" />
+                          class="opacity-100" />
                 </svg>
             </div>
 
@@ -825,32 +826,54 @@
                     resolveTheme();
                 };
 
-                // OPTIMIZATION: Removed expensive getLuminance and checkElementContrast functions
-                // replaced with efficient logic based on Active Section
+                // OPTIMIZED REAL-TIME COLOR DETECTION
+                // We parse computed RGB values directly instead of using expensive Canvas API
+                const getLuminance = (r, g, b) => {
+                    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                };
+
+                const checkElementContrast = (el) => {
+                    if (!el) return 'text-white';
+                    const rect = el.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2;
+                    const y = rect.top + rect.height / 2;
+                    
+                    // Early exit if off-screen
+                    if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) return 'text-white';
+
+                    const elements = document.elementsFromPoint(x, y);
+                    
+                    for (let e of elements) {
+                        // Ignore nav elements and cursor
+                        if (e.tagName === 'NAV' || e.closest('nav') || 
+                            e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) {
+                            continue;
+                        }
+
+                        const style = window.getComputedStyle(e);
+                        const bgColor = style.backgroundColor;
+                        
+                        // Check if color is valid and not transparent
+                        // Most browsers return "rgba(0, 0, 0, 0)" for transparent
+                        if (bgColor && bgColor !== 'transparent' && !bgColor.includes('rgba(0, 0, 0, 0)')) {
+                            const match = bgColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                            if (match) {
+                                const r = parseInt(match[1]);
+                                const g = parseInt(match[2]);
+                                const b = parseInt(match[3]);
+                                const lum = getLuminance(r, g, b);
+                                return lum > 128 ? 'text-black' : 'text-white';
+                            }
+                        }
+                    }
+                    // Fallback to current theme mode
+                    return activeTheme.value === 'dark' ? 'text-white' : 'text-black';
+                };
 
                 const updateNavColors = () => {
-                    // Logic: Define contrast for each section.
-                    // Home (Blue) -> White
-                    // Profile (Light/Dark) -> Auto
-                    // Works (Black) -> White
-                    // Photos (Auto) -> Auto
-                    // Connect (Light/Dark) -> Auto
-                    
-                    const section = activeSection.value;
-                    let color = 'text-white'; // Default
-                    
-                    if (section === 'home') {
-                        color = 'text-white';
-                    } else if (section === 'works') {
-                        color = 'text-white';
-                    } else if (section === 'profile' || section === 'connect' || section === 'photos') {
-                         // Check current active theme
-                         color = activeTheme.value === 'dark' ? 'text-white' : 'text-black';
-                    }
-
-                    navLeftColor.value = color;
-                    navCapsuleColor.value = color;
-                    navRightColor.value = color;
+                    navLeftColor.value = checkElementContrast(navBtnLeft.value);
+                    navCapsuleColor.value = checkElementContrast(navCapsule.value);
+                    navRightColor.value = checkElementContrast(navBtnRight.value);
                 };
 
                 const updateScrollProgress = () => {
@@ -880,8 +903,6 @@
                         }
                     }
                     activeSection.value = current;
-
-                    updateNavColors();
                     
                     // Simple Scroll Anim logic (for Home/Intro)
                     const magContainer = document.getElementById('magnetic-container');
@@ -1244,6 +1265,17 @@
                     requestAnimationFrame(raf);
                 };
 
+                let ticking = false;
+                const onScroll = () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(() => {
+                            updateScrollProgress();
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                };
+
                 onMounted(async () => {
                     setTimeout(() => { finishBootSequence(); }, 1500);
                     initMagneticLogo();
@@ -1253,7 +1285,8 @@
                     initThreeJS();
                     initCursor();
                     initLenis(); 
-                    window.addEventListener('scroll', updateScrollProgress);
+                    // Use throttled scroll handler
+                    window.addEventListener('scroll', onScroll);
 
                     await nextTick();
 
@@ -1288,7 +1321,7 @@
                 });
                 
                 onUnmounted(() => {
-                    window.removeEventListener('scroll', updateScrollProgress);
+                    window.removeEventListener('scroll', onScroll);
                     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', resolveTheme);
                     if(lenis) lenis.destroy();
                     gsap.ticker.remove(rotateBalls);
