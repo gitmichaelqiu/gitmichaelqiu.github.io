@@ -502,7 +502,7 @@
                             
                             <!-- Enter Gallery Link -->
                              <a href="#" class="photo-card-wrapper block">
-                                <div class="photo-card-vertical group relative w-full aspect-square bg-[#111] border border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue transition-colors duration-500 shadow-2xl">
+                                <div class="photo-card-vertical group relative w-full aspect-square bg-[#111] border border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue shadow-2xl">
                                     <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
                                     <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center mb-6 group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300 relative z-10">
                                         <i data-lucide="arrow-right" class="w-8 h-8 text-white"></i>
@@ -649,7 +649,8 @@
             setLines() {
                 const { width, height } = this.bounding;
                 this.lines = []; this.svg.innerHTML = ''; this.paths = [];
-                const xGap = 10; const yGap = 32; 
+                // OPTIMIZATION: Increased gap size to reduce number of lines/points
+                const xGap = 30; const yGap = 80; 
                 const oWidth = width + 200; const oHeight = height + 30;
                 const totalLines = Math.ceil(oWidth / xGap); const totalPoints = Math.ceil(oHeight / yGap);
                 const xStart = (width - xGap * totalLines) / 2; const yStart = (height - yGap * totalPoints) / 2;
@@ -1050,7 +1051,8 @@
                     shape.lineTo( x, y + height - r );
                     shape.quadraticCurveTo( x, y + height, x + r, y + height );
                     shape.lineTo( x + width - r, y + height );
-                    shape.quadraticCurveTo( x + width, y, x + width, y + height - r );
+                    // FIX: Changed quadraticCurveTo control point from 'y' to 'y + height'
+                    shape.quadraticCurveTo( x + width, y + height, x + width, y + height - r );
                     shape.lineTo( x + width, y + r );
                     shape.quadraticCurveTo( x + width, y, x + width - r, y );
                     shape.lineTo( x + r, y );
