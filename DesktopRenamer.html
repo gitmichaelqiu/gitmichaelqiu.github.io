@@ -32,6 +32,7 @@
                         'twinkle': 'twinkle 4s ease-in-out infinite',
                         'bounce-subtle': 'bounceSubtle 2s infinite',
                         'spin-point': 'spinPoint 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                        'grid-pan': 'gridPan 20s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -54,6 +55,10 @@
                             '0%': { transform: 'rotate(-720deg) scale(0) translate(-50px, -50px)', opacity: '0' },
                             '60%': { transform: 'rotate(10deg) scale(1.2) translate(0, 0)', opacity: '1' },
                             '100%': { transform: 'rotate(0deg) scale(1.1) translate(0, 0)', opacity: '1' },
+                        },
+                        gridPan: {
+                            '0%': { backgroundPosition: '0 0' },
+                            '100%': { backgroundPosition: '60px 60px' },
                         }
                     }
                 }
@@ -413,6 +418,9 @@
                 <div class="aurora-container opacity-30 dark:opacity-0 transition-opacity">
                     <div class="aurora-blob blob-2" style="mix-blend-mode: multiply;"></div>
                 </div>
+                <!-- Extra gradient orb for variety -->
+                <div class="absolute top-[20%] right-[5%] w-[30vw] h-[30vw] bg-klein-blue/10 rounded-full blur-[80px] pointer-events-none"></div>
+                
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
 
@@ -463,9 +471,21 @@
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center perspective-[2000px]">
                     
                     <div class="absolute inset-0 bg-[#050505]"></div>
-                    <!-- Minimal Grid Background -->
-                    <div class="absolute inset-0 z-0 opacity-20" style="background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px); background-size: 40px 40px;"></div>
-                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a10] to-[#050505] z-0"></div>
+                    
+                    <!-- Animated Background Elements -->
+                    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                         <!-- Moving Grid -->
+                         <div class="absolute inset-0 z-0 opacity-20 animate-grid-pan" 
+                              style="background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px); background-size: 60px 60px;">
+                         </div>
+                         
+                         <!-- Floating Orbs for depth -->
+                         <div class="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px] animate-float"></div>
+                         <div class="absolute bottom-1/3 right-1/3 w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+                    </div>
+                    
+                    <!-- Vignette -->
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a10]/50 to-[#050505] z-0"></div>
 
                     <!-- Captions Container -->
                     <div class="absolute top-32 left-6 md:left-12 w-full max-w-sm z-[40] pointer-events-none text-left">
