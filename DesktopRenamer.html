@@ -23,77 +23,40 @@
                         sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                         display: ['Syncopate', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                     }
                 }
             }
         }
     </script>
     
-    <!-- Vue 3 -->
+    <!-- Libraries -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    
-    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-
-    <!-- Lenis (Smooth Scroll) -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --klein-blue: #002FA7;
-        }
-
-        body {
-            background-color: #050505;
-            color: #ffffff;
-            overflow-x: hidden;
-            width: 100vw;
-        }
-
+        :root { --klein-blue: #002FA7; }
+        body { background-color: #050505; color: #ffffff; overflow-x: hidden; width: 100vw; }
+        
         /* Smooth Scroll */
         html.lenis { height: auto; }
         .lenis.lenis-smooth { scroll-behavior: auto; }
-        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-        .lenis.lenis-stopped { overflow: hidden; }
 
-        /* Glassmorphism */
         .glass-panel {
             background: rgba(20, 20, 20, 0.6);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nav-capsule {
             background: rgba(10, 10, 10, 0.5);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-        }
-
-        /* macOS UI Elements */
-        .macos-window {
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            position: relative;
-            background: #1e1e1e;
         }
 
         .macos-topbar {
@@ -109,19 +72,18 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        /* Space Label Window Style */
         .space-label-window {
-            background: rgba(40, 40, 40, 0.45);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(50px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
             border-radius: 16px;
         }
-
-        /* Typography */
-        .text-glow {
-            text-shadow: 0 0 30px rgba(0, 47, 167, 0.5);
+        
+        .mission-control-bar {
+            background: rgba(40, 40, 40, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
@@ -131,24 +93,20 @@
         <!-- Navigation -->
         <nav class="fixed top-8 left-1/2 -translate-x-1/2 z-[100]">
             <div class="nav-capsule h-14 px-2 rounded-full flex items-center gap-2">
-                <!-- Logo -->
                 <a href="#" class="flex items-center gap-3 px-4 hover:opacity-80 transition-opacity">
-                    <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-8 h-8 rounded-lg shadow-lg" alt="Logo">
+                    <!-- Placeholder Logo URL -->
+                    <div class="w-8 h-8 rounded-lg bg-klein-blue flex items-center justify-center shadow-lg">
+                        <i data-lucide="layout" class="text-white w-5 h-5"></i>
+                    </div>
                     <span class="font-bold text-sm tracking-wide hidden md:block">DesktopRenamer</span>
                 </a>
-                
                 <div class="w-px h-6 bg-white/10 mx-1"></div>
-                
-                <!-- Links -->
                 <div class="flex items-center gap-1">
                     <button @click="scrollTo('hero')" class="px-4 py-2 text-xs font-mono font-bold hover:bg-white/5 rounded-full transition-colors text-white/70 hover:text-white">HOME</button>
                     <button @click="scrollTo('demo')" class="px-4 py-2 text-xs font-mono font-bold hover:bg-white/5 rounded-full transition-colors text-white/70 hover:text-white">DEMO</button>
                 </div>
-
                 <div class="w-px h-6 bg-white/10 mx-1"></div>
-
-                <!-- CTA -->
-                <a href="#" class="flex items-center gap-2 bg-klein-blue hover:bg-blue-700 text-white px-5 py-2 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(0,47,167,0.4)]">
+                <a href="#" class="flex items-center gap-2 bg-klein-blue hover:bg-blue-700 text-white px-5 py-2 rounded-full transition-all hover:scale-105 shadow-lg">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     <span class="text-xs font-bold">Download</span>
                 </a>
@@ -157,57 +115,36 @@
 
         <main>
             <!-- Hero Section -->
-            <section id="hero" class="relative w-full h-screen flex flex-col items-center pt-32 overflow-hidden">
-                <!-- Top 2/3: Slogan & 3D Icon -->
-                <div class="relative w-full h-[66vh] flex flex-col items-center z-10">
-                    <div class="text-center mb-8 relative z-20">
-                        <h1 class="text-5xl md:text-8xl font-black tracking-tighter mix-blend-overlay opacity-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full blur-xl select-none pointer-events-none">
-                            RENAME EXPERIENCES
-                        </h1>
-                        <h1 class="text-4xl md:text-7xl font-black tracking-tighter text-white relative z-10 drop-shadow-2xl">
-                            RENAME<br>EXPERIENCES
-                        </h1>
-                    </div>
-                    
-                    <!-- 3D Canvas -->
-                    <div ref="canvasContainer" class="w-full h-full absolute inset-0 z-0 pointer-events-auto cursor-grab active:cursor-grabbing"></div>
-                </div>
-
-                <!-- Bottom 1/3: Head of Demo -->
-                <div class="relative w-full h-[34vh] flex flex-col items-center justify-end pb-0 z-20">
-                    <div class="text-center mb-4 opacity-70 animate-pulse">
-                        <span class="font-mono text-xs tracking-[0.3em] uppercase">Scroll to Explore</span>
-                        <div class="flex justify-center mt-2"><i data-lucide="chevron-down" class="w-5 h-5"></i></div>
-                    </div>
-                    
-                    <!-- Top of the Initial Space (The "Head") -->
-                    <div id="demo-head" class="w-[80vw] md:w-[60vw] h-[20vh] bg-[#1e1e1e] rounded-t-[2rem] border-t border-x border-white/10 shadow-[0_-20px_60px_rgba(0,47,167,0.15)] relative overflow-hidden">
-                        <!-- Simulated Top Bar -->
-                        <div class="h-8 w-full flex justify-between items-center px-6 mt-2">
-                            <i data-lucide="apple" class="w-4 h-4 fill-current text-white"></i>
-                            <span class="text-xs font-bold text-white/90">Main Space</span>
-                            <div class="w-16 flex justify-end gap-2">
-                                <i data-lucide="search" class="w-3 h-3 text-white"></i>
-                                <i data-lucide="wifi" class="w-3 h-3 text-white"></i>
-                            </div>
+            <section id="hero" class="relative w-full h-[150vh] flex flex-col items-center pt-32">
+                <!-- Slogan & 3D Icon Container -->
+                <div class="fixed top-0 left-0 w-full h-screen flex flex-col items-center pointer-events-none z-0">
+                    <div class="relative w-full h-[66vh] flex flex-col items-center justify-center z-10" id="hero-content">
+                        <div class="text-center mb-8 relative z-20 mix-blend-difference">
+                            <h1 class="text-4xl md:text-7xl font-black tracking-tighter text-white drop-shadow-2xl leading-tight">
+                                RENAME<br>EXPERIENCES
+                            </h1>
                         </div>
-                        <!-- Gradient Hint -->
-                        <div class="absolute top-12 left-0 w-full h-full bg-gradient-to-br from-klein-blue/20 to-purple-900/20 pointer-events-none"></div>
                     </div>
                 </div>
+                
+                <!-- 3D Canvas (Fixed Background) -->
+                <div ref="canvasContainer" class="fixed top-0 left-0 w-full h-full z-0 pointer-events-auto"></div>
+
+                <!-- Scroll Spacer to drive the initial growth animation -->
+                <div class="absolute bottom-0 w-full h-[50vh] z-10"></div>
             </section>
 
             <!-- Interactive Demo Section -->
-            <section id="demo" class="relative w-full bg-bg-dark z-30" style="height: 400vh;">
+            <section id="demo" class="relative w-full bg-bg-dark z-20" style="height: 500vh;">
                 <!-- Sticky Container -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center perspective-[2000px]">
                     
                     <!-- Background Elements -->
-                    <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#0a0a10] to-[#050505]"></div>
-                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 40px 40px;"></div>
+                    <div class="absolute inset-0 bg-[#050505]"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a10] to-[#050505]"></div>
 
                     <!-- Captions Container -->
-                    <div class="absolute top-24 md:top-32 w-full text-center z-50 pointer-events-none px-6">
+                    <div class="absolute top-32 w-full text-center z-50 pointer-events-none px-6">
                         <div class="caption-slide absolute w-full left-0 opacity-0 transform translate-y-10" id="caption-1">
                             <h2 class="text-3xl md:text-5xl font-bold mb-4">Contextual Naming</h2>
                             <p class="font-mono text-blue-300">Give every space a purpose.</p>
@@ -218,48 +155,55 @@
                         </div>
                         <div class="caption-slide absolute w-full left-0 opacity-0 transform translate-y-10" id="caption-3">
                             <h2 class="text-3xl md:text-5xl font-bold mb-4">Instant Clarity</h2>
-                            <p class="font-mono text-blue-300">Mission Control, redefined.</p>
+                            <p class="font-mono text-blue-300">Real Mission Control integration.</p>
                         </div>
+                    </div>
+                    
+                    <!-- Mission Control Top Bar (Simulated) -->
+                    <div id="mc-top-bar" class="mission-control-bar absolute top-0 w-full h-36 z-[60] transform -translate-y-full flex items-center justify-center gap-6 px-10">
+                         <!-- Thumbnails -->
+                         <div class="h-24 aspect-[16/10] bg-gray-700/50 rounded-lg border border-white/20 relative group hover:scale-105 transition-transform">
+                             <div class="absolute top-2 left-2 w-3 h-3 bg-gray-500 rounded-full"></div>
+                             <div class="absolute inset-0 flex items-center justify-center text-xs font-mono text-white/50">Space 1</div>
+                         </div>
+                         <div class="h-24 aspect-[16/10] bg-gray-700/50 rounded-lg border-2 border-white/80 relative shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform">
+                             <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 rounded-full">Current</div>
+                             <div class="absolute inset-0 flex items-center justify-center text-xs font-mono text-white">Coding</div>
+                         </div>
+                         <div class="h-24 aspect-[16/10] bg-gray-700/50 rounded-lg border border-white/20 relative group hover:scale-105 transition-transform">
+                             <div class="absolute top-2 left-2 w-3 h-3 bg-gray-500 rounded-full"></div>
+                             <div class="absolute inset-0 flex items-center justify-center text-xs font-mono text-white/50">Space 3</div>
+                         </div>
+                         <div class="h-24 aspect-[16/10] bg-gray-800/30 rounded-lg border border-white/10 flex items-center justify-center">
+                             <i data-lucide="plus" class="w-6 h-6 text-white/30"></i>
+                         </div>
                     </div>
 
                     <!-- The Spaces Container (Moving Stage) -->
-                    <div id="spaces-stage" class="relative w-[90vw] md:w-[70vw] aspect-[16/10] will-change-transform">
+                    <!-- Initial state set to mimic the "tease" (scale 0.5, pushed down) -->
+                    <div id="spaces-stage" class="relative w-[90vw] md:w-[70vw] aspect-[16/10] will-change-transform transform translate-y-[40vh] scale-50 opacity-0">
                         
                         <!-- Main Carousel -->
                         <div id="spaces-carousel" class="absolute inset-0 w-full h-full flex gap-[10vw] will-change-transform">
                             
                             <!-- Space 1: Main -->
                             <div class="space-item w-full h-full flex-shrink-0 relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#0a0a0a]">
-                                <!-- Wallpaper -->
-                                <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#1a1a2e] to-black">
-                                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
-                                </div>
+                                <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#1a1a2e] to-black"></div>
                                 
-                                <!-- UI Overlay -->
-                                <div class="absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-10 transition-opacity duration-500" id="ui-overlay-1">
-                                    <!-- Top Bar -->
+                                <div class="absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-10 transition-opacity duration-500">
+                                    <!-- Top Bar: Apple Left, Name Right -->
                                     <div class="macos-topbar h-8 rounded-lg flex items-center justify-between px-4">
-                                        <div class="flex items-center gap-4">
-                                            <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
-                                            <span class="font-bold text-sm">Finder</span>
-                                        </div>
-                                        <!-- The Feature: Custom Name -->
-                                        <span class="font-mono text-xs font-bold tracking-widest text-blue-300 bg-blue-900/30 px-2 py-1 rounded">MAIN_SPACE</span>
-                                        
-                                        <div class="flex items-center gap-3">
-                                            <span class="text-xs font-mono opacity-60">10:42 AM</span>
-                                        </div>
+                                        <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
+                                        <span class="font-bold text-xs tracking-wide text-white">Main Space</span>
                                     </div>
 
                                     <!-- Dock -->
                                     <div class="self-center mb-2">
                                         <div class="dock-glass h-16 px-4 rounded-2xl flex items-center gap-4">
-                                            <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10 rounded-lg hover:-translate-y-2 transition-transform duration-300 shadow-lg">
+                                            <div class="w-10 h-10 rounded-lg bg-klein-blue flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
                                             <div class="w-px h-8 bg-white/10"></div>
-                                            <!-- Placeholders -->
-                                            <div class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 hover:-translate-y-2 transition-all"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 hover:-translate-y-2 transition-all"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 hover:-translate-y-2 transition-all"></div>
+                                            <div class="w-10 h-10 rounded-lg bg-white/10"></div>
+                                            <div class="w-10 h-10 rounded-lg bg-white/10"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -267,30 +211,25 @@
 
                             <!-- Space 2: Coding -->
                             <div class="space-item w-full h-full flex-shrink-0 relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#0d1117]">
-                                <!-- Wallpaper -->
                                 <div class="absolute inset-0 bg-[#0d1117]">
-                                    <div class="absolute inset-0 opacity-10 font-mono text-xs p-8 overflow-hidden text-green-400">
-                                        import { universe } from 'galaxy';<br>
-                                        while(alive) { code(); }<br>
-                                        // TODO: Fix the entropy bug
+                                    <div class="absolute inset-0 opacity-20 font-mono text-xs p-8 text-green-400 overflow-hidden">
+                                        function createUniverse() {<br>
+                                            const stars = [];<br>
+                                            return new Galaxy(stars);<br>
+                                        }
                                     </div>
                                 </div>
 
                                 <div class="absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-10">
                                     <div class="macos-topbar h-8 rounded-lg flex items-center justify-between px-4">
-                                        <div class="flex items-center gap-4">
-                                            <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
-                                            <span class="font-bold text-sm">VS Code</span>
-                                        </div>
-                                        <span class="font-mono text-xs font-bold tracking-widest text-green-400 bg-green-900/30 px-2 py-1 rounded">CODING_ZONE</span>
-                                        <div class="flex items-center gap-3"><span class="text-xs font-mono opacity-60">10:43 AM</span></div>
+                                        <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
+                                        <span class="font-bold text-xs tracking-wide text-white">Coding</span>
                                     </div>
                                     <div class="self-center mb-2">
                                         <div class="dock-glass h-16 px-4 rounded-2xl flex items-center gap-4">
-                                            <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10 rounded-lg shadow-lg">
+                                            <div class="w-10 h-10 rounded-lg bg-klein-blue flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
                                             <div class="w-px h-8 bg-white/10"></div>
                                             <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400"><i data-lucide="code-2" class="w-5 h-5"></i></div>
-                                            <div class="w-10 h-10 rounded-lg bg-white/10"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -298,23 +237,16 @@
 
                             <!-- Space 3: Gaming -->
                             <div class="space-item w-full h-full flex-shrink-0 relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#1a0510]">
-                                <!-- Wallpaper -->
-                                <div class="absolute inset-0 bg-gradient-to-t from-purple-900 via-red-900 to-black">
-                                    <div class="absolute w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30"></div>
-                                </div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-purple-900 via-red-900 to-black"></div>
 
                                 <div class="absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-10">
                                     <div class="macos-topbar h-8 rounded-lg flex items-center justify-between px-4">
-                                        <div class="flex items-center gap-4">
-                                            <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
-                                            <span class="font-bold text-sm">Steam</span>
-                                        </div>
-                                        <span class="font-mono text-xs font-bold tracking-widest text-purple-400 bg-purple-900/30 px-2 py-1 rounded">GAMING_LAIR</span>
-                                        <div class="flex items-center gap-3"><span class="text-xs font-mono opacity-60">10:45 AM</span></div>
+                                        <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
+                                        <span class="font-bold text-xs tracking-wide text-white">Gaming</span>
                                     </div>
                                     <div class="self-center mb-2">
                                         <div class="dock-glass h-16 px-4 rounded-2xl flex items-center gap-4">
-                                            <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10 rounded-lg shadow-lg">
+                                            <div class="w-10 h-10 rounded-lg bg-klein-blue flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
                                             <div class="w-px h-8 bg-white/10"></div>
                                             <div class="w-10 h-10 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400"><i data-lucide="gamepad-2" class="w-5 h-5"></i></div>
                                         </div>
@@ -326,16 +258,17 @@
 
                         <!-- Space Label Window (Hidden initially) -->
                         <div id="mission-control-overlay" class="absolute inset-0 z-50 pointer-events-none opacity-0 flex items-center justify-center">
-                            <div class="space-label-window p-8 flex flex-col items-center gap-4 transform scale-90" id="label-window-content">
-                                <div class="w-16 h-16 rounded-2xl bg-black/20 flex items-center justify-center mb-2 shadow-inner">
-                                    <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10">
+                            <div class="space-label-window p-10 flex flex-col items-center gap-6 transform scale-90" id="label-window-content">
+                                <div class="w-20 h-20 rounded-2xl bg-black/40 flex items-center justify-center mb-2 shadow-inner border border-white/5">
+                                    <i data-lucide="layout" class="text-white w-10 h-10"></i>
                                 </div>
                                 <div class="text-center">
-                                    <h3 class="font-bold text-white text-2xl tracking-tight">Coding Zone</h3>
-                                    <p class="text-white/50 text-sm font-mono mt-1">Current Space</p>
+                                    <h3 class="font-black text-white text-4xl tracking-tighter mb-1">Coding</h3>
+                                    <p class="text-white/40 text-xs font-mono uppercase tracking-widest">DesktopRenamer</p>
                                 </div>
-                                <div class="mt-4 px-4 py-2 bg-white/10 rounded-lg text-xs font-mono text-white/80 border border-white/5">
-                                    Press ⏎ to Rename
+                                <div class="mt-4 px-6 py-3 bg-white/10 rounded-lg text-xs font-mono text-white/80 border border-white/5 flex items-center gap-3">
+                                    <span class="px-1.5 py-0.5 rounded bg-white/20 text-[10px]">⏎</span>
+                                    <span>to Rename</span>
                                 </div>
                             </div>
                         </div>
@@ -351,13 +284,11 @@
     </div>
 
     <script>
-        const { createApp, ref, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, onMounted } = Vue;
 
         createApp({
             setup() {
                 const canvasContainer = ref(null);
-                
-                // --- THREE.JS LOGIC ---
                 let scene, camera, renderer, iconMesh;
                 let mouseX = 0, mouseY = 0;
 
@@ -380,100 +311,63 @@
 
                 const initThree = () => {
                     if (!canvasContainer.value) return;
-                    
                     const w = canvasContainer.value.clientWidth;
                     const h = canvasContainer.value.clientHeight;
 
                     scene = new THREE.Scene();
-                    // Fog for depth blending
                     scene.fog = new THREE.FogExp2(0x050505, 0.02);
 
+                    // Updated Camera Position (Closer to fill container)
                     camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
-                    camera.position.z = 18; // Further back for huge icon
+                    camera.position.z = 14; 
 
                     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
                     renderer.setSize(w, h);
                     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                     renderer.toneMapping = THREE.ACESFilmicToneMapping;
                     renderer.toneMappingExposure = 1.2;
-                    
                     canvasContainer.value.appendChild(renderer.domElement);
 
-                    // Lighting
-                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-                    scene.add(ambientLight);
-                    
+                    // Lights
+                    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
                     const spotLight = new THREE.SpotLight(0xffffff, 2);
                     spotLight.position.set(10, 20, 20);
-                    spotLight.castShadow = true;
                     scene.add(spotLight);
-
                     const blueLight = new THREE.PointLight(0x002FA7, 3, 50);
                     blueLight.position.set(-10, -10, 5);
                     scene.add(blueLight);
 
-                    // Icon Geometry
-                    const size = 6;
+                    // Icon Geometry (Scaled up)
+                    const size = 6.5; 
                     const extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
-                    const shape = createSquircleShape(size);
-                    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    const geometry = new THREE.ExtrudeGeometry(createSquircleShape(size), extrudeSettings);
                     geometry.center();
 
                     // Materials
-                    const textureLoader = new THREE.TextureLoader();
-                    // Using the URL from the index.html prompt
-                    const iconUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png';
-                    
-                    const materialSide = new THREE.MeshStandardMaterial({ 
-                        color: 0x111111, 
-                        roughness: 0.1, 
-                        metalness: 0.8 
-                    });
-                    
-                    const materialFront = new THREE.MeshStandardMaterial({ 
-                        color: 0xffffff, 
-                        roughness: 0.3, 
-                        metalness: 0.2
-                    });
-
-                    textureLoader.load(iconUrl, (tex) => {
-                        tex.encoding = THREE.sRGBEncoding;
-                        materialFront.map = tex;
-                        materialFront.needsUpdate = true;
-                    });
+                    const materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.8 });
+                    const materialFront = new THREE.MeshStandardMaterial({ color: 0x002FA7, roughness: 0.3, metalness: 0.2 });
 
                     iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
-                    
-                    // Initial Rotation
-                    iconMesh.rotation.x = 0.2;
-                    iconMesh.rotation.y = -0.3;
-                    
+                    iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
                     scene.add(iconMesh);
 
-                    // Floating Animation Loop
                     const animate = () => {
                         requestAnimationFrame(animate);
-                        
-                        // Gentle float
                         const time = Date.now() * 0.001;
                         if(iconMesh) {
                             iconMesh.position.y = Math.sin(time) * 0.2;
-                            // Mouse influence
                             iconMesh.rotation.x += (mouseY * 0.5 - iconMesh.rotation.x) * 0.05;
                             iconMesh.rotation.y += (mouseX * 0.5 - iconMesh.rotation.y) * 0.05;
                         }
-                        
                         renderer.render(scene, camera);
                     };
                     animate();
 
-                    // Mouse Move
                     window.addEventListener('mousemove', (e) => {
                         mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
                         mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
                     });
                     
-                    // Resize
                     window.addEventListener('resize', () => {
                         const newW = canvasContainer.value.clientWidth;
                         const newH = canvasContainer.value.clientHeight;
@@ -483,37 +377,34 @@
                     });
                 };
 
-                // --- GSAP SCROLL LOGIC ---
                 const initScrollAnimation = () => {
                     gsap.registerPlugin(ScrollTrigger);
-
                     const tl = gsap.timeline({
                         scrollTrigger: {
                             trigger: "#demo",
-                            start: "top top",
+                            start: "top bottom", // Start earlier
                             end: "bottom bottom",
                             scrub: 1,
                         }
                     });
 
-                    // 1. Grow Stage
-                    // The "head" was just a tease. Now we scale up the actual stage container to fill view.
-                    // We also align it so it matches the position of the "head" initially if possible, 
-                    // but for simplicity, we fade in the stage from bottom while scaling.
+                    // 1. Natural Growth Transition
+                    // Fades out hero text and scales up the demo stage to fill screen
+                    tl.to("#hero-content", { opacity: 0, y: -50, duration: 1 })
+                      .to("#spaces-stage", { 
+                          y: '0vh', 
+                          scale: 1, 
+                          opacity: 1, 
+                          duration: 2, 
+                          ease: "power2.out" 
+                      }, "<")
                     
-                    tl.fromTo("#spaces-stage", 
-                        { y: '50vh', scale: 0.8, opacity: 0 },
-                        { y: '0vh', scale: 1, opacity: 1, duration: 2, ease: "power2.out" }
-                    )
-                    // Caption 1: Contextual Naming
-                    .to("#caption-1", { opacity: 1, y: 0, duration: 1 }, "<")
+                    // Caption 1
+                    .to("#caption-1", { opacity: 1, y: 0, duration: 1 }, "<+0.5")
                     .to("#caption-1", { opacity: 0, y: -20, duration: 1 }, "+=1")
 
-                    // 2. Slide Carousel (Change Spaces)
-                    // Move the carousel left to show Space 2
+                    // 2. Slide Carousel
                     .to("#spaces-carousel", { x: '-110%', duration: 3, ease: "power2.inOut" })
-                    
-                    // Caption 2: Seamless Flow
                     .to("#caption-2", { opacity: 1, y: 0, duration: 1 }, "<+0.5")
                     .to("#caption-2", { opacity: 0, y: -20, duration: 1 }, "+=1")
 
@@ -521,30 +412,25 @@
                     .to("#spaces-carousel", { x: '-220%', duration: 3, ease: "power2.inOut" })
                     
                     // 3. Mission Control Mode
-                    // Scale down the whole stage, blur bg slightly
-                    .to("#spaces-stage", { scale: 0.7, duration: 2, ease: "back.out(1.2)" })
+                    .to("#spaces-stage", { scale: 0.75, y: '5vh', duration: 2, ease: "back.out(1.0)" })
                     .to(".space-item", { filter: "blur(4px) brightness(0.6)", duration: 2 }, "<")
+                    
+                    // Reveal MC Top Bar
+                    .to("#mc-top-bar", { y: 0, duration: 1, ease: "power3.out" }, "<")
                     
                     // Reveal Space Label Window
                     .to("#mission-control-overlay", { opacity: 1, duration: 1 }, "<+0.5")
                     .fromTo("#label-window-content", { scale: 0.8, y: 20 }, { scale: 1, y: 0, duration: 1, ease: "elastic.out(1, 0.6)" }, "<")
-
-                    // Caption 3: Clarity
-                    .to("#caption-3", { opacity: 1, y: 0, duration: 1 }, "<")
+                    .to("#caption-3", { opacity: 1, y: 0, duration: 1 }, "<");
                 };
 
                 const scrollTo = (id) => {
                     const el = document.getElementById(id);
-                    if(el) {
-                        // Use lenis for smooth scrolling if available, else native
-                        window.lenis ? window.lenis.scrollTo(el) : el.scrollIntoView({ behavior: 'smooth' });
-                    }
+                    if(el) window.lenis ? window.lenis.scrollTo(el) : el.scrollIntoView({ behavior: 'smooth' });
                 };
 
                 onMounted(() => {
                     initThree();
-                    
-                    // Initialize Smooth Scroll
                     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
                     window.lenis = lenis;
                     function raf(time) {
@@ -552,17 +438,11 @@
                         requestAnimationFrame(raf);
                     }
                     requestAnimationFrame(raf);
-
-                    // Delay ScrollTrigger to ensure DOM is ready
                     setTimeout(initScrollAnimation, 100);
-                    
-                    // Icons
                     lucide.createIcons();
                 });
 
-                return {
-                    canvasContainer, scrollTo
-                };
+                return { canvasContainer, scrollTo };
             }
         }).mount('#app');
     </script>
