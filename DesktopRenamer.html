@@ -27,7 +27,7 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'aurora': 'aurora 20s linear infinite',
+                        'float': 'float 10s ease-in-out infinite',
                         'twinkle': 'twinkle 4s ease-in-out infinite',
                     },
                     keyframes: {
@@ -35,10 +35,9 @@
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
-                        aurora: {
-                            '0%': { transform: 'rotate(0deg) scale(1)' },
-                            '50%': { transform: 'rotate(180deg) scale(1.1)' },
-                            '100%': { transform: 'rotate(360deg) scale(1)' },
+                        float: {
+                            '0%, 100%': { transform: 'translate(0, 0)' },
+                            '50%': { transform: 'translate(-20px, 20px)' },
                         },
                         twinkle: {
                             '0%, 100%': { opacity: '0.3' },
@@ -121,20 +120,38 @@
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
-        /* Aurora Effect - Strengthened */
-        .aurora-bg {
+        /* --- POLISHED AURORA EFFECT --- */
+        .aurora-container {
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120vmax; height: 120vmax; /* Increased size */
-            background: 
-                radial-gradient(circle at 50% 50%, rgba(0, 47, 167, 0.5) 0%, transparent 50%), /* Increased opacity */
-                conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(32, 190, 255, 0.4) 60deg, transparent 120deg, rgba(120, 0, 255, 0.4) 180deg, transparent 360deg); /* Increased opacity */
-            filter: blur(70px);
-            opacity: 0.9; /* Increased base opacity */
-            mix-blend-mode: screen; /* Added for glow */
-            pointer-events: none;
-            z-index: 1;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+            overflow: hidden;
+        }
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            mix-blend-mode: screen;
+            animation: float 20s infinite ease-in-out;
+        }
+        .blob-1 {
+            top: -20%; right: -10%;
+            width: 70vw; height: 70vw;
+            background: radial-gradient(circle, rgba(0, 47, 167, 0.4), transparent 70%);
+            animation-delay: 0s;
+        }
+        .blob-2 {
+            bottom: -20%; left: -10%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(32, 190, 255, 0.25), transparent 70%);
+            animation-delay: -5s;
+        }
+        .blob-3 {
+            top: 40%; right: 20%;
+            width: 40vw; height: 40vw;
+            background: radial-gradient(circle, rgba(100, 0, 255, 0.2), transparent 70%);
+            animation-delay: -10s;
         }
 
         /* Star Field */
@@ -179,20 +196,25 @@
         .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.5s ease; }
         .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
 
-        /* Mission Control Elements */
+        /* Mission Control Elements - Minimal Style */
         .mc-thumbnail { transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); transform-origin: center; }
         .mc-thumbnail:hover { transform: scale(1.05); }
-        .mc-thumbnail.active { border-color: rgba(255,255,255,0.9); box-shadow: 0 0 0 2px rgba(255,255,255,0.1), 0 10px 20px rgba(0,0,0,0.5); }
+        .mc-thumbnail.active { border-color: #fff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); }
 
-        /* Fake UI Elements */
-        .mac-traffic-lights { display: flex; gap: 6px; }
-        .mac-traffic-light { width: 10px; height: 10px; border-radius: 50%; }
-        .mac-close { background: #FF5F56; border: 1px solid #E0443E; }
-        .mac-min { background: #FFBD2E; border: 1px solid #DEA123; }
-        .mac-max { background: #27C93F; border: 1px solid #1AAB29; }
-        
-        .window-shadow { box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5); }
-        
+        /* Space Item Styles - Minimal/Schematic */
+        .space-item {
+            background-color: #080808;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .space-minimal-window {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .wireframe-line { background: #333; border-radius: 2px; }
+        .wireframe-accent { background: var(--klein-blue); border-radius: 2px; opacity: 0.8; }
+
         /* Wave Component */
         a-waves {
             --x: -0.5rem; --y: 50%; --dash-offset: 20000;
@@ -207,7 +229,6 @@
         }
         html.dark a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
 
-        /* Fix for disappearing elements during sidebar open */
         main.grayscale .glass-card, 
         main.grayscale .nav-glass {
             backdrop-filter: none !important;
@@ -287,7 +308,6 @@
                     <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
-                    <!-- Product Logo SVG -->
                     <div class="font-display font-black text-2xl text-klein-blue tracking-tighter">DR</div>
                 </div>
 
@@ -311,37 +331,47 @@
 
         <main class="transition-all duration-500" :class="{ 'scale-95 blur-sm grayscale': isSidebarOpen }">
             
-            <!-- Hero Section -->
-            <section id="hero" class="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10 bg-black">
+            <!-- Hero Section: Updated Asymmetric Layout -->
+            <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-black">
                 <!-- Stars -->
                 <div class="star-field" ref="starField"></div>
 
-                <!-- Aurora Effect Background -->
-                <div class="aurora-bg animate-aurora"></div>
+                <!-- Polished Aurora: Multiple Blobs -->
+                <div class="aurora-container">
+                    <div class="aurora-blob blob-1"></div>
+                    <div class="aurora-blob blob-2"></div>
+                    <div class="aurora-blob blob-3"></div>
+                </div>
                 
                 <div class="absolute inset-0 z-0">
                     <a-waves class="w-full h-full opacity-30"></a-waves>
                 </div>
                 
-                <!-- 3D Icon Container -->
-                <div ref="canvasContainer" class="absolute inset-0 z-10 pointer-events-auto"></div>
+                <!-- 3D Icon: Positioned to the Right -->
+                <div class="absolute top-0 right-0 w-[60%] h-full z-10 pointer-events-auto" ref="canvasContainer"></div>
 
-                <div class="relative z-20 text-center mix-blend-difference pointer-events-none px-6">
-                    <h1 class="hero-title text-[10vw] md:text-[8vw] font-black tracking-tighter text-white leading-[0.9] opacity-0 translate-y-10">
-                        RENAME<br>EXPERIENCES
-                    </h1>
-                    <p class="hero-subtitle font-mono text-sm md:text-base text-white/80 mt-8 tracking-[0.3em] uppercase opacity-0 translate-y-10">
-                        Contextual Workspaces for macOS
-                    </p>
+                <!-- Text: Positioned to the Left -->
+                <div class="relative z-20 w-full pl-6 md:pl-20 pointer-events-none">
+                    <div class="mix-blend-difference">
+                        <h1 class="hero-title text-[12vw] md:text-[9vw] font-black tracking-tighter text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
+                            <span>RENAME</span>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-500">EXPERIENCES</span>
+                        </h1>
+                        <div class="hero-subtitle mt-8 pl-2 border-l-2 border-klein-blue opacity-0 translate-y-10">
+                            <p class="font-mono text-sm md:text-base text-gray-400 tracking-[0.2em] uppercase pl-4">
+                                Contextual Workspaces for macOS
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="scroll-hint absolute bottom-8 flex flex-col items-center gap-2 font-mono text-xs text-black/50 dark:text-white/50 animate-pulse z-20">
+                <div class="scroll-hint absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-xs text-white/40 animate-pulse z-20">
                     <span>SCROLL TO EXPLORE</span>
                     <i data-lucide="arrow-down" class="w-4 h-4"></i>
                 </div>
             </section>
 
-            <!-- Features Section (Glass Grid) -->
+            <!-- Features Section -->
             <section id="features" class="w-full py-24 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-20 overflow-hidden">
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
@@ -352,7 +382,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 auto-rows-[minmax(220px,auto)]">
-                        <!-- Main Feature -->
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
                              <div class="card-corner-glow"></div>
                              <div class="card-content">
@@ -367,19 +396,16 @@
                              </div>
                         </div>
                         
-                        <!-- Stack -->
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-blue transition-all duration-300 group">
                             <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">NATIVE</h3><i data-lucide="zap" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
                             <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white card-content"><li>Swift</li><li>Lightweight</li><li>Fast</li></ul>
                         </div>
                         
-                        <!-- Icon -->
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-gray transition-all duration-300 group">
                             <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">UI</h3><i data-lucide="layout-template" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
                              <div class="mt-4 card-content"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">Menu<br>Bar</p></div>
                         </div>
                         
-                        <!-- Philosophy -->
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
                              <div class="card-corner-glow"></div>
                              <div class="card-content">
@@ -397,201 +423,106 @@
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center perspective-[2000px]">
                     
                     <div class="absolute inset-0 bg-[#050505]"></div>
-                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a10] to-[#050505]"></div>
+                    <!-- Minimal Grid Background -->
+                    <div class="absolute inset-0 z-0 opacity-20" style="background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px); background-size: 40px 40px;"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a10] to-[#050505] z-0"></div>
 
-                    <!-- Captions Container -->
-                    <div class="absolute top-24 md:top-32 w-full text-center z-[40] pointer-events-none px-6 text-white">
+                    <!-- Captions Container: MOVED TO SIDE/TOP TO AVOID OVERLAP -->
+                    <div class="absolute top-32 left-6 md:left-12 w-full max-w-sm z-[40] pointer-events-none text-left">
                         <div class="caption-slide absolute w-full left-0 opacity-0 transform translate-y-10" id="caption-1">
-                            <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4">Contextual Naming</h2>
-                            <p class="font-mono text-klein-blue">Define your environment.</p>
+                            <span class="font-mono text-klein-blue text-xs tracking-widest mb-2 block">01 / CONTEXT</span>
+                            <h2 class="text-4xl font-black tracking-tighter text-white mb-2">Contextual Naming.</h2>
+                            <p class="text-gray-400">Define your environment with precision.</p>
                         </div>
                         <div class="caption-slide absolute w-full left-0 opacity-0 transform translate-y-10" id="caption-2">
-                            <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4">Seamless Flow</h2>
-                            <p class="font-mono text-klein-blue">Swipe between your worlds.</p>
+                            <span class="font-mono text-klein-blue text-xs tracking-widest mb-2 block">02 / FLOW</span>
+                            <h2 class="text-4xl font-black tracking-tighter text-white mb-2">Seamless Flow.</h2>
+                            <p class="text-gray-400">Navigate between worlds effortlessly.</p>
                         </div>
                         <div class="caption-slide absolute w-full left-0 opacity-0 transform translate-y-10" id="caption-3">
-                            <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4">Instant Clarity</h2>
-                            <p class="font-mono text-klein-blue">Identify workspaces at a glance.</p>
+                            <span class="font-mono text-klein-blue text-xs tracking-widest mb-2 block">03 / CLARITY</span>
+                            <h2 class="text-4xl font-black tracking-tighter text-white mb-2">Instant Clarity.</h2>
+                            <p class="text-gray-400">Identify workspaces at a glance.</p>
                         </div>
                     </div>
                     
                     <!-- Mission Control Bar -->
-                    <div id="mc-top-bar" class="absolute top-0 w-full h-36 z-[60] transform -translate-y-full flex items-center justify-center gap-4 md:gap-8 px-10 pt-4" style="background: rgba(30, 30, 30, 0.4); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05);">
-                         
-                         <!-- Active Indicator Background (Moves visually) -->
-                         <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none">
-                             <!-- This would be dynamic in a real app, simplified here -->
-                         </div>
-
+                    <div id="mc-top-bar" class="absolute top-0 w-full h-24 z-[60] transform -translate-y-full flex items-center justify-center gap-4 px-10 border-b border-white/5 bg-[#111]/80 backdrop-blur-xl">
                          <!-- Space 1 (Main) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="h-14 aspect-[16/10] rounded-md border border-white/20 relative mc-thumbnail overflow-hidden bg-[#1a1a2e]">
-                                 <div class="absolute inset-0 bg-gradient-to-br from-blue-900 to-slate-900 opacity-80"></div>
-                                 <div class="absolute inset-x-2 top-2 bottom-0 bg-white/10 rounded-t-sm"></div>
-                             </div>
-                             <span class="text-[10px] font-medium text-white tracking-tight">Main</span>
+                             <div class="h-10 aspect-[16/10] rounded border border-white/20 relative mc-thumbnail bg-[#222]"></div>
+                             <span class="text-[9px] font-medium text-gray-400 uppercase tracking-wider">Main</span>
                          </div>
-                         
                          <!-- Space 2 (Coding) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="h-14 aspect-[16/10] rounded-md border border-white/20 relative mc-thumbnail overflow-hidden bg-[#0d1117]">
-                                 <div class="absolute inset-2 top-3 bottom-0 bg-[#1e1e1e] rounded-t-sm flex flex-col gap-1 p-1">
-                                     <div class="w-full h-px bg-white/20"></div>
-                                     <div class="w-2/3 h-px bg-white/20"></div>
-                                 </div>
-                             </div>
-                             <span class="text-[10px] font-medium text-white tracking-tight">Coding</span>
+                             <div class="h-10 aspect-[16/10] rounded border border-white/20 relative mc-thumbnail bg-[#222]"></div>
+                             <span class="text-[9px] font-medium text-gray-400 uppercase tracking-wider">Coding</span>
                          </div>
-
                          <!-- Space 3 (Gaming) - Active -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2">
-                             <div class="h-14 aspect-[16/10] rounded-md border-2 border-white/80 relative mc-thumbnail active shadow-lg overflow-hidden bg-purple-900">
-                                 <div class="absolute inset-0 bg-gradient-to-tr from-fuchsia-900 to-purple-800"></div>
-                                 <div class="absolute inset-0 flex items-center justify-center">
-                                     <div class="w-4 h-4 bg-white/20 rounded-sm rotate-45"></div>
-                                 </div>
-                             </div>
-                             <span class="text-[10px] font-bold text-white tracking-tight">Gaming</span>
+                             <div class="h-10 aspect-[16/10] rounded border border-white relative mc-thumbnail active bg-[#333]"></div>
+                             <span class="text-[9px] font-bold text-white uppercase tracking-wider">Gaming</span>
                          </div>
-                         
-                         <div class="h-14 aspect-square bg-white/5 rounded border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer ml-4">
-                             <i data-lucide="plus" class="w-4 h-4 text-white/40"></i>
+                         <div class="h-10 aspect-square bg-white/5 rounded border border-white/10 flex items-center justify-center">
+                             <i data-lucide="plus" class="w-3 h-3 text-white/40"></i>
                          </div>
                     </div>
 
-                    <!-- The Spaces Container -->
-                    <div id="spaces-stage" class="relative w-[85vw] md:w-[65vw] aspect-[16/10] will-change-transform transform translate-y-[-25vh] scale-[0.8] opacity-100 shadow-[0_0_100px_-20px_rgba(0,0,0,0.8)] rounded-xl overflow-hidden border border-white/10 bg-black">
+                    <!-- The Spaces Container: Lowered to avoid text overlap -->
+                    <div id="spaces-stage" class="relative w-[85vw] md:w-[65vw] aspect-[16/10] will-change-transform transform translate-y-[-10vh] scale-[0.8] opacity-100 shadow-[0_0_100px_-20px_rgba(0,0,0,0.8)] rounded-xl overflow-hidden border border-white/10 bg-[#080808]">
                         
                         <!-- Main Carousel -->
                         <div id="spaces-carousel" class="absolute inset-0 w-full h-full flex gap-[20vw] will-change-transform">
                             
-                            <!-- Space 1: Main (Finder Style) -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-gray-900">
-                                <!-- Wallpaper -->
-                                <div class="absolute inset-0 bg-gradient-to-br from-[#2b5876] to-[#4e4376]"></div>
-                                
-                                <!-- Content -->
-                                <div class="absolute inset-0 flex flex-col">
-                                    <!-- Menu Bar -->
-                                    <div class="h-7 bg-black/20 backdrop-blur-md flex items-center justify-between px-4 text-white">
-                                        <div class="flex items-center gap-4 text-[12px] font-semibold">
-                                            <i data-lucide="apple" class="w-3.5 h-3.5 fill-white"></i>
-                                            <span>Finder</span>
-                                            <span class="font-normal opacity-70">File</span>
-                                            <span class="font-normal opacity-70">Edit</span>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-[12px]">
-                                            <span class="font-mono text-[10px] bg-white/20 px-1.5 rounded text-white font-bold">Main Space</span>
-                                            <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
-                                            <span>Mon 9:41 AM</span>
-                                        </div>
+                            <!-- Space 1: Main (Minimal) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#080808] flex items-center justify-center">
+                                <div class="absolute top-4 left-6 right-6 h-px bg-white/10"></div>
+                                <div class="space-minimal-window w-2/3 h-2/3 flex flex-col p-6 gap-4">
+                                    <div class="flex gap-2 mb-4">
+                                        <div class="w-3 h-3 rounded-full bg-gray-800"></div>
+                                        <div class="w-3 h-3 rounded-full bg-gray-800"></div>
+                                        <div class="w-3 h-3 rounded-full bg-gray-800"></div>
                                     </div>
-                                    
-                                    <!-- Window -->
-                                    <div class="flex-1 flex items-center justify-center p-12">
-                                        <div class="w-2/3 h-3/4 bg-[#1e1e1e]/90 backdrop-blur-xl rounded-xl border border-white/10 window-shadow flex flex-col overflow-hidden">
-                                            <div class="h-10 bg-[#2d2d2d] flex items-center px-4 gap-4 border-b border-black/50">
-                                                <div class="mac-traffic-lights">
-                                                    <div class="mac-traffic-light mac-close"></div>
-                                                    <div class="mac-traffic-light mac-min"></div>
-                                                    <div class="mac-traffic-light mac-max"></div>
-                                                </div>
-                                                <div class="flex-1 text-center text-xs text-gray-400 font-medium">Downloads</div>
-                                            </div>
-                                            <div class="flex-1 flex">
-                                                <div class="w-48 bg-[#252526] border-r border-black/50 p-4 space-y-2">
-                                                    <div class="h-2 w-16 bg-white/10 rounded mb-4"></div>
-                                                    <div class="h-2 w-24 bg-white/5 rounded"></div>
-                                                    <div class="h-2 w-20 bg-white/5 rounded"></div>
-                                                    <div class="h-2 w-24 bg-blue-500/20 rounded"></div>
-                                                </div>
-                                                <div class="flex-1 p-6 grid grid-cols-4 gap-4 content-start">
-                                                    <div class="aspect-[3/4] bg-white/5 rounded flex items-center justify-center"><i data-lucide="file" class="text-white/20"></i></div>
-                                                    <div class="aspect-[3/4] bg-white/5 rounded flex items-center justify-center"><i data-lucide="image" class="text-white/20"></i></div>
-                                                    <div class="aspect-[3/4] bg-white/5 rounded flex items-center justify-center"><i data-lucide="music" class="text-white/20"></i></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Dock -->
-                                    <div class="h-20 flex justify-center pb-2">
-                                        <div class="h-14 px-4 bg-white/10 backdrop-blur-2xl rounded-2xl flex items-center gap-3 border border-white/10">
-                                            <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-white"><i data-lucide="smile" class="w-6 h-6"></i></div>
-                                            <div class="w-10 h-10 rounded-lg bg-gray-500"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-white"></div>
+                                    <div class="flex gap-4 h-full">
+                                        <div class="w-1/4 h-full wireframe-line opacity-20"></div>
+                                        <div class="w-3/4 h-full flex flex-col gap-3">
+                                            <div class="h-2 w-1/2 wireframe-line"></div>
+                                            <div class="h-2 w-3/4 wireframe-line"></div>
+                                            <div class="h-24 w-full wireframe-line opacity-50 mt-4"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Space 2: Coding (VS Code Style) -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#0d1117]">
-                                <div class="absolute inset-0 bg-[#0d1117]"></div>
-                                
-                                <div class="absolute inset-0 flex flex-col">
-                                    <div class="h-7 bg-[#010409] flex items-center justify-between px-4 text-gray-400 border-b border-gray-800">
-                                        <div class="flex items-center gap-4 text-[12px] font-semibold text-white">
-                                            <i data-lucide="apple" class="w-3.5 h-3.5 fill-gray-400"></i>
-                                            <span>Code</span>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-[12px]">
-                                            <span class="font-mono text-[10px] bg-green-900/50 text-green-400 px-1.5 rounded border border-green-800">Coding</span>
-                                            <span>Mon 10:23 AM</span>
-                                        </div>
+                            <!-- Space 2: Coding (Minimal) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#080808] flex items-center justify-center">
+                                <div class="absolute top-4 left-6 right-6 h-px bg-white/10"></div>
+                                <div class="space-minimal-window w-3/4 h-3/4 flex flex-col p-0 overflow-hidden">
+                                    <div class="h-8 bg-white/5 border-b border-white/5 flex items-center px-4">
+                                        <div class="w-20 h-2 bg-white/10 rounded"></div>
                                     </div>
-
-                                    <div class="flex-1 p-6 flex items-center justify-center">
-                                        <div class="w-3/4 h-5/6 bg-[#1e1e1e] rounded-lg border border-gray-800 window-shadow flex flex-col overflow-hidden font-mono text-xs">
-                                            <div class="h-8 bg-[#2d2d2d] flex items-center px-4">
-                                                <div class="mac-traffic-lights mr-4">
-                                                    <div class="mac-traffic-light mac-close"></div>
-                                                    <div class="mac-traffic-light mac-min"></div>
-                                                    <div class="mac-traffic-light mac-max"></div>
-                                                </div>
-                                                <span class="text-gray-400 ml-2">app.swift</span>
-                                            </div>
-                                            <div class="flex-1 p-6 text-gray-300 space-y-1">
-                                                <div class="flex"><span class="text-gray-600 mr-4">1</span><span class="text-purple-400">import</span> <span class="text-yellow-300">Cocoa</span></div>
-                                                <div class="flex"><span class="text-gray-600 mr-4">2</span></div>
-                                                <div class="flex"><span class="text-gray-600 mr-4">3</span><span class="text-purple-400">class</span> <span class="text-yellow-300">DesktopRenamer</span>: <span class="text-green-400">NSApplication</span> {</div>
-                                                <div class="flex"><span class="text-gray-600 mr-4">4</span>    <span class="text-blue-400">func</span> <span class="text-yellow-300">applicationDidFinishLaunching</span>() {</div>
-                                                <div class="flex"><span class="text-gray-600 mr-4">5</span>        <span class="text-gray-500">// Initialize workspace observer</span></div>
-                                                <div class="flex"><span class="text-gray-600 mr-4">6</span>        <span class="text-cyan-400">WorkspaceManager</span>.shared.start()</div>
-                                                <div class="flex"><span class="text-gray-600 mr-4">7</span>    }</div>
-                                                <div class="flex"><span class="text-gray-600 mr-4">8</span>}</div>
-                                            </div>
-                                            <div class="h-6 bg-blue-600 text-white flex items-center px-2 text-[10px]">
-                                                <i data-lucide="git-branch" class="w-3 h-3 mr-1"></i> main
-                                            </div>
-                                        </div>
+                                    <div class="flex-1 p-6 font-mono text-[10px] text-gray-600 space-y-2">
+                                        <div class="flex gap-4"><span class="text-gray-800">01</span> <span class="text-klein-blue">import</span> SwiftUI</div>
+                                        <div class="flex gap-4"><span class="text-gray-800">02</span> </div>
+                                        <div class="flex gap-4"><span class="text-gray-800">03</span> <span class="text-klein-blue">struct</span> Space: View {</div>
+                                        <div class="flex gap-4"><span class="text-gray-800">04</span>    <span class="text-klein-blue">var</span> body: some View {</div>
+                                        <div class="flex gap-4"><span class="text-gray-800">05</span>       Text(<span class="text-white">"Hello World"</span>)</div>
+                                        <div class="flex gap-4"><span class="text-gray-800">06</span>    }</div>
+                                        <div class="flex gap-4"><span class="text-gray-800">07</span> }</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Space 3: Gaming (Steam Style) -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#171a21]">
-                                <div class="absolute inset-0 bg-gradient-to-t from-[#1b2838] to-[#2a475e]"></div>
-                                
-                                <div class="absolute inset-0 flex flex-col">
-                                    <div class="h-7 bg-[#171a21]/80 backdrop-blur-md flex items-center justify-between px-4 text-white border-b border-white/5">
-                                        <div class="flex items-center gap-4 text-[12px] font-semibold">
-                                            <i data-lucide="apple" class="w-3.5 h-3.5 fill-white"></i>
-                                            <span>Steam</span>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-[12px]">
-                                            <span class="font-mono text-[10px] bg-purple-900/50 text-purple-300 px-1.5 rounded border border-purple-700">Gaming</span>
-                                            <span>Mon 8:00 PM</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex-1 p-8 flex items-center justify-center">
-                                        <div class="w-full max-w-4xl grid grid-cols-3 gap-6">
-                                            <div class="aspect-[2/3] bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg shadow-xl hover:scale-105 transition-transform"></div>
-                                            <div class="aspect-[2/3] bg-gradient-to-br from-red-600 to-orange-500 rounded-lg shadow-xl hover:scale-105 transition-transform"></div>
-                                            <div class="aspect-[2/3] bg-gradient-to-br from-green-600 to-emerald-500 rounded-lg shadow-xl hover:scale-105 transition-transform"></div>
-                                        </div>
-                                    </div>
+                            <!-- Space 3: Gaming (Minimal) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#080808] flex items-center justify-center">
+                                <div class="absolute top-4 left-6 right-6 h-px bg-white/10"></div>
+                                <div class="w-full h-full p-12 grid grid-cols-3 gap-6">
+                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
+                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
+                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
+                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
+                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
+                                    <div class="space-minimal-window bg-gray-900 border-none"></div>
                                 </div>
                             </div>
 
@@ -599,10 +530,9 @@
 
                         <!-- Reveal Overlay -->
                         <div id="mission-control-overlay" class="absolute inset-0 z-50 pointer-events-none opacity-0 flex items-center justify-center">
-                            <div class="glass-card px-12 py-10 flex flex-col items-center justify-center gap-4 transform scale-90 rounded-[2rem] border border-white/20 shadow-2xl bg-black/40 backdrop-blur-xl" id="label-window-content">
-                                <span class="font-mono text-xs text-purple-400 tracking-[0.4em] uppercase">Current Space</span>
-                                <h2 class="text-7xl font-black text-white tracking-tighter drop-shadow-lg">Gaming</h2>
-                                <div class="h-1 w-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-4"></div>
+                            <div class="glass-card px-16 py-12 flex flex-col items-center justify-center gap-2 transform scale-90 rounded-none border-y border-white/10 bg-black/80 backdrop-blur-2xl w-full" id="label-window-content">
+                                <span class="font-mono text-[10px] text-klein-blue tracking-[0.4em] uppercase mb-2">Current Space</span>
+                                <h2 class="text-8xl font-black text-white tracking-tighter">GAMING</h2>
                             </div>
                         </div>
 
@@ -884,6 +814,12 @@
 
                     iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
                     iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
+                    
+                    // Offset the icon mesh for the new asymmetric layout
+                    if (window.innerWidth > 768) {
+                        iconMesh.position.x = 6; 
+                    }
+                    
                     scene.add(iconMesh);
 
                     const animate = () => {
@@ -918,6 +854,11 @@
                         renderer.setSize(newW, newH);
                         camera.aspect = newW / newH;
                         camera.updateProjectionMatrix();
+                        
+                        // Responsive position update
+                        if (iconMesh) {
+                            iconMesh.position.x = newW > 768 ? 6 : 0;
+                        }
                     });
                 };
 
@@ -941,8 +882,8 @@
 
                     // Initial State
                     tl.fromTo("#spaces-stage", 
-                        { y: '-25vh', scale: 0.8, opacity: 1, borderRadius: '16px', rotateX: 5 }, // Added initial slight rotateX
-                        { y: '0vh', scale: 1, borderRadius: '0px', rotateX: 0, duration: 1.5, ease: "power2.out" } // Flatten out
+                        { y: '-10vh', scale: 0.8, opacity: 1, borderRadius: '16px', rotateX: 5 }, // Added initial slight rotateX
+                        { y: '5vh', scale: 1, borderRadius: '0px', rotateX: 0, duration: 1.5, ease: "power2.out" } // Flatten out
                     )
                     .to("#caption-1", { opacity: 1, y: 0, duration: 1 }, "<")
                     .to("#caption-1", { opacity: 0, y: -20, duration: 1 }, "+=0.5")
@@ -958,7 +899,7 @@
                     .to("nav", { y: '-200%', duration: 0.5, ease: "power2.out" }, "<") 
                     
                     // Mission Control Zoom Out (Added 3D Perspective Tilt)
-                    .to("#spaces-stage", { scale: 0.65, y: '5vh', borderRadius: '16px', rotateX: 5, duration: 2, ease: "power3.out" })
+                    .to("#spaces-stage", { scale: 0.65, y: '10vh', borderRadius: '16px', rotateX: 5, duration: 2, ease: "power3.out" })
                     // FIX: Removed filter transition that might cause jumping
                     .to(".space-item", { duration: 2 }, "<") 
                     .to("#mc-top-bar", { y: 0, duration: 1.5, ease: "power3.out" }, "<")
