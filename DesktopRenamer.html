@@ -53,7 +53,7 @@
             color: #ffffff; 
             overflow-x: hidden; 
             width: 100vw; 
-            cursor: none; /* Hide default cursor for custom one */
+            cursor: none;
         }
         
         /* Smooth Scroll */
@@ -73,7 +73,7 @@
         .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
         body:hover .cursor-outline { width: 30px; height: 30px; }
 
-        /* Glass & UI Elements matching index.html */
+        /* Glass & UI Elements */
         .nav-glass {
             background: rgba(20, 20, 20, 0.6); 
             backdrop-filter: blur(16px);
@@ -90,7 +90,7 @@
             box-shadow: 0 40px 80px rgba(0,0,0,0.5);
         }
 
-        /* Real Mission Control Bar (Top Strip) */
+        /* Mission Control Bar */
         .mission-control-strip {
             background: rgba(40, 40, 40, 0.85);
             backdrop-filter: blur(30px);
@@ -120,20 +120,17 @@
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
 
-        <!-- Navigation (Matched to index.html style) -->
+        <!-- Navigation -->
         <nav class="fixed top-0 left-0 w-full z-[100] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
              :class="{ '-translate-y-[200%]': isNavHidden }">
             
-            <!-- Left: Back Button -->
             <a href="index.html" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center hover:scale-105 transition-transform text-white">
                 <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></i>
             </a>
             
-            <!-- Center: Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 z-50">
                 <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden w-auto px-1 min-w-[200px]">
                     <div class="flex items-center gap-3 px-6">
-                         <!-- Small Icon -->
                         <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" 
                              class="w-6 h-6 rounded shadow-sm" alt="Icon">
                         <span class="font-mono text-xs font-bold tracking-[0.2em] text-white">DESKTOP RENAMER</span>
@@ -141,7 +138,6 @@
                 </div>
             </div>
 
-            <!-- Right: Action -->
             <div>
                 <a href="#" class="nav-glass h-12 px-6 rounded-full flex items-center gap-2 hover:bg-klein-blue hover:border-klein-blue transition-all duration-300 group text-white">
                     <i data-lucide="download" class="w-4 h-4 group-hover:animate-bounce"></i>
@@ -152,12 +148,10 @@
 
         <main>
             <!-- Hero Section -->
-            <section id="hero" class="relative w-full h-[100vh] flex flex-col items-center pt-32 overflow-hidden">
-                <!-- Ambient Glows -->
+            <section id="hero" class="relative w-full h-[100vh] flex flex-col items-center pt-32 overflow-hidden z-10">
                 <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
                 <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30"></div>
 
-                <!-- Slogan & 3D Icon Container -->
                 <div class="fixed top-0 left-0 w-full h-screen flex flex-col items-center pointer-events-none z-0">
                     <div class="relative w-full h-[60vh] flex flex-col items-center justify-center z-10" id="hero-content">
                         <div class="text-center mb-8 relative z-20 mix-blend-difference">
@@ -171,26 +165,23 @@
                     </div>
                 </div>
                 
-                <!-- 3D Canvas (Fixed Background) -->
+                <!-- 3D Canvas -->
                 <div ref="canvasContainer" class="fixed top-0 left-0 w-full h-full z-0 pointer-events-auto"></div>
                 
-                <!-- Scroll Hint -->
                 <div class="absolute bottom-12 flex flex-col items-center gap-2 font-mono text-xs text-white/50 animate-pulse z-10">
                     <span>SCROLL TO EXPLORE</span>
                     <i data-lucide="arrow-down" class="w-4 h-4"></i>
                 </div>
                 
-                <!-- Gradient Spacer -->
                 <div class="absolute bottom-0 w-full h-32 z-10 bg-gradient-to-t from-bg-dark to-transparent"></div>
             </section>
 
             <!-- Interactive Demo Section -->
-            <!-- Negative margin pulls this section UP into the first screen -->
-            <section id="demo" class="relative w-full bg-bg-dark z-20 -mt-[30vh]" style="height: 500vh;">
+            <!-- Adjusted margin and height for cleaner stacking -->
+            <section id="demo" class="relative w-full bg-bg-dark z-20 -mt-[10vh]" style="height: 500vh;">
                 <!-- Sticky Container -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center perspective-[2000px]">
                     
-                    <!-- Background Elements -->
                     <div class="absolute inset-0 bg-[#050505]"></div>
                     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a10] to-[#050505]"></div>
 
@@ -210,9 +201,9 @@
                         </div>
                     </div>
                     
-                    <!-- Real Mission Control Top Strip (Hidden initially) -->
+                    <!-- Mission Control Bar -->
                     <div id="mc-top-bar" class="mission-control-strip absolute top-0 w-full h-36 z-[60] transform -translate-y-full flex items-center justify-center gap-4 md:gap-8 px-10 pt-4">
-                         <!-- Space 1 Thumbnail -->
+                         <!-- Space 1 (Main) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
                              <div class="h-16 aspect-[16/10] bg-gray-800 rounded border border-white/20 relative mc-thumbnail overflow-hidden">
                                  <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
@@ -220,32 +211,30 @@
                              <span class="text-[10px] font-medium text-white tracking-tight">Main</span>
                          </div>
                          
-                         <!-- Space 2 Thumbnail (Current/Active) -->
-                         <div class="group cursor-pointer flex flex-col items-center gap-2">
-                             <div class="h-16 aspect-[16/10] bg-[#1a1a1a] rounded border-2 border-white/60 relative mc-thumbnail active shadow-lg overflow-hidden">
+                         <!-- Space 2 (Coding) - Now INACTIVE -->
+                         <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+                             <div class="h-16 aspect-[16/10] bg-[#1a1a1a] rounded border border-white/20 relative mc-thumbnail overflow-hidden">
                                  <div class="absolute inset-0 bg-[#0d1117] flex items-center justify-center">
                                      <span class="text-[8px] text-green-400 font-mono">code();</span>
                                  </div>
                              </div>
-                             <span class="text-[10px] font-bold text-white tracking-tight">Coding</span>
+                             <span class="text-[10px] font-medium text-white tracking-tight">Coding</span>
                          </div>
 
-                         <!-- Space 3 Thumbnail -->
-                         <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="h-16 aspect-[16/10] bg-purple-900/20 rounded border border-white/20 relative mc-thumbnail overflow-hidden">
+                         <!-- Space 3 (Gaming) - Now ACTIVE -->
+                         <div class="group cursor-pointer flex flex-col items-center gap-2">
+                             <div class="h-16 aspect-[16/10] bg-purple-900/20 rounded border-2 border-white/60 relative mc-thumbnail active shadow-lg overflow-hidden">
                                  <div class="absolute inset-0 bg-gradient-to-t from-purple-900 to-black"></div>
                              </div>
-                             <span class="text-[10px] font-medium text-white tracking-tight">Gaming</span>
+                             <span class="text-[10px] font-bold text-white tracking-tight">Gaming</span>
                          </div>
                          
-                         <!-- Add Space Button -->
                          <div class="h-16 aspect-square bg-white/5 rounded border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer ml-4">
                              <i data-lucide="plus" class="w-5 h-5 text-white/40"></i>
                          </div>
                     </div>
 
-                    <!-- The Spaces Container (Moving Stage) -->
-                    <!-- Initial state: Adjusted translation to make it peek above fold -->
+                    <!-- The Spaces Container -->
                     <div id="spaces-stage" class="relative w-[90vw] md:w-[70vw] aspect-[16/10] will-change-transform transform translate-y-[-25vh] scale-[0.8] opacity-100 shadow-[0_-20px_60px_rgba(0,47,167,0.3)] rounded-t-xl overflow-hidden md:rounded-xl border-t border-white/20">
                         
                         <!-- Main Carousel -->
@@ -254,37 +243,23 @@
                             <!-- Space 1: Main -->
                             <div class="space-item w-full h-full flex-shrink-0 relative rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#0a0a0a]">
                                 <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#1a1a2e] to-black"></div>
-                                
                                 <div class="absolute inset-0 flex flex-col justify-between z-10 transition-opacity duration-500">
-                                    <!-- macOS Top Bar -->
                                     <div class="h-8 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 border-b border-white/5">
-                                        <!-- Left: Apple + App Name -->
                                         <div class="flex items-center gap-4 text-[13px] font-medium">
                                             <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
                                             <span class="font-bold tracking-tight">Finder</span>
-                                            <span class="hidden md:inline opacity-80">File</span>
-                                            <span class="hidden md:inline opacity-80">Edit</span>
-                                            <span class="hidden md:inline opacity-80">View</span>
                                         </div>
-                                        
-                                        <!-- Right: Status Items + DR Label (Space Name) -->
                                         <div class="flex items-center gap-4 text-[13px]">
-                                            <!-- The DR Label Feature -->
                                             <span class="font-mono text-[10px] font-bold tracking-wider text-white bg-white/10 border border-white/10 px-2 py-0.5 rounded shadow-sm">Main Space</span>
-                                            
-                                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
                                             <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
                                             <span class="font-mono">Mon 9:41 AM</span>
                                         </div>
                                     </div>
-
-                                    <!-- Dock -->
                                     <div class="self-center mb-6">
                                         <div class="bg-white/10 backdrop-blur-2xl border border-white/10 h-16 px-4 rounded-2xl flex items-center gap-3 shadow-2xl">
                                             <div class="w-10 h-10 rounded-lg bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
                                             <div class="w-px h-8 bg-white/10 mx-1"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/5 hover:-translate-y-2 transition-transform duration-300"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/5 hover:-translate-y-2 transition-transform duration-300"></div>
+                                            <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/5"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -294,35 +269,25 @@
                             <div class="space-item w-full h-full flex-shrink-0 relative rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#0d1117]">
                                 <div class="absolute inset-0 bg-[#0d1117]">
                                     <div class="absolute inset-0 opacity-20 font-mono text-xs p-12 text-green-400 overflow-hidden leading-relaxed">
-                                        class DesktopRenamer extends Application {<br>
-                                            &nbsp;&nbsp;init() {<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;this.observeSpaces();<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;this.updateMenuBar();<br>
-                                            &nbsp;&nbsp;}<br>
-                                        }
+                                        class DesktopRenamer extends Application { ... }
                                     </div>
                                 </div>
-
                                 <div class="absolute inset-0 flex flex-col justify-between z-10">
                                     <div class="h-8 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 border-b border-white/5">
                                         <div class="flex items-center gap-4 text-[13px] font-medium">
                                             <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
                                             <span class="font-bold tracking-tight">Code</span>
-                                            <span class="hidden md:inline opacity-80">File</span>
                                         </div>
                                         <div class="flex items-center gap-4 text-[13px]">
-                                            <!-- DR Label -->
                                             <span class="font-mono text-[10px] font-bold tracking-wider text-green-300 bg-green-900/40 border border-green-500/30 px-2 py-0.5 rounded shadow-sm">Coding</span>
-                                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
                                             <span class="font-mono">Mon 10:23 AM</span>
                                         </div>
                                     </div>
-
                                     <div class="self-center mb-6">
                                         <div class="bg-white/10 backdrop-blur-2xl border border-white/10 h-16 px-4 rounded-2xl flex items-center gap-3 shadow-2xl">
                                             <div class="w-10 h-10 rounded-lg bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
                                             <div class="w-px h-8 bg-white/10 mx-1"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-[#2c98eb]/20 border border-[#2c98eb]/30 flex items-center justify-center text-[#2c98eb] hover:-translate-y-2 transition-transform duration-300"><i data-lucide="code-2" class="w-5 h-5"></i></div>
+                                            <div class="w-10 h-10 rounded-lg bg-[#2c98eb]/20 border border-[#2c98eb]/30 flex items-center justify-center text-[#2c98eb]"><i data-lucide="code-2" class="w-5 h-5"></i></div>
                                         </div>
                                     </div>
                                 </div>
@@ -331,7 +296,6 @@
                             <!-- Space 3: Gaming -->
                             <div class="space-item w-full h-full flex-shrink-0 relative rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#1a0510]">
                                 <div class="absolute inset-0 bg-gradient-to-t from-purple-900 via-red-900 to-black"></div>
-
                                 <div class="absolute inset-0 flex flex-col justify-between z-10">
                                     <div class="h-8 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 border-b border-white/5">
                                         <div class="flex items-center gap-4 text-[13px] font-medium">
@@ -339,18 +303,15 @@
                                             <span class="font-bold tracking-tight">Steam</span>
                                         </div>
                                         <div class="flex items-center gap-4 text-[13px]">
-                                            <!-- DR Label -->
                                             <span class="font-mono text-[10px] font-bold tracking-wider text-purple-300 bg-purple-900/40 border border-purple-500/30 px-2 py-0.5 rounded shadow-sm">Gaming</span>
-                                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
                                             <span class="font-mono">Mon 8:00 PM</span>
                                         </div>
                                     </div>
-
                                     <div class="self-center mb-6">
                                         <div class="bg-white/10 backdrop-blur-2xl border border-white/10 h-16 px-4 rounded-2xl flex items-center gap-3 shadow-2xl">
                                             <div class="w-10 h-10 rounded-lg bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
                                             <div class="w-px h-8 bg-white/10 mx-1"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 hover:-translate-y-2 transition-transform duration-300"><i data-lucide="gamepad-2" class="w-5 h-5"></i></div>
+                                            <div class="w-10 h-10 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400"><i data-lucide="gamepad-2" class="w-5 h-5"></i></div>
                                         </div>
                                     </div>
                                 </div>
@@ -358,11 +319,11 @@
 
                         </div>
 
-                        <!-- Space Label Window (The Reveal) -->
+                        <!-- Reveal Overlay -->
                         <div id="mission-control-overlay" class="absolute inset-0 z-50 pointer-events-none opacity-0 flex items-center justify-center">
                             <div class="glass-card px-10 py-8 flex flex-col items-center justify-center gap-4 transform scale-90 rounded-3xl" id="label-window-content">
-                                <span class="font-mono text-xs text-green-400 tracking-[0.3em]">CURRENT SPACE</span>
-                                <span class="text-6xl font-black text-white tracking-tighter">Coding</span>
+                                <span class="font-mono text-xs text-purple-400 tracking-[0.3em]">CURRENT SPACE</span>
+                                <span class="text-6xl font-black text-white tracking-tighter">Gaming</span>
                             </div>
                         </div>
 
@@ -389,12 +350,12 @@
                 let scene, camera, renderer, iconMesh;
                 let mouseX = 0, mouseY = 0;
 
-                // --- THREE.JS SETUP (Cleaned Up) ---
+                // --- THREE.JS SETUP WITH FIXED UVs ---
                 const createSquircleShape = (size) => {
                     const shape = new THREE.Shape();
                     const width = size; const height = size;
                     const x = -width / 2; const y = -height / 2;
-                    const r = 0.7; 
+                    const r = 1.5; 
                     shape.moveTo( x, y + r );
                     shape.lineTo( x, y + height - r );
                     shape.quadraticCurveTo( x, y + height, x + r, y + height );
@@ -413,8 +374,6 @@
                     const h = canvasContainer.value.clientHeight;
 
                     scene = new THREE.Scene();
-                    // No Fog, keep it clean
-                    
                     camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
                     camera.position.z = 18;
 
@@ -434,20 +393,41 @@
                     blueLight.position.set(-10, -10, 5);
                     scene.add(blueLight);
 
-                    // Icon
+                    // Geometry Construction & UV Fix
                     const size = 6;
                     const extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
-                    const geometry = new THREE.ExtrudeGeometry(createSquircleShape(size), extrudeSettings);
+                    const shape = createSquircleShape(size);
+                    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    
+                    // FIX: Compute UVs for the front face to map texture properly
+                    geometry.computeBoundingBox();
+                    const max = geometry.boundingBox.max;
+                    const min = geometry.boundingBox.min;
+                    const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
+                    const uvAttribute = geometry.attributes.uv;
+                    const posAttribute = geometry.attributes.position;
+                    
+                    for (let i = 0; i < posAttribute.count; i++) {
+                        const x = posAttribute.getX(i);
+                        const y = posAttribute.getY(i);
+                        // Normalize x/y to 0..1 based on bounding box
+                        const u = (x - min.x) / range.x;
+                        const v = (y - min.y) / range.y;
+                        uvAttribute.setXY(i, u, v);
+                    }
+                    geometry.attributes.uv.needsUpdate = true;
                     geometry.center();
 
                     const textureLoader = new THREE.TextureLoader();
                     const iconUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png';
                     
-                    const materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.8 });
-                    const materialFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.2 });
+                    // Use standard material for sides (dark) and texture for front
+                    const materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+                    const materialFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
 
                     textureLoader.load(iconUrl, (tex) => {
                         tex.encoding = THREE.sRGBEncoding;
+                        tex.center.set(0.5, 0.5); // Ensure texture is centered
                         materialFront.map = tex;
                         materialFront.needsUpdate = true;
                     });
@@ -461,7 +441,6 @@
                         const time = Date.now() * 0.001;
                         if(iconMesh) {
                             iconMesh.position.y = Math.sin(time) * 0.2;
-                            // Subtle parallax follow
                             iconMesh.rotation.x += (mouseY * 0.5 - iconMesh.rotation.x) * 0.05;
                             iconMesh.rotation.y += (mouseX * 0.5 - iconMesh.rotation.y) * 0.05;
                         }
@@ -473,7 +452,6 @@
                         mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
                         mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
                         
-                        // Custom Cursor Logic
                         const dot = document.querySelector('.cursor-dot');
                         const outline = document.querySelector('.cursor-outline');
                         if(dot && outline) {
@@ -505,42 +483,34 @@
                         }
                     });
 
-                    // 1. Natural Growth: Space expands from PEAKING position to FULL screen
                     tl.fromTo("#spaces-stage", 
                         { y: '-25vh', scale: 0.8, opacity: 1, borderRadius: '16px' }, 
                         { y: '0vh', scale: 1, borderRadius: '0px', duration: 1.5, ease: "power2.out" }
                     )
-                    // Caption 1 Fade In/Out
                     .to("#caption-1", { opacity: 1, y: 0, duration: 1 }, "<")
                     .to("#caption-1", { opacity: 0, y: -20, duration: 1 }, "+=0.5")
 
-                    // 2. Slide Carousel
-                    .to("#spaces-carousel", { x: '-110%', duration: 3, ease: "power2.inOut" })
-                    // Caption 2
+                    // Step 1: Slide to Coding
+                    .to("#spaces-carousel", { xPercent: -100, x: '-10vw', duration: 3, ease: "power2.inOut" })
+                    
                     .to("#caption-2", { opacity: 1, y: 0, duration: 1 }, "<+0.5")
                     .to("#caption-2", { opacity: 0, y: -20, duration: 1 }, "+=1")
 
-                    // Move to Space 3
-                    .to("#spaces-carousel", { x: '-220%', duration: 3, ease: "power2.inOut" })
+                    // Step 2: Slide to Gaming (RESTORED)
+                    .to("#spaces-carousel", { xPercent: -200, x: '-20vw', duration: 3, ease: "power2.inOut" })
                     
-                    // 3. Mission Control Transition
-                    // CRITICAL: Hide Main Nav here to prevent blocking MC bar
+                    // Mission Control Animation
                     .call(() => { isNavHidden.value = true; }, null, "<")
                     
                     .to("#spaces-stage", { scale: 0.65, y: '5vh', borderRadius: '16px', duration: 2, ease: "power3.out" })
                     .to(".space-item", { filter: "blur(5px) brightness(0.5)", duration: 2 }, "<")
-                    
-                    // Slide Down MC Top Bar
                     .to("#mc-top-bar", { y: 0, duration: 1.5, ease: "power3.out" }, "<")
                     
-                    // Reveal Label
                     .to("#mission-control-overlay", { opacity: 1, duration: 1 }, "<+0.5")
                     .fromTo("#label-window-content", { scale: 0.8, y: 30 }, { scale: 1, y: 0, duration: 1, ease: "elastic.out(1, 0.6)" }, "<")
                     
-                    // Caption 3
                     .to("#caption-3", { opacity: 1, y: 0, duration: 1 }, "<")
                     
-                    // Restore nav if we reverse back out of MC (logic handled by Vue reactivity on reverse)
                     .call(() => { isNavHidden.value = false; }, null, "+=0.1"); 
                 };
 
