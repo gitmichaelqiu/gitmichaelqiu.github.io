@@ -269,7 +269,6 @@
                     </div>
                 </div>
                 <!-- FIX: Added pathLength="100" to decouple progress from geometry -->
-                <!-- Removed 'transition' from style to fix laggy/broken feel -->
                 <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
                     <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
                      <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
@@ -302,10 +301,12 @@
                     <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
-                    <!-- LOGO ADDED -->
-                    <svg class="w-12 h-12 text-klein-blue" viewBox="0 0 500 500" fill="currentColor">
+                    <!-- LOGO ADDED - FULL VERSION -->
+                    <svg class="w-12 h-12 text-klein-blue" viewBox="0 0 1000 500" fill="currentColor">
                         <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
                         <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
+                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
+                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
                     </svg>
                 </div>
 
@@ -690,12 +691,16 @@
                     lineObj.points.forEach((p) => {
                         const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
                         p.wave.x = Math.cos(move) * 32 * amp; p.wave.y = Math.sin(move) * 16 * amp;
+                        
+                        // FIX: Removed Mouse Interaction to optimize performance
+                        /*
                         const dx = p.x - mouse.sx; const dy = p.y - mouse.sy;
                         const d = Math.hypot(dx, dy); const l = Math.max(175, mouse.vs);
                         if (d < l) {
                             const s = 1 - d / l; const f = Math.cos(d * 0.001) * s;
                             p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00065; p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00065;
                         }
+                        */
                         p.cursor.vx += (0 - p.cursor.x) * 0.005; p.cursor.vy += (0 - p.cursor.y) * 0.005;
                         p.cursor.vx *= 0.925; p.cursor.vy *= 0.925;
                         p.cursor.x += p.cursor.vx * 2; p.cursor.y += p.cursor.vy * 2;
@@ -826,14 +831,27 @@
                     resolveTheme();
                 };
 
-                // OPTIMIZED REAL-TIME COLOR DETECTION
-                // We parse computed RGB values directly instead of using expensive Canvas API
-                const getLuminance = (r, g, b) => {
+                // OPTIMIZED REAL-TIME COLOR DETECTION (Restored Original Canvas Method with Throttling)
+                const getLuminance = (colorStr) => {
+                    // Create a tiny canvas to read pixel data
+                    const canvas = document.createElement("canvas");
+                    canvas.width = 1; canvas.height = 1;
+                    const ctx = canvas.getContext("2d");
+                    ctx.fillStyle = colorStr;
+                    ctx.fillRect(0, 0, 1, 1);
+                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
                     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
                 };
 
+                // Throttled contrast checker
+                let lastCheck = 0;
                 const checkElementContrast = (el) => {
                     if (!el) return 'text-white';
+                    
+                    // Optimization: Only run expensive check every 100ms
+                    const now = Date.now();
+                    if (now - lastCheck < 100) return el._lastColor || 'text-white';
+                    
                     const rect = el.getBoundingClientRect();
                     const x = rect.left + rect.width / 2;
                     const y = rect.top + rect.height / 2;
@@ -842,7 +860,8 @@
                     if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) return 'text-white';
 
                     const elements = document.elementsFromPoint(x, y);
-                    
+                    let foundColor = 'text-white';
+
                     for (let e of elements) {
                         // Ignore nav elements and cursor
                         if (e.tagName === 'NAV' || e.closest('nav') || 
@@ -854,20 +873,18 @@
                         const bgColor = style.backgroundColor;
                         
                         // Check if color is valid and not transparent
-                        // Most browsers return "rgba(0, 0, 0, 0)" for transparent
                         if (bgColor && bgColor !== 'transparent' && !bgColor.includes('rgba(0, 0, 0, 0)')) {
-                            const match = bgColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-                            if (match) {
-                                const r = parseInt(match[1]);
-                                const g = parseInt(match[2]);
-                                const b = parseInt(match[3]);
-                                const lum = getLuminance(r, g, b);
-                                return lum > 128 ? 'text-black' : 'text-white';
-                            }
+                            // Use the canvas method to accurately get luminance
+                            // This handles named colors, rgbs, hex, etc. perfectly
+                            const lum = getLuminance(bgColor);
+                            foundColor = lum > 128 ? 'text-black' : 'text-white';
+                            break; // Stop at the first non-transparent element
                         }
                     }
-                    // Fallback to current theme mode
-                    return activeTheme.value === 'dark' ? 'text-white' : 'text-black';
+                    
+                    el._lastColor = foundColor;
+                    lastCheck = now;
+                    return foundColor;
                 };
 
                 const updateNavColors = () => {
@@ -904,6 +921,9 @@
                     }
                     activeSection.value = current;
                     
+                    // Run Contrast Check
+                    updateNavColors();
+
                     // Simple Scroll Anim logic (for Home/Intro)
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
