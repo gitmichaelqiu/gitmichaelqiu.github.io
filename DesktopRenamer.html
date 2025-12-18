@@ -1,547 +1,436 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DesktopRenamer | Rename Reality</title>
-    
-    <!-- Tailwind CSS -->
+    <title>DesktopRenamer | Rename Experiences</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class', 
-            theme: {
-                extend: {
-                    colors: {
-                        'klein-blue': '#002FA7',
-                        'bg-dark': '#050505',
-                        'surface-glass': 'rgba(255, 255, 255, 0.03)',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                        display: ['Syncopate', 'sans-serif'],
-                    },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Libraries -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&display=swap" rel="stylesheet">
-
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
         :root {
-            --klein-blue: #002FA7;
-            --bg-color: #050505;
+            --dr-blue: #007AFF;
+            --mac-bg: rgba(255, 255, 255, 0.15);
+            --mac-blur: blur(25px);
         }
 
         body {
-            background-color: var(--bg-color);
-            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: white;
             overflow-x: hidden;
-            width: 100vw;
         }
 
-        /* --- Lenis Smooth Scroll --- */
-        html.lenis { height: auto; }
-        .lenis.lenis-smooth { scroll-behavior: auto; }
-        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-        .lenis.lenis-stopped { overflow: hidden; }
-
-        /* --- Custom Cursor --- */
-        @media (hover: hover) and (pointer: fine) {
-            body * { cursor: none !important; }
-            .cursor-dot, .cursor-outline { display: block; }
-        }
-        .cursor-dot, .cursor-outline {
-            position: fixed; top: 0; left: 0;
-            transform: translate(-50%, -50%); border-radius: 50%;
-            z-index: 99999; pointer-events: none; mix-blend-mode: difference;
-        }
-        .cursor-dot { width: 8px; height: 8px; background-color: white; }
-        .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
-        
-        /* --- Glassmorphism --- */
-        .glass-panel {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+        /* Glassmorphism Classes */
+        .glass {
+            background: var(--mac-bg);
+            backdrop-filter: var(--mac-blur);
+            -webkit-backdrop-filter: var(--mac-blur);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
-        }
-        
-        .glass-btn {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-        }
-        .glass-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(0, 47, 167, 0.4);
-            border-color: var(--klein-blue);
         }
 
-        /* --- Text Gradients --- */
-        .text-gradient {
-            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .text-gradient-blue {
-            background: linear-gradient(135deg, #fff 40%, var(--klein-blue) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* 3D App Icon Implementation */
+        .icon-container {
+            perspective: 1000px;
         }
 
-        /* --- Ambient Glows --- */
-        .ambient-glow {
-            position: absolute; width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.25) 0%, transparent 60%);
-            filter: blur(100px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
-        }
-
-        /* --- Laptop Bezel --- */
-        .macbook-bezel {
-            background: #0d0d0d;
-            border-radius: 20px 20px 0 0;
-            box-shadow: inset 0 0 0 2px #2a2a2a;
+        .dr-icon-3d {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 64px;
             position: relative;
             transform-style: preserve-3d;
+            box-shadow: 0 50px 100px -20px rgba(0, 122, 255, 0.3),
+                        0 30px 60px -30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s ease-out;
         }
-        .camera-notch {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 120px; height: 24px;
-            background: #0d0d0d;
-            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+
+        .dr-icon-3d::before {
+            content: "DR";
+            font-weight: 800;
+            font-size: 100px;
+            color: white;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateZ(40px);
+        }
+
+        /* Demo Spaces Styling */
+        .demo-screen {
+            border-radius: 40px;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+        }
+
+        .mac-top-bar {
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .mac-dock {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 64px;
+            padding: 8px;
+            border-radius: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .dock-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .dock-icon.dr {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .space-label-window {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            padding: 24px 60px;
+            border-radius: 24px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 48px;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
             z-index: 50;
         }
 
-        /* --- Vue Transitions --- */
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        /* Mission Control View */
+        .mission-control-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .mc-window-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            padding: 100px;
+            transform: translateY(100px);
+            opacity: 0;
+        }
+
+        .mc-window {
+            aspect-ratio: 16/10;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mc-window.active {
+            box-shadow: 0 0 0 4px var(--dr-blue);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+
+        .caption {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            bottom: -80px;
+            opacity: 0;
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+        }
     </style>
 </head>
-<body>
-    <div id="app" class="relative min-h-screen">
-        
-        <!-- Custom Cursor -->
-        <div class="cursor-dot hidden md:block"></div>
-        <div class="cursor-outline hidden md:block"></div>
+<body class="antialiased">
 
-        <!-- Ambient Background -->
-        <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-            <div class="ambient-glow top-[-20%] left-[-10%] animate-pulse"></div>
-            <div class="ambient-glow bottom-[-20%] right-[-10%] bg-blue-900 opacity-40"></div>
-            <!-- Custom Wave Component -->
-            <a-waves class="absolute inset-0 opacity-30"></a-waves>
+    <!-- Floating Capsule Nav -->
+    <nav class="fixed top-8 left-1/2 -translate-x-1/2 z-50">
+        <div class="glass flex items-center gap-8 px-6 py-3 rounded-full">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4facfe] to-[#00f2fe] flex items-center justify-center font-bold text-xs">DR</div>
+                <span class="font-semibold tracking-tight">DesktopRenamer</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium text-white/70">
+                <a href="#" class="hover:text-white transition-colors">Home</a>
+                <a href="#demo" class="hover:text-white transition-colors">Demo</a>
+                <a href="#features" class="hover:text-white transition-colors">Features</a>
+                <a href="#install" class="hover:text-white transition-colors">Install</a>
+            </div>
+
+            <button class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-gray-200 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V128a8,8,0,0,1,16,0v80H208V128a8,8,0,0,1,16,0ZM93.66,101.66,120,75.31V160a8,8,0,0,0,16,0V75.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40a8,8,0,0,0,11.32,11.32Z"></path></svg>
+                Download
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-[120vh] flex flex-col items-center pt-48">
+        <div class="text-center z-10 mb-20">
+            <h1 id="hero-slogan" class="text-6xl md:text-8xl font-bold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
+                Rename Experiences.
+            </h1>
+            <p class="text-xl text-white/50 font-light">Bring clarity to your macOS workspace, one desktop at a time.</p>
         </div>
 
-        <!-- Navigation Capsule -->
-        <nav class="fixed top-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 hover:scale-105">
-            <div class="glass-panel rounded-full px-2 p-2 flex items-center gap-2 h-14">
-                <div class="bg-white/10 rounded-full w-10 h-10 flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M2 12h20M2 12l5-5m-5 5l5 5"/> <!-- Abstract Icon -->
-                    </svg>
-                </div>
-                <div class="hidden md:flex items-center gap-8 px-6 font-mono text-xs font-bold tracking-widest text-white/80">
-                    <a href="#hero" class="hover:text-klein-blue transition-colors">START</a>
-                    <a href="#demo" class="hover:text-klein-blue transition-colors">DEMO</a>
-                    <a href="#features" class="hover:text-klein-blue transition-colors">SPECS</a>
-                </div>
-                <button class="bg-white text-black hover:bg-klein-blue hover:text-white transition-colors rounded-full px-6 py-2 font-bold text-xs tracking-wider uppercase">
-                    Get App
-                </button>
-            </div>
-        </nav>
+        <div class="icon-container mb-32" id="hero-icon">
+            <div class="dr-icon-3d"></div>
+        </div>
+    </section>
 
-        <!-- Main Content -->
-        <main class="relative z-10">
+    <!-- Demo Section (The Core Interactive Part) -->
+    <section id="demo" class="relative h-[500vh]">
+        <!-- Sticky Wrapper -->
+        <div class="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
             
-            <!-- Hero Section -->
-            <section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
-                <div ref="heroCanvas" class="absolute inset-0 z-10 pointer-events-none"></div>
+            <!-- Demo Container (The "Mac Screen") -->
+            <div id="demo-frame" class="demo-screen w-[90vw] md:w-[70vw] h-[200px] mt-[60vh] glass">
                 
-                <div class="relative z-20 text-center mix-blend-overlay">
-                    <h1 class="font-display text-[12vw] leading-none font-bold tracking-tighter text-white opacity-0 animate-title">
-                        RENAME<br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-klein-blue to-white bg-300% animate-gradient">REALITY</span>
-                    </h1>
-                </div>
-
-                <div class="absolute bottom-12 left-0 w-full flex justify-between px-12 font-mono text-xs text-white/50 uppercase tracking-widest">
-                    <span>MacOS 14.0+</span>
-                    <span class="animate-bounce">Scroll to Explore</span>
-                    <span>v2.0.4 Release</span>
-                </div>
-            </section>
-
-            <!-- The Demo Rig (ScrollTrigger Pinned Section) -->
-            <section id="demo" class="h-[400vh] relative">
-                <div class="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-black/20 perspective-1000">
+                <!-- Content Track (Sliding Spaces) -->
+                <div id="spaces-track" class="flex h-full w-[300%] transition-none">
                     
-                    <!-- Floating Labels (Mission Control Style) -->
-                    <div class="absolute top-[15%] left-[20%] z-30 opacity-0 transform translate-y-10 label-badge glass-panel px-4 py-2 rounded-lg">
-                        <span class="font-mono text-xs text-klein-blue font-bold">CURRENT_SPACE</span>
-                        <div class="text-lg font-bold">Design Mode</div>
+                    <!-- Space 1: Main -->
+                    <div class="space-item w-full h-full relative" style="background-image: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=2070');">
+                        <div class="mac-top-bar">
+                            <div class="flex items-center gap-4">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                                    <path d="M19.374 7.995c-.114.088-2.11 1.213-2.11 3.716 0 2.894 2.54 3.919 2.616 3.945-.011.062-.403 1.402-1.34 2.768-.834 1.2-1.707 2.4-3.033 2.4s-1.668-.77-3.199-.77c-1.492 0-2.022.796-3.236.796s-2.06-1.112-3.033-2.478C4.91 16.77 4 14.278 4 11.914 4 8.122 6.466 6.11 8.892 6.11c1.29 0 2.365.848 3.174.848.77 0 1.973-.898 3.439-.898.556 0 2.553.05 3.868 1.935M8.07 5.213h1.586v-.98c0-1.987 1.272-2.706 2.41-2.706s2.42.72 2.42 2.706v.98h1.584v-.807C16.07 1.442 14.13 0 12.066 0 10.009 0 8.07 1.442 8.07 4.406z"></path>
+                                </svg>
+                                <span class="opacity-50">File Edit View Window Help</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256"><path d="M240,104a56.06,56.06,0,0,1-56,56H144v48h16a8,8,0,0,1,0,16H96a8,8,0,0,1,0-16h16V160H72A56.06,56.06,0,0,1,16,104V72A56.06,56.06,0,0,1,72,16h72a8,8,0,0,1,0,16H72A40,40,0,0,0,32,72v32a40,40,0,0,0,40,40h72v-8h-8a8,8,0,0,1,0-16h40a40,40,0,0,0,40-40V72a40,40,0,0,0-40-40H160a8,8,0,0,1,0-16h24A56.06,56.06,0,0,1,240,72Z"></path></svg>
+                                <span class="font-bold space-name-text">Main</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="absolute top-[15%] right-[20%] z-30 opacity-0 transform translate-y-10 label-badge glass-panel px-4 py-2 rounded-lg text-right">
-                        <span class="font-mono text-xs text-gray-400 font-bold">NEXT_SPACE</span>
-                        <div class="text-lg font-bold text-gray-500">Chill Vibes</div>
+
+                    <!-- Space 2: Coding -->
+                    <div class="space-item w-full h-full relative" style="background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=2072');">
+                        <div class="mac-top-bar">
+                             <div class="flex items-center gap-4">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19.374 7.995c-.114.088-2.11 1.213-2.11 3.716 0 2.894 2.54 3.919 2.616 3.945-.011.062-.403 1.402-1.34 2.768-.834 1.2-1.707 2.4-3.033 2.4s-1.668-.77-3.199-.77c-1.492 0-2.022.796-3.236.796s-2.06-1.112-3.033-2.478C4.91 16.77 4 14.278 4 11.914 4 8.122 6.466 6.11 8.892 6.11c1.29 0 2.365.848 3.174.848.77 0 1.973-.898 3.439-.898.556 0 2.553.05 3.868 1.935M8.07 5.213h1.586v-.98c0-1.987 1.272-2.706 2.41-2.706s2.42.72 2.42 2.706v.98h1.584v-.807C16.07 1.442 14.13 0 12.066 0 10.009 0 8.07 1.442 8.07 4.406z"></path></svg>
+                                <span class="opacity-50">File Edit View Selection Window Help</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256"><path d="M240,104a56.06,56.06,0,0,1-56,56H144v48h16a8,8,0,0,1,0,16H96a8,8,0,0,1,0-16h16V160H72A56.06,56.06,0,0,1,16,104V72A56.06,56.06,0,0,1,72,16h72a8,8,0,0,1,0,16H72A40,40,0,0,0,32,72v32a40,40,0,0,0,40,40h72v-8h-8a8,8,0,0,1,0-16h40a40,40,0,0,0,40-40V72a40,40,0,0,0-40-40H160a8,8,0,0,1,0-16h24A56.06,56.06,0,0,1,240,72Z"></path></svg>
+                                <span class="font-bold space-name-text">Coding</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Laptop Container -->
-                    <div ref="laptopRef" class="relative w-[90vw] aspect-[16/10] max-w-[1400px] macbook-bezel overflow-hidden shadow-2xl transition-shadow duration-500">
-                        <div class="camera-notch"></div>
-                        
-                        <!-- Screen Content -->
-                        <div class="absolute inset-0 bg-[#1a1a1a] overflow-hidden">
-                            <!-- Desktop Track (Slides Horizontally) -->
-                            <div ref="desktopTrackRef" class="flex h-full w-[300%]">
-                                
-                                <!-- Desktop 1: Work -->
-                                <div class="w-1/3 h-full relative bg-cover bg-center flex items-center justify-center" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');">
-                                    <div class="absolute top-4 right-4 glass-panel px-3 py-1 rounded flex gap-2 items-center">
-                                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                                        <span class="font-mono text-xs">Desktop: WORK</span>
-                                    </div>
-                                    <div class="glass-panel p-8 rounded-2xl border border-white/10 flex flex-col items-center">
-                                        <div class="w-16 h-16 bg-blue-500 rounded-2xl mb-4 shadow-lg flex items-center justify-center">
-                                            <i data-lucide="code-2" class="text-white w-8 h-8"></i>
-                                        </div>
-                                        <h2 class="text-2xl font-bold">Coding Session</h2>
-                                        <p class="text-white/60 text-sm mt-2">VS Code, Terminal, Spotify</p>
-                                    </div>
-                                </div>
-
-                                <!-- Desktop 2: Design -->
-                                <div class="w-1/3 h-full relative bg-cover bg-center flex items-center justify-center" style="background-image: url('https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=2670&auto=format&fit=crop');">
-                                    <div class="absolute top-4 right-4 glass-panel px-3 py-1 rounded flex gap-2 items-center">
-                                        <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-                                        <span class="font-mono text-xs">Desktop: DESIGN</span>
-                                    </div>
-                                    <div class="glass-panel p-8 rounded-2xl border border-white/10 flex flex-col items-center">
-                                        <div class="w-16 h-16 bg-purple-500 rounded-2xl mb-4 shadow-lg flex items-center justify-center">
-                                            <i data-lucide="figma" class="text-white w-8 h-8"></i>
-                                        </div>
-                                        <h2 class="text-2xl font-bold">Figma Flow</h2>
-                                        <p class="text-white/60 text-sm mt-2">Figma, Pinterest, Slack</p>
-                                    </div>
-                                </div>
-
-                                <!-- Desktop 3: Chill -->
-                                <div class="w-1/3 h-full relative bg-cover bg-center flex items-center justify-center" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop');">
-                                    <div class="absolute top-4 right-4 glass-panel px-3 py-1 rounded flex gap-2 items-center">
-                                        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                                        <span class="font-mono text-xs">Desktop: CHILL</span>
-                                    </div>
-                                    <div class="glass-panel p-8 rounded-2xl border border-white/10 flex flex-col items-center">
-                                        <div class="w-16 h-16 bg-yellow-500 rounded-2xl mb-4 shadow-lg flex items-center justify-center">
-                                            <i data-lucide="coffee" class="text-white w-8 h-8"></i>
-                                        </div>
-                                        <h2 class="text-2xl font-bold">Sunday Mode</h2>
-                                        <p class="text-white/60 text-sm mt-2">Netflix, Discord</p>
-                                    </div>
-                                </div>
+                    <!-- Space 3: Gaming -->
+                    <div class="space-item w-full h-full relative" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2070');">
+                        <div class="mac-top-bar">
+                             <div class="flex items-center gap-4">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19.374 7.995c-.114.088-2.11 1.213-2.11 3.716 0 2.894 2.54 3.919 2.616 3.945-.011.062-.403 1.402-1.34 2.768-.834 1.2-1.707 2.4-3.033 2.4s-1.668-.77-3.199-.77c-1.492 0-2.022.796-3.236.796s-2.06-1.112-3.033-2.478C4.91 16.77 4 14.278 4 11.914 4 8.122 6.466 6.11 8.892 6.11c1.29 0 2.365.848 3.174.848.77 0 1.973-.898 3.439-.898.556 0 2.553.05 3.868 1.935M8.07 5.213h1.586v-.98c0-1.987 1.272-2.706 2.41-2.706s2.42.72 2.42 2.706v.98h1.584v-.807C16.07 1.442 14.13 0 12.066 0 10.009 0 8.07 1.442 8.07 4.406z"></path></svg>
+                                <span class="opacity-50">Game Play Window Help</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256"><path d="M240,104a56.06,56.06,0,0,1-56,56H144v48h16a8,8,0,0,1,0,16H96a8,8,0,0,1,0-16h16V160H72A56.06,56.06,0,0,1,16,104V72A56.06,56.06,0,0,1,72,16h72a8,8,0,0,1,0,16H72A40,40,0,0,0,32,72v32a40,40,0,0,0,40,40h72v-8h-8a8,8,0,0,1,0-16h40a40,40,0,0,0,40-40V72a40,40,0,0,0-40-40H160a8,8,0,0,1,0-16h24A56.06,56.06,0,0,1,240,72Z"></path></svg>
+                                <span class="font-bold space-name-text">Gaming</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Features Bento Grid -->
-            <section id="features" class="py-32 px-6 md:px-12 relative z-20">
-                <div class="max-w-7xl mx-auto">
-                    <div class="mb-16">
-                        <h2 class="font-display text-4xl md:text-6xl font-bold mb-4">ENGINEERED FOR <span class="text-klein-blue">FOCUS</span>.</h2>
-                        <p class="font-mono text-white/50 max-w-xl">Native C++ performance. Seamless integration with macOS window server.</p>
-                    </div>
+                <!-- Shared Dock -->
+                <div class="mac-dock glass">
+                    <div class="dock-icon dr">DR</div>
+                    <div class="dock-icon"></div>
+                    <div class="dock-icon"></div>
+                    <div class="dock-icon"></div>
+                    <div class="dock-icon"></div>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
-                        <!-- Feature 1 -->
-                        <div class="glass-panel p-8 rounded-3xl col-span-1 md:col-span-2 relative overflow-hidden group hover:border-klein-blue/50 transition-colors">
-                            <div class="absolute top-0 right-0 w-64 h-64 bg-klein-blue/20 blur-[80px] rounded-full group-hover:bg-klein-blue/30 transition-colors"></div>
-                            <div class="relative z-10 h-full flex flex-col justify-between">
-                                <i data-lucide="cpu" class="w-10 h-10 text-white"></i>
-                                <div>
-                                    <h3 class="text-2xl font-bold mb-2">Native Performance</h3>
-                                    <p class="text-white/60">Built with Rust and Swift. Zero electron bloat. Runs silently in the background using less than 10MB RAM.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Feature 2 -->
-                        <div class="glass-panel p-8 rounded-3xl col-span-1 relative overflow-hidden group hover:border-klein-blue/50 transition-colors">
-                            <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-klein-blue/10 to-transparent"></div>
-                            <div class="relative z-10 h-full flex flex-col justify-between">
-                                <i data-lucide="layout-grid" class="w-10 h-10 text-white"></i>
-                                <div>
-                                    <h3 class="text-2xl font-bold mb-2">Mission Control</h3>
-                                    <p class="text-white/60">Labels appear exactly where you need them when swiping up.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Feature 3 -->
-                        <div class="glass-panel p-8 rounded-3xl col-span-1 relative overflow-hidden group hover:border-klein-blue/50 transition-colors">
-                            <div class="relative z-10 h-full flex flex-col justify-between">
-                                <i data-lucide="terminal" class="w-10 h-10 text-white"></i>
-                                <div>
-                                    <h3 class="text-2xl font-bold mb-2">SpaceAPI</h3>
-                                    <p class="text-white/60">Script your desktop names based on open apps or time of day.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Feature 4 (Download) -->
-                        <div class="glass-panel p-8 rounded-3xl col-span-1 md:col-span-2 flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-klein-blue/50 transition-colors">
-                            <div class="flex flex-col gap-2">
-                                <h3 class="text-3xl font-bold">Ready to rename?</h3>
-                                <p class="text-white/60 font-mono text-sm">v2.0.4 | Apple Silicon & Intel</p>
-                            </div>
-                            <div class="flex gap-4">
-                                <button class="px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-klein-blue hover:text-white transition-all transform hover:scale-105 shadow-xl shadow-klein-blue/20">
-                                    Download .DMG
-                                </button>
-                                <button class="px-8 py-4 glass-btn rounded-full text-white font-bold flex items-center gap-2">
-                                    <i data-lucide="github" class="w-4 h-4"></i> Source
-                                </button>
-                            </div>
-                        </div>
+                <!-- Mission Control Overlay -->
+                <div class="mission-control-overlay">
+                    <div class="mc-window-grid">
+                        <div class="mc-window"></div>
+                        <div class="mc-window active"></div>
+                        <div class="mc-window"></div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Footer -->
-            <footer class="border-t border-white/10 py-12 text-center relative z-20 bg-black">
-                <p class="font-mono text-white/30 text-xs">DESIGNED BY MICHAEL QIU &copy; 2025</p>
-            </footer>
+                <!-- Space Label Window -->
+                <div id="label-window" class="space-label-window">Coding</div>
+            </div>
 
-        </main>
-    </div>
+            <!-- Contextual Captions -->
+            <div id="caption-1" class="caption">Organize your workflow by naming your desktops.</div>
+            <div id="caption-2" class="caption">Never get lost in your own workspace again.</div>
+            <div id="caption-3" class="caption">Instantly identify your current space.</div>
+        </div>
+    </section>
+
+    <!-- Content Sections (Mocked from README) -->
+    <section id="features" class="py-32 px-10 max-w-6xl mx-auto">
+        <h2 class="text-5xl font-bold mb-16 text-center">Seamless Workflow.</h2>
+        <div class="grid md:grid-cols-3 gap-12">
+            <div class="glass p-10 rounded-[32px]">
+                <div class="w-12 h-12 bg-blue-500 rounded-xl mb-6 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200Z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Space Labeling</h3>
+                <p class="text-white/60">Customize the name of every desktop space to match your task.</p>
+            </div>
+            <div class="glass p-10 rounded-[32px]">
+                <div class="w-12 h-12 bg-purple-500 rounded-xl mb-6 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Mission Control</h3>
+                <p class="text-white/60">Deep integration with macOS gestures for a native feel.</p>
+            </div>
+            <div class="glass p-10 rounded-[32px]">
+                <div class="w-12 h-12 bg-green-500 rounded-xl mb-6 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 256 256"><path d="M208,40H48A16,16,0,0,0,32,56V200a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V56A16,16,0,0,0,208,40Zm0,160H48V56H208V200Z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Lightweight</h3>
+                <p class="text-white/60">Zero performance impact. Built for modern Apple Silicon.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 text-center text-white/30 border-t border-white/5">
+        <p>&copy; 2024 DesktopRenamer. All rights reserved.</p>
+    </footer>
 
     <script>
-        const { createApp, ref, onMounted, onUnmounted } = Vue;
+        gsap.registerPlugin(ScrollTrigger);
 
-        // --- Custom Wave Component (Adapted from index.html) ---
-        class Noise {
-            constructor(seed) {
-                this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
-                this.p = []; for (var i=0; i<256; i++) { this.p[i] = Math.floor(Math.random()*256); }
-                this.perm = []; for(var i=0; i<512; i++) { this.perm[i]=this.p[i & 255]; }
+        // 1. Icon Animation (3D Tilt)
+        const icon = document.querySelector('.dr-icon-3d');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            icon.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // 2. Demo Scroll Animation Logic
+        const demoTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#demo",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1,
             }
-            dot(g, x, y) { return g[0]*x + g[1]*y; }
-            mix(a, b, t) { return (1-t)*a + t*b; }
-            fade(t) { return t*t*t*(t*(t*6-15)+10); }
-            perlin2(x, y) {
-                var X = Math.floor(x), Y = Math.floor(y); x = x - X; y = y - Y; X = X & 255; Y = Y & 255;
-                var n00 = this.dot(this.grad3[this.perm[X+this.perm[Y]] % 12], x, y);
-                var n01 = this.dot(this.grad3[this.perm[X+this.perm[Y+1]] % 12], x, y-1);
-                var n10 = this.dot(this.grad3[this.perm[X+1+this.perm[Y]] % 12], x-1, y);
-                var n11 = this.dot(this.grad3[this.perm[X+1+this.perm[Y+1]] % 12], x-1, y-1);
-                var u = this.fade(x); return this.mix(this.mix(n00, n10, u), this.mix(n01, n11, u), this.fade(y));
-            }
-        }
+        });
 
-        class AWaves extends HTMLElement {
-            constructor() { super(); }
-            connectedCallback() {
-                this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                this.svg.style.width = '100%'; this.svg.style.height = '100%';
-                this.appendChild(this.svg);
-                this.noise = new Noise(Math.random());
-                this.lines = []; this.paths = [];
-                this.resize();
-                window.addEventListener('resize', this.resize.bind(this));
-                this.rafId = requestAnimationFrame(this.tick.bind(this));
-            }
-            resize() {
-                this.width = window.innerWidth; this.height = window.innerHeight;
-                this.svg.innerHTML = ''; this.lines = []; this.paths = [];
-                const gap = 50; const total = Math.ceil(this.height / gap);
-                for(let i=0; i<total; i++) {
-                    const y = i * gap;
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.setAttribute('fill', 'none');
-                    path.setAttribute('stroke', 'rgba(255,255,255,0.05)');
-                    path.setAttribute('stroke-width', '1');
-                    this.svg.appendChild(path);
-                    this.paths.push(path);
-                    this.lines.push({ y: y, points: [] });
-                    for(let x=0; x<=this.width; x+=50) this.lines[i].points.push({x, y});
-                }
-            }
-            tick(time) {
-                this.lines.forEach((line, i) => {
-                    let d = `M 0 ${line.y} `;
-                    line.points.forEach((p, j) => {
-                        const ns = this.noise.perlin2(p.x * 0.002 + time * 0.0002, i * 0.1 + time * 0.0001) * 40;
-                        d += `L ${p.x} ${line.y + ns} `;
-                    });
-                    this.paths[i].setAttribute('d', d);
-                });
-                requestAnimationFrame(this.tick.bind(this));
-            }
-        }
-        customElements.define('a-waves', AWaves);
+        // Phase 1: Grow the screen
+        demoTimeline.to("#demo-frame", {
+            marginTop: "0vh",
+            height: "85vh",
+            width: "90vw",
+            borderRadius: "24px",
+            duration: 1
+        });
 
-        createApp({
-            setup() {
-                const heroCanvas = ref(null);
-                const laptopRef = ref(null);
-                const desktopTrackRef = ref(null);
-                let scene, camera, renderer, iconMesh;
-                let lenis;
+        // Show first caption
+        demoTimeline.to("#caption-1", { opacity: 1, y: -20, duration: 0.3 }, "<0.5");
 
-                const initThree = () => {
-                    const container = heroCanvas.value;
-                    const width = window.innerWidth;
-                    const height = window.innerHeight;
+        // Phase 2: Slide Spaces (Horizontal Labels)
+        // Space 1 -> Space 2
+        demoTimeline.to("#spaces-track", {
+            xPercent: -33.33,
+            duration: 1,
+            delay: 0.5
+        });
+        demoTimeline.to("#caption-1", { opacity: 0, duration: 0.2 }, ">-1");
+        demoTimeline.to("#caption-2", { opacity: 1, y: -20, duration: 0.3 }, ">");
 
-                    scene = new THREE.Scene();
-                    camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-                    camera.position.z = 5;
+        // Space 2 -> Space 3
+        demoTimeline.to("#spaces-track", {
+            xPercent: -66.66,
+            duration: 1,
+            delay: 0.5
+        });
+        demoTimeline.to("#caption-2", { opacity: 0, duration: 0.2 }, ">-1");
+        demoTimeline.to("#caption-3", { opacity: 1, y: -20, duration: 0.3 }, ">");
 
-                    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                    renderer.setSize(width, height);
-                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                    container.appendChild(renderer.domElement);
+        // Phase 3: Mission Control Simulation
+        // Zoom out slightly & show windows
+        demoTimeline.to("#demo-frame", {
+            scale: 0.9,
+            duration: 0.5
+        });
 
-                    // Lights
-                    const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-                    scene.add(ambient);
-                    const spot = new THREE.SpotLight(0x002FA7, 5);
-                    spot.position.set(5, 5, 5);
-                    scene.add(spot);
-                    const blueRim = new THREE.DirectionalLight(0x002FA7, 2);
-                    blueRim.position.set(-5, 0, -5);
-                    scene.add(blueRim);
+        demoTimeline.to(".mac-top-bar", {
+            y: -50,
+            opacity: 0,
+            duration: 0.3
+        }, "<");
 
-                    // Squircle Shape
-                    const shape = new THREE.Shape();
-                    const w = 2.5, h = 2.5, r = 0.5;
-                    shape.moveTo(-w/2 + r, -h/2);
-                    shape.lineTo(w/2 - r, -h/2); shape.quadraticCurveTo(w/2, -h/2, w/2, -h/2 + r);
-                    shape.lineTo(w/2, h/2 - r); shape.quadraticCurveTo(w/2, h/2, w/2 - r, h/2);
-                    shape.lineTo(-w/2 + r, h/2); shape.quadraticCurveTo(-w/2, h/2, -w/2, h/2 - r);
-                    shape.lineTo(-w/2, -h/2 + r); shape.quadraticCurveTo(-w/2, -h/2, -w/2 + r, -h/2);
+        demoTimeline.to(".mission-control-overlay", {
+            opacity: 1,
+            duration: 0.5
+        }, "<");
 
-                    const geom = new THREE.ExtrudeGeometry(shape, { depth: 0.5, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.1, bevelThickness: 0.1 });
-                    
-                    // Procedural Texture for Logo
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 512; canvas.height = 512;
-                    const ctx = canvas.getContext('2d');
-                    ctx.fillStyle = '#f0f0f0'; ctx.fillRect(0,0,512,512);
-                    ctx.fillStyle = '#002FA7'; ctx.font = 'bold 300px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                    ctx.fillText('R', 256, 256);
-                    const tex = new THREE.CanvasTexture(canvas);
+        demoTimeline.to(".mc-window-grid", {
+            opacity: 1,
+            y: 0,
+            duration: 0.5
+        }, "<");
 
-                    const matSide = new THREE.MeshPhysicalMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.8, clearcoat: 1 });
-                    const matFace = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.2 });
+        // Phase 4: Space Label Window Reveal
+        demoTimeline.to("#label-window", {
+            opacity: 1,
+            scale: 1,
+            duration: 0.5
+        });
 
-                    iconMesh = new THREE.Mesh(geom, [matFace, matSide]);
-                    scene.add(iconMesh);
+        demoTimeline.to("#caption-3", { 
+            text: "Contextual labels that stay with you.", 
+            duration: 0.5 
+        });
 
-                    // Floating Animation
-                    gsap.to(iconMesh.position, { y: 0.2, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+        // Final Hold
+        demoTimeline.to({}, { duration: 1 });
 
-                    // Parallax
-                    window.addEventListener('mousemove', (e) => {
-                        const x = (e.clientX / width) * 2 - 1;
-                        const y = -(e.clientY / height) * 2 + 1;
-                        gsap.to(iconMesh.rotation, { x: y * 0.5, y: x * 0.5, duration: 1 });
-                    });
-                    
-                    // Scroll Animation for Icon (Moves away when scrolling down)
-                    gsap.to(iconMesh.position, {
-                        scrollTrigger: {
-                            trigger: "#hero",
-                            start: "top top",
-                            end: "bottom top",
-                            scrub: true
-                        },
-                        z: -5,
-                        opacity: 0
-                    });
-
-                    function animate() {
-                        requestAnimationFrame(animate);
-                        renderer.render(scene, camera);
-                    }
-                    animate();
-                };
-
-                const initScrollAnimations = () => {
-                    // Demo Rig Timeline
-                    const tl = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: "#demo",
-                            start: "top top",
-                            end: "bottom bottom",
-                            scrub: 1,
-                            pin: true
-                        }
-                    });
-
-                    // 1. Zoom Out (Mission Control)
-                    tl.to(laptopRef.value, { scale: 0.6, y: 50, duration: 2 })
-                      .to('.label-badge', { opacity: 1, y: 0, duration: 1 }, "<50%")
-                    
-                    // 2. Slide Desktop (Switch Spaces)
-                    // Move from 0% (first desktop) to -66.66% (last desktop)
-                      .to(desktopTrackRef.value, { x: "-66.66%", duration: 4, ease: "power2.inOut" })
-                      
-                    // 3. Labels Fade Out
-                      .to('.label-badge', { opacity: 0, y: -20, duration: 1 }, ">-1")
-                    
-                    // 4. Zoom In (Focus Mode)
-                      .to(laptopRef.value, { scale: 1, y: 0, duration: 2 });
-                    
-                    // Title Animation
-                    gsap.to(".animate-title", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.5 });
-                };
-
-                const initCursor = () => {
-                    const dot = document.querySelector('.cursor-dot');
-                    const outline = document.querySelector('.cursor-outline');
-                    window.addEventListener('mousemove', (e) => {
-                        const x = e.clientX; const y = e.clientY;
-                        dot.style.transform = `translate(${x}px, ${y}px)`;
-                        // Small delay for the trailer
-                        outline.animate({ transform: `translate(${x}px, ${y}px)` }, { duration: 500, fill: "forwards" });
-                    });
-                };
-
-                onMounted(() => {
-                    lucide.createIcons();
-                    
-                    // Lenis
-                    lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-                    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-                    requestAnimationFrame(raf);
-
-                    initThree();
-                    initScrollAnimations();
-                    initCursor();
-                });
-
-                return { heroCanvas, laptopRef, desktopTrackRef };
-            }
-        }).mount('#app');
     </script>
 </body>
 </html>
