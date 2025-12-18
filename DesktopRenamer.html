@@ -28,6 +28,7 @@
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'aurora': 'aurora 20s linear infinite',
+                        'twinkle': 'twinkle 4s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -38,6 +39,10 @@
                             '0%': { transform: 'rotate(0deg) scale(1)' },
                             '50%': { transform: 'rotate(180deg) scale(1.1)' },
                             '100%': { transform: 'rotate(360deg) scale(1)' },
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: '0.3' },
+                            '50%': { opacity: '1' },
                         }
                     }
                 }
@@ -116,19 +121,36 @@
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
-        /* Aurora Effect */
+        /* Aurora Effect - Strengthened */
         .aurora-bg {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 100vmax; height: 100vmax;
+            width: 120vmax; height: 120vmax; /* Increased size */
             background: 
-                radial-gradient(circle at 50% 50%, rgba(0, 47, 167, 0.2) 0%, transparent 40%),
-                conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(32, 190, 255, 0.1) 60deg, transparent 120deg, rgba(120, 0, 255, 0.1) 180deg, transparent 360deg);
-            filter: blur(60px);
-            opacity: 0.6;
+                radial-gradient(circle at 50% 50%, rgba(0, 47, 167, 0.5) 0%, transparent 50%), /* Increased opacity */
+                conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(32, 190, 255, 0.4) 60deg, transparent 120deg, rgba(120, 0, 255, 0.4) 180deg, transparent 360deg); /* Increased opacity */
+            filter: blur(70px);
+            opacity: 0.9; /* Increased base opacity */
+            mix-blend-mode: screen; /* Added for glow */
             pointer-events: none;
             z-index: 1;
+        }
+
+        /* Star Field */
+        .star-field {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
         }
 
         .ambient-glow {
@@ -203,7 +225,6 @@
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
              :class="{ 'opacity-0': isBooting, 'opacity-100': !isBooting }">
-             <!-- Removed nav hidden class binding here to let GSAP handle it for smoother perf -->
             
             <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
                 <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
@@ -291,7 +312,10 @@
         <main class="transition-all duration-500" :class="{ 'scale-95 blur-sm grayscale': isSidebarOpen }">
             
             <!-- Hero Section -->
-            <section id="hero" class="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
+            <section id="hero" class="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10 bg-black">
+                <!-- Stars -->
+                <div class="star-field" ref="starField"></div>
+
                 <!-- Aurora Effect Background -->
                 <div class="aurora-bg animate-aurora"></div>
                 
@@ -710,6 +734,7 @@
                 const navLeftColor = ref('text-black dark:text-white');
                 const navCapsuleColor = ref('text-black dark:text-white');
                 const navRightColor = ref('text-black dark:text-white');
+                const starField = ref(null);
 
                 const systemLinks = [
                     { name: 'FEATURES', href: '#features' },
@@ -755,6 +780,30 @@
                     const winHeight = window.innerHeight;
                     const scrollTotal = docHeight - winHeight;
                     scrollProgress.value = scrollTotal > 0 ? (scrollTop / scrollTotal) * 100 : 0;
+                };
+
+                // Create random stars
+                const initStars = () => {
+                    if (!starField.value) return;
+                    const count = 150;
+                    for (let i = 0; i < count; i++) {
+                        const star = document.createElement('div');
+                        star.classList.add('star');
+                        const x = Math.random() * 100;
+                        const y = Math.random() * 100;
+                        const size = Math.random() * 2;
+                        const duration = 2 + Math.random() * 3;
+                        const delay = Math.random() * 5;
+                        
+                        star.style.left = `${x}%`;
+                        star.style.top = `${y}%`;
+                        star.style.width = `${size}px`;
+                        star.style.height = `${size}px`;
+                        star.style.setProperty('--duration', `${duration}s`);
+                        star.style.setProperty('--delay', `${delay}s`);
+                        
+                        starField.value.appendChild(star);
+                    }
                 };
 
                 let scene, camera, renderer, iconMesh;
@@ -927,6 +976,7 @@
                     resolveTheme();
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
                     initThree();
+                    initStars();
                     
                     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
                     function raf(time) {
@@ -947,7 +997,7 @@
                 return {
                     isSidebarOpen, themeMode, scrollProgress, isCapsuleOpen, isBooting, isNavHidden, capsuleDashOffset,
                     toggleSidebar, toggleCapsuleNav, cycleTheme,
-                    canvasContainer, navBtnLeft, navCapsule, navBtnRight, navLeftColor, navCapsuleColor, navRightColor, systemLinks
+                    canvasContainer, navBtnLeft, navCapsule, navBtnRight, navLeftColor, navCapsuleColor, navRightColor, systemLinks, starField
                 };
             }
         }).mount('#app');
