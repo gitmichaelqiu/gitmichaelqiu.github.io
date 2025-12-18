@@ -297,12 +297,12 @@
         <transition name="sidebar">
             <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10001] border-r border-gray-200 dark:border-white/10 flex flex-col shadow-2xl overflow-y-auto overflow-x-hidden" style="container-type: inline-size;">
                 <!-- OPTIMIZED: Header layout with Logo -->
-                <div class="absolute top-8 left-8 md:left-12 right-12 flex items-center justify-between z-50">
+                <div class="absolute top-8 left-8 md:left-12 right-12 flex items-center justify-start gap-4 z-50">
                     <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                     <!-- LOGO ADDED - FULL VERSION -->
-                    <svg class="w-12 h-12 text-klein-blue" viewBox="0 0 1000 500" fill="currentColor">
+                    <svg class="h-12 w-auto text-klein-blue" viewBox="0 0 1000 500" fill="currentColor">
                         <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
                         <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
                         <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
@@ -321,7 +321,7 @@
             </aside>
         </transition>
 
-        <main class="transition-all duration-500" :class="{ 'scale-95 opacity-50 blur-sm pointer-events-none grayscale': isSidebarOpen }">
+        <main class="transition-all duration-500" :class="{ 'scale-95 blur-sm pointer-events-none grayscale': isSidebarOpen }">
             
             <section id="home" class="relative w-full h-[250vh] bg-klein-blue text-white">
                 <div class="sticky top-0 w-full h-screen overflow-hidden">
@@ -831,16 +831,15 @@
                     resolveTheme();
                 };
 
-                // OPTIMIZED REAL-TIME COLOR DETECTION (Restored Original Canvas Method with Throttling)
+                // OPTIMIZED REAL-TIME COLOR DETECTION (Restored Original Canvas Method with Throttling & Alpha Check)
                 const getLuminance = (colorStr) => {
-                    // Create a tiny canvas to read pixel data
                     const canvas = document.createElement("canvas");
                     canvas.width = 1; canvas.height = 1;
                     const ctx = canvas.getContext("2d");
                     ctx.fillStyle = colorStr;
                     ctx.fillRect(0, 0, 1, 1);
-                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-                    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                    const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+                    return { r, g, b, a };
                 };
 
                 // Throttled contrast checker
@@ -874,11 +873,15 @@
                         
                         // Check if color is valid and not transparent
                         if (bgColor && bgColor !== 'transparent' && !bgColor.includes('rgba(0, 0, 0, 0)')) {
-                            // Use the canvas method to accurately get luminance
-                            // This handles named colors, rgbs, hex, etc. perfectly
-                            const lum = getLuminance(bgColor);
+                            // Use the canvas method to accurately get RGBA
+                            const { r, g, b, a } = getLuminance(bgColor);
+                            
+                            // FIX: Check alpha channel. If < 50 (out of 255), treat as transparent/invisible
+                            if (a < 50) continue;
+
+                            const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
                             foundColor = lum > 128 ? 'text-black' : 'text-white';
-                            break; // Stop at the first non-transparent element
+                            break; // Stop at the first visible element
                         }
                     }
                     
