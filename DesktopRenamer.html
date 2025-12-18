@@ -69,12 +69,14 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
+        /* Simplified Square Window */
         .space-label-window {
-            background: rgba(30, 30, 30, 0.6);
-            backdrop-filter: blur(50px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            border-radius: 12px;
+            background: rgba(30, 30, 30, 0.4);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+            border-radius: 32px;
         }
         
         /* Real Mission Control Bar (Top Strip) */
@@ -215,7 +217,6 @@
 
                     <!-- The Spaces Container (Moving Stage) -->
                     <!-- Initial state: Adjusted translation to make it peek above fold -->
-                    <!-- Container starts 30vh up (at 70vh). Center is 120vh. y:-30vh puts center at 90vh (bottom 10%) -->
                     <div id="spaces-stage" class="relative w-[90vw] md:w-[70vw] aspect-[16/10] will-change-transform transform translate-y-[-25vh] scale-[0.8] opacity-100 shadow-[0_-20px_60px_rgba(0,47,167,0.3)] rounded-t-xl overflow-hidden md:rounded-xl border-t border-white/20">
                         
                         <!-- Main Carousel -->
@@ -329,19 +330,10 @@
 
                         </div>
 
-                        <!-- Space Label Window (Hidden initially) -->
+                        <!-- Space Label Window (FINAL: Square Container) -->
                         <div id="mission-control-overlay" class="absolute inset-0 z-50 pointer-events-none opacity-0 flex items-center justify-center">
-                            <div class="space-label-window p-8 flex flex-col items-center gap-4 transform scale-90" id="label-window-content">
-                                <div class="w-16 h-16 rounded-2xl bg-black/20 flex items-center justify-center mb-2 shadow-inner ring-1 ring-white/10">
-                                    <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10">
-                                </div>
-                                <div class="text-center">
-                                    <h3 class="font-bold text-white text-3xl tracking-tight mb-1">Coding</h3>
-                                    <p class="text-white/50 text-xs font-mono uppercase tracking-widest">Current Space</p>
-                                </div>
-                                <div class="mt-4 px-4 py-2 bg-white/10 rounded-lg text-xs font-mono text-white/80 border border-white/5 shadow-inner">
-                                    Press <span class="bg-white/20 px-1 rounded mx-1">⏎</span> to Rename
-                                </div>
+                            <div class="space-label-window w-64 h-64 flex flex-col items-center justify-center gap-2 transform scale-90" id="label-window-content">
+                                <span class="text-4xl font-bold text-white tracking-tight">Coding</span>
                             </div>
                         </div>
 
@@ -362,7 +354,7 @@
             setup() {
                 const canvasContainer = ref(null);
                 const isNavContracted = ref(false);
-                const isNavHidden = ref(false); // New state to completely hide nav
+                const isNavHidden = ref(false);
                 let scene, camera, renderer, iconMesh;
                 let mouseX = 0, mouseY = 0;
 
@@ -470,14 +462,12 @@
                             start: "top top", 
                             end: "bottom bottom",
                             scrub: 1,
-                            // Contract nav when entering demo
                             onEnter: () => isNavContracted.value = true,
                             onLeaveBack: () => isNavContracted.value = false
                         }
                     });
 
                     // 1. Natural Growth: Space expands from PEAKING position to FULL screen
-                    // Changed: Start from -25vh so it peeks up.
                     tl.fromTo("#spaces-stage", 
                         { y: '-25vh', scale: 0.8, opacity: 1, borderRadius: '16px' }, 
                         { y: '0vh', scale: 1, borderRadius: '0px', duration: 1.5, ease: "power2.out" }
