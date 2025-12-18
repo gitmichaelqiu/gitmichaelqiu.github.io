@@ -137,9 +137,19 @@
         .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
 
         /* Mission Control Elements */
-        .mc-thumbnail { transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
-        .mc-thumbnail.active { border-color: rgba(255,255,255,0.6); box-shadow: 0 0 0 2px rgba(255,255,255,0.2); }
+        .mc-thumbnail { transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); transform-origin: center; }
+        .mc-thumbnail:hover { transform: scale(1.05); }
+        .mc-thumbnail.active { border-color: rgba(255,255,255,0.9); box-shadow: 0 0 0 2px rgba(255,255,255,0.1), 0 10px 20px rgba(0,0,0,0.5); }
 
+        /* Fake UI Elements */
+        .mac-traffic-lights { display: flex; gap: 6px; }
+        .mac-traffic-light { width: 10px; height: 10px; border-radius: 50%; }
+        .mac-close { background: #FF5F56; border: 1px solid #E0443E; }
+        .mac-min { background: #FFBD2E; border: 1px solid #DEA123; }
+        .mac-max { background: #27C93F; border: 1px solid #1AAB29; }
+        
+        .window-shadow { box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5); }
+        
         /* Wave Component */
         a-waves {
             --x: -0.5rem; --y: 50%; --dash-offset: 20000;
@@ -357,20 +367,28 @@
                     </div>
                     
                     <!-- Mission Control Bar -->
-                    <div id="mc-top-bar" class="absolute top-0 w-full h-36 z-[60] transform -translate-y-full flex items-center justify-center gap-4 md:gap-8 px-10 pt-4" style="background: rgba(40, 40, 40, 0.85); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div id="mc-top-bar" class="absolute top-0 w-full h-36 z-[60] transform -translate-y-full flex items-center justify-center gap-4 md:gap-8 px-10 pt-4" style="background: rgba(30, 30, 30, 0.4); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                         
+                         <!-- Active Indicator Background (Moves visually) -->
+                         <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none">
+                             <!-- This would be dynamic in a real app, simplified here -->
+                         </div>
+
                          <!-- Space 1 (Main) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="h-16 aspect-[16/10] bg-gray-800 rounded border border-white/20 relative mc-thumbnail overflow-hidden">
-                                 <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
+                             <div class="h-14 aspect-[16/10] rounded-md border border-white/20 relative mc-thumbnail overflow-hidden bg-[#1a1a2e]">
+                                 <div class="absolute inset-0 bg-gradient-to-br from-blue-900 to-slate-900 opacity-80"></div>
+                                 <div class="absolute inset-x-2 top-2 bottom-0 bg-white/10 rounded-t-sm"></div>
                              </div>
                              <span class="text-[10px] font-medium text-white tracking-tight">Main</span>
                          </div>
                          
                          <!-- Space 2 (Coding) -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="h-16 aspect-[16/10] bg-[#1a1a1a] rounded border border-white/20 relative mc-thumbnail overflow-hidden">
-                                 <div class="absolute inset-0 bg-[#0d1117] flex items-center justify-center">
-                                     <span class="text-[8px] text-green-400 font-mono">code();</span>
+                             <div class="h-14 aspect-[16/10] rounded-md border border-white/20 relative mc-thumbnail overflow-hidden bg-[#0d1117]">
+                                 <div class="absolute inset-2 top-3 bottom-0 bg-[#1e1e1e] rounded-t-sm flex flex-col gap-1 p-1">
+                                     <div class="w-full h-px bg-white/20"></div>
+                                     <div class="w-2/3 h-px bg-white/20"></div>
                                  </div>
                              </div>
                              <span class="text-[10px] font-medium text-white tracking-tight">Coding</span>
@@ -378,95 +396,151 @@
 
                          <!-- Space 3 (Gaming) - Active -->
                          <div class="group cursor-pointer flex flex-col items-center gap-2">
-                             <div class="h-16 aspect-[16/10] bg-purple-900/20 rounded border-2 border-white/60 relative mc-thumbnail active shadow-lg overflow-hidden">
-                                 <div class="absolute inset-0 bg-gradient-to-t from-purple-900 to-black"></div>
+                             <div class="h-14 aspect-[16/10] rounded-md border-2 border-white/80 relative mc-thumbnail active shadow-lg overflow-hidden bg-purple-900">
+                                 <div class="absolute inset-0 bg-gradient-to-tr from-fuchsia-900 to-purple-800"></div>
+                                 <div class="absolute inset-0 flex items-center justify-center">
+                                     <div class="w-4 h-4 bg-white/20 rounded-sm rotate-45"></div>
+                                 </div>
                              </div>
                              <span class="text-[10px] font-bold text-white tracking-tight">Gaming</span>
                          </div>
                          
-                         <div class="h-16 aspect-square bg-white/5 rounded border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer ml-4">
-                             <i data-lucide="plus" class="w-5 h-5 text-white/40"></i>
+                         <div class="h-14 aspect-square bg-white/5 rounded border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer ml-4">
+                             <i data-lucide="plus" class="w-4 h-4 text-white/40"></i>
                          </div>
                     </div>
 
                     <!-- The Spaces Container -->
-                    <div id="spaces-stage" class="relative w-[90vw] md:w-[70vw] aspect-[16/10] will-change-transform transform translate-y-[-25vh] scale-[0.8] opacity-100 shadow-[0_-20px_60px_rgba(0,47,167,0.3)] rounded-t-xl overflow-hidden md:rounded-xl border-t border-white/20">
+                    <div id="spaces-stage" class="relative w-[85vw] md:w-[65vw] aspect-[16/10] will-change-transform transform translate-y-[-25vh] scale-[0.8] opacity-100 shadow-[0_0_100px_-20px_rgba(0,0,0,0.8)] rounded-xl overflow-hidden border border-white/10 bg-black">
                         
                         <!-- Main Carousel -->
-                        <div id="spaces-carousel" class="absolute inset-0 w-full h-full flex gap-[10vw] will-change-transform">
+                        <div id="spaces-carousel" class="absolute inset-0 w-full h-full flex gap-[20vw] will-change-transform">
                             
-                            <!-- Space 1: Main -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#0a0a0a]">
-                                <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#1a1a2e] to-black"></div>
-                                <div class="absolute inset-0 flex flex-col justify-between z-10 transition-opacity duration-500">
-                                    <div class="h-8 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 border-b border-white/5">
-                                        <div class="flex items-center gap-4 text-[13px] font-medium text-white">
-                                            <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
-                                            <span class="font-bold tracking-tight">Finder</span>
+                            <!-- Space 1: Main (Finder Style) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-gray-900">
+                                <!-- Wallpaper -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-[#2b5876] to-[#4e4376]"></div>
+                                
+                                <!-- Content -->
+                                <div class="absolute inset-0 flex flex-col">
+                                    <!-- Menu Bar -->
+                                    <div class="h-7 bg-black/20 backdrop-blur-md flex items-center justify-between px-4 text-white">
+                                        <div class="flex items-center gap-4 text-[12px] font-semibold">
+                                            <i data-lucide="apple" class="w-3.5 h-3.5 fill-white"></i>
+                                            <span>Finder</span>
+                                            <span class="font-normal opacity-70">File</span>
+                                            <span class="font-normal opacity-70">Edit</span>
                                         </div>
-                                        <div class="flex items-center gap-4 text-[13px] text-white">
-                                            <span class="font-mono text-[10px] font-bold tracking-wider text-white bg-white/10 border border-white/10 px-2 py-0.5 rounded shadow-sm">Main Space</span>
+                                        <div class="flex items-center gap-3 text-[12px]">
+                                            <span class="font-mono text-[10px] bg-white/20 px-1.5 rounded text-white font-bold">Main Space</span>
                                             <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
-                                            <span class="font-mono">Mon 9:41 AM</span>
+                                            <span>Mon 9:41 AM</span>
                                         </div>
                                     </div>
-                                    <div class="self-center mb-6">
-                                        <div class="bg-white/10 backdrop-blur-2xl border border-white/10 h-16 px-4 rounded-2xl flex items-center gap-3 shadow-2xl">
-                                            <div class="w-10 h-10 rounded-lg bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
-                                            <div class="w-px h-8 bg-white/10 mx-1"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/5"></div>
+                                    
+                                    <!-- Window -->
+                                    <div class="flex-1 flex items-center justify-center p-12">
+                                        <div class="w-2/3 h-3/4 bg-[#1e1e1e]/90 backdrop-blur-xl rounded-xl border border-white/10 window-shadow flex flex-col overflow-hidden">
+                                            <div class="h-10 bg-[#2d2d2d] flex items-center px-4 gap-4 border-b border-black/50">
+                                                <div class="mac-traffic-lights">
+                                                    <div class="mac-traffic-light mac-close"></div>
+                                                    <div class="mac-traffic-light mac-min"></div>
+                                                    <div class="mac-traffic-light mac-max"></div>
+                                                </div>
+                                                <div class="flex-1 text-center text-xs text-gray-400 font-medium">Downloads</div>
+                                            </div>
+                                            <div class="flex-1 flex">
+                                                <div class="w-48 bg-[#252526] border-r border-black/50 p-4 space-y-2">
+                                                    <div class="h-2 w-16 bg-white/10 rounded mb-4"></div>
+                                                    <div class="h-2 w-24 bg-white/5 rounded"></div>
+                                                    <div class="h-2 w-20 bg-white/5 rounded"></div>
+                                                    <div class="h-2 w-24 bg-blue-500/20 rounded"></div>
+                                                </div>
+                                                <div class="flex-1 p-6 grid grid-cols-4 gap-4 content-start">
+                                                    <div class="aspect-[3/4] bg-white/5 rounded flex items-center justify-center"><i data-lucide="file" class="text-white/20"></i></div>
+                                                    <div class="aspect-[3/4] bg-white/5 rounded flex items-center justify-center"><i data-lucide="image" class="text-white/20"></i></div>
+                                                    <div class="aspect-[3/4] bg-white/5 rounded flex items-center justify-center"><i data-lucide="music" class="text-white/20"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Dock -->
+                                    <div class="h-20 flex justify-center pb-2">
+                                        <div class="h-14 px-4 bg-white/10 backdrop-blur-2xl rounded-2xl flex items-center gap-3 border border-white/10">
+                                            <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-white"><i data-lucide="smile" class="w-6 h-6"></i></div>
+                                            <div class="w-10 h-10 rounded-lg bg-gray-500"></div>
+                                            <div class="w-10 h-10 rounded-lg bg-white"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Space 2: Coding -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#0d1117]">
-                                <div class="absolute inset-0 bg-[#0d1117]">
-                                    <div class="absolute inset-0 opacity-20 font-mono text-xs p-12 text-green-400 overflow-hidden leading-relaxed">
-                                        class DesktopRenamer extends Application { ... }
-                                    </div>
-                                </div>
-                                <div class="absolute inset-0 flex flex-col justify-between z-10">
-                                    <div class="h-8 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 border-b border-white/5">
-                                        <div class="flex items-center gap-4 text-[13px] font-medium text-white">
-                                            <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
-                                            <span class="font-bold tracking-tight">Code</span>
+                            <!-- Space 2: Coding (VS Code Style) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#0d1117]">
+                                <div class="absolute inset-0 bg-[#0d1117]"></div>
+                                
+                                <div class="absolute inset-0 flex flex-col">
+                                    <div class="h-7 bg-[#010409] flex items-center justify-between px-4 text-gray-400 border-b border-gray-800">
+                                        <div class="flex items-center gap-4 text-[12px] font-semibold text-white">
+                                            <i data-lucide="apple" class="w-3.5 h-3.5 fill-gray-400"></i>
+                                            <span>Code</span>
                                         </div>
-                                        <div class="flex items-center gap-4 text-[13px] text-white">
-                                            <span class="font-mono text-[10px] font-bold tracking-wider text-green-300 bg-green-900/40 border border-green-500/30 px-2 py-0.5 rounded shadow-sm">Coding</span>
-                                            <span class="font-mono">Mon 10:23 AM</span>
+                                        <div class="flex items-center gap-3 text-[12px]">
+                                            <span class="font-mono text-[10px] bg-green-900/50 text-green-400 px-1.5 rounded border border-green-800">Coding</span>
+                                            <span>Mon 10:23 AM</span>
                                         </div>
                                     </div>
-                                    <div class="self-center mb-6">
-                                        <div class="bg-white/10 backdrop-blur-2xl border border-white/10 h-16 px-4 rounded-2xl flex items-center gap-3 shadow-2xl">
-                                            <div class="w-10 h-10 rounded-lg bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
-                                            <div class="w-px h-8 bg-white/10 mx-1"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-[#2c98eb]/20 border border-[#2c98eb]/30 flex items-center justify-center text-[#2c98eb]"><i data-lucide="code-2" class="w-5 h-5"></i></div>
+
+                                    <div class="flex-1 p-6 flex items-center justify-center">
+                                        <div class="w-3/4 h-5/6 bg-[#1e1e1e] rounded-lg border border-gray-800 window-shadow flex flex-col overflow-hidden font-mono text-xs">
+                                            <div class="h-8 bg-[#2d2d2d] flex items-center px-4">
+                                                <div class="mac-traffic-lights mr-4">
+                                                    <div class="mac-traffic-light mac-close"></div>
+                                                    <div class="mac-traffic-light mac-min"></div>
+                                                    <div class="mac-traffic-light mac-max"></div>
+                                                </div>
+                                                <span class="text-gray-400 ml-2">app.swift</span>
+                                            </div>
+                                            <div class="flex-1 p-6 text-gray-300 space-y-1">
+                                                <div class="flex"><span class="text-gray-600 mr-4">1</span><span class="text-purple-400">import</span> <span class="text-yellow-300">Cocoa</span></div>
+                                                <div class="flex"><span class="text-gray-600 mr-4">2</span></div>
+                                                <div class="flex"><span class="text-gray-600 mr-4">3</span><span class="text-purple-400">class</span> <span class="text-yellow-300">DesktopRenamer</span>: <span class="text-green-400">NSApplication</span> {</div>
+                                                <div class="flex"><span class="text-gray-600 mr-4">4</span>    <span class="text-blue-400">func</span> <span class="text-yellow-300">applicationDidFinishLaunching</span>() {</div>
+                                                <div class="flex"><span class="text-gray-600 mr-4">5</span>        <span class="text-gray-500">// Initialize workspace observer</span></div>
+                                                <div class="flex"><span class="text-gray-600 mr-4">6</span>        <span class="text-cyan-400">WorkspaceManager</span>.shared.start()</div>
+                                                <div class="flex"><span class="text-gray-600 mr-4">7</span>    }</div>
+                                                <div class="flex"><span class="text-gray-600 mr-4">8</span>}</div>
+                                            </div>
+                                            <div class="h-6 bg-blue-600 text-white flex items-center px-2 text-[10px]">
+                                                <i data-lucide="git-branch" class="w-3 h-3 mr-1"></i> main
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Space 3: Gaming -->
-                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#1a0510]">
-                                <div class="absolute inset-0 bg-gradient-to-t from-purple-900 via-red-900 to-black"></div>
-                                <div class="absolute inset-0 flex flex-col justify-between z-10">
-                                    <div class="h-8 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 border-b border-white/5">
-                                        <div class="flex items-center gap-4 text-[13px] font-medium text-white">
-                                            <i data-lucide="apple" class="w-4 h-4 fill-white text-white"></i>
-                                            <span class="font-bold tracking-tight">Steam</span>
+                            <!-- Space 3: Gaming (Steam Style) -->
+                            <div class="space-item w-full h-full flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#171a21]">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#1b2838] to-[#2a475e]"></div>
+                                
+                                <div class="absolute inset-0 flex flex-col">
+                                    <div class="h-7 bg-[#171a21]/80 backdrop-blur-md flex items-center justify-between px-4 text-white border-b border-white/5">
+                                        <div class="flex items-center gap-4 text-[12px] font-semibold">
+                                            <i data-lucide="apple" class="w-3.5 h-3.5 fill-white"></i>
+                                            <span>Steam</span>
                                         </div>
-                                        <div class="flex items-center gap-4 text-[13px] text-white">
-                                            <span class="font-mono text-[10px] font-bold tracking-wider text-purple-300 bg-purple-900/40 border border-purple-500/30 px-2 py-0.5 rounded shadow-sm">Gaming</span>
-                                            <span class="font-mono">Mon 8:00 PM</span>
+                                        <div class="flex items-center gap-3 text-[12px]">
+                                            <span class="font-mono text-[10px] bg-purple-900/50 text-purple-300 px-1.5 rounded border border-purple-700">Gaming</span>
+                                            <span>Mon 8:00 PM</span>
                                         </div>
                                     </div>
-                                    <div class="self-center mb-6">
-                                        <div class="bg-white/10 backdrop-blur-2xl border border-white/10 h-16 px-4 rounded-2xl flex items-center gap-3 shadow-2xl">
-                                            <div class="w-10 h-10 rounded-lg bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center shadow-lg"><i data-lucide="layout" class="text-white w-5 h-5"></i></div>
-                                            <div class="w-px h-8 bg-white/10 mx-1"></div>
-                                            <div class="w-10 h-10 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400"><i data-lucide="gamepad-2" class="w-5 h-5"></i></div>
+
+                                    <div class="flex-1 p-8 flex items-center justify-center">
+                                        <div class="w-full max-w-4xl grid grid-cols-3 gap-6">
+                                            <div class="aspect-[2/3] bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg shadow-xl hover:scale-105 transition-transform"></div>
+                                            <div class="aspect-[2/3] bg-gradient-to-br from-red-600 to-orange-500 rounded-lg shadow-xl hover:scale-105 transition-transform"></div>
+                                            <div class="aspect-[2/3] bg-gradient-to-br from-green-600 to-emerald-500 rounded-lg shadow-xl hover:scale-105 transition-transform"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -476,9 +550,10 @@
 
                         <!-- Reveal Overlay -->
                         <div id="mission-control-overlay" class="absolute inset-0 z-50 pointer-events-none opacity-0 flex items-center justify-center">
-                            <div class="glass-card px-10 py-8 flex flex-col items-center justify-center gap-4 transform scale-90 rounded-3xl" id="label-window-content">
-                                <span class="font-mono text-xs text-purple-400 tracking-[0.3em]">CURRENT SPACE</span>
-                                <span class="text-6xl font-black text-white tracking-tighter">Gaming</span>
+                            <div class="glass-card px-12 py-10 flex flex-col items-center justify-center gap-4 transform scale-90 rounded-[2rem] border border-white/20 shadow-2xl bg-black/40 backdrop-blur-xl" id="label-window-content">
+                                <span class="font-mono text-xs text-purple-400 tracking-[0.4em] uppercase">Current Space</span>
+                                <h2 class="text-7xl font-black text-white tracking-tighter drop-shadow-lg">Gaming</h2>
+                                <div class="h-1 w-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-4"></div>
                             </div>
                         </div>
 
@@ -645,10 +720,8 @@
                     resolveTheme();
                 };
 
-                // Simple contrast check for nav colors (simplified from index.html)
                 const updateNavColors = () => {
-                     // Since we don't have complex white sections overlapping yet, we rely on CSS classes mainly,
-                     // but this structure is here if we need pixel-perfect contrast checks later.
+                     // Placeholder for contrast check logic
                 };
 
                 const updateScrollProgress = () => {
@@ -736,7 +809,6 @@
                     });
 
                     iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
-                    // Initial Rotation
                     iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
                     scene.add(iconMesh);
 
@@ -745,7 +817,6 @@
                         const time = Date.now() * 0.001;
                         if(iconMesh) {
                             iconMesh.position.y = Math.sin(time) * 0.2;
-                            // Magnetic effect on mouse
                             iconMesh.rotation.x += (mouseY * 0.5 - iconMesh.rotation.x) * 0.05;
                             iconMesh.rotation.y += (mouseX * 0.5 - iconMesh.rotation.y) * 0.05;
                         }
@@ -757,7 +828,6 @@
                         mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
                         mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
                         
-                        // Custom cursor link
                         const dot = document.querySelector('.cursor-dot');
                         const outline = document.querySelector('.cursor-outline');
                         if(dot && outline) {
@@ -795,29 +865,30 @@
                         }
                     });
 
+                    // Initial State
                     tl.fromTo("#spaces-stage", 
-                        { y: '-25vh', scale: 0.8, opacity: 1, borderRadius: '16px' }, 
-                        { y: '0vh', scale: 1, borderRadius: '0px', duration: 1.5, ease: "power2.out" }
+                        { y: '-25vh', scale: 0.8, opacity: 1, borderRadius: '16px', rotateX: 5 }, // Added initial slight rotateX
+                        { y: '0vh', scale: 1, borderRadius: '0px', rotateX: 0, duration: 1.5, ease: "power2.out" } // Flatten out
                     )
                     .to("#caption-1", { opacity: 1, y: 0, duration: 1 }, "<")
                     .to("#caption-1", { opacity: 0, y: -20, duration: 1 }, "+=0.5")
 
-                    // Slide to Coding
-                    .to("#spaces-carousel", { xPercent: -100, x: '-10vw', duration: 3, ease: "power2.inOut" })
+                    // Slide to Coding (Horizontal Swipe)
+                    .to("#spaces-carousel", { xPercent: -100, x: '-20vw', duration: 3, ease: "power2.inOut" })
                     .to("#caption-2", { opacity: 1, y: 0, duration: 1 }, "<+0.5")
                     .to("#caption-2", { opacity: 0, y: -20, duration: 1 }, "+=1")
 
                     // Slide to Gaming & Hide Nav
-                    .to("#spaces-carousel", { xPercent: -200, x: '-20vw', duration: 3, ease: "power2.inOut" })
+                    .to("#spaces-carousel", { xPercent: -200, x: '-40vw', duration: 3, ease: "power2.inOut" })
                     .call(() => { isNavHidden.value = true; }, null, "<")
                     
-                    // Mission Control Zoom Out
-                    .to("#spaces-stage", { scale: 0.65, y: '5vh', borderRadius: '16px', duration: 2, ease: "power3.out" })
-                    .to(".space-item", { filter: "blur(5px) brightness(0.5)", duration: 2 }, "<")
+                    // Mission Control Zoom Out (Added 3D Perspective Tilt)
+                    .to("#spaces-stage", { scale: 0.65, y: '5vh', borderRadius: '16px', rotateX: 5, duration: 2, ease: "power3.out" })
+                    .to(".space-item", { filter: "blur(0px) brightness(1)", duration: 2 }, "<") // Keep brightness, maybe slight dim?
                     .to("#mc-top-bar", { y: 0, duration: 1.5, ease: "power3.out" }, "<")
                     
-                    // Label Reveal
-                    .to("#mission-control-overlay", { opacity: 1, duration: 1 }, "<+0.5")
+                    // Label Reveal with pop
+                    .to("#mission-control-overlay", { opacity: 1, duration: 0.5 }, "<+0.5")
                     .fromTo("#label-window-content", { scale: 0.8, y: 30 }, { scale: 1, y: 0, duration: 1, ease: "elastic.out(1, 0.6)" }, "<")
                     .to("#caption-3", { opacity: 1, y: 0, duration: 1 }, "<")
                     
@@ -825,12 +896,9 @@
                 };
 
                 onMounted(() => {
-                    // Simulate Boot Sequence
                     setTimeout(() => { isBooting.value = false; }, 1000);
-                    
                     resolveTheme();
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
-                    
                     initThree();
                     
                     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
@@ -840,9 +908,7 @@
                         requestAnimationFrame(raf);
                     }
                     requestAnimationFrame(raf);
-                    
                     window.addEventListener('scroll', updateScrollProgress);
-
                     setTimeout(initScrollAnimation, 100);
                     lucide.createIcons();
                 });
