@@ -27,11 +27,17 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'aurora': 'aurora 20s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        aurora: {
+                            '0%': { transform: 'rotate(0deg) scale(1)' },
+                            '50%': { transform: 'rotate(180deg) scale(1.1)' },
+                            '100%': { transform: 'rotate(360deg) scale(1)' },
                         }
                     }
                 }
@@ -110,6 +116,21 @@
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
+        /* Aurora Effect */
+        .aurora-bg {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vmax; height: 100vmax;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(0, 47, 167, 0.2) 0%, transparent 40%),
+                conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(32, 190, 255, 0.1) 60deg, transparent 120deg, rgba(120, 0, 255, 0.1) 180deg, transparent 360deg);
+            filter: blur(60px);
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .ambient-glow {
             position: absolute; width: 40vmax; height: 40vmax;
             background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
@@ -181,7 +202,8 @@
         <!-- Navigation -->
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
-             :class="{ 'opacity-0': isBooting, 'opacity-100': !isBooting, '-translate-y-[200%]': isNavHidden }">
+             :class="{ 'opacity-0': isBooting, 'opacity-100': !isBooting }">
+             <!-- Removed nav hidden class binding here to let GSAP handle it for smoother perf -->
             
             <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
                 <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
@@ -270,6 +292,9 @@
             
             <!-- Hero Section -->
             <section id="hero" class="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
+                <!-- Aurora Effect Background -->
+                <div class="aurora-bg animate-aurora"></div>
+                
                 <div class="absolute inset-0 z-0">
                     <a-waves class="w-full h-full opacity-30"></a-waves>
                 </div>
@@ -880,11 +905,13 @@
 
                     // Slide to Gaming & Hide Nav
                     .to("#spaces-carousel", { xPercent: -200, x: '-40vw', duration: 3, ease: "power2.inOut" })
-                    .call(() => { isNavHidden.value = true; }, null, "<")
+                    // FIX: Replaced direct Vue state modification with GSAP tween to prevent reactivity flash
+                    .to("nav", { y: '-200%', duration: 0.5, ease: "power2.out" }, "<") 
                     
                     // Mission Control Zoom Out (Added 3D Perspective Tilt)
                     .to("#spaces-stage", { scale: 0.65, y: '5vh', borderRadius: '16px', rotateX: 5, duration: 2, ease: "power3.out" })
-                    .to(".space-item", { filter: "blur(0px) brightness(1)", duration: 2 }, "<") // Keep brightness, maybe slight dim?
+                    // FIX: Removed filter transition that might cause jumping
+                    .to(".space-item", { duration: 2 }, "<") 
                     .to("#mc-top-bar", { y: 0, duration: 1.5, ease: "power3.out" }, "<")
                     
                     // Label Reveal with pop
@@ -892,7 +919,7 @@
                     .fromTo("#label-window-content", { scale: 0.8, y: 30 }, { scale: 1, y: 0, duration: 1, ease: "elastic.out(1, 0.6)" }, "<")
                     .to("#caption-3", { opacity: 1, y: 0, duration: 1 }, "<")
                     
-                    .call(() => { isNavHidden.value = false; }, null, "+=0.1"); 
+                    .to("nav", { y: '0%', duration: 0.5, ease: "power2.out" }, "+=0.1"); 
                 };
 
                 onMounted(() => {
