@@ -268,36 +268,37 @@
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
+        /* Black Button (Matches original logic but premium shape) */
         .btn-premium-primary {
-            background-color: white; color: black;
+            background-color: black; color: white;
         }
         html.dark .btn-premium-primary { background-color: white; color: black; }
         
         .btn-premium-secondary {
-            background-color: rgba(255,255,255,0.05); 
-            color: white;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        html:not(.dark) .btn-premium-secondary {
-            background-color: rgba(0,0,0,0.03); 
+            background-color: transparent; 
             color: black;
             border: 1px solid rgba(0,0,0,0.1);
+        }
+        html.dark .btn-premium-secondary {
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         /* Sophisticated Hover */
         .btn-premium:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 40px -10px rgba(255,255,255,0.3);
-        }
-        html:not(.dark) .btn-premium:hover {
             box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
         }
+        html.dark .btn-premium:hover {
+            box-shadow: 0 10px 40px -10px rgba(255,255,255,0.15);
+        }
         
+        /* Shine Effect */
         .btn-premium::after {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
             transform: translateX(-100%);
             transition: transform 0.6s;
         }
@@ -386,6 +387,12 @@
                             <p class="font-sans text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light tracking-wide pl-4">
                                 Custom Names for Mission Control Spaces
                             </p>
+                        </div>
+                        
+                        <!-- NEW FOOTER TEXT -->
+                        <div class="mt-16 pl-6 opacity-0 animate-fade-in" style="animation-delay: 1.2s">
+                            <p class="font-display text-sm font-bold text-gray-800 dark:text-white mb-1">DESIGNED BY MICHAEL QIU</p>
+                            <p class="font-mono text-xs text-gray-500 tracking-wider">A macOSer Series App</p>
                         </div>
                     </div>
                 </div>
@@ -603,10 +610,12 @@
 
                             <!-- Right: Actions (Unified Style) -->
                             <div class="flex flex-col gap-4 w-full md:w-auto min-w-[200px]">
-                                <a href="#" class="btn-premium btn-premium-primary inline-flex items-center justify-center gap-3 px-8 py-4 shadow-xl cursor-interactive w-full">
+                                <!-- Main Download Button -->
+                                <a :href="downloadUrl" class="btn-premium btn-premium-primary inline-flex items-center justify-center gap-3 px-8 py-4 shadow-xl cursor-interactive w-full">
                                     <span class="relative z-10">DOWNLOAD APP</span>
                                     <i data-lucide="arrow-down" class="w-4 h-4 relative z-10"></i>
                                 </a>
+                                <!-- Secondary Source Code Button -->
                                 <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="btn-premium btn-premium-secondary inline-flex items-center justify-center gap-3 px-8 py-4 font-bold text-sm cursor-interactive w-full">
                                     <span>SOURCE CODE</span>
                                     <i data-lucide="github" class="w-4 h-4"></i>
@@ -710,6 +719,7 @@
                 const navCapsuleColor = ref('text-black dark:text-white');
                 const navRightColor = ref('text-black dark:text-white');
                 const latestVersion = ref(''); // Added for version fetching
+                const downloadUrl = ref('#'); // URL state
                 let lenis; // Store lenis instance
 
                 const systemLinks = [
@@ -953,6 +963,14 @@
                         .then(response => response.json())
                         .then(data => {
                             if(data.tag_name) latestVersion.value = data.tag_name;
+                            // Find assets
+                            if(data.assets && data.assets.length > 0) {
+                                // Prefer .dmg, then .zip
+                                const asset = data.assets.find(a => a.name.endsWith('.dmg')) || data.assets.find(a => a.name.endsWith('.zip')) || data.assets[0];
+                                if(asset) downloadUrl.value = asset.browser_download_url;
+                            } else {
+                                downloadUrl.value = data.html_url; // Fallback to release page
+                            }
                         })
                         .catch(err => console.log("Version fetch failed", err));
                 });
@@ -965,7 +983,7 @@
                     isSidebarOpen, themeMode, scrollProgress, isCapsuleOpen, isBooting, isNavHidden, capsuleDashOffset,
                     toggleSidebar, toggleCapsuleNav, cycleTheme, scrollTo,
                     canvasContainer, navBtnLeft, navCapsule, navBtnRight, navLeftColor, navCapsuleColor, navRightColor, systemLinks, starField,
-                    latestVersion
+                    latestVersion, downloadUrl
                 };
             }
         }).mount('#app');
