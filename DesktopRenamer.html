@@ -29,7 +29,6 @@
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 10s ease-in-out infinite',
-                        'twinkle': 'twinkle 4s ease-in-out infinite',
                         'bounce-subtle': 'bounceSubtle 2s infinite',
                         'spin-point': 'spinPoint 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
                         'grid-pan': 'gridPan 20s linear infinite',
@@ -42,10 +41,6 @@
                         float: {
                             '0%, 100%': { transform: 'translate(0, 0)' },
                             '50%': { transform: 'translate(-20px, 20px)' },
-                        },
-                        twinkle: {
-                            '0%, 100%': { opacity: '0.3' },
-                            '50%': { opacity: '1' },
                         },
                         bounceSubtle: {
                             '0%, 100%': { transform: 'translateY(0)' },
@@ -86,7 +81,6 @@
             transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             width: 100vw;
             overflow-x: hidden;
-            /* Force hide default cursor globally to fix the "decoration not hiding" issue */
             cursor: none !important; 
         }
         
@@ -110,7 +104,6 @@
         .cursor-dot { width: 8px; height: 8px; background-color: white; }
         .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
         
-        /* Interactive elements hover effect */
         a:hover ~ .cursor-outline, 
         button:hover ~ .cursor-outline,
         .cursor-interactive:hover ~ .cursor-outline { 
@@ -144,6 +137,19 @@
             box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
         }
 
+        /* No Hover Utility for Demo Cards */
+        .no-hover:hover {
+            transform: none !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.7) !important;
+        }
+        html.dark .no-hover:hover {
+            background: rgba(20, 20, 20, 0.3) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            box-shadow: none !important;
+        }
+
         .card-corner-glow {
             position: absolute; top: 0; right: 0; width: 300px; height: 300px;
             background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
@@ -151,63 +157,20 @@
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
-        /* --- POLISHED AURORA EFFECT --- */
+        /* Aurora */
         .aurora-container {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 0;
-            overflow: hidden;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
         }
         .aurora-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            mix-blend-mode: screen;
-            animation: float 20s infinite ease-in-out;
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.6; mix-blend-mode: screen; animation: float 20s infinite ease-in-out;
         }
-        /* Light Mode Aurora - Softer */
-        html:not(.dark) .aurora-blob {
-            mix-blend-mode: multiply;
-            opacity: 0.08;
-            filter: blur(100px);
-        }
+        html:not(.dark) .aurora-blob { mix-blend-mode: multiply; opacity: 0.08; filter: blur(100px); }
         
-        .blob-1 {
-            top: -20%; right: -10%;
-            width: 70vw; height: 70vw;
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.6), transparent 70%);
-            animation-delay: 0s;
-        }
-        .blob-2 {
-            bottom: -20%; left: -10%;
-            width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(32, 190, 255, 0.4), transparent 70%);
-            animation-delay: -5s;
-        }
-        .blob-3 {
-            top: 40%; right: 20%;
-            width: 40vw; height: 40vw;
-            background: radial-gradient(circle, rgba(100, 0, 255, 0.3), transparent 70%);
-            animation-delay: -10s;
-        }
-
-        /* Star Field */
-        .star-field {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
-            animation: twinkle var(--duration) ease-in-out infinite;
-            animation-delay: var(--delay);
-        }
-        html:not(.dark) .star { background: #002FA7; opacity: 0.3; }
+        .blob-1 { top: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0, 47, 167, 0.6), transparent 70%); animation-delay: 0s; }
+        .blob-2 { bottom: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(32, 190, 255, 0.4), transparent 70%); animation-delay: -5s; }
+        .blob-3 { top: 40%; right: 20%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(100, 0, 255, 0.3), transparent 70%); animation-delay: -10s; }
 
         .ambient-glow {
             position: absolute; width: 40vmax; height: 40vmax;
@@ -284,6 +247,23 @@
             vertical-align: middle;
         }
         @keyframes blink { 50% { opacity: 0; } }
+
+        /* Premium Download Card Style */
+        .premium-download-card {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8);
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        html:not(.dark) .premium-download-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 40px 80px -20px rgba(0, 47, 167, 0.15);
+        }
+        .premium-download-card:hover {
+            transform: translateY(-5px) scale(1.005);
+        }
     </style>
 </head>
 <body :class="{ 'is-booting': isBooting }">
@@ -341,8 +321,7 @@
             
             <!-- Hero Section -->
             <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-white dark:bg-black transition-colors duration-500">
-                <!-- Stars -->
-                <div class="star-field" ref="starField"></div>
+                <!-- Stars Removed as requested -->
 
                 <!-- Aurora -->
                 <div class="aurora-container">
@@ -427,8 +406,8 @@
                 </div>
             </section>
 
-            <!-- DEMO SECTION: Scroll-Driven Flow (UPDATED) -->
-            <section id="demo" class="relative bg-[#050505] z-30" style="height: 350vh;">
+            <!-- DEMO SECTION: Slower Animation (500vh) + No Hover -->
+            <section id="demo" class="relative bg-[#050505] z-30" style="height: 500vh;">
                 <!-- Sticky Wrapper -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
                     
@@ -478,7 +457,7 @@
                             </div>
 
                             <!-- Floating Renamer Window (Simulated) -->
-                            <div id="demo-input-window" class="absolute glass-card p-6 rounded-xl flex flex-col gap-4 w-80 transform translate-y-10 opacity-0 border border-white/10 shadow-2xl">
+                            <div id="demo-input-window" class="absolute glass-card p-6 rounded-xl flex flex-col gap-4 w-80 transform translate-y-10 opacity-0 border border-white/10 shadow-2xl no-hover">
                                 <div class="flex justify-between items-center">
                                     <span class="text-[10px] font-mono text-gray-500 uppercase tracking-wider">Rename Space</span>
                                     <div class="flex gap-1.5">
@@ -496,7 +475,7 @@
                             </div>
 
                             <!-- The Resulting Label (Core Feature) -->
-                            <div id="demo-final-label" class="absolute glass-card px-12 py-8 rounded-2xl border border-white/20 transform scale-90 opacity-0 flex flex-col items-center gap-2 bg-black/40 backdrop-blur-2xl">
+                            <div id="demo-final-label" class="absolute glass-card px-12 py-8 rounded-2xl border border-white/20 transform scale-90 opacity-0 flex flex-col items-center gap-2 bg-black/40 backdrop-blur-2xl no-hover">
                                 <span class="text-xs font-mono text-klein-blue tracking-[0.3em]">ACTIVE SPACE</span>
                                 <h2 class="text-6xl font-black text-white tracking-tighter">GAMING</h2>
                             </div>
@@ -515,7 +494,7 @@
                                         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold text-white tracking-widest uppercase">GAMING</div>
                                         
                                         <!-- The Large Label Inside Mission Control -->
-                                        <div class="glass-card px-6 py-4 rounded-xl border border-white/20 backdrop-blur-md transform scale-75 shadow-lg">
+                                        <div class="glass-card px-6 py-4 rounded-xl border border-white/20 backdrop-blur-md transform scale-75 shadow-lg no-hover">
                                             <span class="text-2xl font-black text-white">GAMING</span>
                                         </div>
                                     </div>
@@ -539,50 +518,59 @@
                 </div>
             </section>
 
-            <!-- Download Section -->
-            <section id="download" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] relative z-30 flex flex-col items-center text-center overflow-hidden transition-colors duration-500">
-                <div class="aurora-container opacity-30 dark:opacity-0 transition-opacity">
-                    <div class="aurora-blob blob-3" style="mix-blend-mode: multiply; left: 20%;"></div>
-                </div>
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-klein-blue/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <!-- Download Section (PREMIUM REDESIGN) -->
+            <section id="download" class="w-full py-40 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] relative z-30 overflow-hidden flex items-center justify-center">
+                <!-- Background ambient -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-klein-blue/5 rounded-full blur-[120px] pointer-events-none"></div>
+                
+                <div class="relative z-10 w-full max-w-5xl">
+                    <div class="premium-download-card rounded-3xl p-12 md:p-24 relative overflow-hidden group">
+                        
+                        <!-- Inner Glow -->
+                        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-klein-blue/20 to-transparent rounded-full blur-[100px] transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
 
-                <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-                    <div class="glass-card w-full p-12 md:p-20 rounded-3xl border border-white/20 shadow-2xl relative overflow-hidden group">
-                        <div class="card-corner-glow"></div>
-                        <div class="relative z-10 flex flex-col items-center">
-                            <h2 class="text-5xl md:text-7xl font-black text-black dark:text-white mb-8 tracking-tighter">
-                                READY TO<br><span class="text-klein-blue">ORGANIZE?</span>
-                            </h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300 mb-12 leading-relaxed max-w-xl">
-                                Download DesktopRenamer today and transform how you navigate your digital life. Simple, lightweight, and built for power users.
-                            </p>
-                            <a href="#" class="inline-flex items-center gap-3 px-10 py-5 text-white rounded-full font-bold tracking-wide transition-all transform hover:scale-105 download-btn-gradient mb-6 shadow-xl cursor-interactive">
-                                <i data-lucide="download" class="w-5 h-5"></i>
-                                <span>DOWNLOAD FOR MACOS</span>
-                            </a>
-                            <p class="font-mono text-xs text-gray-500 mb-12">Requires macOS 14.0 or later (Apple Silicon)</p>
-                            <div class="w-full max-w-lg bg-white/50 dark:bg-black/40 border border-black/5 dark:border-white/10 rounded-xl p-6 backdrop-blur-md text-left">
-                                <div class="flex items-center gap-3 mb-4 text-yellow-600 dark:text-yellow-500">
-                                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
-                                    <span class="font-bold text-sm">"Cannot verify developer"?</span>
-                                </div>
-                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
-                                    Because this app is not signed with an expensive Apple Developer ID, macOS might block the first launch. To open it:
-                                </p>
-                                <div class="bg-black/5 dark:bg-black/60 rounded-lg p-3 font-mono text-[10px] text-gray-600 dark:text-gray-300 flex flex-col gap-2">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-[8px] text-black dark:text-white">1</span>
-                                        <span>System Settings → Privacy & Security</span>
+                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+                            <!-- Left: Branding -->
+                            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-16 h-16 rounded-2xl bg-white dark:bg-black flex items-center justify-center shadow-lg border border-black/5 dark:border-white/10">
+                                        <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10 rounded-lg" alt="Icon">
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-[8px] text-black dark:text-white">2</span>
-                                        <span>Scroll to bottom</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-[8px] text-black dark:text-white">3</span>
-                                        <span>Click <span class="text-black dark:text-white font-bold">Open Anyway</span> for DesktopRenamer</span>
+                                    <div class="flex flex-col">
+                                        <span class="font-display font-black text-2xl text-black dark:text-white tracking-tight">DESKTOP RENAMER</span>
+                                        <span class="font-mono text-xs text-gray-500 tracking-widest">VERSION 1.0</span>
                                     </div>
                                 </div>
+                                <h2 class="text-4xl md:text-6xl font-black text-black dark:text-white tracking-tighter mb-6 leading-[0.9]">
+                                    YOUR WORKFLOW,<br><span class="text-klein-blue">REDEFINED.</span>
+                                </h2>
+                                <div class="flex flex-wrap gap-6 justify-center md:justify-start text-sm font-mono text-gray-500">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-klein-blue"></i>
+                                        <span>macOS 14+</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-klein-blue"></i>
+                                        <span>Apple Silicon</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-klein-blue"></i>
+                                        <span>Free & Open Source</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Actions -->
+                            <div class="flex flex-col gap-4 w-full md:w-auto">
+                                <a href="#" class="group relative inline-flex items-center justify-center gap-4 px-12 py-5 bg-black dark:bg-white text-white dark:text-black rounded-full font-bold text-lg tracking-wide hover:scale-105 transition-transform shadow-2xl cursor-interactive overflow-hidden">
+                                    <span class="relative z-10">DOWNLOAD APP</span>
+                                    <i data-lucide="arrow-down" class="w-5 h-5 relative z-10 group-hover:translate-y-1 transition-transform"></i>
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                                </a>
+                                <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="inline-flex items-center justify-center gap-3 px-12 py-4 border border-black/10 dark:border-white/10 rounded-full font-mono text-sm text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-interactive">
+                                    <i data-lucide="github" class="w-4 h-4"></i>
+                                    <span>VIEW SOURCE CODE</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -606,38 +594,23 @@
     <script>
         const { createApp, ref, computed, onMounted, onUnmounted, nextTick, watch } = Vue;
 
-        // ... [Noise and AWaves classes remain unchanged] ...
-        class Noise {
-            constructor(seed) {
-                this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
-                this.p = []; for (var i=0; i<256; i++) { this.p[i] = Math.floor(Math.random()*256); }
-                this.perm = []; for(var i=0; i<512; i++) { this.perm[i]=this.p[i & 255]; }
-            }
-            dot(g, x, y) { return g[0]*x + g[1]*y; }
-            mix(a, b, t) { return (1-t)*a + t*b; }
-            fade(t) { return t*t*t*(t*(t*6-15)+10); }
-            perlin2(x, y) {
-                var X = Math.floor(x), Y = Math.floor(y);
-                x = x - X; y = y - Y;
-                X = X & 255; Y = Y & 255;
-                var n00 = this.dot(this.grad3[this.perm[X+this.perm[Y]] % 12], x, y);
-                var n01 = this.dot(this.grad3[this.perm[X+this.perm[Y+1]] % 12], x, y-1);
-                var n10 = this.dot(this.grad3[this.perm[X+1+this.perm[Y]] % 12], x-1, y);
-                var n11 = this.dot(this.grad3[this.perm[X+1+this.perm[Y+1]] % 12], x-1, y-1);
-                var u = this.fade(x); return this.mix(this.mix(n00, n10, u), this.mix(n01, n11, u), this.fade(y));
-            }
-        }
-
         class AWaves extends HTMLElement {
             constructor() { super(); this._progress = 0; }
             connectedCallback() {
                 this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                 this.appendChild(this.svg);
-                this.noise = new Noise(Math.random());
+                // Simple Perlin-ish noise gen
+                this.perm = new Uint8Array(512);
+                for(let i=0; i<512; i++) this.perm[i] = Math.floor(Math.random()*255);
                 this.lines = []; this.paths = [];
                 this.setSize(); this.setLines();
                 this.rafId = requestAnimationFrame(this.tick.bind(this));
                 window.addEventListener('resize', this.onResize.bind(this));
+            }
+            noise(x, y) {
+                // Simplified noise function for brevity/performance in single file
+                const X = Math.floor(x) & 255; const Y = Math.floor(y) & 255;
+                return (this.perm[X+Y] % 12) / 12; 
             }
             disconnectedCallback() { cancelAnimationFrame(this.rafId); window.removeEventListener('resize', this.onResize); }
             onResize() { this.setSize(); this.setLines(); }
@@ -665,7 +638,7 @@
                 const amp = 1;
                 this.lines.forEach((line, idx) => {
                     line.points.forEach(p => {
-                        const move = this.noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
+                        const move = Math.sin((p.x + time * 0.002) * 0.01) * Math.cos((p.y + time * 0.002) * 0.01) * 10;
                         p.wave.x = Math.cos(move) * 32 * amp; p.wave.y = Math.sin(move) * 16 * amp;
                     });
                     let d = `M ${line.points[0].x + line.points[0].wave.x} ${line.points[0].y + line.points[0].wave.y}`;
@@ -693,7 +666,6 @@
                 const navCapsule = ref(null);
                 const navBtnRight = ref(null);
                 const starField = ref(null);
-                // Refs declared for color calculation
                 const navLeftColor = ref('text-black dark:text-white');
                 const navCapsuleColor = ref('text-black dark:text-white');
                 const navRightColor = ref('text-black dark:text-white');
@@ -737,25 +709,6 @@
                     const winHeight = window.innerHeight;
                     const scrollTotal = docHeight - winHeight;
                     scrollProgress.value = scrollTotal > 0 ? (scrollTop / scrollTotal) * 100 : 0;
-                };
-
-                const initStars = () => {
-                    if (!starField.value) return;
-                    const count = 150;
-                    for (let i = 0; i < count; i++) {
-                        const star = document.createElement('div');
-                        star.classList.add('star');
-                        const x = Math.random() * 100;
-                        const y = Math.random() * 100;
-                        const size = Math.random() * 2;
-                        const duration = 2 + Math.random() * 3;
-                        const delay = Math.random() * 5;
-                        star.style.left = `${x}%`; star.style.top = `${y}%`;
-                        star.style.width = `${size}px`; star.style.height = `${size}px`;
-                        star.style.setProperty('--duration', `${duration}s`);
-                        star.style.setProperty('--delay', `${delay}s`);
-                        starField.value.appendChild(star);
-                    }
                 };
                 
                 const initCursor = () => {
@@ -875,16 +828,15 @@
                             trigger: "#demo",
                             start: "top top", 
                             end: "bottom bottom",
-                            scrub: 1,
+                            scrub: 1, // Increased scrubber distance via HTML height for slower feel
                         }
                     });
 
                     const steps = document.querySelectorAll('.demo-step-text');
 
-                    // 1. Initial State: Zoom-in Label for Identification
+                    // 1. Initial State
                     tl.fromTo("#demo-menubar", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 1 })
                       .to(steps[0], { opacity: 1, y: 0, duration: 0.5 }, "<")
-                      // ZOOM EFFECT: Pulse the "Desktop 1" pill dramatically
                       .to("#demo-identify-zoom", { scale: 1.5, opacity: 1, duration: 0.5, ease: "back.out(1.5)" })
                       .to("#demo-identify-zoom", { scale: 0.5, opacity: 0, duration: 0.5, ease: "power2.in" }, "+=0.8");
 
@@ -893,43 +845,34 @@
                       .to("#demo-input-window", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)" })
                       .to(steps[1], { opacity: 1, y: 0, duration: 0.5 }, "<");
 
-                    // 3. Typing Simulation
+                    // 3. Typing
                     tl.to("#input-text", { 
-                        duration: 1.5, 
-                        text: "Gaming", 
-                        ease: "none",
+                        duration: 1.5, text: "Gaming", ease: "none",
                         onUpdate: function() {
                             const progress = this.progress();
                             gsap.set("#input-progress", { width: (progress * 100) + "%" });
                         }
                     });
 
-                    // 4. Update Menubar Animation
+                    // 4. Update
                     tl.to("#demo-input-window", { scale: 0.9, opacity: 0, duration: 0.5, delay: 0.5 })
                       .to(steps[1], { opacity: 0, y: -20, duration: 0.5 }, "<")
-                      
-                      // Flash the menubar item
                       .to("#demo-space-pill", { scale: 1.2, backgroundColor: "#ffffff", duration: 0.2, ease: "power1.inOut" })
-                      .to("#demo-text", { text: "Gaming", duration: 0.01 }, ">") // Swap text instantly at peak
+                      .to("#demo-text", { text: "Gaming", duration: 0.01 }, ">") 
                       .to("#demo-icon", { color: "#000000", duration: 0.01 }, "<")
                       .to("#demo-space-pill", { scale: 1.0, backgroundColor: "rgba(0, 47, 167, 0.6)", borderColor: "#002FA7", duration: 0.4, ease: "elastic.out(1, 0.5)" })
                       .to("#demo-icon", { color: "#ffffff", duration: 0.4 }, "<")
-                      
-                      // Show Final Label
                       .to("#demo-final-label", { scale: 1, opacity: 1, duration: 1, ease: "elastic.out(1, 0.7)" }, "-=0.2")
                       .to(steps[2], { opacity: 1, y: 0, duration: 0.5 }, "<");
 
-                    // 5. Mission Control Preview
+                    // 5. Mission Control
                     tl.to(steps[2], { opacity: 0, y: -20, duration: 0.5 }, "+=1.5")
                       .to("#demo-final-label", { opacity: 0, duration: 0.5 }, "<")
                       .to("#demo-mission-control", { opacity: 1, scale: 1, pointerEvents: 'auto', duration: 1, ease: "power2.out" })
-                      
-                      // Staggered reveal of Mission Control items
                       .to("#mc-title", { opacity: 1, y: 0, duration: 0.5 }, "<+0.2")
                       .to("#mc-space-1", { opacity: 0.5, y: 0, scale: 0.9, duration: 0.6, ease: "power2.out" }, "<+0.1")
                       .to("#mc-space-2", { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power2.out" }, "<+0.1")
                       .to("#mc-space-3", { opacity: 0.5, y: 0, scale: 0.9, duration: 0.6, ease: "power2.out" }, "<+0.1")
-                      
                       .to(steps[3], { opacity: 1, y: 0, duration: 0.5 }, "<");
 
                     // 6. Hold
@@ -941,8 +884,7 @@
                     resolveTheme();
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
                     initThree();
-                    initStars();
-                    initCursor();
+                    initCursor(); // No stars
                     
                     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
                     function raf(time) {
