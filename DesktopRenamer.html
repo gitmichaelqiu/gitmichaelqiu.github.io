@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
+    <!-- ... (No changes to head, config, styles) ... -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DesktopRenamer | Contextual Workspaces</title>
@@ -26,6 +27,7 @@
                         serif: ['Playfair Display', 'serif'],
                         cursive: ['Comic Sans MS', 'Comic Sans', 'cursive'],
                     },
+                    // ... animations ...
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -73,6 +75,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
+    <!-- ... styles ... -->
     <style>
         :root { --klein-blue: #002FA7; }
 
@@ -371,7 +374,7 @@
 
         <main class="transition-all duration-500">
             
-            <!-- Hero Section (Updated Layout) -->
+            <!-- Hero Section -->
             <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-white dark:bg-black transition-colors duration-500">
                 <!-- Aurora -->
                 <div class="aurora-container">
@@ -402,7 +405,7 @@
                     </div>
                 </div>
 
-                <!-- Signature Block (Bottom Right) - RESTORED & OPTIMIZED -->
+                <!-- Signature Block (Bottom Right) - RESTORED & TYPOGRAPHY FIXED -->
                 <div class="absolute bottom-12 right-12 z-20 flex flex-col items-end opacity-0 animate-fade-in pointer-events-none" style="animation-delay: 1.5s">
                     <p class="font-display text-xs font-bold text-gray-900 dark:text-white mb-1 tracking-[0.2em] text-right">
                         Designed by <span class="text-klein-blue">Michael Qiu</span>
@@ -624,8 +627,8 @@
                                         <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10 rounded-lg" alt="Icon">
                                     </div>
                                     <div class="flex flex-col">
-                                        <!-- UPDATED FONT -->
-                                        <span class="font-display font-black text-2xl text-black dark:text-white tracking-tight">DESKTOP RENAMER</span>
+                                        <!-- UPDATED FONT & CASING -->
+                                        <span class="font-display font-extrabold text-2xl text-black dark:text-white tracking-tight">DesktopRenamer</span>
                                         <span class="font-mono text-xs text-gray-500 tracking-widest">{{ latestVersion || 'VERSION 1.0' }}</span>
                                     </div>
                                 </div>
