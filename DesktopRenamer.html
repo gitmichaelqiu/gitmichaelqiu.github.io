@@ -72,6 +72,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -150,7 +151,7 @@
         }
         .group:hover .card-corner-glow { opacity: 1; }
         
-        /* --- POLISHED AURORA EFFECT (Restored from Original) --- */
+        /* --- POLISHED AURORA EFFECT --- */
         .aurora-container {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -191,7 +192,7 @@
             animation-delay: -10s;
         }
 
-        /* Star Field (Restored from Original) */
+        /* Star Field */
         .star-field {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -291,17 +292,17 @@
         <div class="cursor-dot hidden md:block"></div>
         <div class="cursor-outline hidden md:block"></div>
 
-        <!-- NAVIGATION (Restored Capsule + Left Arrow) -->
+        <!-- NAVIGATION -->
         <nav ref="navBar" 
              class="fixed top-0 left-0 w-full z-[9990] py-6 px-6 md:px-10 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
              :class="{ 'opacity-0': isBooting, 'opacity-100': !isBooting }">
             
-            <!-- Left: Back Button (To Main Site) -->
+            <!-- Left: Back Button -->
             <a href="index.html" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex justify-center items-center pointer-events-auto hover:scale-105 transition-transform text-gray-800 dark:text-white cursor-interactive">
                 <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></i>
             </a>
             
-            <!-- Center: Floating Capsule (Restored Layout) -->
+            <!-- Center: Floating Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto top-6" ref="navCapsule">
                 <div class="nav-glass h-12 rounded-full flex items-center p-1 gap-1 border border-black/5 dark:border-white/20">
                     <!-- Icon + Title -->
@@ -311,7 +312,7 @@
                         <span class="font-display font-bold text-xs tracking-wide text-gray-900 dark:text-white hidden sm:block">DesktopRenamer</span>
                     </a>
                     
-                    <!-- Links (Desktop) -->
+                    <!-- Links -->
                     <div class="hidden md:flex items-center gap-1 border-l border-black/10 dark:border-white/10 px-2 h-6">
                         <a href="#hero" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">HOME</a>
                         <a href="#features" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">FEATURES</a>
@@ -338,12 +339,12 @@
 
         <main class="transition-all duration-500">
             
-            <!-- Hero Section: RESTORED ORIGINAL -->
+            <!-- Hero Section -->
             <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-white dark:bg-black transition-colors duration-500">
                 <!-- Stars -->
                 <div class="star-field" ref="starField"></div>
 
-                <!-- Polished Aurora: Multiple Blobs -->
+                <!-- Aurora -->
                 <div class="aurora-container">
                     <div class="aurora-blob blob-1"></div>
                     <div class="aurora-blob blob-2"></div>
@@ -354,10 +355,10 @@
                     <a-waves class="w-full h-full opacity-30"></a-waves>
                 </div>
                 
-                <!-- 3D Icon: Positioned to the Right -->
+                <!-- 3D Icon -->
                 <div class="absolute top-0 right-0 w-full md:w-[50%] h-full z-10 pointer-events-auto" ref="canvasContainer"></div>
 
-                <!-- Text: Positioned to the Left -->
+                <!-- Text -->
                 <div class="relative z-20 w-full md:w-[55%] pl-6 md:pl-20 pointer-events-none flex flex-col justify-center h-full">
                     <div class="mix-blend-difference">
                         <h1 class="hero-title text-[10vw] md:text-[7vw] font-black tracking-tighter text-black dark:text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
@@ -378,7 +379,7 @@
                 </div>
             </section>
 
-            <!-- Features Section (Restored) -->
+            <!-- Features Section -->
             <section id="features" class="w-full py-24 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-20 overflow-hidden transition-colors duration-500">
                 <div class="aurora-container opacity-30 dark:opacity-0 transition-opacity">
                     <div class="aurora-blob blob-2" style="mix-blend-mode: multiply;"></div>
@@ -426,7 +427,7 @@
                 </div>
             </section>
 
-            <!-- DEMO SECTION REDESIGN: Scroll-Driven Flow -->
+            <!-- DEMO SECTION: Scroll-Driven Flow (UPDATED) -->
             <section id="demo" class="relative bg-[#050505] z-30" style="height: 350vh;">
                 <!-- Sticky Wrapper -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
@@ -440,7 +441,7 @@
                     <div class="relative w-full max-w-5xl px-6 z-10">
                         
                         <!-- 1. The Menu Bar (Evolves on scroll) -->
-                        <div id="demo-menubar" class="w-full h-12 bg-[#111]/80 backdrop-blur-xl border border-white/10 rounded-t-xl flex items-center justify-between px-6 mb-0 relative z-20 transition-all">
+                        <div id="demo-menubar" class="w-full h-12 bg-[#111]/80 backdrop-blur-xl border border-white/10 rounded-t-xl flex items-center justify-between px-6 mb-0 relative z-20 transition-all origin-top">
                             <div class="flex items-center gap-4 opacity-50">
                                 <i data-lucide="apple" class="w-4 h-4 text-white"></i>
                                 <span class="font-bold text-white text-xs">Finder</span>
@@ -448,10 +449,15 @@
                             
                             <!-- Dynamic Space Name -->
                             <div class="flex items-center gap-3">
-                                <div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded transition-all duration-300" id="demo-space-pill">
+                                <div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded transition-all duration-300 relative" id="demo-space-pill">
                                     <i data-lucide="monitor" class="w-3 h-3 text-gray-400" id="demo-icon"></i>
                                     <span class="font-mono text-xs font-bold text-gray-300" id="demo-text">Desktop 1</span>
                                     <span class="typewriter-cursor opacity-0"></span>
+                                    
+                                    <!-- Zooming Label for "Identify" Step -->
+                                    <div id="demo-identify-zoom" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-klein-blue text-white px-4 py-2 rounded-lg text-lg font-bold shadow-xl opacity-0 pointer-events-none">
+                                        Desktop 1
+                                    </div>
                                 </div>
                                 <i data-lucide="search" class="w-4 h-4 text-gray-500"></i>
                                 <span class="text-xs text-gray-500">Mon 9:41 AM</span>
@@ -463,15 +469,16 @@
                             
                             <!-- Wallpaper Layer -->
                             <div class="absolute inset-0 bg-gradient-to-br from-[#111] to-[#050505]">
-                                <!-- Wallpaper Image -->
-                                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" 
+                                <!-- UPDATED WALLPAPER -->
+                                <img src="https://www.macplanete.com/wp-content/uploads/2025/06/macOS26_Clair-scaled.jpg" 
                                      alt="Wallpaper" 
-                                     class="absolute inset-0 w-full h-full object-cover opacity-60">
-                                <div class="absolute inset-0 bg-black/40"></div>
+                                     class="absolute inset-0 w-full h-full object-cover opacity-80"
+                                     style="object-position: center bottom;">
+                                <div class="absolute inset-0 bg-black/20"></div>
                             </div>
 
                             <!-- Floating Renamer Window (Simulated) -->
-                            <div id="demo-input-window" class="absolute glass-card p-6 rounded-xl flex flex-col gap-4 w-80 transform translate-y-10 opacity-0 border border-white/10">
+                            <div id="demo-input-window" class="absolute glass-card p-6 rounded-xl flex flex-col gap-4 w-80 transform translate-y-10 opacity-0 border border-white/10 shadow-2xl">
                                 <div class="flex justify-between items-center">
                                     <span class="text-[10px] font-mono text-gray-500 uppercase tracking-wider">Rename Space</span>
                                     <div class="flex gap-1.5">
@@ -480,6 +487,7 @@
                                     </div>
                                 </div>
                                 <div class="h-10 bg-black/20 rounded border border-white/10 flex items-center px-3">
+                                    <!-- TYPING ANIMATION TARGET -->
                                     <span class="text-white font-mono text-sm" id="input-text"></span><span class="typewriter-cursor"></span>
                                 </div>
                                 <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
@@ -495,24 +503,24 @@
 
                             <!-- Mission Control Preview (New) -->
                             <div id="demo-mission-control" class="absolute inset-0 bg-black/60 backdrop-blur-md opacity-0 flex flex-col items-center justify-center gap-8 pointer-events-none transform scale-110">
-                                <div class="text-white font-bold text-2xl tracking-tight">Mission Control</div>
+                                <div class="text-white font-bold text-2xl tracking-tight opacity-0 transform translate-y-4" id="mc-title">Mission Control</div>
                                 <div class="flex gap-6">
                                     <!-- Space 1 -->
-                                    <div class="w-64 aspect-[16/10] bg-[#1a1a2e] rounded-lg border border-white/20 relative shadow-2xl transform scale-90 opacity-50">
+                                    <div class="w-64 aspect-[16/10] bg-[#1a1a2e] rounded-lg border border-white/20 relative shadow-2xl transform scale-90 opacity-0 translate-y-10" id="mc-space-1">
                                         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-400">Desktop 1</div>
                                     </div>
                                     <!-- Space 2 (Renamed) -->
-                                    <div class="w-64 aspect-[16/10] bg-indigo-900/40 rounded-lg border-2 border-white relative shadow-2xl flex items-center justify-center overflow-hidden">
-                                        <div class="absolute inset-0 bg-cover bg-center opacity-50" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');"></div>
+                                    <div class="w-64 aspect-[16/10] bg-indigo-900/40 rounded-lg border-2 border-white relative shadow-2xl flex items-center justify-center overflow-hidden transform scale-100 opacity-0 translate-y-10" id="mc-space-2">
+                                        <div class="absolute inset-0 bg-cover bg-center opacity-50" style="background-image: url('https://www.macplanete.com/wp-content/uploads/2025/06/macOS26_Clair-scaled.jpg');"></div>
                                         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold text-white tracking-widest uppercase">GAMING</div>
                                         
                                         <!-- The Large Label Inside Mission Control -->
-                                        <div class="glass-card px-6 py-4 rounded-xl border border-white/20 backdrop-blur-md transform scale-75">
+                                        <div class="glass-card px-6 py-4 rounded-xl border border-white/20 backdrop-blur-md transform scale-75 shadow-lg">
                                             <span class="text-2xl font-black text-white">GAMING</span>
                                         </div>
                                     </div>
                                     <!-- Space 3 -->
-                                    <div class="w-64 aspect-[16/10] bg-[#0f172a] rounded-lg border border-white/20 relative shadow-2xl transform scale-90 opacity-50">
+                                    <div class="w-64 aspect-[16/10] bg-[#0f172a] rounded-lg border border-white/20 relative shadow-2xl transform scale-90 opacity-0 translate-y-10" id="mc-space-3">
                                         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-400">Desktop 3</div>
                                     </div>
                                 </div>
@@ -531,17 +539,14 @@
                 </div>
             </section>
 
-            <!-- Download / Connect Section (Restored) -->
+            <!-- Download Section -->
             <section id="download" class="w-full py-32 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] relative z-30 flex flex-col items-center text-center overflow-hidden transition-colors duration-500">
-                <!-- Light mode background blobs -->
                 <div class="aurora-container opacity-30 dark:opacity-0 transition-opacity">
                     <div class="aurora-blob blob-3" style="mix-blend-mode: multiply; left: 20%;"></div>
                 </div>
-                <!-- Background Glow -->
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-klein-blue/10 rounded-full blur-[100px] pointer-events-none"></div>
 
                 <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-                    
                     <div class="glass-card w-full p-12 md:p-20 rounded-3xl border border-white/20 shadow-2xl relative overflow-hidden group">
                         <div class="card-corner-glow"></div>
                         <div class="relative z-10 flex flex-col items-center">
@@ -551,15 +556,11 @@
                             <p class="text-lg text-gray-600 dark:text-gray-300 mb-12 leading-relaxed max-w-xl">
                                 Download DesktopRenamer today and transform how you navigate your digital life. Simple, lightweight, and built for power users.
                             </p>
-                            
                             <a href="#" class="inline-flex items-center gap-3 px-10 py-5 text-white rounded-full font-bold tracking-wide transition-all transform hover:scale-105 download-btn-gradient mb-6 shadow-xl cursor-interactive">
                                 <i data-lucide="download" class="w-5 h-5"></i>
                                 <span>DOWNLOAD FOR MACOS</span>
                             </a>
-                            
                             <p class="font-mono text-xs text-gray-500 mb-12">Requires macOS 14.0 or later (Apple Silicon)</p>
-
-                            <!-- Gatekeeper Guide -->
                             <div class="w-full max-w-lg bg-white/50 dark:bg-black/40 border border-black/5 dark:border-white/10 rounded-xl p-6 backdrop-blur-md text-left">
                                 <div class="flex items-center gap-3 mb-4 text-yellow-600 dark:text-yellow-500">
                                     <i data-lucide="alert-triangle" class="w-5 h-5"></i>
@@ -590,11 +591,9 @@
             
             <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
                 <p>&copy; 2025 MICHAEL QIU.</p>
-                
                 <a href="#hero" class="group flex items-center justify-center hover:scale-105 transition-transform duration-300 cursor-interactive">
                     <div class="font-display font-black text-xl text-gray-400 group-hover:text-klein-blue transition-colors">DR</div>
                 </a>
-
                 <div class="flex gap-8 mt-6 md:mt-0">
                     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-white/10 hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300 cursor-interactive">
                         <i data-lucide="arrow-up" class="w-5 h-5"></i>
@@ -607,6 +606,7 @@
     <script>
         const { createApp, ref, computed, onMounted, onUnmounted, nextTick, watch } = Vue;
 
+        // ... [Noise and AWaves classes remain unchanged] ...
         class Noise {
             constructor(seed) {
                 this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
@@ -692,10 +692,11 @@
                 const navBtnLeft = ref(null);
                 const navCapsule = ref(null);
                 const navBtnRight = ref(null);
+                const starField = ref(null);
+                // Refs declared for color calculation
                 const navLeftColor = ref('text-black dark:text-white');
                 const navCapsuleColor = ref('text-black dark:text-white');
                 const navRightColor = ref('text-black dark:text-white');
-                const starField = ref(null);
 
                 const systemLinks = [
                     { name: 'FEATURES', href: '#features' },
@@ -721,7 +722,6 @@
                     }
                     if (resolved === 'dark') document.documentElement.classList.add('dark');
                     else document.documentElement.classList.remove('dark');
-                    updateNavColors();
                 };
 
                 const cycleTheme = () => {
@@ -729,10 +729,6 @@
                     else if (themeMode.value === 'light') themeMode.value = 'dark';
                     else themeMode.value = 'auto';
                     resolveTheme();
-                };
-
-                const updateNavColors = () => {
-                     // Placeholder for contrast check logic
                 };
 
                 const updateScrollProgress = () => {
@@ -743,7 +739,6 @@
                     scrollProgress.value = scrollTotal > 0 ? (scrollTop / scrollTotal) * 100 : 0;
                 };
 
-                // Create random stars
                 const initStars = () => {
                     if (!starField.value) return;
                     const count = 150;
@@ -755,37 +750,22 @@
                         const size = Math.random() * 2;
                         const duration = 2 + Math.random() * 3;
                         const delay = Math.random() * 5;
-                        
-                        star.style.left = `${x}%`;
-                        star.style.top = `${y}%`;
-                        star.style.width = `${size}px`;
-                        star.style.height = `${size}px`;
+                        star.style.left = `${x}%`; star.style.top = `${y}%`;
+                        star.style.width = `${size}px`; star.style.height = `${size}px`;
                         star.style.setProperty('--duration', `${duration}s`);
                         star.style.setProperty('--delay', `${delay}s`);
-                        
                         starField.value.appendChild(star);
                     }
                 };
                 
-                // Initialize Custom Cursor
                 const initCursor = () => {
                     const dot = document.querySelector('.cursor-dot');
                     const outline = document.querySelector('.cursor-outline');
-                    
                     if (dot && outline) {
                         window.addEventListener('mousemove', (e) => {
-                            const posX = e.clientX;
-                            const posY = e.clientY;
-                            
-                            // Animate dot immediately
-                            dot.style.left = `${posX}px`;
-                            dot.style.top = `${posY}px`;
-                            
-                            // Animate outline with slight delay/smoothness
-                            outline.animate({
-                                left: `${posX}px`,
-                                top: `${posY}px`
-                            }, { duration: 500, fill: "forwards" });
+                            const posX = e.clientX; const posY = e.clientY;
+                            dot.style.left = `${posX}px`; dot.style.top = `${posY}px`;
+                            outline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
                         });
                     }
                 };
@@ -814,19 +794,15 @@
                     if (!canvasContainer.value) return;
                     const w = canvasContainer.value.clientWidth;
                     const h = canvasContainer.value.clientHeight;
-
                     scene = new THREE.Scene();
                     camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
                     camera.position.z = 18;
-
                     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
                     renderer.setSize(w, h);
                     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                     renderer.toneMapping = THREE.ACESFilmicToneMapping;
                     renderer.toneMappingExposure = 1.2;
                     canvasContainer.value.appendChild(renderer.domElement);
-
-                    // Lighting
                     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
                     const spotLight = new THREE.SpotLight(0xffffff, 2);
                     spotLight.position.set(10, 20, 20);
@@ -834,14 +810,10 @@
                     const blueLight = new THREE.PointLight(0x002FA7, 3, 50);
                     blueLight.position.set(-10, -10, 5);
                     scene.add(blueLight);
-
-                    // Icon Geometry
                     const size = 6;
                     const extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
                     const shape = createSquircleShape(size);
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                    
-                    // UV Fix
                     geometry.computeBoundingBox();
                     const max = geometry.boundingBox.max; const min = geometry.boundingBox.min;
                     const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
@@ -852,28 +824,20 @@
                     }
                     geometry.attributes.uv.needsUpdate = true;
                     geometry.center();
-
                     const textureLoader = new THREE.TextureLoader();
                     const iconUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png';
-                    
                     const materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
                     const materialFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
-
                     textureLoader.load(iconUrl, (tex) => {
                         tex.encoding = THREE.sRGBEncoding;
                         tex.center.set(0.5, 0.5);
                         materialFront.map = tex;
                         materialFront.needsUpdate = true;
                     });
-
                     iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
                     iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
-                    
-                    // Center the icon within the container (0,0) as the container itself is offset
                     iconMesh.position.x = 0;
-                    
                     scene.add(iconMesh);
-
                     const animate = () => {
                         requestAnimationFrame(animate);
                         const time = Date.now() * 0.001;
@@ -885,12 +849,10 @@
                         renderer.render(scene, camera);
                     };
                     animate();
-
                     window.addEventListener('mousemove', (e) => {
                         mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
                         mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
                     });
-                    
                     window.addEventListener('resize', () => {
                         if(!canvasContainer.value) return;
                         const newW = canvasContainer.value.clientWidth;
@@ -902,14 +864,12 @@
                 };
 
                 const initScrollAnimation = () => {
-                    gsap.registerPlugin(ScrollTrigger);
+                    gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-                    // Hero Text Animation
                     gsap.to(".hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.5 });
                     gsap.to(".hero-subtitle", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.8 });
                     if(iconMesh) gsap.fromTo(iconMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 2, ease: "elastic.out(1, 0.5)", delay: 0.2});
 
-                    // --- NEW SCROLL-DRIVEN DEMO ANIMATION ---
                     const tl = gsap.timeline({
                         scrollTrigger: {
                             trigger: "#demo",
@@ -921,50 +881,58 @@
 
                     const steps = document.querySelectorAll('.demo-step-text');
 
-                    // 1. Initial State: Boring "Desktop 1" with Wallpaper
+                    // 1. Initial State: Zoom-in Label for Identification
                     tl.fromTo("#demo-menubar", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 1 })
-                      .to(steps[0], { opacity: 1, y: 0, duration: 0.5 }, "<");
+                      .to(steps[0], { opacity: 1, y: 0, duration: 0.5 }, "<")
+                      // ZOOM EFFECT: Pulse the "Desktop 1" pill dramatically
+                      .to("#demo-identify-zoom", { scale: 1.5, opacity: 1, duration: 0.5, ease: "back.out(1.5)" })
+                      .to("#demo-identify-zoom", { scale: 0.5, opacity: 0, duration: 0.5, ease: "power2.in" }, "+=0.8");
 
-                    // 2. Rename Trigger: Input appears
-                    tl.to(steps[0], { opacity: 0, y: -20, duration: 0.5 }, "+=1")
+                    // 2. Rename Trigger
+                    tl.to(steps[0], { opacity: 0, y: -20, duration: 0.5 }, "+=0.5")
                       .to("#demo-input-window", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)" })
                       .to(steps[1], { opacity: 1, y: 0, duration: 0.5 }, "<");
 
                     // 3. Typing Simulation
-                    const textToType = "Gaming";
                     tl.to("#input-text", { 
                         duration: 1.5, 
-                        text: textToType, 
+                        text: "Gaming", 
                         ease: "none",
                         onUpdate: function() {
-                            // Update progress bar as we type
                             const progress = this.progress();
                             gsap.set("#input-progress", { width: (progress * 100) + "%" });
                         }
                     });
 
-                    // 4. Commit: Input disappears, Menubar Updates, Label Appears
+                    // 4. Update Menubar Animation
                     tl.to("#demo-input-window", { scale: 0.9, opacity: 0, duration: 0.5, delay: 0.5 })
                       .to(steps[1], { opacity: 0, y: -20, duration: 0.5 }, "<")
                       
-                      // Update Menubar
-                      .to("#demo-text", { text: "Gaming", duration: 0.1 }, "<")
-                      .to("#demo-icon", { color: "#ffffff", duration: 0.1 }, "<")
-                      .to("#demo-space-pill", { backgroundColor: "rgba(0, 47, 167, 0.6)", borderColor: "#002FA7", duration: 0.3 }, "<")
+                      // Flash the menubar item
+                      .to("#demo-space-pill", { scale: 1.2, backgroundColor: "#ffffff", duration: 0.2, ease: "power1.inOut" })
+                      .to("#demo-text", { text: "Gaming", duration: 0.01 }, ">") // Swap text instantly at peak
+                      .to("#demo-icon", { color: "#000000", duration: 0.01 }, "<")
+                      .to("#demo-space-pill", { scale: 1.0, backgroundColor: "rgba(0, 47, 167, 0.6)", borderColor: "#002FA7", duration: 0.4, ease: "elastic.out(1, 0.5)" })
+                      .to("#demo-icon", { color: "#ffffff", duration: 0.4 }, "<")
                       
-                      // Show Label
-                      .to("#demo-final-label", { scale: 1, opacity: 1, duration: 1, ease: "elastic.out(1, 0.7)" })
+                      // Show Final Label
+                      .to("#demo-final-label", { scale: 1, opacity: 1, duration: 1, ease: "elastic.out(1, 0.7)" }, "-=0.2")
                       .to(steps[2], { opacity: 1, y: 0, duration: 0.5 }, "<");
 
                     // 5. Mission Control Preview
                     tl.to(steps[2], { opacity: 0, y: -20, duration: 0.5 }, "+=1.5")
-                      
-                      // Zoom out "Desktop" into Mission Control view
-                      .to("#demo-final-label", { opacity: 0, duration: 0.5 }, "<") // Hide active label
+                      .to("#demo-final-label", { opacity: 0, duration: 0.5 }, "<")
                       .to("#demo-mission-control", { opacity: 1, scale: 1, pointerEvents: 'auto', duration: 1, ease: "power2.out" })
+                      
+                      // Staggered reveal of Mission Control items
+                      .to("#mc-title", { opacity: 1, y: 0, duration: 0.5 }, "<+0.2")
+                      .to("#mc-space-1", { opacity: 0.5, y: 0, scale: 0.9, duration: 0.6, ease: "power2.out" }, "<+0.1")
+                      .to("#mc-space-2", { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power2.out" }, "<+0.1")
+                      .to("#mc-space-3", { opacity: 0.5, y: 0, scale: 0.9, duration: 0.6, ease: "power2.out" }, "<+0.1")
+                      
                       .to(steps[3], { opacity: 1, y: 0, duration: 0.5 }, "<");
 
-                    // 6. Hold for viewing
+                    // 6. Hold
                     tl.to({}, { duration: 3 });
                 };
 
