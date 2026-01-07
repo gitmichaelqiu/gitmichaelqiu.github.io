@@ -877,6 +877,44 @@
                     return tex;
                 };
 
+                // New Helper for Side Texture (Grass + Dirt)
+                const createSideTexture = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 64; canvas.height = 64;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Bottom Dirt
+                    ctx.fillStyle = '#3E2723';
+                    ctx.fillRect(0, 0, 64, 64);
+                    
+                    // Top Grass Overlay (Approx top 1/4)
+                    ctx.fillStyle = '#6CC548';
+                    ctx.fillRect(0, 0, 64, 16);
+                    
+                    // Random grass drip pixels
+                    for(let i=0; i<30; i++) {
+                        const x = Math.floor(Math.random() * 64);
+                        const h = Math.floor(Math.random() * 6) + 2;
+                        ctx.fillRect(x, 16, 2, h);
+                    }
+
+                    // Add global noise
+                    for(let i=0; i<400; i++) {
+                        const x = Math.floor(Math.random() * 64);
+                        const y = Math.floor(Math.random() * 64);
+                        const w = Math.floor(Math.random() * 4) + 1;
+                        const h = Math.floor(Math.random() * 4) + 1;
+                        ctx.fillStyle = '#000000';
+                        ctx.globalAlpha = Math.random() * 0.15;
+                        ctx.fillRect(x, y, w, h);
+                    }
+                    
+                    const tex = new THREE.CanvasTexture(canvas);
+                    tex.magFilter = THREE.NearestFilter;
+                    tex.minFilter = THREE.NearestFilter;
+                    return tex;
+                };
+
                 // --- HERO 3D ICON ---
                 let heroScene, heroCamera, heroRenderer, iconMesh;
                 let mouseX = 0, mouseY = 0;
@@ -984,7 +1022,7 @@
 
                     // Textures
                     const grassTop = createTexture('#6CC548', '#FFFFFF', 0.2);
-                    const grassSide = createTexture('#6CC548', '#3E2723', 0.5); // Green/Brown mix
+                    const grassSide = createSideTexture(); // NEW: Correct grass side texture
                     const dirt = createTexture('#3E2723', '#000000', 0.3);
                     const skin = createTexture('#B88567', '#8D5537', 0.1); // Arm skin
 
@@ -997,7 +1035,6 @@
                         new THREE.MeshLambertMaterial({ map: grassSide }), // pz
                         new THREE.MeshLambertMaterial({ map: grassSide })  // nz
                     ];
-                    const dirtMat = new THREE.MeshLambertMaterial({ map: dirt });
                     const armMat = new THREE.MeshLambertMaterial({ map: skin });
 
                     // Ground Plane
@@ -1012,13 +1049,11 @@
                     ground.receiveShadow = true;
                     gameScene.add(ground);
 
-                    // Arm Rig (Attached to Camera for First Person View)
-                    // In ThreeJS, we add the mesh to the camera object so it moves with it.
-                    // Arm dimensions: approx 0.3 x 1.0 x 0.3
+                    // Arm Rig
                     const armGeo = new THREE.BoxGeometry(0.3, 1.2, 0.3);
                     gameArmMesh = new THREE.Mesh(armGeo, armMat);
                     gameArmMesh.castShadow = true;
-                    // Initial Position (Bottom Right)
+                    // Initial Position
                     gameArmMesh.position.set(0.5, -0.5, -1); 
                     gameArmMesh.rotation.set(0.2, -0.1, 0.1);
                     
@@ -1034,11 +1069,13 @@
                     gameCamera.position.set(0, 1.7, 0); // Eye height
 
                     // Placed Block (In World)
+                    // Start HIDDEN and at correct scale 0
                     gamePlacedBlockMesh = new THREE.Mesh(blockGeo, grassMat);
-                    gamePlacedBlockMesh.position.set(0, 0.15, -3); // In front of player, on ground (y=half height)
+                    gamePlacedBlockMesh.position.set(0, 0.15, -3); // On ground
                     gamePlacedBlockMesh.castShadow = true;
                     gamePlacedBlockMesh.receiveShadow = true;
-                    gamePlacedBlockMesh.visible = false; // Start hidden
+                    gamePlacedBlockMesh.visible = false; 
+                    gamePlacedBlockMesh.scale.set(0, 0, 0);
                     gameScene.add(gamePlacedBlockMesh);
 
                     const animateGame = () => {
@@ -1080,11 +1117,15 @@
                     tl.set("#demo-success", { y: -20, opacity: 0 });
                     tl.set("#demo-auto-notification", { opacity: 0, x: 50 });
                     
-                    // Reset 3D Arm
+                    // Reset 3D State
                     if(gameArmMesh) {
                         gameArmMesh.position.y = -2; // Hide below screen
+                    }
+                    // Ensure Held Block is Visible initially (for when arm comes up)
+                    if(gameHeldBlockMesh) {
                         gameHeldBlockMesh.visible = true;
                     }
+                    // Ensure Placed Block is Invisible initially
                     if(gamePlacedBlockMesh) {
                         gamePlacedBlockMesh.visible = false;
                         gamePlacedBlockMesh.scale.set(0,0,0);
@@ -1118,7 +1159,7 @@
                       .to("#demo-hud", { opacity: 1, duration: 1 }, "<") // Show HUD
                       .to("#demo-folder", { opacity: 0, scale: 0, duration: 0.5 }, "<")
                       
-                      // Arm Enters (Up from bottom)
+                      // Arm Enters (Up from bottom) - Held Block should be visible here
                       .to(gameArmMesh ? gameArmMesh.position : {}, { y: -0.5, duration: 0.8, ease: "power3.out" }, "-=0.3")
                       
                       .to("#demo-cursor", { opacity: 0, duration: 0.3 }, "<")
@@ -1127,33 +1168,39 @@
                     // ACTION
                     tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "none", duration: 0.1 }, "+=0.3")
                       
-                      // Swing Arm (Use GSAP on Three.js props)
+                      // Swing Arm Down
                       .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.8, y: -0.5, duration: 0.1, ease: "power2.in" })
                       
-                      // Hide Held Block
-                      .call(() => { if(gameHeldBlockMesh) gameHeldBlockMesh.visible = false; })
-                      
-                      // Screen Shake + Place Block
-                      .call(() => {
-                           const monitor = document.getElementById('demo-monitor');
-                           monitor.classList.remove('shake-screen');
-                           void monitor.offsetWidth; 
-                           monitor.classList.add('shake-screen');
-                           
-                           // Show Placed Block
-                           if(gamePlacedBlockMesh) {
+                      // AT APEX of Swing: Swap Visibility
+                      .call(() => { 
+                          // Hide Held Block
+                          if(gameHeldBlockMesh) gameHeldBlockMesh.visible = false;
+                          
+                          // Show Placed Block
+                          if(gamePlacedBlockMesh) {
                                gamePlacedBlockMesh.visible = true;
-                               gamePlacedBlockMesh.scale.set(1,1,1);
-                               // Small pop effect
-                               gsap.from(gamePlacedBlockMesh.scale, {x:0, y:0, z:0, duration: 0.3, ease:"back.out"});
-                           }
+                               // Pop up animation
+                               gsap.fromTo(gamePlacedBlockMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 0.3, ease:"back.out(2)"});
+                          }
+                          
+                          // Screen Shake
+                          const monitor = document.getElementById('demo-monitor');
+                          monitor.classList.remove('shake-screen');
+                          void monitor.offsetWidth; 
+                          monitor.classList.add('shake-screen');
                       })
                       
                       // Return Arm
                       .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.2, y: -0.1, duration: 0.3, ease: "elastic.out(1, 0.5)" })
                       
-                      // Regain Block (Creative mode logic)
-                      .call(() => { if(gameHeldBlockMesh) gameHeldBlockMesh.visible = true; }, null, "+=0.2")
+                      // Regain Block (Creative mode style - it pops back into hand)
+                      .call(() => { 
+                          if(gameHeldBlockMesh) {
+                              gameHeldBlockMesh.visible = true;
+                              gameHeldBlockMesh.scale.set(0,0,0);
+                              gsap.to(gameHeldBlockMesh.scale, {x:1, y:1, z:1, duration: 0.2, ease: "back.out"});
+                          } 
+                      }, null, "+=0.2")
                       
                       .set("#success-text", { text: "INSTANT GAMEPLAY" })
                       .to("#demo-success", { y: 20, opacity: 1, duration: 0.4 }, "-=0.2");
