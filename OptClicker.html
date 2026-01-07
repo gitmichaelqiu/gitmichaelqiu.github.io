@@ -582,27 +582,39 @@
                                 <span class="text-xs font-bold text-white shadow-black drop-shadow-md bg-black/20 px-2 rounded">Project Alpha</span>
                             </div>
 
-                            <!-- SCENE 3: AUTOMATION RULES WINDOW (New) -->
-                            <div id="demo-automation-window" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 glass-card p-4 rounded-xl flex flex-col gap-3 opacity-0 scale-90 shadow-2xl z-50">
-                                <div class="flex items-center gap-2 border-b border-gray-200/20 pb-2">
-                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                    <span class="ml-2 text-[10px] font-bold text-gray-500">Rules</span>
+                            <!-- SCENE 3: AUTOMATION RULES WINDOW (Updated to match source code) -->
+                            <div id="demo-automation-window" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 glass-card p-5 rounded-xl flex flex-col gap-4 opacity-0 scale-90 shadow-2xl z-50 font-sans">
+                                <div class="flex items-center justify-between border-b border-gray-200/20 pb-3">
+                                    <span class="text-sm font-bold text-black dark:text-white">Auto Toggle</span>
+                                    <div class="w-8 h-4 bg-green-500 rounded-full relative"><div class="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
                                 </div>
-                                <div class="flex items-center justify-between bg-black/5 p-2 rounded-lg">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-6 bg-green-600 rounded flex items-center justify-center text-xs text-white font-bold">M</div>
-                                        <span class="text-xs font-bold text-black dark:text-white">Minecraft</span>
+                                
+                                <div class="flex flex-col gap-2">
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Target Apps</span>
+                                    <div class="bg-black/5 dark:bg-white/5 rounded-lg overflow-hidden border border-black/5 dark:border-white/5">
+                                        <!-- App 1 -->
+                                        <div class="flex items-center gap-3 p-2 border-b border-black/5 dark:border-white/5">
+                                            <div class="w-6 h-6 bg-gradient-to-br from-green-600 to-green-800 rounded-md shadow-sm flex items-center justify-center text-[10px] text-white font-bold">M</div>
+                                            <span class="text-xs font-medium text-black dark:text-gray-200">Minecraft</span>
+                                        </div>
+                                        <!-- App 2 -->
+                                        <div class="flex items-center gap-3 p-2 border-b border-black/5 dark:border-white/5">
+                                            <div class="w-6 h-6 bg-gradient-to-br from-blue-700 to-blue-900 rounded-md shadow-sm flex items-center justify-center text-[10px] text-white font-bold"><i data-lucide="gamepad-2" class="w-3 h-3"></i></div>
+                                            <span class="text-xs font-medium text-black dark:text-gray-200">Steam</span>
+                                        </div>
+                                        <!-- Process Rule -->
+                                        <div class="flex items-center gap-3 p-2">
+                                            <div class="w-6 h-6 bg-gray-600 rounded-md shadow-sm flex items-center justify-center text-white"><i data-lucide="terminal" class="w-3 h-3"></i></div>
+                                            <div class="flex flex-col">
+                                                <span class="text-xs font-medium text-black dark:text-gray-200">proc:java</span>
+                                                <span class="text-[8px] text-gray-500">Process Match</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span class="text-[10px] font-mono text-klein-blue bg-klein-blue/10 px-2 py-1 rounded">NATIVE CLICK</span>
                                 </div>
-                                <div class="flex items-center justify-between bg-black/5 p-2 rounded-lg opacity-50">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-6 bg-blue-500 rounded flex items-center justify-center text-xs text-white font-bold">F</div>
-                                        <span class="text-xs font-bold text-black dark:text-white">Finder</span>
-                                    </div>
-                                    <span class="text-[10px] font-mono text-gray-500 bg-gray-500/10 px-2 py-1 rounded">RIGHT CLICK</span>
+                                <div class="flex gap-2">
+                                     <div class="w-4 h-4 rounded-md bg-black/10 dark:bg-white/10 flex items-center justify-center"><i data-lucide="plus" class="w-3 h-3 text-gray-500"></i></div>
+                                     <div class="w-4 h-4 rounded-md bg-black/10 dark:bg-white/10 flex items-center justify-center"><i data-lucide="minus" class="w-3 h-3 text-gray-500"></i></div>
                                 </div>
                             </div>
 
@@ -1074,7 +1086,8 @@
                     gameScene.add(ground);
 
                     // Arm Rig
-                    const armGeo = new THREE.BoxGeometry(0.3, 1.2, 0.3);
+                    // Hand shorter: Height reduced from 1.2 to 0.7
+                    const armGeo = new THREE.BoxGeometry(0.35, 0.7, 0.35); 
                     gameArmMesh = new THREE.Mesh(armGeo, armMat);
                     gameArmMesh.castShadow = true;
                     // Initial Position
@@ -1082,9 +1095,11 @@
                     gameArmMesh.rotation.set(0.2, -0.1, 0.1);
                     
                     // Held Block
-                    const blockGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5); // Increased scale
+                    // Block bigger: 0.8 scale
+                    const blockGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8); 
                     gameHeldBlockMesh = new THREE.Mesh(blockGeo, grassMat);
-                    gameHeldBlockMesh.position.set(0, 0.75, -0.15); // Adjusted for larger block
+                    // Adjust position relative to shorter arm
+                    gameHeldBlockMesh.position.set(0, 0.5, -0.2); 
                     gameHeldBlockMesh.rotation.set(0, Math.PI/4, 0);
                     gameArmMesh.add(gameHeldBlockMesh);
 
@@ -1095,7 +1110,8 @@
                     // Placed Block (In World)
                     // Start HIDDEN and at correct scale 0
                     gamePlacedBlockMesh = new THREE.Mesh(blockGeo, grassMat);
-                    gamePlacedBlockMesh.position.set(0, 0.25, -3); // On ground (y=half height)
+                    // Higher Y position: half height = 0.4
+                    gamePlacedBlockMesh.position.set(0, 0.4, -3); 
                     gamePlacedBlockMesh.castShadow = true;
                     gamePlacedBlockMesh.receiveShadow = true;
                     gamePlacedBlockMesh.visible = false; 
@@ -1192,11 +1208,12 @@
                     // ACTION
                     tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "none", duration: 0.1 }, "+=0.3")
                       
-                      // Swing Arm Down (Extends Forward and Rotates Down)
-                      .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: -0.5, y: -0.1, duration: 0.15, ease: "power2.in" }) // Rotate down
-                      .to(gameArmMesh ? gameArmMesh.position : {}, { z: -1.5, y: -0.6, duration: 0.15, ease: "power2.in" }, "<") // Thrust forward
+                      // Swing Arm (Forward and Down)
+                      // Corrected Direction: Punching out slightly then returning
+                      .to(gameArmMesh ? gameArmMesh.position : {}, { z: -1.8, y: -0.4, duration: 0.15, ease: "power2.in" }) 
+                      .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: -0.5, y: 0, duration: 0.15, ease: "power2.in" }, "<")
                       
-                      // AT APEX of Swing: Screen Shake & Place Block
+                      // AT APEX of Swing: Swap Visibility & Screen Shake
                       .call(() => { 
                           const monitor = document.getElementById('demo-monitor');
                           monitor.classList.remove('shake-screen');
@@ -1211,8 +1228,8 @@
                       })
                       
                       // Return Arm
-                      .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.2, y: -0.1, duration: 0.3, ease: "elastic.out(1, 0.5)" })
-                      .to(gameArmMesh ? gameArmMesh.position : {}, { z: -1, y: -0.5, duration: 0.3, ease: "elastic.out(1, 0.5)" }, "<")
+                      .to(gameArmMesh ? gameArmMesh.position : {}, { z: -1, y: -0.5, duration: 0.3, ease: "elastic.out(1, 0.5)" })
+                      .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.2, y: -0.1, duration: 0.3, ease: "elastic.out(1, 0.5)" }, "<")
                       
                       .set("#success-text", { text: "INSTANT GAMEPLAY" })
                       .to("#demo-success", { y: 20, opacity: 1, duration: 0.4 }, "-=0.2");
@@ -1234,7 +1251,7 @@
                       .to("#demo-crosshair", { opacity: 0, duration: 0.3 }, "<")
                       .to("#demo-cursor", { opacity: 1, duration: 0.3 }, "<")
                       
-                      // Automation Window
+                      // Automation Window (Redesigned)
                       .to("#demo-automation-window", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2")
                       
                       // Notifications
