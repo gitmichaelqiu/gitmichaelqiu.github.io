@@ -248,7 +248,7 @@
         }
 
         /* -----------------------
-           POLISHED GAME ASSETS
+           GAME ASSETS & 3D ENGINE
            ----------------------- */
         .game-hud-bar {
             background: linear-gradient(180deg, rgba(30,30,30,0.9) 0%, rgba(10,10,10,0.95) 100%);
@@ -265,11 +265,6 @@
             position: relative;
             overflow: hidden;
         }
-        .game-slot::after {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent);
-            opacity: 0;
-        }
         .game-slot.active {
             border-color: white;
             background: rgba(255,255,255,0.15);
@@ -278,88 +273,110 @@
             box-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
 
-        /* Voxel 3D Engine */
-        .scene-3d {
-            transform-style: preserve-3d;
-            perspective: 800px;
-            width: 100%; height: 100%;
-            position: absolute; pointer-events: none;
-        }
-        
-        /* The Hand/Arm */
-        .cube-wrap {
-            position: absolute;
-            transform-style: preserve-3d;
-            bottom: -120px;
-            right: 15%;
-            transform-origin: 100% 100%; /* Pivot from bottom right */
-            transform: rotateY(-20deg) rotateX(10deg);
-        }
-        
-        .cube {
-            position: relative; width: 80px; height: 240px;
+        /* 3D SCENE SETUP (First Person Perspective) */
+        .viewport-3d {
+            position: absolute; inset: 0;
+            perspective: 600px; /* FPS FOV */
+            overflow: hidden;
             transform-style: preserve-3d;
         }
         
-        /* Voxel Faces - High Fidelity Gradients for lighting */
-        .face {
-            position: absolute;
-            /* Anti-aliasing hack */
-            outline: 1px solid transparent; 
-            backface-visibility: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        /* THE WORLD (Camera moves relative to this) */
+        .world-stage {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d;
+            /* Camera Angle: Looking down slightly (RotateX) */
+            transform: rotateX(20deg); 
         }
 
-        /* Steve's Arm Skin/Sleeve */
-        .face--front { width: 80px; height: 240px; transform: translateZ(40px); background: linear-gradient(to bottom, #008D96 0%, #008D96 40%, #B88567 40%); }
-        .face--back  { width: 80px; height: 240px; transform: rotateY(180deg) translateZ(40px); background: linear-gradient(to bottom, #00767D 0%, #00767D 40%, #A07256 40%); }
-        .face--right { width: 80px; height: 240px; transform: rotateY(90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 0%, #006066 40%, #8D634A 40%); }
-        .face--left  { width: 80px; height: 240px; transform: rotateY(-90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 0%, #006066 40%, #8D634A 40%); }
-        .face--top   { width: 80px; height: 80px;  transform: rotateX(90deg) translateZ(40px); background: #00767D; }
-        .face--bottom{ width: 80px; height: 80px;  transform: rotateX(-90deg) translateZ(200px); background: #8D634A; }
-
-        /* The Block */
-        .placed-block {
+        /* THE GROUND (Infinite Plane) */
+        .ground-plane {
             position: absolute;
             top: 50%; left: 50%;
-            width: 80px; height: 80px;
+            width: 300%; height: 300%;
+            background-color: #5AA83B;
+            /* Grid Pattern */
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 100px 100px; /* 1 block = 100px */
+            transform-origin: 50% 50%;
+            /* Flatten ground: Rotate X 90deg to lay flat, Translate Y down to be below camera */
+            transform: translate(-50%, -50%) rotateX(90deg) translateZ(-100px); 
+            backface-visibility: hidden;
+        }
+
+        /* PLAYER RIG (Fixed to Screen, but participates in 3D) */
+        .player-rig {
+            position: absolute; bottom: 0; right: 20%;
+            width: 0; height: 0;
             transform-style: preserve-3d;
-            transform: translate(-50%, -50%) rotateX(-15deg) rotateY(35deg);
-            opacity: 0;
-            will-change: transform;
+            z-index: 20;
         }
         
-        /* Grass Block Textures via Gradients */
-        .p-face {
-            position: absolute; width: 80px; height: 80px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            outline: 1px solid transparent;
+        /* THE ARM (Pivots from bottom right) */
+        .arm-pivot {
+            position: absolute; bottom: -200px; right: -100px;
+            transform-style: preserve-3d;
+            transform-origin: 100% 100%; /* Pivot at shoulder/elbow off-screen */
+            transform: rotateY(-30deg) rotateX(10deg);
         }
-        /* Top (Grass) */
-        .p-face--top    { transform: rotateX(90deg) translateZ(40px); background: linear-gradient(135deg, #6CC548, #4FA83D); }
-        /* Sides (Grass Top + Dirt) */
-        .p-face--front  { transform: translateZ(40px); background: linear-gradient(to bottom, #6CC548 0%, #6CC548 20%, #78523A 20%); }
-        .p-face--right  { transform: rotateY(90deg) translateZ(40px); background: linear-gradient(to bottom, #5AA83B 0%, #5AA83B 20%, #5D3E2C 20%); filter: brightness(0.8); }
-        .p-face--left   { transform: rotateY(-90deg) translateZ(40px); background: linear-gradient(to bottom, #5AA83B 0%, #5AA83B 20%, #5D3E2C 20%); filter: brightness(0.8); }
-        .p-face--back   { transform: rotateY(180deg) translateZ(40px); background: linear-gradient(to bottom, #5AA83B 0%, #5AA83B 20%, #5D3E2C 20%); filter: brightness(0.6); }
-        .p-face--bottom { transform: rotateX(-90deg) translateZ(40px); background: #3E2723; }
 
-        /* Particles */
-        .particle {
-            position: absolute; width: 8px; height: 8px;
-            background: #6CC548; pointer-events: none; opacity: 0;
+        /* Voxel Construction Helpers */
+        .voxel-group { transform-style: preserve-3d; position: absolute; }
+        .voxel-face { position: absolute; backface-visibility: hidden; outline: 1px solid transparent; }
+        
+        /* Steve's Arm Geometry (W:80, H:300, D:80) */
+        .steve-arm {
+            width: 80px; height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        /* Face logic: Center origin is center of the div (40, 150) */
+        .arm-face--front { width: 80px; height: 300px; transform: translateZ(40px); background: linear-gradient(to bottom, #008D96 40%, #B88567 40%); }
+        .arm-face--back  { width: 80px; height: 300px; transform: rotateY(180deg) translateZ(40px); background: linear-gradient(to bottom, #00767D 40%, #A07256 40%); }
+        .arm-face--right { width: 80px; height: 300px; transform: rotateY(90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 40%, #8D634A 40%); }
+        .arm-face--left  { width: 80px; height: 300px; transform: rotateY(-90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 40%, #8D634A 40%); }
+        .arm-face--top   { width: 80px; height: 80px;  transform: rotateX(90deg) translateZ(40px); background: #00767D; }
+        .arm-face--btm   { width: 80px; height: 80px;  transform: rotateX(-90deg) translateZ(260px); background: #8D634A; } /* Z = Height - half_depth? No, Z moves locally relative to center */
+
+        /* HELD BLOCK (Attached to Arm) */
+        .held-block-rig {
+            position: absolute; top: -60px; left: 10px; /* Position at top of hand */
+            transform-style: preserve-3d;
+            transform: rotateX(20deg) rotateY(-45deg); /* Angled in hand */
+        }
+        /* Block Geometry (60x60x60) */
+        .block-unit { width: 60px; height: 60px; position: relative; transform-style: preserve-3d; }
+        .blk-face { width: 60px; height: 60px; position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); }
+        .blk-top { transform: rotateX(90deg) translateZ(30px); background: #6CC548; }
+        .blk-btm { transform: rotateX(-90deg) translateZ(30px); background: #3E2723; }
+        .blk-fwd { transform: translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
+        .blk-bck { transform: rotateY(180deg) translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
+        .blk-lft { transform: rotateY(-90deg) translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
+        .blk-rgt { transform: rotateY(90deg) translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
+
+        /* PLACED BLOCK (On the Ground) */
+        .placed-block-container {
+            position: absolute; top: 50%; left: 50%;
+            transform-style: preserve-3d;
+            /* Positioned relative to world center, pushed Z to match ground, Y to sit on top */
+            /* Ground is at Y=0 (center) rotated X 90deg, translated Z -100px. */
+            /* To sit on ground, block needs to be at that level. */
+            /* We will manually tween this into place */
+            opacity: 0;
         }
 
         /* Screen Shake Keyframes */
         @keyframes shake {
             0% { transform: translate(0, 0) rotate(0); }
-            20% { transform: translate(-2px, 2px) rotate(-1deg); }
-            40% { transform: translate(-2px, -2px) rotate(1deg); }
+            20% { transform: translate(-2px, 2px) rotate(-0.5deg); }
+            40% { transform: translate(-2px, -2px) rotate(0.5deg); }
             60% { transform: translate(2px, 2px) rotate(0); }
-            80% { transform: translate(2px, -2px) rotate(1deg); }
+            80% { transform: translate(2px, -2px) rotate(0.5deg); }
             100% { transform: translate(0, 0) rotate(0); }
         }
-        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        .shake-screen { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
 
         /* Notification Pill - Unified */
         .notification-pill {
@@ -414,6 +431,12 @@
             transform: translateX(-100%); transition: transform 0.6s;
         }
         .btn-premium:hover::after { transform: translateX(100%); }
+
+        /* Particles */
+        .particle {
+            position: absolute; width: 8px; height: 8px;
+            background: #6CC548; pointer-events: none; opacity: 0; z-index: 50;
+        }
     </style>
 </head>
 <body :class="{ 'is-booting': isBooting }">
@@ -571,7 +594,7 @@
                     <div class="relative w-full max-w-6xl px-4 z-10 flex items-center justify-center perspective-[1200px]">
                         
                         <!-- Desktop Scene -->
-                        <div class="w-full aspect-[16/9] bg-[#000] border border-white/10 rounded-xl relative overflow-hidden shadow-2xl flex items-center justify-center transition-all duration-700 transform-style-3d" id="demo-monitor">
+                        <div class="w-full aspect-[16/9] bg-[#000] border border-white/10 rounded-xl relative overflow-hidden shadow-2xl flex items-center justify-center transition-all duration-700" id="demo-monitor">
                             
                             <!-- Wallpaper Layer -->
                             <div class="absolute inset-0 bg-gradient-to-br from-[#111] to-[#050505] transition-opacity duration-700" id="demo-wallpaper">
@@ -610,34 +633,68 @@
                                 </div>
                             </div>
                             
-                            <!-- GAMING ENVIRONMENT (Minecraft Voxel Style) -->
+                            <!-- GAMING ENVIRONMENT (First Person Voxel Style) -->
                             <div class="absolute inset-0 opacity-0 transition-opacity duration-500 overflow-hidden" id="demo-gaming-bg">
-                                <!-- Sky with Gradient -->
-                                <div class="absolute inset-0 bg-gradient-to-b from-[#87CEEB] to-[#C4E4FF]"></div>
-                                <!-- Sun -->
-                                <div class="absolute top-10 right-20 w-16 h-16 bg-yellow-300 shadow-[0_0_40px_rgba(253,224,71,0.8)] rotate-45 border-4 border-yellow-400 opacity-90"></div>
                                 
-                                <!-- Voxel Clouds -->
-                                <div class="absolute top-16 left-1/4 w-32 h-10 bg-white/60"></div>
-                                <div class="absolute top-10 left-[28%] w-20 h-8 bg-white/60"></div>
-                                <div class="absolute top-32 right-1/4 w-40 h-12 bg-white/50"></div>
+                                <div class="viewport-3d">
+                                    <!-- Sky with Gradient -->
+                                    <div class="absolute inset-0 bg-gradient-to-b from-[#87CEEB] to-[#C4E4FF] -z-20"></div>
+                                    <!-- Sun -->
+                                    <div class="absolute top-10 right-20 w-16 h-16 bg-yellow-300 shadow-[0_0_40px_rgba(253,224,71,0.8)] rotate-45 border-4 border-yellow-400 opacity-90 -z-10"></div>
+                                    
+                                    <!-- Voxel Clouds -->
+                                    <div class="absolute top-16 left-1/4 w-32 h-10 bg-white/60 -z-10"></div>
+                                    <div class="absolute top-10 left-[28%] w-20 h-8 bg-white/60 -z-10"></div>
+                                    <div class="absolute top-32 right-1/4 w-40 h-12 bg-white/50 -z-10"></div>
 
-                                <!-- Particle Container (Anchored Center) -->
-                                <div id="particle-container" class="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-30"></div>
+                                    <!-- The World Stage (Perspective Camera) -->
+                                    <div class="world-stage" id="world-stage">
+                                        <!-- Infinite Ground Plane -->
+                                        <div class="ground-plane"></div>
+                                        
+                                        <!-- Placed Block (Appears on ground) -->
+                                        <div class="placed-block-container" id="demo-placed-block">
+                                            <div class="block-unit">
+                                                <div class="blk-face blk-fwd"></div>
+                                                <div class="blk-face blk-bck"></div>
+                                                <div class="blk-face blk-top"></div>
+                                                <div class="blk-face blk-btm"></div>
+                                                <div class="blk-face blk-lft"></div>
+                                                <div class="blk-face blk-rgt"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Particle Container (World Space) -->
+                                        <div id="particle-container" class="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none"></div>
+                                    </div>
 
-                                <!-- The Placed Block (3D) -->
-                                <div class="scene-3d z-20">
-                                    <div class="placed-block" id="demo-placed-block">
-                                        <div class="p-face p-face--front"></div>
-                                        <div class="p-face p-face--back"></div>
-                                        <div class="p-face p-face--top"></div>
-                                        <div class="p-face p-face--bottom"></div>
-                                        <div class="p-face p-face--right"></div>
-                                        <div class="p-face p-face--left"></div>
+                                    <!-- First Person Rig (Attached to Camera) -->
+                                    <div class="player-rig" id="player-rig">
+                                        <div class="arm-pivot" id="demo-arm">
+                                            <div class="steve-arm">
+                                                <div class="voxel-face arm-face--front"></div>
+                                                <div class="voxel-face arm-face--back"></div>
+                                                <div class="voxel-face arm-face--left"></div>
+                                                <div class="voxel-face arm-face--right"></div>
+                                                <div class="voxel-face arm-face--top"></div>
+                                                <div class="voxel-face arm-face--btm"></div>
+                                            </div>
+                                            <!-- Held Block -->
+                                            <div class="held-block-rig" id="held-block">
+                                                <div class="block-unit">
+                                                    <div class="blk-face blk-fwd"></div>
+                                                    <div class="blk-face blk-bck"></div>
+                                                    <div class="blk-face blk-top"></div>
+                                                    <div class="blk-face blk-btm"></div>
+                                                    <div class="blk-face blk-lft"></div>
+                                                    <div class="blk-face blk-rgt"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- HUD -->
+                                <!-- HUD (Overlay) -->
                                 <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col gap-2 items-center w-full max-w-md px-4 z-40">
                                     <div class="flex justify-between w-full px-1 mb-1">
                                         <div class="flex gap-1">
@@ -678,22 +735,6 @@
                                 <span class="text-xs font-bold text-white shadow-black drop-shadow-md bg-black/20 px-2 rounded">Project Alpha</span>
                             </div>
 
-                            <!-- SCENE 2: GAMING ARM (3D) -->
-                            <div id="demo-arm-wrapper" class="absolute bottom-0 right-0 w-full h-full pointer-events-none z-30 opacity-0">
-                                <div class="scene-3d">
-                                    <div class="cube-wrap" id="demo-arm">
-                                        <div class="cube">
-                                            <div class="face face--front"></div>
-                                            <div class="face face--back"></div>
-                                            <div class="face face--right"></div>
-                                            <div class="face face--left"></div>
-                                            <div class="face face--top"></div>
-                                            <div class="face face--bottom"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             <!-- SCENE 3: AUTO TOGGLE NOTIFICATIONS -->
                             <div id="demo-auto-notification" class="absolute top-16 right-4 flex flex-col gap-3 items-end opacity-0 transform translate-x-10 z-50">
                                 <div class="notification-pill px-4 py-3 rounded-xl flex items-center gap-3 w-72">
@@ -1059,19 +1100,22 @@
                         const p = document.createElement('div');
                         p.classList.add('particle');
                         const angle = Math.random() * Math.PI * 2;
-                        const speed = 20 + Math.random() * 40;
+                        const speed = 40 + Math.random() * 60; // Spread out more in world space
                         const tx = Math.cos(angle) * speed;
                         const ty = Math.sin(angle) * speed;
+                        
+                        // Start from center (0,0 is center of world stage)
+                        p.style.left = '50%'; p.style.top = '50%';
                         
                         container.appendChild(p);
                         
                         gsap.to(p, {
-                            x: tx, y: ty, opacity: 1, scale: 0.5 + Math.random(),
-                            duration: 0.1, ease: 'power1.out'
+                            x: tx, y: ty - 40, opacity: 1, scale: 0.5 + Math.random(),
+                            duration: 0.2, ease: 'power1.out'
                         });
                         gsap.to(p, {
                             opacity: 0, y: ty + 20,
-                            duration: 0.4, delay: 0.1, ease: 'power2.in',
+                            duration: 0.4, delay: 0.2, ease: 'power2.in',
                             onComplete: () => p.remove()
                         });
                     }
@@ -1089,18 +1133,21 @@
                             trigger: "#demo",
                             start: "top top", 
                             end: "bottom bottom",
-                            scrub: 0.5, // Smoother scrub
+                            scrub: 0.5,
                         }
                     });
 
                     const steps = document.querySelectorAll('.demo-step');
 
-                    // INITIAL
+                    // INITIAL SETUP
                     tl.set("#demo-context-menu", { scale: 0.5, opacity: 0 });
                     tl.set("#demo-success", { y: -20, opacity: 0 });
-                    tl.set("#demo-arm-wrapper", { opacity: 0, y: 100 });
                     tl.set("#demo-auto-notification", { opacity: 0, x: 50 });
-                    tl.set("#demo-placed-block", { opacity: 0, scale: 0 });
+                    
+                    // Set 3D Scene Initial State
+                    tl.set("#demo-placed-block", { opacity: 0, scale: 0, y: -50 });
+                    tl.set("#player-rig", { opacity: 0, y: 300 }); // Arm starts below screen
+                    tl.set("#held-block", { scale: 1, opacity: 1 });
 
                     // --- SCENE 1: DESKTOP ---
                     tl.to(steps[0], { opacity: 1, duration: 0.5 })
@@ -1122,26 +1169,27 @@
                       .to(steps[0], { opacity: 0.3, duration: 0.5 });
 
 
-                    // --- SCENE 2: GAMING ---
+                    // --- SCENE 2: GAMING (First Person) ---
                     // Transition
                     tl.to(steps[1], { opacity: 1, duration: 0.5 }, "<")
                       .to("#demo-wallpaper", { opacity: 0, duration: 1 })
                       .to("#demo-gaming-bg", { opacity: 1, duration: 1 }, "<")
                       .to("#demo-folder", { opacity: 0, scale: 0, duration: 0.5 }, "<")
                       
-                      // Arm enters nicely
-                      .to("#demo-arm-wrapper", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.5)" }, "-=0.3")
+                      // Arm Enters (Up from bottom)
+                      .to("#player-rig", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.3")
                       
                       .to("#demo-cursor", { opacity: 0, duration: 0.3 }, "<")
                       .to("#demo-crosshair", { opacity: 1, duration: 0.3 }, "<");
 
-                    // ACTION
+                    // ACTION: Click
                     tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "none", duration: 0.1 }, "+=0.3")
                       
-                      // Swing Arm
-                      .to("#demo-arm", { rotationX: 40, rotationY: -40, z: -20, duration: 0.15, ease: "power2.in" })
+                      // Swing Arm (Rotate Pivot)
+                      .to("#demo-arm", { rotationX: 40, rotationY: -50, z: -20, duration: 0.15, ease: "power2.in" })
+                      .to("#held-block", { opacity: 0, duration: 0.1 }, ">-0.1") // Block leaves hand
                       
-                      // Screen Shake + Block + Particles
+                      // Screen Shake + Place Block + Particles
                       .call(() => {
                            const monitor = document.getElementById('demo-monitor');
                            monitor.classList.remove('shake-screen');
@@ -1149,10 +1197,12 @@
                            monitor.classList.add('shake-screen');
                            spawnParticles();
                       })
-                      .to("#demo-placed-block", { opacity: 1, scale: 1, duration: 0.1, ease: "back.out(2)" }, ">")
+                      // Block appears on ground (Tween y to 0 to land)
+                      .to("#demo-placed-block", { opacity: 1, scale: 1, y: 0, duration: 0.1, ease: "back.out(2)" }, ">")
                       
                       // Return Arm
-                      .to("#demo-arm", { rotationX: 10, rotationY: -20, z: 0, duration: 0.3, ease: "elastic.out(1, 0.5)" })
+                      .to("#demo-arm", { rotationX: 10, rotationY: -30, z: 0, duration: 0.3, ease: "elastic.out(1, 0.5)" })
+                      .to("#held-block", { opacity: 1, duration: 0.2 }, ">") // Regain block (creative mode style)
                       
                       .set("#success-text", { text: "INSTANT GAMEPLAY" })
                       .to("#demo-success", { y: 20, opacity: 1, duration: 0.4 }, "-=0.2");
@@ -1166,10 +1216,8 @@
                     // --- SCENE 3: AUTOMATION ---
                     tl.to(steps[2], { opacity: 1, duration: 0.5 }, "<")
                       
-                      // Minimize Game logic
-                      .to("#demo-gaming-bg", { scale: 0.9, opacity: 0, y: 100, duration: 0.8, ease: "power3.in" })
-                      .to("#demo-placed-block", { opacity: 0, duration: 0.2 }, "<")
-                      .to("#demo-arm-wrapper", { opacity: 0, y: 200, duration: 0.5 }, "<")
+                      // Minimize Game logic: Everything falls down
+                      .to("#demo-gaming-bg", { opacity: 0, y: 100, duration: 0.8, ease: "power3.in" })
                       
                       .to("#demo-wallpaper", { opacity: 1, duration: 1 }, "-=0.4")
                       .to("#demo-crosshair", { opacity: 0, duration: 0.3 }, "<")
