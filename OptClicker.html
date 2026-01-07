@@ -274,100 +274,12 @@
         }
 
         /* 3D SCENE SETUP (First Person Perspective) */
-        .viewport-3d {
-            position: absolute; inset: 0;
-            perspective: 600px; /* FPS FOV */
-            overflow: hidden;
-            transform-style: preserve-3d;
-        }
-        
-        /* THE WORLD (Camera moves relative to this) */
-        .world-stage {
-            position: absolute; width: 100%; height: 100%;
-            transform-style: preserve-3d;
-            /* Camera Angle: Looking down slightly (RotateX) */
-            transform: rotateX(20deg); 
+        /* Removed all CSS 3D Transforms - Replaced by Three.js Canvas */
+        .game-canvas-container {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0;
         }
 
-        /* THE GROUND (Infinite Plane) */
-        .ground-plane {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 300%; height: 300%;
-            background-color: #5AA83B;
-            /* Grid Pattern */
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 100px 100px; /* 1 block = 100px */
-            transform-origin: 50% 50%;
-            /* Flatten ground: Rotate X 90deg to lay flat, Translate Y down to be below camera */
-            transform: translate(-50%, -50%) rotateX(90deg) translateZ(-100px); 
-            backface-visibility: hidden;
-        }
-
-        /* PLAYER RIG (Fixed to Screen, but participates in 3D) */
-        .player-rig {
-            position: absolute; bottom: 0; right: 20%;
-            width: 0; height: 0;
-            transform-style: preserve-3d;
-            z-index: 20;
-        }
-        
-        /* THE ARM (Pivots from bottom right) */
-        .arm-pivot {
-            position: absolute; bottom: -200px; right: -100px;
-            transform-style: preserve-3d;
-            transform-origin: 100% 100%; /* Pivot at shoulder/elbow off-screen */
-            transform: rotateY(-30deg) rotateX(10deg);
-        }
-
-        /* Voxel Construction Helpers */
-        .voxel-group { transform-style: preserve-3d; position: absolute; }
-        .voxel-face { position: absolute; backface-visibility: hidden; outline: 1px solid transparent; }
-        
-        /* Steve's Arm Geometry (W:80, H:300, D:80) */
-        .steve-arm {
-            width: 80px; height: 300px;
-            position: relative;
-            transform-style: preserve-3d;
-        }
-        /* Face logic: Center origin is center of the div (40, 150) */
-        .arm-face--front { width: 80px; height: 300px; transform: translateZ(40px); background: linear-gradient(to bottom, #008D96 40%, #B88567 40%); }
-        .arm-face--back  { width: 80px; height: 300px; transform: rotateY(180deg) translateZ(40px); background: linear-gradient(to bottom, #00767D 40%, #A07256 40%); }
-        .arm-face--right { width: 80px; height: 300px; transform: rotateY(90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 40%, #8D634A 40%); }
-        .arm-face--left  { width: 80px; height: 300px; transform: rotateY(-90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 40%, #8D634A 40%); }
-        .arm-face--top   { width: 80px; height: 80px;  transform: rotateX(90deg) translateZ(40px); background: #00767D; }
-        .arm-face--btm   { width: 80px; height: 80px;  transform: rotateX(-90deg) translateZ(260px); background: #8D634A; } /* Z = Height - half_depth? No, Z moves locally relative to center */
-
-        /* HELD BLOCK (Attached to Arm) */
-        .held-block-rig {
-            position: absolute; top: -60px; left: 10px; /* Position at top of hand */
-            transform-style: preserve-3d;
-            transform: rotateX(20deg) rotateY(-45deg); /* Angled in hand */
-        }
-        /* Block Geometry (60x60x60) */
-        .block-unit { width: 60px; height: 60px; position: relative; transform-style: preserve-3d; }
-        .blk-face { width: 60px; height: 60px; position: absolute; backface-visibility: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); }
-        .blk-top { transform: rotateX(90deg) translateZ(30px); background: #6CC548; }
-        .blk-btm { transform: rotateX(-90deg) translateZ(30px); background: #3E2723; }
-        .blk-fwd { transform: translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
-        .blk-bck { transform: rotateY(180deg) translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
-        .blk-lft { transform: rotateY(-90deg) translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
-        .blk-rgt { transform: rotateY(90deg) translateZ(30px); background: linear-gradient(to bottom, #6CC548 20%, #78523A 20%); }
-
-        /* PLACED BLOCK (On the Ground) */
-        .placed-block-container {
-            position: absolute; top: 50%; left: 50%;
-            transform-style: preserve-3d;
-            /* Positioned relative to world center, pushed Z to match ground, Y to sit on top */
-            /* Ground is at Y=0 (center) rotated X 90deg, translated Z -100px. */
-            /* To sit on ground, block needs to be at that level. */
-            /* We will manually tween this into place */
-            opacity: 0;
-        }
-
-        /* Screen Shake Keyframes */
+        /* Screen Shake Keyframes - Applied to the container */
         @keyframes shake {
             0% { transform: translate(0, 0) rotate(0); }
             20% { transform: translate(-2px, 2px) rotate(-0.5deg); }
@@ -376,7 +288,7 @@
             80% { transform: translate(2px, -2px) rotate(0.5deg); }
             100% { transform: translate(0, 0) rotate(0); }
         }
-        .shake-screen { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
+        .shake-screen { animation: shake 0.15s cubic-bezier(.36,.07,.19,.97) both; }
 
         /* Notification Pill - Unified */
         .notification-pill {
@@ -431,12 +343,6 @@
             transform: translateX(-100%); transition: transform 0.6s;
         }
         .btn-premium:hover::after { transform: translateX(100%); }
-
-        /* Particles */
-        .particle {
-            position: absolute; width: 8px; height: 8px;
-            background: #6CC548; pointer-events: none; opacity: 0; z-index: 50;
-        }
     </style>
 </head>
 <body :class="{ 'is-booting': isBooting }">
@@ -633,97 +539,38 @@
                                 </div>
                             </div>
                             
-                            <!-- GAMING ENVIRONMENT (First Person Voxel Style) -->
-                            <div class="absolute inset-0 opacity-0 transition-opacity duration-500 overflow-hidden" id="demo-gaming-bg">
-                                
-                                <div class="viewport-3d">
-                                    <!-- Sky with Gradient -->
-                                    <div class="absolute inset-0 bg-gradient-to-b from-[#87CEEB] to-[#C4E4FF] -z-20"></div>
-                                    <!-- Sun -->
-                                    <div class="absolute top-10 right-20 w-16 h-16 bg-yellow-300 shadow-[0_0_40px_rgba(253,224,71,0.8)] rotate-45 border-4 border-yellow-400 opacity-90 -z-10"></div>
-                                    
-                                    <!-- Voxel Clouds -->
-                                    <div class="absolute top-16 left-1/4 w-32 h-10 bg-white/60 -z-10"></div>
-                                    <div class="absolute top-10 left-[28%] w-20 h-8 bg-white/60 -z-10"></div>
-                                    <div class="absolute top-32 right-1/4 w-40 h-12 bg-white/50 -z-10"></div>
+                            <!-- GAMING ENVIRONMENT (THREE.JS Canvas) -->
+                            <div class="game-canvas-container" id="demo-game-canvas"></div>
 
-                                    <!-- The World Stage (Perspective Camera) -->
-                                    <div class="world-stage" id="world-stage">
-                                        <!-- Infinite Ground Plane -->
-                                        <div class="ground-plane"></div>
-                                        
-                                        <!-- Placed Block (Appears on ground) -->
-                                        <div class="placed-block-container" id="demo-placed-block">
-                                            <div class="block-unit">
-                                                <div class="blk-face blk-fwd"></div>
-                                                <div class="blk-face blk-bck"></div>
-                                                <div class="blk-face blk-top"></div>
-                                                <div class="blk-face blk-btm"></div>
-                                                <div class="blk-face blk-lft"></div>
-                                                <div class="blk-face blk-rgt"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Particle Container (World Space) -->
-                                        <div id="particle-container" class="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none"></div>
+                            <!-- HUD (Overlay) -->
+                            <div id="demo-hud" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col gap-2 items-center w-full max-w-md px-4 z-40 opacity-0 pointer-events-none">
+                                <div class="flex justify-between w-full px-1 mb-1">
+                                    <div class="flex gap-1">
+                                        <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                        <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                        <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                        <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                        <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
                                     </div>
-
-                                    <!-- First Person Rig (Attached to Camera) -->
-                                    <div class="player-rig" id="player-rig">
-                                        <div class="arm-pivot" id="demo-arm">
-                                            <div class="steve-arm">
-                                                <div class="voxel-face arm-face--front"></div>
-                                                <div class="voxel-face arm-face--back"></div>
-                                                <div class="voxel-face arm-face--left"></div>
-                                                <div class="voxel-face arm-face--right"></div>
-                                                <div class="voxel-face arm-face--top"></div>
-                                                <div class="voxel-face arm-face--btm"></div>
-                                            </div>
-                                            <!-- Held Block -->
-                                            <div class="held-block-rig" id="held-block">
-                                                <div class="block-unit">
-                                                    <div class="blk-face blk-fwd"></div>
-                                                    <div class="blk-face blk-bck"></div>
-                                                    <div class="blk-face blk-top"></div>
-                                                    <div class="blk-face blk-btm"></div>
-                                                    <div class="blk-face blk-lft"></div>
-                                                    <div class="blk-face blk-rgt"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="flex gap-1">
+                                        <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
+                                        <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
+                                        <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
                                     </div>
                                 </div>
-
-                                <!-- HUD (Overlay) -->
-                                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col gap-2 items-center w-full max-w-md px-4 z-40">
-                                    <div class="flex justify-between w-full px-1 mb-1">
-                                        <div class="flex gap-1">
-                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
-                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
-                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
-                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
-                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
-                                        </div>
-                                        <div class="flex gap-1">
-                                            <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
-                                            <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
-                                            <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
-                                        </div>
+                                <!-- Hotbar -->
+                                <div class="flex gap-1 p-1 game-hud-bar">
+                                    <div class="w-10 h-10 game-slot active flex items-center justify-center">
+                                        <div class="w-6 h-6 bg-gradient-to-br from-green-500 to-green-800 border border-green-900 shadow-lg"></div>
                                     </div>
-                                    <!-- Hotbar -->
-                                    <div class="flex gap-1 p-1 game-hud-bar">
-                                        <div class="w-10 h-10 game-slot active flex items-center justify-center">
-                                            <div class="w-6 h-6 bg-gradient-to-br from-green-500 to-green-800 border border-green-900 shadow-lg"></div>
-                                        </div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                        <div class="w-10 h-10 game-slot"></div>
-                                    </div>
+                                    <div class="w-10 h-10 game-slot"></div>
+                                    <div class="w-10 h-10 game-slot"></div>
+                                    <div class="w-10 h-10 game-slot"></div>
+                                    <div class="w-10 h-10 game-slot"></div>
+                                    <div class="w-10 h-10 game-slot"></div>
+                                    <div class="w-10 h-10 game-slot"></div>
+                                    <div class="w-10 h-10 game-slot"></div>
+                                    <div class="w-10 h-10 game-slot"></div>
                                 </div>
                             </div>
 
@@ -964,6 +811,14 @@
                 const downloadUrl = ref('#'); 
                 let lenis; 
 
+                // Three.js References for Animation
+                let gameArmMesh = null;
+                let gamePlacedBlockMesh = null;
+                let gameHeldBlockMesh = null;
+                let gameCamera = null;
+                let gameScene = null;
+                let gameRenderer = null;
+
                 const resolveTheme = () => {
                     let resolved = 'dark';
                     if (themeMode.value === 'auto') {
@@ -998,7 +853,32 @@
                     }
                 };
 
-                let scene, camera, renderer, iconMesh;
+                // Helper to create Pixelated Textures
+                const createTexture = (color, noiseColor = '#000000', noiseAlpha = 0.1) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 64; canvas.height = 64;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = color;
+                    ctx.fillRect(0, 0, 64, 64);
+                    
+                    // Add noise
+                    for(let i=0; i<400; i++) {
+                        const x = Math.floor(Math.random() * 64);
+                        const y = Math.floor(Math.random() * 64);
+                        const w = Math.floor(Math.random() * 4) + 1;
+                        const h = Math.floor(Math.random() * 4) + 1;
+                        ctx.fillStyle = noiseColor;
+                        ctx.globalAlpha = Math.random() * noiseAlpha;
+                        ctx.fillRect(x, y, w, h);
+                    }
+                    const tex = new THREE.CanvasTexture(canvas);
+                    tex.magFilter = THREE.NearestFilter;
+                    tex.minFilter = THREE.NearestFilter;
+                    return tex;
+                };
+
+                // --- HERO 3D ICON ---
+                let heroScene, heroCamera, heroRenderer, iconMesh;
                 let mouseX = 0, mouseY = 0;
 
                 const createSquircleShape = (size) => {
@@ -1018,39 +898,30 @@
                     return shape;
                 };
 
-                const initThree = () => {
+                const initHero3D = () => {
                     if (!canvasContainer.value) return;
                     const w = canvasContainer.value.clientWidth;
                     const h = canvasContainer.value.clientHeight;
-                    scene = new THREE.Scene();
-                    camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
-                    camera.position.z = 18;
-                    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                    renderer.setSize(w, h);
-                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-                    renderer.toneMappingExposure = 1.2;
-                    canvasContainer.value.appendChild(renderer.domElement);
-                    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                    heroScene = new THREE.Scene();
+                    heroCamera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+                    heroCamera.position.z = 18;
+                    heroRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                    heroRenderer.setSize(w, h);
+                    heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    heroRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+                    heroRenderer.toneMappingExposure = 1.2;
+                    canvasContainer.value.appendChild(heroRenderer.domElement);
+                    heroScene.add(new THREE.AmbientLight(0xffffff, 0.6));
                     const spotLight = new THREE.SpotLight(0xffffff, 2);
                     spotLight.position.set(10, 20, 20);
-                    scene.add(spotLight);
+                    heroScene.add(spotLight);
                     const blueLight = new THREE.PointLight(0x002FA7, 3, 50);
                     blueLight.position.set(-10, -10, 5);
-                    scene.add(blueLight);
+                    heroScene.add(blueLight);
                     const size = 6;
                     const extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
                     const shape = createSquircleShape(size);
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                    geometry.computeBoundingBox();
-                    const max = geometry.boundingBox.max; const min = geometry.boundingBox.min;
-                    const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
-                    const uvAttribute = geometry.attributes.uv; const posAttribute = geometry.attributes.position;
-                    for (let i = 0; i < posAttribute.count; i++) {
-                        const x = posAttribute.getX(i); const y = posAttribute.getY(i);
-                        uvAttribute.setXY(i, (x - min.x) / range.x, (y - min.y) / range.y);
-                    }
-                    geometry.attributes.uv.needsUpdate = true;
                     geometry.center();
                     const textureLoader = new THREE.TextureLoader();
                     const iconUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/opt-clicker.png';
@@ -1064,8 +935,8 @@
                     });
                     iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
                     iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
-                    iconMesh.position.x = 0;
-                    scene.add(iconMesh);
+                    heroScene.add(iconMesh);
+                    
                     const animate = () => {
                         requestAnimationFrame(animate);
                         const time = Date.now() * 0.001;
@@ -1074,51 +945,116 @@
                             iconMesh.rotation.x += (mouseY * 0.5 - iconMesh.rotation.x) * 0.05;
                             iconMesh.rotation.y += (mouseX * 0.5 - iconMesh.rotation.y) * 0.05;
                         }
-                        renderer.render(scene, camera);
+                        heroRenderer.render(heroScene, heroCamera);
                     };
                     animate();
-                    window.addEventListener('mousemove', (e) => {
-                        mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
-                        mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
-                    });
-                    window.addEventListener('resize', () => {
-                        if(!canvasContainer.value) return;
-                        const newW = canvasContainer.value.clientWidth;
-                        const newH = canvasContainer.value.clientHeight;
-                        renderer.setSize(newW, newH);
-                        camera.aspect = newW / newH;
-                        camera.updateProjectionMatrix();
-                    });
                 };
 
-                const spawnParticles = () => {
-                    const container = document.getElementById('particle-container');
+                // --- GAME SCENE 3D (Minecraft Style) ---
+                const initGame3D = () => {
+                    const container = document.getElementById('demo-game-canvas');
                     if (!container) return;
+                    const w = container.clientWidth;
+                    const h = container.clientHeight;
+
+                    gameScene = new THREE.Scene();
+                    gameScene.background = new THREE.Color(0x87CEEB); // Sky Blue
+                    // Add Fog for depth
+                    gameScene.fog = new THREE.Fog(0x87CEEB, 20, 60);
+
+                    // FOV 70 is standard for FPS
+                    gameCamera = new THREE.PerspectiveCamera(70, w / h, 0.1, 1000);
                     
-                    // Create burst
-                    for (let i = 0; i < 8; i++) {
-                        const p = document.createElement('div');
-                        p.classList.add('particle');
-                        const angle = Math.random() * Math.PI * 2;
-                        const speed = 40 + Math.random() * 60; // Spread out more in world space
-                        const tx = Math.cos(angle) * speed;
-                        const ty = Math.sin(angle) * speed;
-                        
-                        // Start from center (0,0 is center of world stage)
-                        p.style.left = '50%'; p.style.top = '50%';
-                        
-                        container.appendChild(p);
-                        
-                        gsap.to(p, {
-                            x: tx, y: ty - 40, opacity: 1, scale: 0.5 + Math.random(),
-                            duration: 0.2, ease: 'power1.out'
-                        });
-                        gsap.to(p, {
-                            opacity: 0, y: ty + 20,
-                            duration: 0.4, delay: 0.2, ease: 'power2.in',
-                            onComplete: () => p.remove()
-                        });
-                    }
+                    gameRenderer = new THREE.WebGLRenderer({ alpha: false, antialias: true });
+                    gameRenderer.setSize(w, h);
+                    gameRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    gameRenderer.shadowMap.enabled = true;
+                    gameRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                    container.appendChild(gameRenderer.domElement);
+
+                    // Lighting
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                    gameScene.add(ambientLight);
+                    const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+                    sunLight.position.set(50, 100, 50);
+                    sunLight.castShadow = true;
+                    sunLight.shadow.mapSize.width = 2048;
+                    sunLight.shadow.mapSize.height = 2048;
+                    gameScene.add(sunLight);
+
+                    // Textures
+                    const grassTop = createTexture('#6CC548', '#FFFFFF', 0.2);
+                    const grassSide = createTexture('#6CC548', '#3E2723', 0.5); // Green/Brown mix
+                    const dirt = createTexture('#3E2723', '#000000', 0.3);
+                    const skin = createTexture('#B88567', '#8D5537', 0.1); // Arm skin
+
+                    // Materials
+                    const grassMat = [
+                        new THREE.MeshLambertMaterial({ map: grassSide }), // px
+                        new THREE.MeshLambertMaterial({ map: grassSide }), // nx
+                        new THREE.MeshLambertMaterial({ map: grassTop }),  // py (Top)
+                        new THREE.MeshLambertMaterial({ map: dirt }),      // ny (Bottom)
+                        new THREE.MeshLambertMaterial({ map: grassSide }), // pz
+                        new THREE.MeshLambertMaterial({ map: grassSide })  // nz
+                    ];
+                    const dirtMat = new THREE.MeshLambertMaterial({ map: dirt });
+                    const armMat = new THREE.MeshLambertMaterial({ map: skin });
+
+                    // Ground Plane
+                    const groundGeo = new THREE.PlaneGeometry(200, 200);
+                    const groundTex = createTexture('#5AA83B', '#3E2723', 0.1);
+                    groundTex.wrapS = THREE.RepeatWrapping;
+                    groundTex.wrapT = THREE.RepeatWrapping;
+                    groundTex.repeat.set(100, 100);
+                    const groundMat = new THREE.MeshLambertMaterial({ map: groundTex });
+                    const ground = new THREE.Mesh(groundGeo, groundMat);
+                    ground.rotation.x = -Math.PI / 2;
+                    ground.receiveShadow = true;
+                    gameScene.add(ground);
+
+                    // Arm Rig (Attached to Camera for First Person View)
+                    // In ThreeJS, we add the mesh to the camera object so it moves with it.
+                    // Arm dimensions: approx 0.3 x 1.0 x 0.3
+                    const armGeo = new THREE.BoxGeometry(0.3, 1.2, 0.3);
+                    gameArmMesh = new THREE.Mesh(armGeo, armMat);
+                    gameArmMesh.castShadow = true;
+                    // Initial Position (Bottom Right)
+                    gameArmMesh.position.set(0.5, -0.5, -1); 
+                    gameArmMesh.rotation.set(0.2, -0.1, 0.1);
+                    
+                    // Held Block
+                    const blockGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                    gameHeldBlockMesh = new THREE.Mesh(blockGeo, grassMat);
+                    gameHeldBlockMesh.position.set(0, 0.6, -0.2); // Relative to Arm top
+                    gameHeldBlockMesh.rotation.set(0, Math.PI/4, 0);
+                    gameArmMesh.add(gameHeldBlockMesh);
+
+                    gameCamera.add(gameArmMesh);
+                    gameScene.add(gameCamera);
+                    gameCamera.position.set(0, 1.7, 0); // Eye height
+
+                    // Placed Block (In World)
+                    gamePlacedBlockMesh = new THREE.Mesh(blockGeo, grassMat);
+                    gamePlacedBlockMesh.position.set(0, 0.15, -3); // In front of player, on ground (y=half height)
+                    gamePlacedBlockMesh.castShadow = true;
+                    gamePlacedBlockMesh.receiveShadow = true;
+                    gamePlacedBlockMesh.visible = false; // Start hidden
+                    gameScene.add(gamePlacedBlockMesh);
+
+                    const animateGame = () => {
+                        requestAnimationFrame(animateGame);
+                        gameRenderer.render(gameScene, gameCamera);
+                    };
+                    animateGame();
+
+                    window.addEventListener('resize', () => {
+                        if (!container) return;
+                        const w = container.clientWidth;
+                        const h = container.clientHeight;
+                        gameRenderer.setSize(w, h);
+                        gameCamera.aspect = w / h;
+                        gameCamera.updateProjectionMatrix();
+                    });
                 };
 
                 const initScrollAnimation = () => {
@@ -1139,15 +1075,20 @@
 
                     const steps = document.querySelectorAll('.demo-step');
 
-                    // INITIAL SETUP
+                    // INITIAL
                     tl.set("#demo-context-menu", { scale: 0.5, opacity: 0 });
                     tl.set("#demo-success", { y: -20, opacity: 0 });
                     tl.set("#demo-auto-notification", { opacity: 0, x: 50 });
                     
-                    // Set 3D Scene Initial State
-                    tl.set("#demo-placed-block", { opacity: 0, scale: 0, y: -50 });
-                    tl.set("#player-rig", { opacity: 0, y: 300 }); // Arm starts below screen
-                    tl.set("#held-block", { scale: 1, opacity: 1 });
+                    // Reset 3D Arm
+                    if(gameArmMesh) {
+                        gameArmMesh.position.y = -2; // Hide below screen
+                        gameHeldBlockMesh.visible = true;
+                    }
+                    if(gamePlacedBlockMesh) {
+                        gamePlacedBlockMesh.visible = false;
+                        gamePlacedBlockMesh.scale.set(0,0,0);
+                    }
 
                     // --- SCENE 1: DESKTOP ---
                     tl.to(steps[0], { opacity: 1, duration: 0.5 })
@@ -1169,40 +1110,50 @@
                       .to(steps[0], { opacity: 0.3, duration: 0.5 });
 
 
-                    // --- SCENE 2: GAMING (First Person) ---
+                    // --- SCENE 2: GAMING ---
                     // Transition
                     tl.to(steps[1], { opacity: 1, duration: 0.5 }, "<")
                       .to("#demo-wallpaper", { opacity: 0, duration: 1 })
-                      .to("#demo-gaming-bg", { opacity: 1, duration: 1 }, "<")
+                      .to(".game-canvas-container", { opacity: 1, duration: 1 }, "<") // Show 3D Canvas
+                      .to("#demo-hud", { opacity: 1, duration: 1 }, "<") // Show HUD
                       .to("#demo-folder", { opacity: 0, scale: 0, duration: 0.5 }, "<")
                       
                       // Arm Enters (Up from bottom)
-                      .to("#player-rig", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.3")
+                      .to(gameArmMesh ? gameArmMesh.position : {}, { y: -0.5, duration: 0.8, ease: "power3.out" }, "-=0.3")
                       
                       .to("#demo-cursor", { opacity: 0, duration: 0.3 }, "<")
                       .to("#demo-crosshair", { opacity: 1, duration: 0.3 }, "<");
 
-                    // ACTION: Click
+                    // ACTION
                     tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "none", duration: 0.1 }, "+=0.3")
                       
-                      // Swing Arm (Rotate Pivot)
-                      .to("#demo-arm", { rotationX: 40, rotationY: -50, z: -20, duration: 0.15, ease: "power2.in" })
-                      .to("#held-block", { opacity: 0, duration: 0.1 }, ">-0.1") // Block leaves hand
+                      // Swing Arm (Use GSAP on Three.js props)
+                      .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.8, y: -0.5, duration: 0.1, ease: "power2.in" })
                       
-                      // Screen Shake + Place Block + Particles
+                      // Hide Held Block
+                      .call(() => { if(gameHeldBlockMesh) gameHeldBlockMesh.visible = false; })
+                      
+                      // Screen Shake + Place Block
                       .call(() => {
                            const monitor = document.getElementById('demo-monitor');
                            monitor.classList.remove('shake-screen');
-                           void monitor.offsetWidth; // Trigger reflow
+                           void monitor.offsetWidth; 
                            monitor.classList.add('shake-screen');
-                           spawnParticles();
+                           
+                           // Show Placed Block
+                           if(gamePlacedBlockMesh) {
+                               gamePlacedBlockMesh.visible = true;
+                               gamePlacedBlockMesh.scale.set(1,1,1);
+                               // Small pop effect
+                               gsap.from(gamePlacedBlockMesh.scale, {x:0, y:0, z:0, duration: 0.3, ease:"back.out"});
+                           }
                       })
-                      // Block appears on ground (Tween y to 0 to land)
-                      .to("#demo-placed-block", { opacity: 1, scale: 1, y: 0, duration: 0.1, ease: "back.out(2)" }, ">")
                       
                       // Return Arm
-                      .to("#demo-arm", { rotationX: 10, rotationY: -30, z: 0, duration: 0.3, ease: "elastic.out(1, 0.5)" })
-                      .to("#held-block", { opacity: 1, duration: 0.2 }, ">") // Regain block (creative mode style)
+                      .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.2, y: -0.1, duration: 0.3, ease: "elastic.out(1, 0.5)" })
+                      
+                      // Regain Block (Creative mode logic)
+                      .call(() => { if(gameHeldBlockMesh) gameHeldBlockMesh.visible = true; }, null, "+=0.2")
                       
                       .set("#success-text", { text: "INSTANT GAMEPLAY" })
                       .to("#demo-success", { y: 20, opacity: 1, duration: 0.4 }, "-=0.2");
@@ -1216,8 +1167,9 @@
                     // --- SCENE 3: AUTOMATION ---
                     tl.to(steps[2], { opacity: 1, duration: 0.5 }, "<")
                       
-                      // Minimize Game logic: Everything falls down
-                      .to("#demo-gaming-bg", { opacity: 0, y: 100, duration: 0.8, ease: "power3.in" })
+                      // Minimize Game logic
+                      .to(".game-canvas-container", { opacity: 0, y: 100, duration: 0.8, ease: "power3.in" })
+                      .to("#demo-hud", { opacity: 0, y: 50, duration: 0.5 }, "<")
                       
                       .to("#demo-wallpaper", { opacity: 1, duration: 1 }, "-=0.4")
                       .to("#demo-crosshair", { opacity: 0, duration: 0.3 }, "<")
@@ -1238,7 +1190,8 @@
                     setTimeout(() => { isBooting.value = false; }, 1000);
                     resolveTheme();
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
-                    initThree();
+                    initHero3D();
+                    initGame3D();
                     initCursor(); 
                     
                     lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
@@ -1248,7 +1201,8 @@
                         requestAnimationFrame(raf);
                     }
                     requestAnimationFrame(raf);
-                    setTimeout(initScrollAnimation, 100);
+                    // Delay animation setup slightly to ensure meshes are created
+                    setTimeout(initScrollAnimation, 500);
                     lucide.createIcons();
 
                     fetch('https://api.github.com/repos/gitmichaelqiu/OptClicker/releases/latest')
