@@ -1008,6 +1008,19 @@
                     const extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
                     const shape = createSquircleShape(size);
                     const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    
+                    // --- UPDATED UV MAPPING LOGIC (MATCHES DESKTOP RENAMER) ---
+                    geometry.computeBoundingBox();
+                    const max = geometry.boundingBox.max; const min = geometry.boundingBox.min;
+                    const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
+                    const uvAttribute = geometry.attributes.uv; const posAttribute = geometry.attributes.position;
+                    for (let i = 0; i < posAttribute.count; i++) {
+                        const x = posAttribute.getX(i); const y = posAttribute.getY(i);
+                        uvAttribute.setXY(i, (x - min.x) / range.x, (y - min.y) / range.y);
+                    }
+                    geometry.attributes.uv.needsUpdate = true;
+                    // -----------------------------------------------------------
+
                     geometry.center();
                     const textureLoader = new THREE.TextureLoader();
                     const iconUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/opt-clicker.png';
