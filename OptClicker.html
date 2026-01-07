@@ -64,7 +64,7 @@
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Fonts - EXACT match to DesktopRenamer -->
+    <!-- Fonts -->
     <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <!-- Styles -->
@@ -203,9 +203,8 @@
         }
         html.dark a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
 
-        /* Key Visualizer for Demo - THEME AWARE */
+        /* Key Visualizer */
         .key-cap {
-            /* Light Mode Defaults */
             background: rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
@@ -214,7 +213,6 @@
             transition: all 0.1s ease;
         }
         html.dark .key-cap {
-            /* Dark Mode Overrides */
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
@@ -228,7 +226,7 @@
             color: white !important;
         }
         
-        /* Context Menu Demo */
+        /* Context Menu */
         .context-menu {
             background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(12px);
@@ -249,88 +247,119 @@
             color: white;
         }
 
-        /* Game UI Assets */
+        /* -----------------------
+           POLISHED GAME ASSETS
+           ----------------------- */
         .game-hud-bar {
-            background: linear-gradient(180deg, #888 0%, #444 100%);
-            border: 2px solid #222;
-            box-shadow: inset 2px 2px 0 rgba(255,255,255,0.2);
+            background: linear-gradient(180deg, rgba(30,30,30,0.9) 0%, rgba(10,10,10,0.95) 100%);
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 4px;
+            border-radius: 4px;
         }
         .game-slot {
-            background: rgba(0,0,0,0.4);
-            border: 2px solid #666;
-            transition: all 0.2s;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .game-slot::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
         }
         .game-slot.active {
             border-color: white;
-            background: rgba(255,255,255,0.1);
-            transform: scale(1.1);
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.15);
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
 
-        /* 3D Game Block in CSS - SEAMLESS FIX */
+        /* Voxel 3D Engine */
         .scene-3d {
             transform-style: preserve-3d;
-            perspective: 1000px;
+            perspective: 800px;
+            width: 100%; height: 100%;
+            position: absolute; pointer-events: none;
         }
+        
+        /* The Hand/Arm */
         .cube-wrap {
             position: absolute;
             transform-style: preserve-3d;
-            bottom: -50px;
+            bottom: -120px;
             right: 15%;
-            transform: rotateY(-30deg) rotateX(20deg);
+            transform-origin: 100% 100%; /* Pivot from bottom right */
+            transform: rotateY(-20deg) rotateX(10deg);
         }
+        
         .cube {
-            position: relative;
-            width: 100px;
-            height: 100px;
+            position: relative; width: 80px; height: 240px;
             transform-style: preserve-3d;
         }
-        /* Face Base */
+        
+        /* Voxel Faces - High Fidelity Gradients for lighting */
         .face {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            background: #795548; 
-            /* Inner shadow mimics AO and texture */
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.6); 
-            /* Overlap borders slightly to fix gaps */
+            /* Anti-aliasing hack */
             outline: 1px solid transparent; 
             backface-visibility: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
         }
-        /* Overlap logic: translateZ slightly < 50px (e.g. 49.8px) to pinch corners */
-        .face--front { transform: translateZ(49.8px); background-color: #8D6E63; }
-        .face--back  { transform: rotateY(180deg) translateZ(49.8px); background-color: #5D4037; }
-        .face--right { transform: rotateY(90deg) translateZ(49.8px); background-color: #6D4C41; }
-        .face--left  { transform: rotateY(-90deg) translateZ(49.8px); background-color: #6D4C41; }
-        .face--top   { transform: rotateX(90deg) translateZ(49.8px); background-color: #4CAF50; /* Grass */ }
-        .face--bottom{ transform: rotateX(-90deg) translateZ(49.8px); background-color: #3E2723; }
 
-        /* Placed Block Style - SEAMLESS FIX */
+        /* Steve's Arm Skin/Sleeve */
+        .face--front { width: 80px; height: 240px; transform: translateZ(40px); background: linear-gradient(to bottom, #008D96 0%, #008D96 40%, #B88567 40%); }
+        .face--back  { width: 80px; height: 240px; transform: rotateY(180deg) translateZ(40px); background: linear-gradient(to bottom, #00767D 0%, #00767D 40%, #A07256 40%); }
+        .face--right { width: 80px; height: 240px; transform: rotateY(90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 0%, #006066 40%, #8D634A 40%); }
+        .face--left  { width: 80px; height: 240px; transform: rotateY(-90deg) translateZ(40px); background: linear-gradient(to bottom, #006066 0%, #006066 40%, #8D634A 40%); }
+        .face--top   { width: 80px; height: 80px;  transform: rotateX(90deg) translateZ(40px); background: #00767D; }
+        .face--bottom{ width: 80px; height: 80px;  transform: rotateX(-90deg) translateZ(200px); background: #8D634A; }
+
+        /* The Block */
         .placed-block {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 60px;
-            height: 60px;
+            top: 50%; left: 50%;
+            width: 80px; height: 80px;
             transform-style: preserve-3d;
-            transform: translate(-50%, -50%) rotateX(10deg) rotateY(45deg);
+            transform: translate(-50%, -50%) rotateX(-15deg) rotateY(35deg);
             opacity: 0;
+            will-change: transform;
         }
-        .placed-face {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: #795548;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
-            backface-visibility: hidden;
+        
+        /* Grass Block Textures via Gradients */
+        .p-face {
+            position: absolute; width: 80px; height: 80px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
             outline: 1px solid transparent;
         }
-        /* Overlap logic: translateZ slightly < 30px (e.g. 29.8px) */
-        .placed-face--front { transform: translateZ(29.8px); background-color: #8D6E63; }
-        .placed-face--back  { transform: rotateY(180deg) translateZ(29.8px); background-color: #5D4037; }
-        .placed-face--top { transform: rotateX(90deg) translateZ(29.8px); background-color: #4CAF50; }
-        .placed-face--bottom{ transform: rotateX(-90deg) translateZ(29.8px); background-color: #3E2723; }
-        .placed-face--right { transform: rotateY(90deg) translateZ(29.8px); background-color: #6D4C41; }
-        .placed-face--left  { transform: rotateY(-90deg) translateZ(29.8px); background-color: #6D4C41; }
+        /* Top (Grass) */
+        .p-face--top    { transform: rotateX(90deg) translateZ(40px); background: linear-gradient(135deg, #6CC548, #4FA83D); }
+        /* Sides (Grass Top + Dirt) */
+        .p-face--front  { transform: translateZ(40px); background: linear-gradient(to bottom, #6CC548 0%, #6CC548 20%, #78523A 20%); }
+        .p-face--right  { transform: rotateY(90deg) translateZ(40px); background: linear-gradient(to bottom, #5AA83B 0%, #5AA83B 20%, #5D3E2C 20%); filter: brightness(0.8); }
+        .p-face--left   { transform: rotateY(-90deg) translateZ(40px); background: linear-gradient(to bottom, #5AA83B 0%, #5AA83B 20%, #5D3E2C 20%); filter: brightness(0.8); }
+        .p-face--back   { transform: rotateY(180deg) translateZ(40px); background: linear-gradient(to bottom, #5AA83B 0%, #5AA83B 20%, #5D3E2C 20%); filter: brightness(0.6); }
+        .p-face--bottom { transform: rotateX(-90deg) translateZ(40px); background: #3E2723; }
+
+        /* Particles */
+        .particle {
+            position: absolute; width: 8px; height: 8px;
+            background: #6CC548; pointer-events: none; opacity: 0;
+        }
+
+        /* Screen Shake Keyframes */
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0); }
+            20% { transform: translate(-2px, 2px) rotate(-1deg); }
+            40% { transform: translate(-2px, -2px) rotate(1deg); }
+            60% { transform: translate(2px, 2px) rotate(0); }
+            80% { transform: translate(2px, -2px) rotate(1deg); }
+            100% { transform: translate(0, 0) rotate(0); }
+        }
+        .shake-screen { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
 
         /* Notification Pill - Unified */
         .notification-pill {
@@ -406,22 +435,18 @@
             <!-- Center: Floating Capsule -->
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto top-6" ref="navCapsule">
                 <div class="nav-glass h-12 rounded-full flex items-center p-1 gap-1 border border-black/5 dark:border-white/20">
-                    <!-- Icon + Title -->
                     <a href="#hero" @click.prevent="scrollTo('#hero')" class="flex items-center gap-3 px-4 py-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-interactive">
                         <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/opt-clicker.png" 
                              class="w-5 h-5 rounded-sm shadow-sm" alt="Icon">
-                        <!-- Font Synced to DesktopRenamer -->
                         <span class="font-display font-bold text-xs tracking-wide text-gray-900 dark:text-white hidden sm:block">OptClicker</span>
                     </a>
                     
-                    <!-- Links -->
                     <div class="hidden md:flex items-center gap-1 border-l border-black/10 dark:border-white/10 px-2 h-6">
                         <a href="#hero" @click.prevent="scrollTo('#hero')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive font-mono">HOME</a>
                         <a href="#features" @click.prevent="scrollTo('#features')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive font-mono">FEATURES</a>
                         <a href="#demo" @click.prevent="scrollTo('#demo')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive font-mono">DEMO</a>
                     </div>
 
-                    <!-- Download Button -->
                     <a href="#download" @click.prevent="scrollTo('#download')" class="hidden md:flex h-9 px-5 items-center gap-2 rounded-full bg-black dark:bg-white text-white dark:text-black font-bold text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg ml-1 cursor-interactive">
                         <span class="font-mono">DOWNLOAD</span>
                         <i data-lucide="arrow-down" class="w-3 h-3"></i>
@@ -443,7 +468,6 @@
             
             <!-- Hero Section -->
             <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-white dark:bg-black transition-colors duration-500">
-                <!-- Aurora -->
                 <div class="aurora-container">
                     <div class="aurora-blob blob-1"></div>
                     <div class="aurora-blob blob-2"></div>
@@ -454,14 +478,10 @@
                     <a-waves class="w-full h-full opacity-30"></a-waves>
                 </div>
                 
-                <!-- 3D Icon -->
                 <div class="absolute top-0 right-0 w-full md:w-[50%] h-full z-10 pointer-events-auto" ref="canvasContainer"></div>
 
-                <!-- Text Content -->
                 <div class="relative z-20 w-full md:w-[55%] pl-6 md:pl-20 pointer-events-none flex flex-col justify-center h-full">
                     <div class="mix-blend-difference">
-                        <!-- Synced Hero Font: Inter for 'OPT', Display for 'CLICKER' (Style choice) or both Inter Black -->
-                        <!-- Matches DesktopRenamer structure -->
                         <h1 class="hero-title text-[10vw] md:text-[7vw] font-black tracking-tighter text-black dark:text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
                             <span>OPT</span>
                             <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-500">CLICKER</span>
@@ -474,7 +494,6 @@
                     </div>
                 </div>
 
-                <!-- Signature Block -->
                 <div class="absolute bottom-12 right-12 z-20 flex flex-col items-end opacity-0 animate-fade-in pointer-events-none" style="animation-delay: 1.5s">
                     <p class="font-display text-xs font-bold text-gray-900 dark:text-white mb-1 tracking-[0.2em] text-right">
                         Designed by <span class="text-klein-blue">Michael Qiu</span>
@@ -549,10 +568,10 @@
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-klein-blue/5 rounded-full blur-[100px] pointer-events-none animate-pulse-slow"></div>
 
                     <!-- Flow Visualization Container -->
-                    <div class="relative w-full max-w-5xl px-6 z-10 flex items-center justify-center perspective-[1000px]">
+                    <div class="relative w-full max-w-6xl px-4 z-10 flex items-center justify-center perspective-[1200px]">
                         
                         <!-- Desktop Scene -->
-                        <div class="w-full aspect-[16/9] bg-[#0a0a0a] border border-white/10 rounded-xl relative overflow-hidden shadow-2xl flex items-center justify-center transition-all duration-700" id="demo-monitor">
+                        <div class="w-full aspect-[16/9] bg-[#000] border border-white/10 rounded-xl relative overflow-hidden shadow-2xl flex items-center justify-center transition-all duration-700 transform-style-3d" id="demo-monitor">
                             
                             <!-- Wallpaper Layer -->
                             <div class="absolute inset-0 bg-gradient-to-br from-[#111] to-[#050505] transition-opacity duration-700" id="demo-wallpaper">
@@ -560,10 +579,10 @@
                                      alt="Wallpaper" 
                                      class="absolute inset-0 w-full h-full object-cover opacity-80"
                                      style="object-position: center bottom;">
-                                <div class="absolute inset-0 bg-black/20"></div>
+                                <div class="absolute inset-0 bg-black/10"></div>
                                 
                                 <!-- Fake Menu Bar -->
-                                <div class="absolute top-0 left-0 w-full h-8 bg-black/40 backdrop-blur-md flex items-center px-4 justify-between border-b border-white/5">
+                                <div class="absolute top-0 left-0 w-full h-8 bg-black/40 backdrop-blur-md flex items-center px-4 justify-between border-b border-white/5 z-20">
                                     <div class="flex items-center gap-4">
                                         <i data-lucide="apple" class="w-3 h-3 text-white"></i>
                                         <span class="text-xs font-bold text-white">Finder</span>
@@ -571,71 +590,74 @@
                                         <span class="text-xs text-gray-300">Edit</span>
                                         <span class="text-xs text-gray-300">View</span>
                                     </div>
-                                    <!-- Status Bar Icons -->
                                     <div class="flex items-center gap-3">
                                         <div id="status-icon" class="w-4 h-4 flex items-center justify-center transition-all duration-300">
-                                            <!-- Option Icon with Slash (Disabled state) - FIXED ICON -->
                                             <div class="relative w-full h-full opacity-50" id="status-icon-disabled">
                                                 <div class="relative w-4 h-4">
                                                     <i data-lucide="option" class="absolute inset-0 w-4 h-4 text-white"></i>
-                                                    <!-- SVG Line for strict Slash -->
                                                     <svg class="absolute inset-0 w-4 h-4 pointer-events-none" viewBox="0 0 24 24">
                                                         <line x1="4" y1="20" x2="20" y2="4" stroke="white" stroke-width="2" />
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <!-- Option Icon (Enabled state) -->
                                             <div class="hidden" id="status-icon-enabled">
                                                 <i data-lucide="option" class="w-4 h-4 text-klein-light filter drop-shadow-[0_0_5px_rgba(59,109,255,0.8)]"></i>
                                             </div>
                                         </div>
                                         <i data-lucide="wifi" class="w-3 h-3 text-white"></i>
-                                        <i data-lucide="battery-medium" class="w-3 h-3 text-white"></i>
                                         <span class="text-xs text-white">Mon 9:41 AM</span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Gaming Background Layer (Minecraft Style) -->
-                            <div class="absolute inset-0 bg-sky-300 opacity-0 transition-all duration-700 flex items-center justify-center overflow-hidden origin-center" id="demo-gaming-bg">
-                                <!-- Sky/Horizon -->
-                                <div class="absolute inset-0 bg-gradient-to-b from-sky-400 to-sky-200"></div>
-                                <!-- Simple Ground -->
-                                <div class="absolute bottom-0 w-full h-[40%] bg-gradient-to-b from-green-600 to-green-800"></div>
-                                <!-- Minecraft Clouds (CSS) -->
-                                <div class="absolute top-10 left-10 w-24 h-8 bg-white/80"></div>
-                                <div class="absolute top-20 right-20 w-32 h-8 bg-white/80"></div>
+                            <!-- GAMING ENVIRONMENT (Minecraft Voxel Style) -->
+                            <div class="absolute inset-0 opacity-0 transition-opacity duration-500 overflow-hidden" id="demo-gaming-bg">
+                                <!-- Sky with Gradient -->
+                                <div class="absolute inset-0 bg-gradient-to-b from-[#87CEEB] to-[#C4E4FF]"></div>
+                                <!-- Sun -->
+                                <div class="absolute top-10 right-20 w-16 h-16 bg-yellow-300 shadow-[0_0_40px_rgba(253,224,71,0.8)] rotate-45 border-4 border-yellow-400 opacity-90"></div>
                                 
-                                <!-- Placed Block Placeholder (Hidden initially) -->
-                                <div class="placed-block" id="demo-placed-block">
-                                    <div class="placed-face placed-face--front"></div>
-                                    <div class="placed-face placed-face--back"></div>
-                                    <div class="placed-face placed-face--top"></div>
-                                    <div class="placed-face placed-face--bottom"></div>
-                                    <div class="placed-face placed-face--right"></div>
-                                    <div class="placed-face placed-face--left"></div>
+                                <!-- Voxel Clouds -->
+                                <div class="absolute top-16 left-1/4 w-32 h-10 bg-white/60"></div>
+                                <div class="absolute top-10 left-[28%] w-20 h-8 bg-white/60"></div>
+                                <div class="absolute top-32 right-1/4 w-40 h-12 bg-white/50"></div>
+
+                                <!-- Particle Container (Anchored Center) -->
+                                <div id="particle-container" class="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-30"></div>
+
+                                <!-- The Placed Block (3D) -->
+                                <div class="scene-3d z-20">
+                                    <div class="placed-block" id="demo-placed-block">
+                                        <div class="p-face p-face--front"></div>
+                                        <div class="p-face p-face--back"></div>
+                                        <div class="p-face p-face--top"></div>
+                                        <div class="p-face p-face--bottom"></div>
+                                        <div class="p-face p-face--right"></div>
+                                        <div class="p-face p-face--left"></div>
+                                    </div>
                                 </div>
 
-                                <!-- GAME HUD -->
-                                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col gap-2 items-center w-full max-w-md px-4">
-                                    <!-- Health/Armor -->
-                                    <div class="flex justify-between w-full px-2">
+                                <!-- HUD -->
+                                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col gap-2 items-center w-full max-w-md px-4 z-40">
+                                    <div class="flex justify-between w-full px-1 mb-1">
                                         <div class="flex gap-1">
-                                            <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500"></i>
-                                            <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500"></i>
-                                            <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500"></i>
-                                            <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500"></i>
-                                            <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500"></i>
+                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
+                                            <i data-lucide="heart" class="w-5 h-5 text-[#FF3333] fill-[#FF3333] drop-shadow-md"></i>
                                         </div>
                                         <div class="flex gap-1">
-                                            <i data-lucide="shield" class="w-4 h-4 text-gray-300 fill-gray-300"></i>
-                                            <i data-lucide="shield" class="w-4 h-4 text-gray-300 fill-gray-300"></i>
-                                            <i data-lucide="shield" class="w-4 h-4 text-gray-300 fill-gray-300"></i>
+                                            <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
+                                            <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
+                                            <i data-lucide="shield" class="w-5 h-5 text-gray-200 fill-gray-200 drop-shadow-md"></i>
                                         </div>
                                     </div>
                                     <!-- Hotbar -->
-                                    <div class="flex gap-1 p-1 bg-black/40 border-2 border-gray-600 rounded-sm">
-                                        <div class="w-10 h-10 game-slot active flex items-center justify-center"><div class="w-6 h-6 bg-green-700 border border-green-900"></div></div>
+                                    <div class="flex gap-1 p-1 game-hud-bar">
+                                        <div class="w-10 h-10 game-slot active flex items-center justify-center">
+                                            <div class="w-6 h-6 bg-gradient-to-br from-green-500 to-green-800 border border-green-900 shadow-lg"></div>
+                                        </div>
                                         <div class="w-10 h-10 game-slot"></div>
                                         <div class="w-10 h-10 game-slot"></div>
                                         <div class="w-10 h-10 game-slot"></div>
@@ -649,15 +671,15 @@
                             </div>
 
                             <!-- SCENE 1: DESKTOP OBJECTS -->
-                            <div id="demo-folder" class="relative flex flex-col items-center gap-2 transform translate-y-10">
+                            <div id="demo-folder" class="relative flex flex-col items-center gap-2 transform translate-y-10 z-20">
                                 <div class="w-24 h-20 bg-blue-400/90 rounded-md border-t-4 border-blue-300 shadow-xl relative folder-icon">
                                     <div class="absolute -top-3 left-0 w-10 h-4 bg-blue-400/90 rounded-t-md border-t border-l border-r border-blue-300"></div>
                                 </div>
                                 <span class="text-xs font-bold text-white shadow-black drop-shadow-md bg-black/20 px-2 rounded">Project Alpha</span>
                             </div>
 
-                            <!-- SCENE 2: GAMING ARM/BLOCK -->
-                            <div id="demo-arm-wrapper" class="absolute bottom-0 right-20 transform translate-y-full opacity-0 pointer-events-none">
+                            <!-- SCENE 2: GAMING ARM (3D) -->
+                            <div id="demo-arm-wrapper" class="absolute bottom-0 right-0 w-full h-full pointer-events-none z-30 opacity-0">
                                 <div class="scene-3d">
                                     <div class="cube-wrap" id="demo-arm">
                                         <div class="cube">
@@ -673,9 +695,7 @@
                             </div>
                             
                             <!-- SCENE 3: AUTO TOGGLE NOTIFICATIONS -->
-                            <!-- Fixed Layout: Absolute container holds notifications in stack -->
                             <div id="demo-auto-notification" class="absolute top-16 right-4 flex flex-col gap-3 items-end opacity-0 transform translate-x-10 z-50">
-                                <!-- 1. App Detected Notification (Always visible when container is visible) -->
                                 <div class="notification-pill px-4 py-3 rounded-xl flex items-center gap-3 w-72">
                                     <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-bold text-lg shadow-inner">
                                         M
@@ -685,8 +705,6 @@
                                         <span class="text-sm font-semibold text-white">Minecraft</span>
                                     </div>
                                 </div>
-                                
-                                <!-- 2. OptClicker Enabled Notification (Hidden initially) -->
                                 <div class="notification-pill px-4 py-3 rounded-xl flex items-center gap-3 w-72" id="notif-optclicker" style="opacity: 0; transform: translateY(-10px);">
                                     <div class="w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center text-white shadow-lg shadow-gray-700/30">
                                         <i data-lucide="zap-off" class="w-6 h-6"></i>
@@ -698,21 +716,21 @@
                                 </div>
                             </div>
 
-                            <!-- Simulated Cursor (Desktop Only) -->
+                            <!-- Simulated Cursor -->
                             <div id="demo-cursor" class="absolute top-1/2 left-1/4 w-6 h-6 z-50 pointer-events-none transition-all duration-300" style="transform: translate(-50%, -50%);">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M5.5 3L17.5 15L11.5 16L14.5 21L12.5 22L9.5 17L5.5 21V3Z" fill="white" stroke="black" stroke-width="1.5"/>
                                 </svg>
                             </div>
                             
-                            <!-- Crosshair (Gaming Only) -->
-                            <div id="demo-crosshair" class="absolute top-1/2 left-1/2 w-4 h-4 z-50 pointer-events-none opacity-0" style="transform: translate(-50%, -50%);">
-                                <div class="absolute top-1/2 left-0 w-full h-[2px] bg-white/80 box-shadow shadow-black drop-shadow-md"></div>
-                                <div class="absolute left-1/2 top-0 h-full w-[2px] bg-white/80 box-shadow shadow-black drop-shadow-md"></div>
+                            <!-- Crosshair -->
+                            <div id="demo-crosshair" class="absolute top-1/2 left-1/2 w-6 h-6 z-50 pointer-events-none opacity-0 mix-blend-difference" style="transform: translate(-50%, -50%);">
+                                <div class="absolute top-1/2 left-0 w-full h-[2px] bg-white shadow-sm"></div>
+                                <div class="absolute left-1/2 top-0 h-full w-[2px] bg-white shadow-sm"></div>
                             </div>
 
                             <!-- Floating Keyboard Visualizer -->
-                            <div id="demo-keyboard" class="absolute bottom-12 left-12 glass-card p-6 rounded-2xl border border-white/20 opacity-0 transform translate-y-10 no-hover z-50">
+                            <div id="demo-keyboard" class="absolute bottom-8 left-8 glass-card p-6 rounded-2xl border border-white/20 opacity-0 transform translate-y-10 no-hover z-50">
                                 <div class="flex items-end gap-2">
                                     <div class="flex flex-col items-center gap-1">
                                         <div id="key-ctrl" class="key-cap w-12 h-12 flex items-center justify-center text-xs font-mono text-black dark:text-white">^</div>
@@ -740,9 +758,9 @@
                             </div>
 
                             <!-- Success Banner -->
-                            <div id="demo-success" class="absolute top-12 glass-card px-8 py-4 rounded-full border border-klein-blue/50 opacity-0 transform -translate-y-10 flex items-center gap-3 no-hover bg-black/60 backdrop-blur-md z-50">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-klein-blue"></i>
-                                <span class="font-bold text-white tracking-wide" id="success-text">RIGHT CLICK TRIGGERED</span>
+                            <div id="demo-success" class="absolute top-16 glass-card px-8 py-3 rounded-full border border-klein-blue/50 opacity-0 transform -translate-y-10 flex items-center gap-3 no-hover bg-black/80 backdrop-blur-md z-50 shadow-2xl">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-klein-blue"></i>
+                                <span class="font-bold text-white text-sm tracking-wide" id="success-text">RIGHT CLICK TRIGGERED</span>
                             </div>
 
                         </div>
@@ -751,7 +769,6 @@
                     <!-- Progress Captions -->
                     <div class="absolute bottom-12 left-0 w-full px-12">
                         <div class="max-w-4xl mx-auto flex justify-between items-center relative">
-                            <!-- Line -->
                             <div class="absolute top-1/2 left-0 w-full h-[1px] bg-white/10 -z-10"></div>
                             
                             <div class="demo-step flex flex-col items-center gap-3 opacity-30 transition-all duration-500" data-step="1">
@@ -775,17 +792,14 @@
 
             <!-- Download Section -->
             <section id="download" class="w-full h-screen bg-[#F2F2F7] dark:bg-[#050505] relative z-30 overflow-hidden flex flex-col justify-between">
-                <!-- Background ambient -->
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-klein-blue/5 rounded-full blur-[120px] pointer-events-none"></div>
                 
                 <div class="flex-grow flex items-center justify-center w-full max-w-5xl mx-auto px-6 md:px-12 relative z-10">
                     <div class="premium-download-card rounded-3xl p-12 md:p-24 relative overflow-hidden group w-full">
                         <div class="card-corner-glow"></div>
-                        <!-- Inner Glow -->
                         <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-klein-blue/20 to-transparent rounded-full blur-[100px] transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
 
                         <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-                            <!-- Left: Branding -->
                             <div class="flex flex-col items-center md:items-start text-center md:text-left">
                                 <div class="flex items-center gap-4 mb-6">
                                     <div class="w-16 h-16 rounded-2xl bg-white dark:bg-black flex items-center justify-center shadow-lg border border-black/5 dark:border-white/10">
@@ -815,14 +829,11 @@
                                 </div>
                             </div>
 
-                            <!-- Right: Actions -->
                             <div class="flex flex-col gap-4 w-full md:w-auto min-w-[240px]">
-                                <!-- Main Download Button -->
                                 <a :href="downloadUrl" class="btn-premium btn-premium-primary inline-flex items-center justify-center gap-3 px-8 py-5 shadow-2xl cursor-interactive w-full">
                                     <span class="relative z-10 font-bold tracking-wide font-mono">DOWNLOAD APP</span>
                                     <i data-lucide="arrow-down" class="w-5 h-5 relative z-10"></i>
                                 </a>
-                                <!-- Secondary Source Code Button -->
                                 <a href="https://github.com/gitmichaelqiu/OptClicker" target="_blank" class="btn-premium btn-premium-secondary inline-flex items-center justify-center gap-3 px-8 py-5 font-bold tracking-wide text-sm cursor-interactive w-full">
                                     <span class="font-mono">SOURCE CODE</span>
                                     <i data-lucide="github" class="w-5 h-5"></i>
@@ -1039,6 +1050,33 @@
                     });
                 };
 
+                const spawnParticles = () => {
+                    const container = document.getElementById('particle-container');
+                    if (!container) return;
+                    
+                    // Create burst
+                    for (let i = 0; i < 8; i++) {
+                        const p = document.createElement('div');
+                        p.classList.add('particle');
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = 20 + Math.random() * 40;
+                        const tx = Math.cos(angle) * speed;
+                        const ty = Math.sin(angle) * speed;
+                        
+                        container.appendChild(p);
+                        
+                        gsap.to(p, {
+                            x: tx, y: ty, opacity: 1, scale: 0.5 + Math.random(),
+                            duration: 0.1, ease: 'power1.out'
+                        });
+                        gsap.to(p, {
+                            opacity: 0, y: ty + 20,
+                            duration: 0.4, delay: 0.1, ease: 'power2.in',
+                            onComplete: () => p.remove()
+                        });
+                    }
+                };
+
                 const initScrollAnimation = () => {
                     gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -1046,103 +1084,106 @@
                     gsap.to(".hero-subtitle", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.8 });
                     if(iconMesh) gsap.fromTo(iconMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 2, ease: "elastic.out(1, 0.5)", delay: 0.2});
 
-                    // Demo Animation Timeline
                     const tl = gsap.timeline({
                         scrollTrigger: {
                             trigger: "#demo",
                             start: "top top", 
                             end: "bottom bottom",
-                            scrub: 1,
+                            scrub: 0.5, // Smoother scrub
                         }
                     });
 
                     const steps = document.querySelectorAll('.demo-step');
 
-                    // --- INITIAL SETUP ---
-                    tl.set("#demo-context-menu", { scale: 0.5, opacity: 0, pointerEvents: "none" });
+                    // INITIAL
+                    tl.set("#demo-context-menu", { scale: 0.5, opacity: 0 });
                     tl.set("#demo-success", { y: -20, opacity: 0 });
                     tl.set("#demo-arm-wrapper", { opacity: 0, y: 100 });
-                    tl.set("#demo-auto-notification", { opacity: 0, x: 50 }); // Start hidden to right
-                    tl.set("#demo-placed-block", { opacity: 0 });
-                    
-                    // --- SCENE 1: DESKTOP (Native) ---
-                    // 1. Initial State (Hover)
+                    tl.set("#demo-auto-notification", { opacity: 0, x: 50 });
+                    tl.set("#demo-placed-block", { opacity: 0, scale: 0 });
+
+                    // --- SCENE 1: DESKTOP ---
                     tl.to(steps[0], { opacity: 1, duration: 0.5 })
                       .to("#demo-keyboard", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)" })
                       .to("#demo-cursor", { top: "50%", left: "50%", duration: 1.5, ease: "power2.inOut" }, "<");
 
-                    // 2. Press Option Key
-                    tl.to("#key-opt", { 
-                          backgroundColor: "#002FA7", 
-                          borderColor: "#002FA7", 
-                          y: 4,
-                          boxShadow: "0 0 0 rgba(0,0,0,0)",
-                          duration: 0.2 
-                      });
-
-                    // 3. Trigger Right Click (Context Menu)
+                    // Trigger
+                    tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "none", duration: 0.2 });
+                    
+                    // Show Menu
                     tl.set("#demo-context-menu", { top: "50%", left: "50%" })
                       .to("#demo-context-menu", { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" })
                       .to("#demo-success", { y: 20, opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" }, "<+0.1");
 
-                    // 4. Reset for Transition
+                    // Clean
                     tl.to("#key-opt", { backgroundColor: "rgba(255, 255, 255, 0.1)", borderColor: "rgba(255, 255, 255, 0.2)", y: 0, boxShadow: "0 4px 0 rgba(0, 0, 0, 0.3)", duration: 0.2 }, "+=0.5")
                       .to("#demo-context-menu", { opacity: 0, scale: 0.5, duration: 0.3 })
                       .to("#demo-success", { opacity: 0, y: -20, duration: 0.3 })
                       .to(steps[0], { opacity: 0.3, duration: 0.5 });
 
 
-                    // --- SCENE 2: GAMING MODE ---
-                    // Transition Environment
+                    // --- SCENE 2: GAMING ---
+                    // Transition
                     tl.to(steps[1], { opacity: 1, duration: 0.5 }, "<")
                       .to("#demo-wallpaper", { opacity: 0, duration: 1 })
                       .to("#demo-gaming-bg", { opacity: 1, duration: 1 }, "<")
                       .to("#demo-folder", { opacity: 0, scale: 0, duration: 0.5 }, "<")
+                      
+                      // Arm enters nicely
                       .to("#demo-arm-wrapper", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.5)" }, "-=0.3")
                       
-                      // Cursor Morph to Crosshair
                       .to("#demo-cursor", { opacity: 0, duration: 0.3 }, "<")
                       .to("#demo-crosshair", { opacity: 1, duration: 0.3 }, "<");
 
-                    // Interaction (Press Option) - FASTER SWING
-                    tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.1 }, "+=0.5") // Quicker press
-                      .to("#demo-arm", { rotationX: 40, rotationY: -60, x: 20, y: 50, duration: 0.1, ease: "power2.in" }) // Fast Swing Down
-                      .to("#demo-placed-block", { opacity: 1, duration: 0.05 }, ">") // Block Appears Instantly
-                      .to("#demo-arm", { rotationX: 20, rotationY: -30, x: 0, y: 0, duration: 0.2, ease: "elastic.out(1, 0.5)" }) // Bounce Back
-                      .set("#success-text", { text: "INSTANT TRIGGER" })
-                      .to("#demo-success", { y: 20, opacity: 1, duration: 0.4, ease: "elastic.out(1, 0.5)" }, "-=0.2");
-                    
-                    // Cleanup Scene 2
+                    // ACTION
+                    tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "none", duration: 0.1 }, "+=0.3")
+                      
+                      // Swing Arm
+                      .to("#demo-arm", { rotationX: 40, rotationY: -40, z: -20, duration: 0.15, ease: "power2.in" })
+                      
+                      // Screen Shake + Block + Particles
+                      .call(() => {
+                           const monitor = document.getElementById('demo-monitor');
+                           monitor.classList.remove('shake-screen');
+                           void monitor.offsetWidth; // Trigger reflow
+                           monitor.classList.add('shake-screen');
+                           spawnParticles();
+                      })
+                      .to("#demo-placed-block", { opacity: 1, scale: 1, duration: 0.1, ease: "back.out(2)" }, ">")
+                      
+                      // Return Arm
+                      .to("#demo-arm", { rotationX: 10, rotationY: -20, z: 0, duration: 0.3, ease: "elastic.out(1, 0.5)" })
+                      
+                      .set("#success-text", { text: "INSTANT GAMEPLAY" })
+                      .to("#demo-success", { y: 20, opacity: 1, duration: 0.4 }, "-=0.2");
+
+                    // Clean
                     tl.to("#key-opt", { backgroundColor: "rgba(255, 255, 255, 0.1)", borderColor: "rgba(255, 255, 255, 0.2)", y: 0, boxShadow: "0 4px 0 rgba(0, 0, 0, 0.3)", duration: 0.2 }, "+=0.5")
                       .to("#demo-success", { opacity: 0, y: -20, duration: 0.3 })
                       .to(steps[1], { opacity: 0.3, duration: 0.5 });
 
 
-                    // --- SCENE 3: AUTOMATION / AUTO TOGGLE ---
+                    // --- SCENE 3: AUTOMATION ---
                     tl.to(steps[2], { opacity: 1, duration: 0.5 }, "<")
                       
-                      // Minimize Game: Slide down and fade
-                      .to("#demo-gaming-bg", { scale: 0.8, opacity: 0, y: 50, duration: 0.8, ease: "power3.in" })
+                      // Minimize Game logic
+                      .to("#demo-gaming-bg", { scale: 0.9, opacity: 0, y: 100, duration: 0.8, ease: "power3.in" })
                       .to("#demo-placed-block", { opacity: 0, duration: 0.2 }, "<")
-                      .to("#demo-arm-wrapper", { opacity: 0, y: 100, duration: 0.5 }, "<")
+                      .to("#demo-arm-wrapper", { opacity: 0, y: 200, duration: 0.5 }, "<")
                       
-                      .to("#demo-wallpaper", { opacity: 0.8, duration: 1 }, "-=0.4")
+                      .to("#demo-wallpaper", { opacity: 1, duration: 1 }, "-=0.4")
                       .to("#demo-crosshair", { opacity: 0, duration: 0.3 }, "<")
                       .to("#demo-cursor", { opacity: 1, duration: 0.3 }, "<")
                       
-                      // AUTO TOGGLE ACTION REFINED
-                      // 1. Show App Switch Detected
+                      // Notifications
                       .to("#demo-auto-notification", { opacity: 1, x: 0, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2")
                       
-                      // 2. Status Bar Icon Changes (Visual cue)
-                      .to("#status-icon-enabled", { display: "none", duration: 0 }, "+=0.5")
+                      .to("#status-icon-enabled", { display: "none", duration: 0 }, "+=0.3")
                       .to("#status-icon-disabled", { display: "block", duration: 0.2 })
                       
-                      // 3. Show Enabled Notification (Slide down from previous notification)
-                      .to("#notif-optclicker", { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.2)" }, "<+0.2");
+                      .to("#notif-optclicker", { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.2)" }, "<+0.1");
 
-                    // Final Hold
-                    tl.to({}, { duration: 2 });
+                    tl.to({}, { duration: 1 });
                 };
 
                 onMounted(() => {
@@ -1162,7 +1203,6 @@
                     setTimeout(initScrollAnimation, 100);
                     lucide.createIcons();
 
-                    // Fetch Version for OptClicker
                     fetch('https://api.github.com/repos/gitmichaelqiu/OptClicker/releases/latest')
                         .then(response => response.json())
                         .then(data => {
