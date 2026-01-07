@@ -383,9 +383,9 @@
                     </a>
                     
                     <div class="hidden md:flex items-center gap-1 border-l border-black/10 dark:border-white/10 px-2 h-6">
-                        <a href="#hero" @click.prevent="scrollTo('#hero')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive font-mono">HOME</a>
-                        <a href="#features" @click.prevent="scrollTo('#features')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive font-mono">FEATURES</a>
-                        <a href="#demo" @click.prevent="scrollTo('#demo')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive font-mono">DEMO</a>
+                        <a href="#hero" @click.prevent="scrollTo('#hero')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">HOME</a>
+                        <a href="#features" @click.prevent="scrollTo('#features')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">FEATURES</a>
+                        <a href="#demo" @click.prevent="scrollTo('#demo')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">DEMO</a>
                     </div>
 
                     <a href="#download" @click.prevent="scrollTo('#download')" class="hidden md:flex h-9 px-5 items-center gap-2 rounded-full bg-black dark:bg-white text-white dark:text-black font-bold text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg ml-1 cursor-interactive">
@@ -1035,6 +1035,12 @@
                     iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
                     iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
                     heroScene.add(iconMesh);
+                    
+                    // Added mouse move listener to update rotation variables for the 3D scene
+                    window.addEventListener('mousemove', (e) => {
+                        mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+                        mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+                    });
                     
                     const animate = () => {
                         requestAnimationFrame(animate);
