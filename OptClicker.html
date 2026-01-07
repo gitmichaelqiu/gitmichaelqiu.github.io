@@ -203,19 +203,29 @@
         }
         html.dark a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
 
-        /* Key Visualizer for Demo */
+        /* Key Visualizer for Demo - THEME AWARE */
         .key-cap {
+            /* Light Mode Defaults */
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+            color: #111;
+            border-radius: 8px;
+            transition: all 0.1s ease;
+        }
+        html.dark .key-cap {
+            /* Dark Mode Overrides */
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            transition: all 0.1s ease;
+            color: white;
         }
         .key-cap.pressed {
             transform: translateY(4px);
             box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
-            background: var(--klein-blue);
-            border-color: var(--klein-blue);
+            background: var(--klein-blue) !important;
+            border-color: var(--klein-blue) !important;
+            color: white !important;
         }
         
         /* Context Menu Demo */
@@ -256,10 +266,10 @@
             transform: scale(1.1);
         }
 
-        /* 3D Game Block in CSS - IMPROVED */
+        /* 3D Game Block in CSS - SEAMLESS FIX */
         .scene-3d {
             transform-style: preserve-3d;
-            perspective: 1200px; /* Better perspective */
+            perspective: 1000px;
         }
         .cube-wrap {
             position: absolute;
@@ -274,25 +284,27 @@
             height: 100px;
             transform-style: preserve-3d;
         }
+        /* Face Base */
         .face {
             position: absolute;
             width: 100px;
             height: 100px;
-            /* Solid Block look */
             background: #795548; 
-            /* box-shadow for inner definition instead of border to avoid gap issues */
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5); 
-            backface-visibility: visible; /* Fix for flickering/missing faces */
+            /* Inner shadow mimics AO and texture */
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6); 
+            /* Overlap borders slightly to fix gaps */
+            outline: 1px solid transparent; 
+            backface-visibility: hidden;
         }
-        /* Adjusted transformZ to 50px (half of 100px) */
-        .face--front { transform: translateZ(50px); background-color: #8D6E63; }
-        .face--back  { transform: rotateY(180deg) translateZ(50px); background-color: #5D4037; }
-        .face--right { transform: rotateY(90deg) translateZ(50px); background-color: #6D4C41; }
-        .face--left  { transform: rotateY(-90deg) translateZ(50px); background-color: #6D4C41; }
-        .face--top   { transform: rotateX(90deg) translateZ(50px); background-color: #4CAF50; /* Grass top */ border-bottom: none; }
-        .face--bottom{ transform: rotateX(-90deg) translateZ(50px); background-color: #3E2723; }
+        /* Overlap logic: translateZ slightly < 50px (e.g. 49.8px) to pinch corners */
+        .face--front { transform: translateZ(49.8px); background-color: #8D6E63; }
+        .face--back  { transform: rotateY(180deg) translateZ(49.8px); background-color: #5D4037; }
+        .face--right { transform: rotateY(90deg) translateZ(49.8px); background-color: #6D4C41; }
+        .face--left  { transform: rotateY(-90deg) translateZ(49.8px); background-color: #6D4C41; }
+        .face--top   { transform: rotateX(90deg) translateZ(49.8px); background-color: #4CAF50; /* Grass */ }
+        .face--bottom{ transform: rotateX(-90deg) translateZ(49.8px); background-color: #3E2723; }
 
-        /* Placed Block Style - IMPROVED */
+        /* Placed Block Style - SEAMLESS FIX */
         .placed-block {
             position: absolute;
             top: 50%;
@@ -300,7 +312,7 @@
             width: 60px;
             height: 60px;
             transform-style: preserve-3d;
-            transform: translate(-50%, -50%) rotateX(20deg) rotateY(45deg);
+            transform: translate(-50%, -50%) rotateX(10deg) rotateY(45deg);
             opacity: 0;
         }
         .placed-face {
@@ -308,15 +320,17 @@
             width: 60px;
             height: 60px;
             background: #795548;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-            backface-visibility: visible;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            backface-visibility: hidden;
+            outline: 1px solid transparent;
         }
-        .placed-face--front { transform: translateZ(30px); background-color: #8D6E63; }
-        .placed-face--back  { transform: rotateY(180deg) translateZ(30px); background-color: #5D4037; }
-        .placed-face--top { transform: rotateX(90deg) translateZ(30px); background-color: #4CAF50; }
-        .placed-face--bottom{ transform: rotateX(-90deg) translateZ(30px); background-color: #3E2723; }
-        .placed-face--right { transform: rotateY(90deg) translateZ(30px); background-color: #6D4C41; }
-        .placed-face--left  { transform: rotateY(-90deg) translateZ(30px); background-color: #6D4C41; }
+        /* Overlap logic: translateZ slightly < 30px (e.g. 29.8px) */
+        .placed-face--front { transform: translateZ(29.8px); background-color: #8D6E63; }
+        .placed-face--back  { transform: rotateY(180deg) translateZ(29.8px); background-color: #5D4037; }
+        .placed-face--top { transform: rotateX(90deg) translateZ(29.8px); background-color: #4CAF50; }
+        .placed-face--bottom{ transform: rotateX(-90deg) translateZ(29.8px); background-color: #3E2723; }
+        .placed-face--right { transform: rotateY(90deg) translateZ(29.8px); background-color: #6D4C41; }
+        .placed-face--left  { transform: rotateY(-90deg) translateZ(29.8px); background-color: #6D4C41; }
 
         /* Notification Pill - Unified */
         .notification-pill {
@@ -701,15 +715,15 @@
                             <div id="demo-keyboard" class="absolute bottom-12 left-12 glass-card p-6 rounded-2xl border border-white/20 opacity-0 transform translate-y-10 no-hover z-50">
                                 <div class="flex items-end gap-2">
                                     <div class="flex flex-col items-center gap-1">
-                                        <div id="key-ctrl" class="key-cap w-12 h-12 flex items-center justify-center text-xs font-mono text-white">^</div>
+                                        <div id="key-ctrl" class="key-cap w-12 h-12 flex items-center justify-center text-xs font-mono text-black dark:text-white">^</div>
                                         <span class="text-[8px] font-mono text-gray-500">CTRL</span>
                                     </div>
                                     <div class="flex flex-col items-center gap-1">
-                                        <div id="key-opt" class="key-cap w-14 h-12 flex items-center justify-center text-xs font-mono text-white">⌥</div>
+                                        <div id="key-opt" class="key-cap w-14 h-12 flex items-center justify-center text-xs font-mono text-black dark:text-white">⌥</div>
                                         <span class="text-[8px] font-mono text-gray-500">OPT</span>
                                     </div>
                                     <div class="flex flex-col items-center gap-1">
-                                        <div id="key-cmd" class="key-cap w-16 h-12 flex items-center justify-center text-xs font-mono text-white">⌘</div>
+                                        <div id="key-cmd" class="key-cap w-16 h-12 flex items-center justify-center text-xs font-mono text-black dark:text-white">⌘</div>
                                         <span class="text-[8px] font-mono text-gray-500">CMD</span>
                                     </div>
                                 </div>
