@@ -1058,9 +1058,9 @@
                     gameArmMesh.rotation.set(0.2, -0.1, 0.1);
                     
                     // Held Block
-                    const blockGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                    const blockGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5); // Increased scale
                     gameHeldBlockMesh = new THREE.Mesh(blockGeo, grassMat);
-                    gameHeldBlockMesh.position.set(0, 0.6, -0.2); // Relative to Arm top
+                    gameHeldBlockMesh.position.set(0, 0.75, -0.15); // Adjusted for larger block
                     gameHeldBlockMesh.rotation.set(0, Math.PI/4, 0);
                     gameArmMesh.add(gameHeldBlockMesh);
 
@@ -1071,7 +1071,7 @@
                     // Placed Block (In World)
                     // Start HIDDEN and at correct scale 0
                     gamePlacedBlockMesh = new THREE.Mesh(blockGeo, grassMat);
-                    gamePlacedBlockMesh.position.set(0, 0.15, -3); // On ground
+                    gamePlacedBlockMesh.position.set(0, 0.25, -3); // On ground (y=half height)
                     gamePlacedBlockMesh.castShadow = true;
                     gamePlacedBlockMesh.receiveShadow = true;
                     gamePlacedBlockMesh.visible = false; 
@@ -1171,36 +1171,23 @@
                       // Swing Arm Down
                       .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.8, y: -0.5, duration: 0.1, ease: "power2.in" })
                       
-                      // AT APEX of Swing: Swap Visibility
+                      // AT APEX of Swing: Swap Visibility & Screen Shake
                       .call(() => { 
-                          // Hide Held Block
-                          if(gameHeldBlockMesh) gameHeldBlockMesh.visible = false;
-                          
-                          // Show Placed Block
-                          if(gamePlacedBlockMesh) {
-                               gamePlacedBlockMesh.visible = true;
-                               // Pop up animation
-                               gsap.fromTo(gamePlacedBlockMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 0.3, ease:"back.out(2)"});
-                          }
-                          
-                          // Screen Shake
                           const monitor = document.getElementById('demo-monitor');
                           monitor.classList.remove('shake-screen');
                           void monitor.offsetWidth; 
                           monitor.classList.add('shake-screen');
                       })
+                      .set(gameHeldBlockMesh, { visible: false }, ">")
+                      .set(gamePlacedBlockMesh, { visible: true }, "<")
+                      .to(gamePlacedBlockMesh.scale, { x: 1, y: 1, z: 1, duration: 0.3, ease: "back.out(2)" }, "<")
                       
                       // Return Arm
                       .to(gameArmMesh ? gameArmMesh.rotation : {}, { x: 0.2, y: -0.1, duration: 0.3, ease: "elastic.out(1, 0.5)" })
                       
                       // Regain Block (Creative mode style - it pops back into hand)
-                      .call(() => { 
-                          if(gameHeldBlockMesh) {
-                              gameHeldBlockMesh.visible = true;
-                              gameHeldBlockMesh.scale.set(0,0,0);
-                              gsap.to(gameHeldBlockMesh.scale, {x:1, y:1, z:1, duration: 0.2, ease: "back.out"});
-                          } 
-                      }, null, "+=0.2")
+                      .set(gameHeldBlockMesh, { visible: true }, "+=0.2")
+                      .fromTo(gameHeldBlockMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 0.2, ease: "back.out"}, "<")
                       
                       .set("#success-text", { text: "INSTANT GAMEPLAY" })
                       .to("#demo-success", { y: 20, opacity: 1, duration: 0.4 }, "-=0.2");
