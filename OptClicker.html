@@ -24,6 +24,7 @@
                         mono: ['JetBrains Mono', 'monospace'],
                         display: ['Syncopate', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
+                        cursive: ['Comic Sans MS', 'Comic Sans', 'cursive'],
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
@@ -31,6 +32,7 @@
                         'float': 'float 10s ease-in-out infinite',
                         'bounce-subtle': 'bounceSubtle 2s infinite',
                         'key-press': 'keyPress 0.3s ease-in-out',
+                        'spin-slow': 'spin 12s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -61,6 +63,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Fonts matched exactly to DesktopRenamer -->
     <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <!-- Styles -->
@@ -235,6 +239,21 @@
             color: white;
         }
 
+        /* Game Block for Demo */
+        .game-block-face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(139, 69, 19, 0.8); /* Dirt color */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .game-block-face--top { transform: rotateX(90deg) translateZ(50px); background: rgba(34, 139, 34, 0.8); /* Grass */ }
+        .game-block-face--front { transform: translateZ(50px); }
+        .game-block-face--right { transform: rotateY(90deg) translateZ(50px); filter: brightness(0.8); }
+
         /* Premium Download Card Style */
         .premium-download-card {
             background: rgba(10, 10, 12, 0.85);
@@ -405,19 +424,19 @@
                         </div>
                         
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-blue transition-all duration-300 group">
-                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">NATIVE</h3><i data-lucide="zap" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
-                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white card-content"><li>Swift</li><li>Lightweight</li><li>Fast</li></ul>
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">GAMING</h3><i data-lucide="gamepad-2" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white card-content"><li>Native</li><li>Instant</li><li>Zero Latency</li></ul>
                         </div>
                         
                         <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-gray transition-all duration-300 group">
-                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">UI</h3><i data-lucide="layout-template" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
-                             <div class="mt-4 card-content"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">Menu<br>Bar</p></div>
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">CONTROL</h3><i data-lucide="sliders" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                             <div class="mt-4 card-content"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">Auto<br>Toggle</p></div>
                         </div>
                         
                         <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
                              <div class="card-corner-glow"></div>
                              <div class="card-content">
-                                 <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">CONTROL</h3>
+                                 <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">PHILOSOPHY</h3>
                                  <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">"Bridge the gap between keyboard and trackpad."</p>
                              </div>
                         </div>
@@ -426,31 +445,37 @@
             </section>
 
             <!-- DEMO SECTION -->
-            <section id="demo" class="relative bg-[#050505] z-30" style="height: 500vh;">
+            <section id="demo" class="relative bg-[#050505] z-30" style="height: 600vh;">
                 <!-- Sticky Wrapper -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
                     
                     <!-- Background Ambiance -->
-                    <div class="absolute inset-0 bg-[#050505]"></div>
+                    <div class="absolute inset-0 bg-[#050505] transition-colors duration-1000" id="demo-bg"></div>
                     <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/10 to-blue-900/10 opacity-50"></div>
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-klein-blue/5 rounded-full blur-[100px] pointer-events-none animate-pulse-slow"></div>
 
                     <!-- Flow Visualization Container -->
-                    <div class="relative w-full max-w-5xl px-6 z-10 flex items-center justify-center">
+                    <div class="relative w-full max-w-5xl px-6 z-10 flex items-center justify-center perspective-[1000px]">
                         
                         <!-- Desktop Scene -->
-                        <div class="w-full aspect-[16/9] bg-[#0a0a0a] border border-white/10 rounded-xl relative overflow-hidden shadow-2xl flex items-center justify-center">
+                        <div class="w-full aspect-[16/9] bg-[#0a0a0a] border border-white/10 rounded-xl relative overflow-hidden shadow-2xl flex items-center justify-center transition-all duration-700" id="demo-monitor">
                             
-                            <!-- Wallpaper -->
-                            <div class="absolute inset-0 bg-gradient-to-br from-[#111] to-[#050505]">
+                            <!-- Wallpaper Layer -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#111] to-[#050505] transition-opacity duration-700" id="demo-wallpaper">
                                 <img src="https://www.macplanete.com/wp-content/uploads/2025/06/macOS26_Clair-scaled.jpg" 
                                      alt="Wallpaper" 
                                      class="absolute inset-0 w-full h-full object-cover opacity-80"
                                      style="object-position: center bottom;">
                                 <div class="absolute inset-0 bg-black/20"></div>
                             </div>
+                            
+                            <!-- Gaming Background Layer -->
+                            <div class="absolute inset-0 bg-stone-900 opacity-0 transition-opacity duration-700 flex items-center justify-center" id="demo-gaming-bg">
+                                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                                <div class="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            </div>
 
-                            <!-- Desktop Icon (Folder) -->
+                            <!-- SCENE 1: DESKTOP -->
                             <div id="demo-folder" class="relative flex flex-col items-center gap-2 transform translate-y-10">
                                 <div class="w-24 h-20 bg-blue-400/90 rounded-md border-t-4 border-blue-300 shadow-xl relative folder-icon">
                                     <div class="absolute -top-3 left-0 w-10 h-4 bg-blue-400/90 rounded-t-md border-t border-l border-r border-blue-300"></div>
@@ -458,11 +483,62 @@
                                 <span class="text-xs font-bold text-white shadow-black drop-shadow-md bg-black/20 px-2 rounded">Project Alpha</span>
                             </div>
 
+                            <!-- SCENE 2: GAMING BLOCK -->
+                            <div id="demo-block" class="absolute opacity-0 transform-style-3d animate-spin-slow">
+                                <div class="relative w-[100px] h-[100px] transform-style-3d">
+                                    <div class="game-block-face game-block-face--front"></div>
+                                    <div class="game-block-face game-block-face--top"></div>
+                                    <div class="game-block-face game-block-face--right"></div>
+                                </div>
+                            </div>
+
+                            <!-- SCENE 3: SETTINGS WINDOW -->
+                            <div id="demo-settings" class="absolute glass-card w-80 rounded-xl border border-white/10 opacity-0 shadow-2xl no-hover flex flex-col overflow-hidden bg-[#1e1e1e]/90 backdrop-blur-xl font-sans">
+                                <!-- Title Bar -->
+                                <div class="h-8 bg-black/20 border-b border-white/5 flex items-center px-3 gap-2">
+                                    <div class="flex gap-1.5">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                                    </div>
+                                    <span class="text-[10px] font-medium text-gray-400 ml-2">Auto-Toggle Rules</span>
+                                </div>
+                                <!-- Content -->
+                                <div class="p-4 flex flex-col gap-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-300">Enable Auto-Toggle</span>
+                                        <div class="w-8 h-4 bg-klein-blue rounded-full relative"><div class="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
+                                    </div>
+                                    <div class="h-[1px] bg-white/10"></div>
+                                    <div class="text-[10px] text-gray-500 font-mono mb-1">TARGET APPS</div>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center gap-2 bg-white/5 p-2 rounded border border-white/5">
+                                            <div class="w-4 h-4 bg-green-600 rounded-sm"></div>
+                                            <span class="text-xs text-gray-300">Minecraft</span>
+                                            <span class="text-[9px] text-gray-500 ml-auto font-mono">proc:java</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-white/5 p-2 rounded border border-white/5 opacity-50">
+                                            <div class="w-4 h-4 bg-blue-600 rounded-sm"></div>
+                                            <span class="text-xs text-gray-300">Steam</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end gap-2 mt-2">
+                                        <div class="w-4 h-4 rounded bg-white/10 flex items-center justify-center text-[10px] text-gray-400">+</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <!-- Simulated Cursor -->
-                            <div id="demo-cursor" class="absolute top-1/2 left-1/4 w-6 h-6 z-50 pointer-events-none" style="transform: translate(-50%, -50%);">
+                            <div id="demo-cursor" class="absolute top-1/2 left-1/4 w-6 h-6 z-50 pointer-events-none transition-all duration-300" style="transform: translate(-50%, -50%);">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M5.5 3L17.5 15L11.5 16L14.5 21L12.5 22L9.5 17L5.5 21V3Z" fill="white" stroke="black" stroke-width="1.5"/>
                                 </svg>
+                            </div>
+                            <!-- Crosshair (Hidden by default) -->
+                            <div id="demo-crosshair" class="absolute top-1/2 left-1/2 w-8 h-8 z-50 pointer-events-none opacity-0" style="transform: translate(-50%, -50%);">
+                                <div class="absolute top-1/2 left-0 w-full h-[2px] bg-white/80"></div>
+                                <div class="absolute left-1/2 top-0 h-full w-[2px] bg-white/80"></div>
                             </div>
 
                             <!-- Floating Keyboard Visualizer -->
@@ -494,9 +570,9 @@
                             </div>
 
                             <!-- Success Banner -->
-                            <div id="demo-success" class="absolute top-12 glass-card px-8 py-4 rounded-full border border-klein-blue/50 opacity-0 transform -translate-y-10 flex items-center gap-3 no-hover bg-black/60 backdrop-blur-md">
+                            <div id="demo-success" class="absolute top-12 glass-card px-8 py-4 rounded-full border border-klein-blue/50 opacity-0 transform -translate-y-10 flex items-center gap-3 no-hover bg-black/60 backdrop-blur-md z-50">
                                 <i data-lucide="check-circle" class="w-6 h-6 text-klein-blue"></i>
-                                <span class="font-bold text-white tracking-wide">RIGHT CLICK TRIGGERED</span>
+                                <span class="font-bold text-white tracking-wide" id="success-text">RIGHT CLICK TRIGGERED</span>
                             </div>
 
                         </div>
@@ -510,17 +586,17 @@
                             
                             <div class="demo-step flex flex-col items-center gap-3 opacity-30 transition-all duration-500" data-step="1">
                                 <div class="w-3 h-3 rounded-full bg-white ring-4 ring-black"></div>
-                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">HOVER</span>
+                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">NATIVE</span>
                             </div>
                             
                             <div class="demo-step flex flex-col items-center gap-3 opacity-30 transition-all duration-500" data-step="2">
                                 <div class="w-3 h-3 rounded-full bg-white ring-4 ring-black"></div>
-                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">PRESS OPTION</span>
+                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">GAMING</span>
                             </div>
                             
                             <div class="demo-step flex flex-col items-center gap-3 opacity-30 transition-all duration-500" data-step="3">
                                 <div class="w-3 h-3 rounded-full bg-white ring-4 ring-black"></div>
-                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">CONTEXT</span>
+                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">AUTOMATION</span>
                             </div>
                         </div>
                     </div>
@@ -800,7 +876,7 @@
                     gsap.to(".hero-subtitle", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.8 });
                     if(iconMesh) gsap.fromTo(iconMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 2, ease: "elastic.out(1, 0.5)", delay: 0.2});
 
-                    // Demo Animation
+                    // Demo Animation Timeline
                     const tl = gsap.timeline({
                         scrollTrigger: {
                             trigger: "#demo",
@@ -812,19 +888,20 @@
 
                     const steps = document.querySelectorAll('.demo-step');
 
-                    // 0. Setup
-                    tl.set("#demo-context-menu", { scale: 0.5, opacity: 0 });
+                    // --- INITIAL SETUP ---
+                    tl.set("#demo-context-menu", { scale: 0.5, opacity: 0, pointerEvents: "none" });
                     tl.set("#demo-success", { y: -20, opacity: 0 });
-
+                    tl.set("#demo-block", { opacity: 0, scale: 0.5 });
+                    tl.set("#demo-settings", { opacity: 0, y: 50, scale: 0.9 });
+                    
+                    // --- SCENE 1: DESKTOP (Native) ---
                     // 1. Initial State (Hover)
                     tl.to(steps[0], { opacity: 1, duration: 0.5 })
                       .to("#demo-keyboard", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)" })
                       .to("#demo-cursor", { top: "50%", left: "50%", duration: 1.5, ease: "power2.inOut" }, "<");
 
                     // 2. Press Option Key
-                    tl.to(steps[0], { opacity: 0.3, duration: 0.5 }, "+=0.2")
-                      .to(steps[1], { opacity: 1, duration: 0.5 }, "<")
-                      .to("#key-opt", { 
+                    tl.to("#key-opt", { 
                           backgroundColor: "#002FA7", 
                           borderColor: "#002FA7", 
                           y: 4,
@@ -832,23 +909,57 @@
                           duration: 0.2 
                       });
 
-                    // 3. Trigger Right Click (Context Menu appears)
-                    tl.to(steps[1], { opacity: 0.3, duration: 0.5 }, "+=0.2")
-                      .to(steps[2], { opacity: 1, duration: 0.5 }, "<")
-                      .set("#demo-context-menu", { top: "50%", left: "50%" })
+                    // 3. Trigger Right Click (Context Menu)
+                    tl.set("#demo-context-menu", { top: "50%", left: "50%" })
                       .to("#demo-context-menu", { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" })
                       .to("#demo-success", { y: 20, opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" }, "<+0.1");
 
-                    // 4. Release Key
-                    tl.to("#key-opt", { 
-                          backgroundColor: "rgba(255, 255, 255, 0.1)", 
-                          borderColor: "rgba(255, 255, 255, 0.2)", 
-                          y: 0,
-                          boxShadow: "0 4px 0 rgba(0, 0, 0, 0.3)",
-                          duration: 0.2 
-                      }, "+=0.5");
+                    // 4. Reset for Transition
+                    tl.to("#key-opt", { backgroundColor: "rgba(255, 255, 255, 0.1)", borderColor: "rgba(255, 255, 255, 0.2)", y: 0, boxShadow: "0 4px 0 rgba(0, 0, 0, 0.3)", duration: 0.2 }, "+=0.5")
+                      .to("#demo-context-menu", { opacity: 0, scale: 0.5, duration: 0.3 })
+                      .to("#demo-success", { opacity: 0, y: -20, duration: 0.3 })
+                      .to(steps[0], { opacity: 0.3, duration: 0.5 });
+
+
+                    // --- SCENE 2: GAMING MODE ---
+                    // Transition Environment
+                    tl.to(steps[1], { opacity: 1, duration: 0.5 }, "<")
+                      .to("#demo-wallpaper", { opacity: 0, duration: 1 })
+                      .to("#demo-gaming-bg", { opacity: 1, duration: 1 }, "<")
+                      .to("#demo-folder", { opacity: 0, scale: 0, duration: 0.5 }, "<")
+                      .to("#demo-block", { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.5)" }, "-=0.3")
                       
-                    // 5. Hold
+                      // Cursor Morph
+                      .to("#demo-cursor", { opacity: 0, duration: 0.3 }, "<")
+                      .to("#demo-crosshair", { opacity: 1, duration: 0.3 }, "<");
+
+                    // Interaction
+                    tl.to("#key-opt", { backgroundColor: "#002FA7", borderColor: "#002FA7", y: 4, boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.2 }, "+=0.5")
+                      .to("#demo-block", { rotationY: 360, duration: 0.6, ease: "power2.inOut" }) // Interact
+                      .set("#success-text", { text: "INSTANT TRIGGER" })
+                      .to("#demo-success", { y: 20, opacity: 1, duration: 0.4, ease: "elastic.out(1, 0.5)" }, "-=0.2");
+                    
+                    // Cleanup Scene 2
+                    tl.to("#key-opt", { backgroundColor: "rgba(255, 255, 255, 0.1)", borderColor: "rgba(255, 255, 255, 0.2)", y: 0, boxShadow: "0 4px 0 rgba(0, 0, 0, 0.3)", duration: 0.2 }, "+=0.5")
+                      .to("#demo-success", { opacity: 0, y: -20, duration: 0.3 })
+                      .to(steps[1], { opacity: 0.3, duration: 0.5 });
+
+
+                    // --- SCENE 3: AUTOMATION / SETTINGS ---
+                    tl.to(steps[2], { opacity: 1, duration: 0.5 }, "<")
+                      .to("#demo-gaming-bg", { opacity: 0, duration: 1 })
+                      .to("#demo-wallpaper", { opacity: 0.8, duration: 1 }, "<")
+                      .to("#demo-block", { opacity: 0, scale: 0.5, duration: 0.5 }, "<")
+                      .to("#demo-crosshair", { opacity: 0, duration: 0.3 }, "<")
+                      .to("#demo-cursor", { opacity: 1, duration: 0.3 }, "<")
+                      
+                      // Show Settings
+                      .to("#demo-settings", { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" }, "-=0.5")
+                      
+                      // Highlight Automation
+                      .to("#demo-settings", { borderColor: "#002FA7", boxShadow: "0 0 30px rgba(0,47,167,0.3)", duration: 0.5 });
+
+                    // Final Hold
                     tl.to({}, { duration: 2 });
                 };
 
