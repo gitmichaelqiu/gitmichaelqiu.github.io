@@ -146,6 +146,18 @@
             box-shadow: none !important;
         }
 
+        /* Window Specific High Contrast */
+        .window-card {
+            background: rgba(245, 245, 247, 0.95);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        html.dark .window-card {
+            background: rgba(30, 30, 32, 0.95);
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
         .card-corner-glow {
             position: absolute; top: 0; right: 0; width: 300px; height: 300px;
             background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
@@ -582,39 +594,39 @@
                                 <span class="text-xs font-bold text-white shadow-black drop-shadow-md bg-black/20 px-2 rounded">Project Alpha</span>
                             </div>
 
-                            <!-- SCENE 3: AUTOMATION RULES WINDOW (Updated to match source code) -->
-                            <div id="demo-automation-window" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 glass-card p-5 rounded-xl flex flex-col gap-4 opacity-0 scale-90 shadow-2xl z-50 font-sans">
-                                <div class="flex items-center justify-between border-b border-gray-200/20 pb-3">
+                            <!-- SCENE 3: AUTOMATION RULES WINDOW (High Contrast) -->
+                            <div id="demo-automation-window" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 window-card p-5 rounded-xl flex flex-col gap-4 opacity-0 scale-90 shadow-2xl z-50 font-sans">
+                                <div class="flex items-center justify-between border-b border-gray-300 dark:border-gray-700 pb-3">
                                     <span class="text-sm font-bold text-black dark:text-white">Auto Toggle</span>
                                     <div class="w-8 h-4 bg-green-500 rounded-full relative"><div class="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
                                 </div>
                                 
                                 <div class="flex flex-col gap-2">
-                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Target Apps</span>
-                                    <div class="bg-black/5 dark:bg-white/5 rounded-lg overflow-hidden border border-black/5 dark:border-white/5">
+                                    <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Target Apps</span>
+                                    <div class="bg-white dark:bg-black/30 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
                                         <!-- App 1 -->
-                                        <div class="flex items-center gap-3 p-2 border-b border-black/5 dark:border-white/5">
+                                        <div class="flex items-center gap-3 p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e]">
                                             <div class="w-6 h-6 bg-gradient-to-br from-green-600 to-green-800 rounded-md shadow-sm flex items-center justify-center text-[10px] text-white font-bold">M</div>
-                                            <span class="text-xs font-medium text-black dark:text-gray-200">Minecraft</span>
+                                            <span class="text-xs font-medium text-black dark:text-white">Minecraft</span>
                                         </div>
                                         <!-- App 2 -->
-                                        <div class="flex items-center gap-3 p-2 border-b border-black/5 dark:border-white/5">
+                                        <div class="flex items-center gap-3 p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e1e1e]">
                                             <div class="w-6 h-6 bg-gradient-to-br from-blue-700 to-blue-900 rounded-md shadow-sm flex items-center justify-center text-[10px] text-white font-bold"><i data-lucide="gamepad-2" class="w-3 h-3"></i></div>
-                                            <span class="text-xs font-medium text-black dark:text-gray-200">Steam</span>
+                                            <span class="text-xs font-medium text-black dark:text-white">Steam</span>
                                         </div>
                                         <!-- Process Rule -->
-                                        <div class="flex items-center gap-3 p-2">
+                                        <div class="flex items-center gap-3 p-2 bg-white dark:bg-[#1e1e1e]">
                                             <div class="w-6 h-6 bg-gray-600 rounded-md shadow-sm flex items-center justify-center text-white"><i data-lucide="terminal" class="w-3 h-3"></i></div>
                                             <div class="flex flex-col">
-                                                <span class="text-xs font-medium text-black dark:text-gray-200">proc:java</span>
+                                                <span class="text-xs font-medium text-black dark:text-white">proc:java</span>
                                                 <span class="text-[8px] text-gray-500">Process Match</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="flex gap-2">
-                                     <div class="w-4 h-4 rounded-md bg-black/10 dark:bg-white/10 flex items-center justify-center"><i data-lucide="plus" class="w-3 h-3 text-gray-500"></i></div>
-                                     <div class="w-4 h-4 rounded-md bg-black/10 dark:bg-white/10 flex items-center justify-center"><i data-lucide="minus" class="w-3 h-3 text-gray-500"></i></div>
+                                     <div class="w-5 h-5 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"><i data-lucide="plus" class="w-3 h-3 text-black dark:text-white"></i></div>
+                                     <div class="w-5 h-5 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"><i data-lucide="minus" class="w-3 h-3 text-black dark:text-white"></i></div>
                                 </div>
                             </div>
 
@@ -1094,10 +1106,9 @@
                     gameArmMesh.position.set(0.5, -0.5, -1); 
                     gameArmMesh.rotation.set(0.2, -0.1, 0.1);
                     
-                    // Held Block
-                    // Block bigger: 0.8 scale
-                    const blockGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8); 
-                    gameHeldBlockMesh = new THREE.Mesh(blockGeo, grassMat);
+                    // Held Block - smaller (0.25)
+                    const heldBlockGeo = new THREE.BoxGeometry(0.25, 0.25, 0.25); 
+                    gameHeldBlockMesh = new THREE.Mesh(heldBlockGeo, grassMat);
                     // Adjust position relative to shorter arm
                     gameHeldBlockMesh.position.set(0, 0.5, -0.2); 
                     gameHeldBlockMesh.rotation.set(0, Math.PI/4, 0);
@@ -1108,10 +1119,11 @@
                     gameCamera.position.set(0, 1.7, 0); // Eye height
 
                     // Placed Block (In World)
-                    // Start HIDDEN and at correct scale 0
-                    gamePlacedBlockMesh = new THREE.Mesh(blockGeo, grassMat);
-                    // Higher Y position: half height = 0.4
-                    gamePlacedBlockMesh.position.set(0, 0.4, -3); 
+                    // Bigger (1.0)
+                    const placedBlockGeo = new THREE.BoxGeometry(1.0, 1.0, 1.0);
+                    gamePlacedBlockMesh = new THREE.Mesh(placedBlockGeo, grassMat);
+                    // Higher Y position: half height = 0.5
+                    gamePlacedBlockMesh.position.set(0, 0.5, -3); 
                     gamePlacedBlockMesh.castShadow = true;
                     gamePlacedBlockMesh.receiveShadow = true;
                     gamePlacedBlockMesh.visible = false; 
