@@ -168,7 +168,6 @@
         html.dark .app-card-glass:hover { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3); }
 
         /* --- PHOTOS SECTION REDESIGN --- */
-        /* Wrapper Context */
         #photos-wrapper {
             transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             background-color: #050505;
@@ -178,9 +177,7 @@
         #photos-wrapper.light-mode { background-color: #ffffff; color: #002FA7; }
         #photos-wrapper.dark-mode { background-color: #020412; color: #ffffff; }
 
-        /* Wave Component - SMOOTHER LINES */
         a-waves {
-            /* Changed from 4000 to 20000 for long page support */
             --x: -0.5rem; --y: 50%; --dash-offset: 20000;
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 0;
@@ -191,13 +188,11 @@
             stroke-dasharray: 20000; 
             stroke-dashoffset: var(--dash-offset);
         }
-        /* Mode-based Stroke Colors */
         a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
         #photos-wrapper.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.15); }
 
-        /* Photo Cards */
         .photo-card-wrapper {
-            opacity: 0; transform: translateY(50px); /* Initial State for Batch Reveal */
+            opacity: 0; transform: translateY(50px);
             will-change: transform, opacity;
         }
 
@@ -212,7 +207,6 @@
             box-shadow: 0 20px 40px rgba(0, 47, 167, 0.3);
         }
 
-        /* Nav & Layout */
         .nav-glass {
             background: rgba(150, 150, 150, 0.1); 
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -225,8 +219,6 @@
         .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.5s ease; }
         .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
 
-        /* --- FIX FOR DISAPPEARING ELEMENTS --- */
-        /* Disable backdrop-filter when main is scaled/blurred/grayscale (sidebar open) */
         main.grayscale .glass-card, 
         main.grayscale .app-card-glass,
         main.grayscale .photo-card-vertical,
@@ -278,7 +270,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- FIX: Added pathLength="100" to decouple progress from geometry -->
                 <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
                     <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
                      <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
@@ -306,12 +297,10 @@
 
         <transition name="sidebar">
             <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10001] border-r border-gray-200 dark:border-white/10 flex flex-col shadow-2xl overflow-y-auto overflow-x-hidden" style="container-type: inline-size;">
-                <!-- OPTIMIZED: Header layout with Logo to the right -->
                 <div class="absolute top-8 left-8 md:left-12 right-12 flex items-center justify-between z-50">
                     <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
-                    <!-- LOGO ADDED - FULL VERSION TO THE RIGHT -->
                     <svg class="h-12 w-auto text-klein-blue" viewBox="0 0 1000 500" fill="currentColor">
                         <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
                         <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
@@ -323,7 +312,6 @@
                 <div class="flex flex-col gap-8 relative z-10 mt-48 w-full">
                     <div class="font-mono text-sm text-klein-blue mb-4 tracking-[0.3em] font-bold pl-8 md:pl-12">SYSTEM MAP</div>
                     
-                    <!-- Updated Link Logic -->
                     <a href="#home" 
                     @click.prevent="handleNavClick('home')"
                     class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" 
@@ -490,21 +478,17 @@
                 </div>
             </section>
 
-            <!-- PHOTOS SECTION (REFACTORED) -->
+            <!-- PHOTOS SECTION -->
             <div id="photos-wrapper" :class="[activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
-                <!-- Background Waves (Fixed relative to wrapper) -->
                 <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                      <a-waves class="w-full h-full"></a-waves>
                 </div>
 
-                <!-- Intro Sequence (Pinned) -->
                 <section id="photos-intro" class="h-screen flex items-center justify-center relative z-10 sticky top-0 overflow-hidden">
                     <div class="relative w-full h-full flex items-center justify-center pointer-events-none">
-                        <!-- Huge Title -->
                         <h2 class="gallery-title absolute text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none opacity-0">
                             GALLERY
                         </h2>
-                        <!-- Quote -->
                         <div class="gallery-quote absolute text-center opacity-0 max-w-3xl px-6 w-full transform translate-y-12">
                             <p class="font-serif italic text-3xl md:text-5xl leading-tight mb-2">
                                 "Code creates the logic. Photography captures the soul."
@@ -513,7 +497,6 @@
                     </div>
                 </section>
 
-                <!-- Grid (Natural Scroll) -->
                 <section id="photos" class="relative z-20 pb-32 px-6 md:px-12 w-full max-w-[95vw] mx-auto min-h-screen">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
                         <!-- Column 1 -->
@@ -553,8 +536,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Enter Gallery Link (FIXED: Supports Light & Dark Theme) -->
                              <a href="#" class="photo-card-wrapper block">
                                 <div class="photo-card-vertical group relative w-full aspect-square bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue shadow-2xl transition-all duration-500">
                                     <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
@@ -607,8 +588,6 @@
 
             <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
                 <p>&copy; {{ new Date().getFullYear() }} MICHAEL QIU.</p>
-                
-                <!-- Logo Centered -->
                 <a href="#home" class="group flex items-center justify-center hover:scale-105 transition-transform duration-300">
                     <svg class="h-10 w-auto text-gray-400 group-hover:text-klein-blue transition-colors" viewBox="0 0 1000 500" fill="currentColor">
                         <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
@@ -617,8 +596,6 @@
                         <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
                     </svg>
                 </a>
-
-                <!-- Back to Top Arrow -->
                 <div class="flex gap-8 mt-6 md:mt-0">
                     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-white/10 hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
                         <i data-lucide="arrow-up" class="w-5 h-5"></i>
@@ -654,7 +631,6 @@
             }
         }
 
-        /* --- FIXED AWAVES CLASS --- */
         class AWaves extends HTMLElement {
             constructor() {
                 super();
@@ -676,7 +652,6 @@
 
                 this.setSize(); this.setLines(); this.bindEvents();
                 
-                // Add ResizeObserver to handle content expansion (e.g. photos loading)
                 this.resizeObserver = new ResizeObserver(entries => {
                     if(this.resizeTimer) clearTimeout(this.resizeTimer);
                     this.resizeTimer = setTimeout(() => {
@@ -717,13 +692,11 @@
             setLines() {
                 const { width, height } = this.bounding;
                 this.lines = []; this.svg.innerHTML = ''; this.paths = [];
-                // OPTIMIZATION: Increased gap size to reduce number of lines/points
                 const xGap = 30; const yGap = 80; 
                 const oWidth = width + 200; const oHeight = height + 30;
                 const totalLines = Math.ceil(oWidth / xGap); const totalPoints = Math.ceil(oHeight / yGap);
                 const xStart = (width - xGap * totalLines) / 2; const yStart = (height - yGap * totalPoints) / 2;
                 
-                // Set pathLength equal to a safe maximum to prevent cutoff
                 const pathLength = 20000;
 
                 for (let i = 0; i <= totalLines; i++) {
@@ -746,16 +719,6 @@
                     lineObj.points.forEach((p) => {
                         const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
                         p.wave.x = Math.cos(move) * 32 * amp; p.wave.y = Math.sin(move) * 16 * amp;
-                        
-                        // FIX: Removed Mouse Interaction to optimize performance
-                        /*
-                        const dx = p.x - mouse.sx; const dy = p.y - mouse.sy;
-                        const d = Math.hypot(dx, dy); const l = Math.max(175, mouse.vs);
-                        if (d < l) {
-                            const s = 1 - d / l; const f = Math.cos(d * 0.001) * s;
-                            p.cursor.vx += Math.cos(mouse.a) * f * l * mouse.vs * 0.00065; p.cursor.vy += Math.sin(mouse.a) * f * l * mouse.vs * 0.00065;
-                        }
-                        */
                         p.cursor.vx += (0 - p.cursor.x) * 0.005; p.cursor.vy += (0 - p.cursor.y) * 0.005;
                         p.cursor.vx *= 0.925; p.cursor.vy *= 0.925;
                         p.cursor.x += p.cursor.vx * 2; p.cursor.y += p.cursor.vy * 2;
@@ -770,7 +733,6 @@
                 const { lines, moved, paths } = this;
                 lines.forEach((lineObj, lIndex) => {
                     const points = lineObj.points; const lastIdx = points.length - 1;
-                    // FIX: Uses Quadratic Bezier for smoothing instead of LineTo
                     let pStart = moved(points[lastIdx], false); 
                     let d = `M ${pStart.x} ${pStart.y}`;
                     
@@ -778,7 +740,6 @@
                         const p = moved(points[i], true);
                         const pNext = (i > 0) ? moved(points[i-1], true) : p;
                         
-                        // Simple mid-point smoothing
                         if (i > 0) {
                             const midX = (p.x + pNext.x) / 2;
                             const midY = (p.y + pNext.y) / 2;
@@ -822,14 +783,24 @@
                 const navBtnLeft = ref(null);
                 const navCapsule = ref(null);
                 const navBtnRight = ref(null);
-                
-                const systemLinks = [
-                    { name: 'HOME', targetId: 'home', isExternal: false },
-                    { name: 'BLOG', url: 'https://gitmichaelqiu.github.io/blog/', isExternal: true },
-                    { name: 'APPS', targetId: 'works', isExternal: false },
-                    { name: 'PHOTOS', targetId: 'photos', isExternal: false }
-                ];
-                
+
+                const handleNavClick = (targetId) => {
+                    isSidebarOpen.value = false;
+                    setTimeout(() => {
+                        const el = document.getElementById(targetId);
+                        if (el && lenis) {
+                            lenis.scrollTo(el);
+                        }
+                    }, 400); 
+                };
+
+                const handleLinkClick = (event, link) => {
+                    if (!link.isExternal) {
+                        event.preventDefault();
+                        handleNavClick(link.targetId);
+                    }
+                };
+                                
                 const apps = [
                     { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png' },
                     { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/opt-clicker.png' },
@@ -852,10 +823,9 @@
                 let lenis;
                 let ballsRef = []; 
 
-                // FIX: Removed capsulePerimeter as we now use pathLength="100"
                 const capsuleDashOffset = computed(() => {
                     const progress = Math.min(100, Math.max(0, scrollProgress.value));
-                    return 100 - progress; // Simple mapping for pathLength="100"
+                    return 100 - progress;
                 });
 
                 const photoColumns = computed(() => {
@@ -879,7 +849,7 @@
                     activeTheme.value = resolved;
                     if (resolved === 'dark') document.documentElement.classList.add('dark');
                     else document.documentElement.classList.remove('dark');
-                    updateNavColors(); // Force update on theme change
+                    updateNavColors(); 
                 };
 
                 const cycleTheme = () => {
@@ -889,7 +859,6 @@
                     resolveTheme();
                 };
 
-                // RESTORED ORIGINAL CAPSULE LOGIC
                 const getLuminance = (colorStr) => {
                     const canvas = document.createElement("canvas");
                     canvas.width = 1; canvas.height = 1;
@@ -905,13 +874,9 @@
                     const rect = el.getBoundingClientRect();
                     const x = rect.left + rect.width / 2;
                     const y = rect.top + rect.height / 2;
-                    
-                    // Simple boundary check
                     if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) return 'text-white';
-
                     const elements = document.elementsFromPoint(x, y);
                     let bgLuminance = 0; 
-                    
                     for (let e of elements) {
                         if (e.tagName === 'NAV' || e.closest('nav') || e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) continue;
                         const style = window.getComputedStyle(e);
@@ -941,26 +906,20 @@
                     
                     window.lastScrollY = scrollTop;
 
-                    // Update Active Section
                     const sections = ['home', 'profile', 'works', 'photos', 'connect'];
                     let current = 'home';
-                    // Loop backwards to find the last section that is "in view"
                     for (const section of sections) {
                         const el = document.getElementById(section);
                         if (el) {
                             const rect = el.getBoundingClientRect();
-                            // Simple heuristic: if top is within view or we are past it
                             if (rect.top <= winHeight * 0.5) {
                                 current = section;
                             }
                         }
                     }
                     activeSection.value = current;
-                    
-                    // Run Contrast Check
                     updateNavColors();
 
-                    // Simple Scroll Anim logic (for Home/Intro)
                     const magContainer = document.getElementById('magnetic-container');
                     const heroText = document.querySelector('.hero-text-container');
                     const introText = document.querySelector('.intro-text');
@@ -1063,7 +1022,6 @@
                                 svg.appendChild(line);
                                 svg.appendChild(ball);
                                 let initialX, initialY;
-                                
                                 if (isBooting.value) {
                                     const angle = (ballIndex * 0.1) + (Math.random() * 0.5);
                                     const r = circleRadius + (Math.random() * 20 - 10);
@@ -1077,7 +1035,6 @@
                                     initialX = x; initialY = y;
                                     line.style.opacity = '0.15';
                                 }
-
                                 ball.setAttribute("cx", initialX); ball.setAttribute("cy", initialY);
                                 line.setAttribute("x1", initialX); line.setAttribute("y1", initialY);
                                 line.setAttribute("x2", initialX); line.setAttribute("y2", initialY);
@@ -1141,7 +1098,6 @@
                     gsap.to(".hero-text-container", { opacity: 1, duration: 2, ease: "power4.out", delay: 1.0 });
                 };
 
-                // ThreeJS Logic (Optimized: Only setup once)
                 const createSquircleShape = (size) => {
                     const shape = new THREE.Shape();
                     const width = size; const height = size;
@@ -1151,7 +1107,6 @@
                     shape.lineTo( x, y + height - r );
                     shape.quadraticCurveTo( x, y + height, x + r, y + height );
                     shape.lineTo( x + width - r, y + height );
-                    // FIX: Changed quadraticCurveTo control point from 'y' to 'y + height'
                     shape.quadraticCurveTo( x + width, y + height, x + width, y + height - r );
                     shape.lineTo( x + width, y + r );
                     shape.quadraticCurveTo( x + width, y, x + width - r, y );
@@ -1341,16 +1296,10 @@
                     initThreeJS();
                     initCursor();
                     initLenis(); 
-                    // Use throttled scroll handler
                     window.addEventListener('scroll', onScroll);
-
                     await nextTick();
-
                     const waves = document.querySelector('a-waves');
                     if (waves) { waves.setSize(); waves.setLines(); }
-
-                    /* --- OPTIMIZED PHOTO SCROLLING --- */
-                    // 1. Pinned Intro Animation (Timeline)
                     const introTl = gsap.timeline({
                         scrollTrigger: {
                             trigger: "#photos-intro",
@@ -1361,15 +1310,12 @@
                             id: "photos-intro-trigger"
                         }
                     });
-
                     introTl
                         .to("a-waves", { "--dash-offset": 0, duration: 2, ease: "none" })
                         .to(".gallery-title", { opacity: 1, scale: 1, duration: 1, ease: "power2.out" }, "<")
                         .to(".gallery-title", { opacity: 0, scale: 1.5, filter: "blur(10px)", duration: 1 }, "+=0.5")
                         .to(".gallery-quote", { opacity: 1, y: 0, duration: 1 }, "-=0.5")
                         .to(".gallery-quote", { opacity: 0, y: -50, duration: 1 }, "+=1");
-
-                    // 2. Native Scroll Grid Reveal (Batch)
                     ScrollTrigger.batch(".photo-card-wrapper", {
                         onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: "power3.out" }),
                         start: "top 85%"
@@ -1384,8 +1330,8 @@
                 });
 
                 return {
-                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, systemLinks, photos, photoColumns,
-                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight
+                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, photos, photoColumns,
+                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight, handleNavClick, handleLinkClick, isBooting
                 };
             }
         }).mount('#app');
