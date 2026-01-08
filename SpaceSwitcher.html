@@ -490,11 +490,11 @@
                                 </div>
                             </div>
 
-                            <!-- GAMING WINDOW (HIDDEN FOR NEW FLOW) -->
+                            <!-- GAMING WINDOW -->
                             <div id="window-game" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-indigo-900 rounded-lg shadow-2xl border border-white/10 flex items-center justify-center opacity-0 scale-95 hidden">
                                 <div class="text-center">
                                     <i data-lucide="gamepad-2" class="w-24 h-24 text-white mb-4 opacity-80"></i>
-                                    <h2 class="text-4xl font-black text-white tracking-widest">GAME LAUNCHER</h2>
+                                    <h2 class="text-4xl font-black text-white tracking-widest">AUTO DOCK</h2>
                                     <p class="text-indigo-200 mt-2">Ready to play.</p>
                                 </div>
                             </div>
@@ -580,22 +580,22 @@
                         <!-- Left Sidebar: Requirement Notice -->
                         <div class="premium-download-card rounded-3xl p-8 relative overflow-hidden flex flex-col justify-center items-center text-center w-full md:w-1/3 min-w-[280px]">
                             <div class="card-corner-glow"></div>
-                            <div class="relative z-10 flex flex-col items-center gap-6">
-                                <div class="flex items-center gap-4 mb-2">
-                                    <div class="w-16 h-16 rounded-2xl bg-white dark:bg-black flex items-center justify-center shadow-lg border border-black/5 dark:border-white/10">
+                            <div class="relative z-10 flex flex-col items-start gap-6 w-full">
+                                <div class="flex items-center gap-4 mb-2 w-full">
+                                    <div class="w-16 h-16 rounded-2xl bg-white dark:bg-black flex items-center justify-center shadow-lg border border-black/5 dark:border-white/10 flex-shrink-0">
                                         <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-16 h-16 rounded-lg" alt="Icon">
                                     </div>
-                                    <span class="font-display font-bold text-lg tracking-wide text-gray-900 dark:text-white">DesktopRenamer</span>
+                                    <span class="font-display font-bold text-lg tracking-wide text-gray-900 dark:text-white text-left break-words">Desktop<br>Renamer</span>
                                 </div>
-                                <div class="text-left w-full px-4">
-                                    <h3 class="font-bold text-xl text-black dark:text-white mb-2 text-center">Required First</h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 text-center">The backend engine that powers context detection.</p>
+                                <div class="text-left w-full px-0">
+                                    <h3 class="font-bold text-xl text-black dark:text-white mb-2 text-left">Required First</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 text-left">The backend engine that powers context detection.</p>
                                     
                                     <div class="flex flex-col gap-3 w-full">
-                                        <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases/latest" class="btn-premium btn-premium-primary px-4 py-3 rounded-full text-xs font-bold tracking-wide transition-all text-center flex items-center justify-center gap-2">
+                                        <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases/latest" class="btn-premium btn-premium-primary px-4 py-3 rounded-full text-xs font-bold tracking-wide transition-all text-center flex items-center justify-center gap-2 w-full">
                                             <i data-lucide="download" class="w-4 h-4 relative z-10"></i> <span class="relative z-10">Download App</span>
                                         </a>
-                                        <a href="DesktopRenamer.html" class="btn-premium btn-premium-secondary px-4 py-3 rounded-full text-xs font-bold tracking-wide transition-all text-center flex items-center justify-center gap-2">
+                                        <a href="DesktopRenamer.html" class="btn-premium btn-premium-secondary px-4 py-3 rounded-full text-xs font-bold tracking-wide transition-all text-center flex items-center justify-center gap-2 w-full">
                                             <i data-lucide="globe" class="w-4 h-4"></i> Website
                                         </a>
                                     </div>
@@ -892,7 +892,7 @@
                     // INITIAL
                     tl.set("#window-work", { opacity: 1, scale: 1 });
                     tl.set("#window-game", { opacity: 0, scale: 0.9, display: 'none' }); // Hide game launcher
-                    tl.set("#demo-success", { y: -20, opacity: 0 }); // Initial state for capsule
+                    // Removed capsule initialization
                     
                     // --- SWITCH TRIGGER (No initial "Work Space" phase) ---
                     tl.to(steps[0], { opacity: 1, duration: 0.5 });
@@ -908,24 +908,21 @@
 
                     // WINDOW SWITCH
                     tl.to("#window-work", { x: -800, opacity: 0, rotate: -10, duration: 0.8, ease: "power2.in" }, "<")
-                      // .to("#window-game", { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }, "-=0.4") // HIDE GAME LAUNCHER
+                      .to("#window-game", { display: 'flex', opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }, "-=0.4") // SHOW GAME LAUNCHER
                       .set("#space-name-indicator", { text: "GAME" });
 
                     // NOTIFICATION
-                    tl.to("#demo-notification", { x: 0, opacity: 1, duration: 0.5, ease: "back.out(1.2)" })
-                      // .to("#demo-success", { y: 20, opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" }, "<+0.1"); // REMOVE CAPSULE
+                    tl.to("#demo-notification", { x: 0, opacity: 1, duration: 0.5, ease: "back.out(1.2)" });
 
                     // --- SCENE 3: GAME SPACE ---
                     tl.to(steps[0], { opacity: 0.3, duration: 0.5 })
-                      .to(steps[1], { opacity: 1, duration: 0.5 }, "<")
-                      // .to("#demo-success", { opacity: 0, y: -20, duration: 0.3 }, "+=0.5"); // REMOVE CAPSULE
+                      .to(steps[1], { opacity: 1, duration: 0.5 }, "<");
 
                     // --- SCENE 4: RULES ---
                     tl.to(steps[1], { opacity: 0.3, duration: 0.5 }, "+=1")
                       .to(steps[2], { opacity: 1, duration: 0.5 }, "<")
                       .to("#demo-notification", { opacity: 0, x: 50, duration: 0.5 }, "<")
-                      // .set("#success-text", { text: "APPLYING RULES" }) // REMOVE CAPSULE
-                      // .to("#demo-success", { y: 20, opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" }, "<+0.1") // REMOVE CAPSULE
+                      .to("#window-game", { opacity: 0, scale: 0.9, duration: 0.5 }, "<") // HIDE GAME LAUNCHER for Rules
                       .to("#demo-rules-window", { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }, "<+0.2");
 
                     tl.to({}, { duration: 1 });
