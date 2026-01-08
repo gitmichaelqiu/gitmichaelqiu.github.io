@@ -1,4 +1,4 @@
-# [gitmichaelqiu.github.io](gitmichaelqiu.github.io)
+# gitmichaelqiu.github.io
 
 My portfolio entry and several introduction sites to my apps.
 
