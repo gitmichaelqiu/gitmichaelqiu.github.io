@@ -515,15 +515,15 @@
                             <div id="demo-notification" class="absolute top-12 right-4 glass-card px-4 py-3 rounded-lg border border-white/20 flex items-center gap-3 transform translate-x-64 opacity-0 transition-all duration-500 no-hover">
                                 <div class="w-8 h-8 rounded bg-klein-blue flex items-center justify-center text-white"><i data-lucide="layers" class="w-4 h-4"></i></div>
                                 <div>
-                                    <p class="text-xs font-bold text-white">SpaceSwitcher</p>
-                                    <p class="text-[10px] text-gray-300">Switched to Gaming Dock</p>
+                                    <p class="text-xs font-bold text-black dark:text-white">SpaceSwitcher</p>
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-300">Switched to Gaming Dock</p>
                                 </div>
                             </div>
                             
                             <!-- Rules Window -->
                             <div id="demo-rules-window" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] glass-card rounded-lg border border-white/20 flex flex-col opacity-0 scale-90 transition-all duration-500 no-hover z-50 pointer-events-none">
                                 <div class="h-8 bg-black/20 flex items-center px-3 border-b border-white/10 rounded-t-lg">
-                                    <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Automation Rule</span>
+                                    <span class="text-[10px] font-bold text-gray-800 dark:text-gray-300 uppercase tracking-widest">Automation Rule</span>
                                 </div>
                                 <div class="p-4 flex flex-col gap-3">
                                     <div class="rule-card-demo">
@@ -541,6 +541,12 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Success Banner (Falling Capsule) -->
+                            <div id="demo-success" class="absolute top-16 glass-card px-8 py-3 rounded-full border border-klein-blue/50 opacity-0 transform -translate-y-10 flex items-center gap-3 no-hover bg-black/80 backdrop-blur-md z-50 shadow-2xl">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-klein-blue"></i>
+                                <span class="font-bold text-white text-sm tracking-wide" id="success-text">SWITCHING TO GAME MODE</span>
                             </div>
 
                         </div>
@@ -581,16 +587,19 @@
                         <div class="premium-download-card rounded-3xl p-8 relative overflow-hidden flex flex-col justify-center items-center text-center w-full md:w-1/3 min-w-[280px]">
                             <div class="card-corner-glow"></div>
                             <div class="relative z-10 flex flex-col items-center gap-6">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-800 to-black flex items-center justify-center shadow-lg border border-white/10">
-                                    <i data-lucide="alert-circle" class="w-6 h-6 text-white"></i>
+                                <div class="w-16 h-16 rounded-2xl bg-white dark:bg-black flex items-center justify-center shadow-lg border border-black/5 dark:border-white/10">
+                                    <img src="https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png" class="w-16 h-16 rounded-lg" alt="Icon">
                                 </div>
-                                <div>
+                                <div class="text-left w-full px-4">
                                     <h3 class="font-bold text-xl text-black dark:text-white mb-2">Required First</h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">SpaceSwitcher relies on DesktopRenamer API to detect space changes.</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">The backend engine that powers context detection.</p>
                                     
                                     <div class="flex flex-col gap-3 w-full">
-                                        <a href="DesktopRenamer.html" class="px-4 py-3 rounded-full border border-gray-300 dark:border-white/20 text-xs font-bold tracking-wide hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all text-center">
-                                            GET DESKTOP RENAMER
+                                        <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases/latest" class="px-4 py-3 rounded-full bg-black text-white dark:bg-white dark:text-black text-xs font-bold tracking-wide hover:opacity-90 transition-all text-center flex items-center justify-center gap-2">
+                                            <i data-lucide="download" class="w-4 h-4"></i> Download App
+                                        </a>
+                                        <a href="DesktopRenamer.html" class="px-4 py-3 rounded-full border border-gray-300 dark:border-white/20 text-xs font-bold tracking-wide hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all text-center flex items-center justify-center gap-2">
+                                            <i data-lucide="globe" class="w-4 h-4"></i> Website
                                         </a>
                                     </div>
                                 </div>
@@ -886,6 +895,7 @@
                     // INITIAL
                     tl.set("#window-work", { opacity: 1, scale: 1 });
                     tl.set("#window-game", { opacity: 0, scale: 0.9 });
+                    tl.set("#demo-success", { y: -20, opacity: 0 }); // Initial state for capsule
                     
                     // --- SWITCH TRIGGER (No initial "Work Space" phase) ---
                     tl.to(steps[0], { opacity: 1, duration: 0.5 });
@@ -905,16 +915,20 @@
                       .set("#space-name-indicator", { text: "GAME" });
 
                     // NOTIFICATION
-                    tl.to("#demo-notification", { x: 0, opacity: 1, duration: 0.5, ease: "back.out(1.2)" });
+                    tl.to("#demo-notification", { x: 0, opacity: 1, duration: 0.5, ease: "back.out(1.2)" })
+                      .to("#demo-success", { y: 20, opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" }, "<+0.1"); // Show capsule
 
                     // --- SCENE 3: GAME SPACE ---
                     tl.to(steps[0], { opacity: 0.3, duration: 0.5 })
-                      .to(steps[1], { opacity: 1, duration: 0.5 }, "<");
+                      .to(steps[1], { opacity: 1, duration: 0.5 }, "<")
+                      .to("#demo-success", { opacity: 0, y: -20, duration: 0.3 }, "+=0.5"); // Hide capsule
 
                     // --- SCENE 4: RULES ---
                     tl.to(steps[1], { opacity: 0.3, duration: 0.5 }, "+=1")
                       .to(steps[2], { opacity: 1, duration: 0.5 }, "<")
                       .to("#demo-notification", { opacity: 0, x: 50, duration: 0.5 }, "<")
+                      .set("#success-text", { text: "APPLYING RULES" }) // Change capsule text
+                      .to("#demo-success", { y: 20, opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" }, "<+0.1") // Show capsule
                       .to("#demo-rules-window", { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }, "<+0.2");
 
                     tl.to({}, { duration: 1 });
