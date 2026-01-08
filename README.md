@@ -1,5 +1,7 @@
-# gitmichaelqiu.github.io
+# [gitmichaelqiu.github.io](gitmichaelqiu.github.io)
 
-This is my new website built using Vue 3. It is not released yet.
+My portfolio entry and several introduction sites to my apps.
 
-You can check [gitmichaelqiu.github.io](https://gitmichaelqiu.github.io/).
+Visit [here](gitmichaelqiu.github.io).
+
+Under [MIT License](./LICENSE).
