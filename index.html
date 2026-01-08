@@ -258,15 +258,15 @@
                             {{ activeSection.toUpperCase() }}
                         </div>
                         <div v-else class="flex gap-5 font-mono text-[10px] font-bold px-6 animate-fade-in whitespace-nowrap">
-                            <a href="#home" class="hover:opacity-60 transition-opacity">HOME</a>
+                            <a href="#home" @click.prevent="handleNavClick('home')" class="hover:opacity-60 transition-opacity">HOME</a>
                             <span>/</span>
-                            <a href="#profile" class="hover:opacity-60 transition-opacity">PROFILE</a>
+                            <a href="#profile" @click.prevent="handleNavClick('profile')" class="hover:opacity-60 transition-opacity">PROFILE</a>
                             <span>/</span>
-                            <a href="#works" class="hover:opacity-60 transition-opacity">WORKS</a>
+                            <a href="#works" @click.prevent="handleNavClick('works')" class="hover:opacity-60 transition-opacity">WORKS</a>
                             <span>/</span>
-                            <a href="#photos" class="hover:opacity-60 transition-opacity">PHOTOS</a>
+                            <a href="#photos" @click.prevent="handleNavClick('photos')" class="hover:opacity-60 transition-opacity">PHOTOS</a>
                             <span>/</span>
-                            <a href="#connect" class="hover:opacity-60 transition-opacity">CONNECT</a>
+                            <a href="#connect" @click.prevent="handleNavClick('connect')" class="hover:opacity-60 transition-opacity">CONNECT</a>
                         </div>
                     </div>
                 </div>
@@ -466,10 +466,10 @@
                                             <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">MACOS</span>
                                             <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">SWIFT</span>
                                         </div>
-                                        <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-white/20 shadow-lg text-gray-900 dark:text-white font-bold text-sm hover:scale-105 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300">
+                                        <a :href="app.url" target="_blank" class="flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-white/20 shadow-lg text-gray-900 dark:text-white font-bold text-sm hover:scale-105 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300">
                                             <span>View</span>
                                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -785,13 +785,27 @@
                 const navBtnRight = ref(null);
 
                 const handleNavClick = (targetId) => {
+                    const wasSidebarOpen = isSidebarOpen.value;
                     isSidebarOpen.value = false;
-                    setTimeout(() => {
+                    
+                    const performScroll = () => {
                         const el = document.getElementById(targetId);
                         if (el && lenis) {
-                            lenis.scrollTo(el);
+                            lenis.scrollTo(el, {
+                                duration: 1.5,
+                                onComplete: () => {
+                                    ScrollTrigger.refresh();
+                                    ScrollTrigger.update();
+                                }
+                            });
                         }
-                    }, 400); 
+                    };
+
+                    if (wasSidebarOpen) {
+                        setTimeout(performScroll, 400);
+                    } else {
+                        performScroll();
+                    }
                 };
 
                 const handleLinkClick = (event, link) => {
@@ -802,9 +816,9 @@
                 };
                                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/opt-clicker.png' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/space-switcher.png' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/desktop-renamer.png', url: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/opt-clicker.png', url: 'https://gitmichaelqiu.github.io/OptClicker' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/MyWebsite/refs/heads/main/resources/works/space-switcher.png', url: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
                 ];
 
                 const photos = [
