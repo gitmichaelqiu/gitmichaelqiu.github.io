@@ -63,10 +63,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
-    <!-- Fonts - Standard Google Fonts URL for Unified Typography -->
-    <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
     <!-- Styles -->
     <style>
         :root { --klein-blue: #002FA7; }
@@ -436,7 +434,7 @@
             </section>
 
             <!-- DEMO SECTION -->
-            <section id="demo" class="relative bg-[#050505] z-30" style="height: 500vh;">
+            <section id="demo" class="relative bg-[#050505] z-30" style="height: 600vh;">
                 <!-- Sticky Wrapper -->
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
                     
@@ -490,7 +488,7 @@
                                 </div>
                             </div>
 
-                            <!-- GAMING WINDOW -->
+                            <!-- GAMING WINDOW (Updated: Centered via flex + transform) -->
                             <div id="window-game" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-indigo-900 rounded-lg shadow-2xl border border-white/10 flex items-center justify-center opacity-0 scale-95 hidden">
                                 <div class="text-center">
                                     <i data-lucide="gamepad-2" class="w-24 h-24 text-white mb-4 opacity-80"></i>
@@ -520,8 +518,8 @@
                                 </div>
                             </div>
                             
-                            <!-- Rules Window -->
-                            <div id="demo-rules-window" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] glass-card rounded-lg border border-white/20 flex flex-col opacity-0 scale-90 transition-all duration-500 no-hover z-50 pointer-events-none">
+                            <!-- Rules Window (Larger width: w-[400px]) -->
+                            <div id="demo-rules-window" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] glass-card rounded-lg border border-white/20 flex flex-col opacity-0 scale-90 transition-all duration-500 no-hover z-50 pointer-events-none">
                                 <div class="h-8 bg-black/20 flex items-center px-3 border-b border-white/10 rounded-t-lg">
                                     <span class="text-[10px] font-bold text-gray-800 dark:text-gray-300 uppercase tracking-widest">Automation Rule</span>
                                 </div>
