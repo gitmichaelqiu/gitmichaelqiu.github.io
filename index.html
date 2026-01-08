@@ -824,7 +824,10 @@
                 const navBtnRight = ref(null);
                 
                 const systemLinks = [
-                    { name: 'HOME' }, { name: 'WRITINGS' }, { name: 'ARCHIVE' }, { name: 'LABS' }
+                    { name: 'HOME', targetId: 'home', isExternal: false },
+                    { name: 'BLOG', url: 'https://gitmichaelqiu.github.io/blog/', isExternal: true },
+                    { name: 'APPS', targetId: 'works', isExternal: false },
+                    { name: 'PHOTOS', targetId: 'photos', isExternal: false }
                 ];
                 
                 const apps = [
