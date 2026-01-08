@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceSwitcher | Contextual Docks</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', 
+            theme: {
+                extend: {
+                    colors: {
+                        'klein-blue': '#002FA7',
+                        'klein-light': '#3B6DFF',
+                        'bg-dark': '#050505',
+                        'bg-light': '#F2F2F7', 
+                        'deep-navy': '#020412',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Syncopate', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        cursive: ['Comic Sans MS', 'Comic Sans', 'cursive'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 10s ease-in-out infinite',
+                        'bounce-subtle': 'bounceSubtle 2s infinite',
+                        'key-press': 'keyPress 0.3s ease-in-out',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translate(0, 0)' },
+                            '50%': { transform: 'translate(-20px, 20px)' },
+                        },
+                        keyPress: {
+                            '0%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(0.95)', backgroundColor: 'var(--klein-blue)', borderColor: 'var(--klein-blue)' },
+                            '100%': { transform: 'scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Libraries -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Fonts - Standard Google Fonts URL for Unified Typography -->
+    <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <style>
+        :root { --klein-blue: #002FA7; }
+
+        body {
+            background-color: #F2F2F7;
+            color: #111;
+            transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100vw;
+            overflow-x: hidden;
+            cursor: none !important; 
+        }
+        
+        body.is-booting { overflow: hidden; height: 100vh; }
+
+        html.dark body { background-color: #050505; color: #ffffff; }
+
+        /* Lenis */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        .lenis.lenis-scrolling iframe { pointer-events: none; }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%); border-radius: 50%;
+            z-index: 20000; pointer-events: none; mix-blend-mode: difference;
+        }
+        .cursor-dot { width: 8px; height: 8px; background-color: white; }
+        .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
+        
+        a:hover ~ .cursor-outline, 
+        button:hover ~ .cursor-outline,
+        .cursor-interactive:hover ~ .cursor-outline { 
+            width: 30px; height: 30px; 
+        }
+
+        /* Glass Cards */
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(0, 0, 0, 0.05); 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: transform, box-shadow;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        html.dark .glass-card { 
+            background: rgba(20, 20, 20, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: none;
+        }
+        
+        .glass-card:hover { 
+            border-color: var(--klein-blue); 
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.15);
+            z-index: 20;
+        }
+        html.dark .glass-card:hover {
+            background: rgba(0, 47, 167, 0.05);
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
+        }
+
+        /* No Hover Utility for Demo Cards */
+        .no-hover:hover {
+            transform: none !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.7) !important;
+        }
+        html.dark .no-hover:hover {
+            background: rgba(20, 20, 20, 0.3) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            box-shadow: none !important;
+        }
+
+        /* Window Specific High Contrast */
+        .window-card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(0,0,0,0.15);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        html.dark .window-card {
+            background: rgba(28, 28, 30, 0.98);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .card-corner-glow {
+            position: absolute; top: 0; right: 0; width: 300px; height: 300px;
+            background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
+            opacity: 0; transition: opacity 0.6s ease; pointer-events: none; z-index: 0;
+        }
+        .group:hover .card-corner-glow { opacity: 1; }
+        
+        /* Aurora */
+        .aurora-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .aurora-blob {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.6; mix-blend-mode: screen; animation: float 20s infinite ease-in-out;
+        }
+        html:not(.dark) .aurora-blob { mix-blend-mode: multiply; opacity: 0.08; filter: blur(100px); }
+        
+        .blob-1 { top: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0, 47, 167, 0.6), transparent 70%); animation-delay: 0s; }
+        .blob-2 { bottom: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(32, 190, 255, 0.4), transparent 70%); animation-delay: -5s; }
+        .blob-3 { top: 40%; right: 20%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(100, 0, 255, 0.3), transparent 70%); animation-delay: -10s; }
+
+        .card-content { position: relative; z-index: 10; }
+
+        .hover-solid-blue:hover { background-color: var(--klein-blue) !important; border-color: var(--klein-blue) !important; }
+        .hover-solid-gray:hover { background-color: #333 !important; border-color: #333 !important; }
+        html.dark .hover-solid-gray:hover { background-color: #eee !important; border-color: #eee !important; }
+        html.dark .hover-solid-gray:hover h3, html.dark .hover-solid-gray:hover i, html.dark .hover-solid-gray:hover p { color: black !important; }
+
+        /* Navigation */
+        .nav-glass {
+            background: rgba(20, 20, 20, 0.7); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        html:not(.dark) .nav-glass {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        
+        /* Wave Component */
+        a-waves {
+            --x: -0.5rem; --y: 50%; --dash-offset: 20000;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        a-waves svg { display: block; width: 100%; height: 100%; }
+        a-waves svg path {
+            fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
+            stroke-dasharray: 20000; stroke-dashoffset: var(--dash-offset);
+            stroke: rgba(0, 47, 167, 0.1);
+        }
+        html.dark a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
+
+        /* Premium Download Card Style */
+        .premium-download-card {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8);
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        html:not(.dark) .premium-download-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 40px 80px -20px rgba(0, 47, 167, 0.15);
+        }
+        .premium-download-card:hover {
+            border-color: var(--klein-blue);
+            box-shadow: 0 50px 120px -30px rgba(0, 47, 167, 0.3);
+            transform: translateY(-5px) scale(1.005);
+        }
+        
+        .premium-download-card .card-corner-glow { opacity: 0; transition: opacity 0.6s ease; }
+        .premium-download-card:hover .card-corner-glow { opacity: 1; }
+
+        /* Unified Premium Button */
+        .btn-premium {
+            position: relative; overflow: hidden; border-radius: 9999px;
+            font-weight: 700; letter-spacing: 0.05em;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .btn-premium-primary { background-color: black; color: white; }
+        html.dark .btn-premium-primary { background-color: white; color: black; }
+        .btn-premium-secondary { background-color: transparent; color: black; border: 1px solid rgba(0,0,0,0.1); }
+        html.dark .btn-premium-secondary { color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2); }
+        html.dark .btn-premium:hover { box-shadow: 0 10px 40px -10px rgba(255,255,255,0.15); }
+        .btn-premium::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%); transition: transform 0.6s;
+        }
+        .btn-premium:hover::after { transform: translateX(100%); }
+
+        /* SpaceSwitcher Specific Demo Styles */
+        .dock-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 8px;
+            display: flex;
+            gap: 12px;
+            transition: all 0.5s ease;
+        }
+        .dock-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: #444;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body :class="{ 'is-booting': isBooting }">
+    <div id="app" class="relative min-h-screen selection:bg-white selection:text-klein-blue">
+        
+        <div class="cursor-dot hidden md:block"></div>
+        <div class="cursor-outline hidden md:block"></div>
+
+        <!-- NAVIGATION -->
+        <nav ref="navBar" 
+             class="fixed top-0 left-0 w-full z-[9990] py-6 px-6 md:px-10 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
+             :class="{ 'opacity-0': isBooting, 'opacity-100': !isBooting }">
+            
+            <!-- Left: Back Button -->
+            <a href="index.html" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex justify-center items-center pointer-events-auto hover:scale-105 transition-transform text-gray-800 dark:text-white cursor-interactive">
+                <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></i>
+            </a>
+            
+            <!-- Center: Floating Capsule -->
+            <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto top-6" ref="navCapsule">
+                <div class="nav-glass h-12 rounded-full flex items-center p-1 gap-1 border border-black/5 dark:border-white/20">
+                    <a href="#hero" @click.prevent="scrollTo('#hero')" class="flex items-center gap-3 px-4 py-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-interactive">
+                        <div class="w-5 h-5 rounded-sm shadow-sm bg-gradient-to-tr from-klein-blue to-purple-500 flex items-center justify-center">
+                            <i data-lucide="layers" class="w-3 h-3 text-white"></i>
+                        </div>
+                        <span class="font-display font-bold text-xs tracking-wide text-gray-900 dark:text-white hidden sm:block">SpaceSwitcher</span>
+                    </a>
+                    
+                    <div class="hidden md:flex items-center gap-1 border-l border-black/10 dark:border-white/10 px-2 h-6">
+                        <a href="#hero" @click.prevent="scrollTo('#hero')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">HOME</a>
+                        <a href="#features" @click.prevent="scrollTo('#features')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">FEATURES</a>
+                        <a href="#demo" @click.prevent="scrollTo('#demo')" class="text-[10px] font-bold text-gray-600 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors px-3 py-1 cursor-interactive">DEMO</a>
+                    </div>
+
+                    <a href="#download" @click.prevent="scrollTo('#download')" class="hidden md:flex h-9 px-5 items-center gap-2 rounded-full bg-black dark:bg-white text-white dark:text-black font-bold text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg ml-1 cursor-interactive">
+                        <span>DOWNLOAD</span>
+                        <i data-lucide="arrow-down" class="w-3 h-3"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Theme Toggle -->
+            <div class="flex items-center gap-3 pointer-events-auto">
+                <button @click="cycleTheme" ref="navBtnRight" class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform text-gray-800 dark:text-white cursor-interactive">
+                    <span v-show="themeMode === 'light'"><i data-lucide="sun" class="w-4 h-4"></i></span>
+                    <span v-show="themeMode === 'dark'"><i data-lucide="moon" class="w-4 h-4"></i></span>
+                    <span v-show="themeMode === 'auto'"><i data-lucide="monitor" class="w-4 h-4"></i></span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="transition-all duration-500">
+            
+            <!-- Hero Section -->
+            <section id="hero" class="relative w-full h-screen flex items-center overflow-hidden z-10 bg-white dark:bg-black transition-colors duration-500">
+                <div class="aurora-container">
+                    <div class="aurora-blob blob-1"></div>
+                    <div class="aurora-blob blob-2"></div>
+                    <div class="aurora-blob blob-3"></div>
+                </div>
+                
+                <div class="absolute inset-0 z-0">
+                    <a-waves class="w-full h-full opacity-30"></a-waves>
+                </div>
+                
+                <div class="absolute top-0 right-0 w-full md:w-[50%] h-full z-10 pointer-events-auto" ref="canvasContainer"></div>
+
+                <div class="relative z-20 w-full md:w-[55%] pl-6 md:pl-20 pointer-events-none flex flex-col justify-center h-full">
+                    <div class="mix-blend-difference">
+                        <h1 class="hero-title text-[10vw] md:text-[7vw] font-black tracking-tighter text-black dark:text-white leading-[0.85] opacity-0 translate-y-10 flex flex-col">
+                            <span>SPACE</span>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-600 to-gray-400 dark:from-white dark:via-white dark:to-gray-500">SWITCHER</span>
+                        </h1>
+                        <div class="hero-subtitle mt-8 pl-2 border-l-2 border-klein-blue opacity-0 translate-y-10">
+                            <p class="font-sans text-lg md:text-2xl font-light text-gray-700 dark:text-gray-300 tracking-wide pl-4 max-w-lg leading-relaxed">
+                                Context-Aware Docks & Window Rules for macOS.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-12 right-12 z-20 flex flex-col items-end opacity-0 animate-fade-in pointer-events-none" style="animation-delay: 1.5s">
+                    <p class="font-display text-xs font-bold text-gray-900 dark:text-white mb-1 tracking-[0.2em] text-right">
+                        Designed by <span class="text-klein-blue">Michael Qiu</span>
+                    </p>
+                    <p class="font-mono text-[9px] text-gray-500 dark:text-gray-400 tracking-widest text-right opacity-80">
+                        A macOSer Series App
+                    </p>
+                </div>
+
+                <div class="scroll-hint absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-xs text-black/40 dark:text-white/40 animate-pulse z-20">
+                    <span>SCROLL TO EXPLORE</span>
+                    <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="w-full py-24 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-20 overflow-hidden transition-colors duration-500">
+                <div class="aurora-container opacity-30 dark:opacity-0 transition-opacity">
+                    <div class="aurora-blob blob-2" style="mix-blend-mode: multiply;"></div>
+                </div>
+                <div class="absolute top-[20%] right-[5%] w-[30vw] h-[30vw] bg-klein-blue/10 rounded-full blur-[80px] pointer-events-none"></div>
+                
+                <div class="max-w-[90vw] mx-auto relative z-10">
+                    <div class="flex items-end justify-between mb-12 border-b border-gray-200 dark:border-white/10 pb-8">
+                        <h2 class="text-3xl font-light text-gray-500">System Capabilities</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 auto-rows-[minmax(220px,auto)]">
+                        <!-- Card 1: Contextual Docks -->
+                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
+                             <div class="card-corner-glow"></div>
+                             <div class="card-content">
+                                 <h3 class="font-mono text-xs text-klein-blue mb-6 tracking-widest border border-klein-blue/30 inline-block px-3 py-1 rounded-full">CONTEXT_AWARE</h3>
+                                 <p class="text-2xl md:text-3xl font-light leading-snug text-gray-900 dark:text-gray-100">
+                                     Assign unique <span class="font-bold border-b-2 border-klein-blue">Dock Sets</span> to each Space. Your development tools stay in your code space; games stay in your play space.
+                                 </p>
+                             </div>
+                             <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6 card-content">
+                                 <div><span class="block font-mono text-xs text-gray-500 mb-1">COMPATIBILITY</span><span class="font-bold text-xl text-black dark:text-white">macOS 13+</span></div>
+                                 <i data-lucide="dock" class="w-6 h-6 text-klein-blue"></i>
+                             </div>
+                        </div>
+                        
+                        <!-- Card 2: Rules -->
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-blue transition-all duration-300 group">
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">RULES</h3><i data-lucide="list-tree" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white card-content"><li>Auto Hide</li><li>Minimize</li><li>Focus</li></ul>
+                        </div>
+                        
+                        <!-- Card 3: Integration -->
+                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-gray transition-all duration-300 group">
+                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">SYNC</h3><i data-lucide="link" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
+                             <div class="mt-4 card-content"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">Desktop<br>Renamer</p></div>
+                        </div>
+                        
+                        <!-- Card 4: Philosophy -->
+                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
+                             <div class="card-corner-glow"></div>
+                             <div class="card-content">
+                                 <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">FOCUS</h3>
+                                 <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">"A cluttered Dock is a cluttered mind. See only what you need."</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DEMO SECTION -->
+            <section id="demo" class="relative bg-[#050505] z-30" style="height: 500vh;">
+                <!-- Sticky Wrapper -->
+                <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
+                    
+                    <!-- Background Ambiance -->
+                    <div class="absolute inset-0 bg-[#050505] transition-colors duration-1000" id="demo-bg"></div>
+                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/10 to-blue-900/10 opacity-50"></div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-klein-blue/5 rounded-full blur-[100px] pointer-events-none animate-pulse-slow"></div>
+
+                    <!-- Flow Visualization Container -->
+                    <div class="relative w-full max-w-6xl px-4 z-10 flex items-center justify-center perspective-[1200px]">
+                        
+                        <!-- Desktop Scene -->
+                        <div class="w-full aspect-[16/9] bg-[#000] border border-white/10 rounded-xl relative overflow-hidden shadow-2xl flex items-center justify-center transition-all duration-700" id="demo-monitor">
+                            
+                            <!-- Wallpaper Layer (Dynamic) -->
+                            <div class="absolute inset-0 bg-cover bg-center transition-all duration-1000" id="demo-wallpaper" style="background-image: url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2072&auto=format&fit=crop'); opacity: 0.8;">
+                                <div class="absolute inset-0 bg-black/20"></div>
+                            </div>
+                            
+                            <!-- Fake Menu Bar -->
+                            <div class="absolute top-0 left-0 w-full h-8 bg-black/40 backdrop-blur-md flex items-center px-4 justify-between border-b border-white/5 z-20">
+                                <div class="flex items-center gap-4">
+                                    <i data-lucide="apple" class="w-3 h-3 text-white"></i>
+                                    <span class="text-xs font-bold text-white">Code</span>
+                                    <span class="text-xs text-gray-300">File</span>
+                                    <span class="text-xs text-gray-300">View</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-2 px-2 py-0.5 bg-white/10 rounded">
+                                        <i data-lucide="layers" class="w-3 h-3 text-white"></i>
+                                        <span class="text-xs font-bold text-white" id="space-name-indicator">WORK</span>
+                                    </div>
+                                    <i data-lucide="wifi" class="w-3 h-3 text-white"></i>
+                                    <span class="text-xs text-white">Mon 9:41 AM</span>
+                                </div>
+                            </div>
+
+                            <!-- WORK WINDOW -->
+                            <div id="window-work" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-[#1e1e1e] rounded-lg shadow-2xl border border-white/10 flex flex-col overflow-hidden">
+                                <div class="h-8 bg-[#252526] flex items-center px-3 gap-2 border-b border-white/5">
+                                    <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></div>
+                                    <span class="text-xs text-gray-400 ml-4">main.swift — SpaceSwitcher</span>
+                                </div>
+                                <div class="p-4 font-mono text-xs text-gray-300">
+                                    <p><span class="text-pink-400">import</span> SwiftUI</p>
+                                    <p><span class="text-pink-400">struct</span> ContentView: View {</p>
+                                    <p class="pl-4"><span class="text-blue-400">var</span> body: <span class="text-pink-400">some</span> View {</p>
+                                    <p class="pl-8">Text(<span class="text-orange-400">"Hello, World!"</span>)</p>
+                                    <p class="pl-4">}</p>
+                                    <p>}</p>
+                                </div>
+                            </div>
+
+                            <!-- GAMING WINDOW -->
+                            <div id="window-game" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-indigo-900 rounded-lg shadow-2xl border border-white/10 flex items-center justify-center opacity-0 scale-95">
+                                <div class="text-center">
+                                    <i data-lucide="gamepad-2" class="w-24 h-24 text-white mb-4 opacity-80"></i>
+                                    <h2 class="text-4xl font-black text-white tracking-widest">GAME LAUNCHER</h2>
+                                    <p class="text-indigo-200 mt-2">Ready to play.</p>
+                                </div>
+                            </div>
+
+                            <!-- DOCK -->
+                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 dock-container" id="dock-bar">
+                                <!-- Initial State (Work) -->
+                                <div class="dock-icon bg-blue-600 flex items-center justify-center text-white" id="dock-1"><i data-lucide="code-2" class="w-5 h-5"></i></div>
+                                <div class="dock-icon bg-gray-700 flex items-center justify-center text-white" id="dock-2"><i data-lucide="terminal" class="w-5 h-5"></i></div>
+                                <div class="dock-icon bg-green-600 flex items-center justify-center text-white" id="dock-3"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
+                                
+                                <!-- Hidden State (Gaming) -->
+                                <div class="dock-icon bg-purple-600 flex items-center justify-center text-white hidden" id="dock-4"><i data-lucide="gamepad-2" class="w-5 h-5"></i></div>
+                                <div class="dock-icon bg-indigo-500 flex items-center justify-center text-white hidden" id="dock-5"><i data-lucide="twitch" class="w-5 h-5"></i></div>
+                            </div>
+
+                            <!-- Notification Toast -->
+                            <div id="demo-notification" class="absolute top-12 right-4 glass-card px-4 py-3 rounded-lg border border-white/20 flex items-center gap-3 transform translate-x-64 opacity-0 transition-all duration-500 no-hover">
+                                <div class="w-8 h-8 rounded bg-klein-blue flex items-center justify-center text-white"><i data-lucide="layers" class="w-4 h-4"></i></div>
+                                <div>
+                                    <p class="text-xs font-bold text-white">SpaceSwitcher</p>
+                                    <p class="text-[10px] text-gray-300">Switched to Gaming Dock</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Progress Captions -->
+                    <div class="absolute bottom-12 left-0 w-full px-12">
+                        <div class="max-w-4xl mx-auto flex justify-between items-center relative">
+                            <div class="absolute top-1/2 left-0 w-full h-[1px] bg-white/10 -z-10"></div>
+                            
+                            <div class="demo-step flex flex-col items-center gap-3 opacity-30 transition-all duration-500" data-step="1">
+                                <div class="w-3 h-3 rounded-full bg-white ring-4 ring-black"></div>
+                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">WORK SPACE</span>
+                            </div>
+                            
+                            <div class="demo-step flex flex-col items-center gap-3 opacity-30 transition-all duration-500" data-step="2">
+                                <div class="w-3 h-3 rounded-full bg-white ring-4 ring-black"></div>
+                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">SWITCH</span>
+                            </div>
+                            
+                            <div class="demo-step flex flex-col items-center gap-3 opacity-30 transition-all duration-500" data-step="3">
+                                <div class="w-3 h-3 rounded-full bg-white ring-4 ring-black"></div>
+                                <span class="text-xs font-mono font-bold tracking-widest text-white/80">GAME SPACE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Section -->
+            <section id="download" class="w-full h-screen bg-[#F2F2F7] dark:bg-[#050505] relative z-30 overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-klein-blue/5 rounded-full blur-[120px] pointer-events-none"></div>
+                
+                <div class="flex-grow flex items-center justify-center w-full max-w-5xl mx-auto px-6 md:px-12 relative z-10">
+                    <div class="premium-download-card rounded-3xl p-12 md:p-24 relative overflow-hidden group w-full">
+                        <div class="card-corner-glow"></div>
+                        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-klein-blue/20 to-transparent rounded-full blur-[100px] transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+
+                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+                            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-16 h-16 rounded-2xl bg-white dark:bg-black flex items-center justify-center shadow-lg border border-black/5 dark:border-white/10">
+                                        <!-- Placeholder Icon for SpaceSwitcher -->
+                                        <div class="w-16 h-16 rounded-lg bg-gradient-to-tr from-klein-blue to-purple-600 flex items-center justify-center">
+                                            <i data-lucide="layers" class="w-8 h-8 text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="font-display font-extrabold text-2xl text-black dark:text-white tracking-tight">SpaceSwitcher</span>
+                                        <span class="font-mono text-xs text-gray-500 tracking-widest">{{ latestVersion || 'VERSION 1.0' }}</span>
+                                    </div>
+                                </div>
+                                <h2 class="text-4xl md:text-6xl font-black text-black dark:text-white tracking-tighter mb-6 leading-[0.9]">
+                                    YOUR DOCK,<br><span class="text-klein-blue">EVOLVED.</span>
+                                </h2>
+                                <div class="flex flex-wrap gap-6 justify-center md:justify-start text-sm font-mono text-gray-500">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-klein-blue"></i>
+                                        <span>macOS 13+</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-klein-blue"></i>
+                                        <span>Apple Silicon</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-klein-blue"></i>
+                                        <span>Free & Open Source</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-4 w-full md:w-auto min-w-[240px]">
+                                <a :href="downloadUrl" class="btn-premium btn-premium-primary inline-flex items-center justify-center gap-3 px-8 py-5 shadow-2xl cursor-interactive w-full">
+                                    <span class="relative z-10 font-bold tracking-wide">DOWNLOAD APP</span>
+                                    <i data-lucide="arrow-down" class="w-5 h-5 relative z-10"></i>
+                                </a>
+                                <a href="https://github.com/gitmichaelqiu/SpaceSwitcher" target="_blank" class="btn-premium btn-premium-secondary inline-flex items-center justify-center gap-3 px-8 py-5 font-bold tracking-wide text-sm cursor-interactive w-full">
+                                    <span>SOURCE CODE</span>
+                                    <i data-lucide="github" class="w-5 h-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono relative z-30">
+                    <p>&copy; {{ new Date().getFullYear() }} MICHAEL QIU.</p>
+                    <a href="#hero" class="group flex items-center justify-center hover:scale-105 transition-transform duration-300 cursor-interactive">
+                        <div class="font-display font-black text-xl text-gray-400 group-hover:text-klein-blue transition-colors">SS</div>
+                    </a>
+                    <div class="flex gap-8 mt-6 md:mt-0">
+                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-white/10 hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300 cursor-interactive">
+                            <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </footer>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+
+        class AWaves extends HTMLElement {
+            constructor() { super(); this._progress = 0; }
+            connectedCallback() {
+                this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                this.appendChild(this.svg);
+                this.perm = new Uint8Array(512);
+                for(let i=0; i<512; i++) this.perm[i] = Math.floor(Math.random()*255);
+                this.lines = []; this.paths = [];
+                this.setSize(); this.setLines();
+                this.rafId = requestAnimationFrame(this.tick.bind(this));
+                window.addEventListener('resize', this.onResize.bind(this));
+            }
+            disconnectedCallback() { cancelAnimationFrame(this.rafId); window.removeEventListener('resize', this.onResize); }
+            onResize() { this.setSize(); this.setLines(); }
+            setSize() {
+                const rect = this.getBoundingClientRect();
+                this.width = rect.width || window.innerWidth;
+                this.height = rect.height || window.innerHeight;
+                this.svg.setAttribute('width', this.width); this.svg.setAttribute('height', this.height);
+            }
+            setLines() {
+                this.svg.innerHTML = ''; this.paths = []; this.lines = [];
+                const xGap = 30; const yGap = 80;
+                const totalLines = Math.ceil((this.width + 200) / xGap);
+                const totalPoints = Math.ceil((this.height + 30) / yGap);
+                
+                for (let i = 0; i <= totalLines; i++) {
+                    const points = [];
+                    for (let j = 0; j <= totalPoints; j++) points.push({ x: i * xGap, y: j * yGap, wave: {x:0, y:0} });
+                    this.lines.push({ points, speed: 0.8 + Math.random() * 0.4 });
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    this.svg.appendChild(path); this.paths.push(path);
+                }
+            }
+            tick(time) {
+                const amp = 1;
+                this.lines.forEach((line, idx) => {
+                    line.points.forEach(p => {
+                        const move = Math.sin((p.x + time * 0.002) * 0.01) * Math.cos((p.y + time * 0.002) * 0.01) * 10;
+                        p.wave.x = Math.cos(move) * 32 * amp; p.wave.y = Math.sin(move) * 16 * amp;
+                    });
+                    let d = `M ${line.points[0].x + line.points[0].wave.x} ${line.points[0].y + line.points[0].wave.y}`;
+                    for(let i=1; i<line.points.length; i++) {
+                        const p = line.points[i];
+                        d += ` L ${p.x + p.wave.x} ${p.y + p.wave.y}`;
+                    }
+                    this.paths[idx].setAttribute('d', d);
+                });
+                this.rafId = requestAnimationFrame(this.tick.bind(this));
+            }
+        }
+        if(!customElements.get('a-waves')) { customElements.define('a-waves', AWaves); }
+
+        createApp({
+            setup() {
+                const themeMode = ref('auto');
+                const isBooting = ref(true);
+                const canvasContainer = ref(null);
+                const latestVersion = ref(''); 
+                const downloadUrl = ref('#'); 
+                let lenis; 
+
+                // Three.js References
+                let heroScene, heroCamera, heroRenderer, iconMesh;
+                let mouseX = 0, mouseY = 0;
+
+                const resolveTheme = () => {
+                    let resolved = 'dark';
+                    if (themeMode.value === 'auto') {
+                        resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    } else {
+                        resolved = themeMode.value;
+                    }
+                    if (resolved === 'dark') document.documentElement.classList.add('dark');
+                    else document.documentElement.classList.remove('dark');
+                };
+
+                const cycleTheme = () => {
+                    if (themeMode.value === 'auto') themeMode.value = 'light';
+                    else if (themeMode.value === 'light') themeMode.value = 'dark';
+                    else themeMode.value = 'auto';
+                    resolveTheme();
+                };
+
+                const scrollTo = (target) => {
+                    if (lenis) lenis.scrollTo(target);
+                };
+                
+                const initCursor = () => {
+                    const dot = document.querySelector('.cursor-dot');
+                    const outline = document.querySelector('.cursor-outline');
+                    if (dot && outline) {
+                        window.addEventListener('mousemove', (e) => {
+                            const posX = e.clientX; const posY = e.clientY;
+                            dot.style.left = `${posX}px`; dot.style.top = `${posY}px`;
+                            outline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+                        });
+                    }
+                };
+
+                // --- PROCEDURAL TEXTURE GENERATION ---
+                const createSpaceSwitcherTexture = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 512; canvas.height = 512;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Background: Deep gradient
+                    const grad = ctx.createLinearGradient(0, 0, 512, 512);
+                    grad.addColorStop(0, '#002FA7'); // Klein Blue
+                    grad.addColorStop(1, '#6b21a8'); // Purple
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(0, 0, 512, 512);
+                    
+                    // Symbol: Switcher Arrows / Layers
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                    ctx.shadowBlur = 20;
+                    
+                    // Draw rounded rect 1
+                    ctx.roundRect(100, 150, 312, 80, 20);
+                    ctx.fill();
+                    
+                    // Draw rounded rect 2 (offset)
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.beginPath();
+                    ctx.roundRect(100, 280, 312, 80, 20);
+                    ctx.fill();
+                    
+                    const tex = new THREE.CanvasTexture(canvas);
+                    tex.encoding = THREE.sRGBEncoding;
+                    return tex;
+                };
+
+                // --- 3D SCENE SETUP ---
+                const createSquircleShape = (size) => {
+                    const shape = new THREE.Shape();
+                    const width = size; const height = size;
+                    const x = -width / 2; const y = -height / 2;
+                    const r = 1.5; 
+                    shape.moveTo( x, y + r );
+                    shape.lineTo( x, y + height - r );
+                    shape.quadraticCurveTo( x, y + height, x + r, y + height );
+                    shape.lineTo( x + width - r, y + height );
+                    shape.quadraticCurveTo( x + width, y + height, x + width, y + height - r );
+                    shape.lineTo( x + width, y + r );
+                    shape.quadraticCurveTo( x + width, y, x + width - r, y );
+                    shape.lineTo( x + r, y );
+                    shape.quadraticCurveTo( x, y, x, y + r );
+                    return shape;
+                };
+
+                const initHero3D = () => {
+                    if (!canvasContainer.value) return;
+                    const w = canvasContainer.value.clientWidth;
+                    const h = canvasContainer.value.clientHeight;
+                    heroScene = new THREE.Scene();
+                    heroCamera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+                    heroCamera.position.z = 18;
+                    heroRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                    heroRenderer.setSize(w, h);
+                    heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    heroRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+                    heroRenderer.toneMappingExposure = 1.2;
+                    canvasContainer.value.appendChild(heroRenderer.domElement);
+                    heroScene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                    const spotLight = new THREE.SpotLight(0xffffff, 2);
+                    spotLight.position.set(10, 20, 20);
+                    heroScene.add(spotLight);
+                    const blueLight = new THREE.PointLight(0x002FA7, 3, 50);
+                    blueLight.position.set(-10, -10, 5);
+                    heroScene.add(blueLight);
+                    
+                    const size = 6;
+                    const extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
+                    const shape = createSquircleShape(size);
+                    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    
+                    // --- UV MAPPING (CRITICAL FOR UNIFICATION) ---
+                    geometry.computeBoundingBox();
+                    const max = geometry.boundingBox.max; const min = geometry.boundingBox.min;
+                    const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
+                    const uvAttribute = geometry.attributes.uv; const posAttribute = geometry.attributes.position;
+                    for (let i = 0; i < posAttribute.count; i++) {
+                        const x = posAttribute.getX(i); const y = posAttribute.getY(i);
+                        uvAttribute.setXY(i, (x - min.x) / range.x, (y - min.y) / range.y);
+                    }
+                    geometry.attributes.uv.needsUpdate = true;
+                    // -------------------------------------------
+
+                    geometry.center();
+                    const materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+                    const materialFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+                    
+                    // Use procedural texture since we don't have a URL
+                    const texture = createSpaceSwitcherTexture();
+                    materialFront.map = texture;
+                    
+                    iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
+                    iconMesh.rotation.x = 0.2; iconMesh.rotation.y = -0.3;
+                    heroScene.add(iconMesh);
+                    
+                    // MOUSE INTERACTION (CRITICAL)
+                    window.addEventListener('mousemove', (e) => {
+                        mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+                        mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+                    });
+                    
+                    const animate = () => {
+                        requestAnimationFrame(animate);
+                        const time = Date.now() * 0.001;
+                        if(iconMesh) {
+                            iconMesh.position.y = Math.sin(time) * 0.2;
+                            iconMesh.rotation.x += (mouseY * 0.5 - iconMesh.rotation.x) * 0.05;
+                            iconMesh.rotation.y += (mouseX * 0.5 - iconMesh.rotation.y) * 0.05;
+                        }
+                        heroRenderer.render(heroScene, heroCamera);
+                    };
+                    animate();
+                    
+                    window.addEventListener('resize', () => {
+                        if (!canvasContainer.value) return;
+                        const w = canvasContainer.value.clientWidth;
+                        const h = canvasContainer.value.clientHeight;
+                        heroRenderer.setSize(w, h);
+                        heroCamera.aspect = w / h;
+                        heroCamera.updateProjectionMatrix();
+                    });
+                };
+
+                const initScrollAnimation = () => {
+                    gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+                    gsap.to(".hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.5 });
+                    gsap.to(".hero-subtitle", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.8 });
+                    if(iconMesh) gsap.fromTo(iconMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 2, ease: "elastic.out(1, 0.5)", delay: 0.2});
+
+                    const tl = gsap.timeline({
+                        scrollTrigger: {
+                            trigger: "#demo",
+                            start: "top top", 
+                            end: "bottom bottom",
+                            scrub: 0.5,
+                        }
+                    });
+
+                    const steps = document.querySelectorAll('.demo-step');
+
+                    // INITIAL
+                    tl.set("#window-work", { opacity: 1, scale: 1 });
+                    tl.set("#window-game", { opacity: 0, scale: 0.9 });
+                    
+                    // --- SCENE 1: WORK SPACE ---
+                    tl.to(steps[0], { opacity: 1, duration: 0.5 })
+                      .to("#dock-1", { y: -10, duration: 0.5, ease: "bounce.out" })
+                      .to("#dock-1", { y: 0, duration: 0.2 });
+
+                    // --- SWITCH TRIGGER ---
+                    tl.to(steps[0], { opacity: 0.3, duration: 0.5 })
+                      .to(steps[1], { opacity: 1, duration: 0.5 }, "<");
+                      
+                    // WALLPAPER SHIFT (BLUE -> PURPLE)
+                    tl.to("#demo-wallpaper", { filter: "hue-rotate(60deg)", duration: 1.5 }, "<");
+                    
+                    // DOCK SWITCH
+                    tl.to("#dock-1, #dock-2, #dock-3", { scale: 0, width: 0, margin: 0, duration: 0.5, opacity: 0 })
+                      .set("#dock-1, #dock-2, #dock-3", { display: "none" })
+                      .set("#dock-4, #dock-5", { display: "flex", scale: 0, width: 0, opacity: 0 })
+                      .to("#dock-4, #dock-5", { display: "flex", scale: 1, width: 40, margin: 0, duration: 0.5, opacity: 1 });
+
+                    // WINDOW SWITCH
+                    tl.to("#window-work", { x: -800, opacity: 0, rotate: -10, duration: 0.8, ease: "power2.in" }, "<")
+                      .to("#window-game", { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }, "-=0.4")
+                      .set("#space-name-indicator", { text: "GAME" });
+
+                    // NOTIFICATION
+                    tl.to("#demo-notification", { x: 0, opacity: 1, duration: 0.5, ease: "back.out(1.2)" });
+
+                    // --- SCENE 3: FINAL ---
+                    tl.to(steps[1], { opacity: 0.3, duration: 0.5 })
+                      .to(steps[2], { opacity: 1, duration: 0.5 }, "<");
+
+                    tl.to({}, { duration: 1 });
+                };
+
+                onMounted(() => {
+                    setTimeout(() => { isBooting.value = false; }, 1000);
+                    resolveTheme();
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
+                    initHero3D();
+                    initCursor(); 
+                    
+                    lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+                    function raf(time) {
+                        lenis.raf(time);
+                        ScrollTrigger.update();
+                        requestAnimationFrame(raf);
+                    }
+                    requestAnimationFrame(raf);
+                    setTimeout(initScrollAnimation, 500);
+                    lucide.createIcons();
+
+                    // GitHub Fetch
+                    fetch('https://api.github.com/repos/gitmichaelqiu/SpaceSwitcher/releases/latest')
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.tag_name) latestVersion.value = data.tag_name;
+                            if(data.assets && data.assets.length > 0) {
+                                const asset = data.assets.find(a => a.name.endsWith('.dmg')) || data.assets.find(a => a.name.endsWith('.zip')) || data.assets[0];
+                                if(asset) downloadUrl.value = asset.browser_download_url;
+                            } else {
+                                downloadUrl.value = data.html_url;
+                            }
+                        })
+                        .catch(err => console.log("Version fetch failed", err));
+                });
+
+                onUnmounted(() => {
+                     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', resolveTheme);
+                });
+
+                return {
+                    themeMode, isBooting, cycleTheme, scrollTo,
+                    canvasContainer, latestVersion, downloadUrl
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
