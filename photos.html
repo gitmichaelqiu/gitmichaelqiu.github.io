@@ -558,7 +558,7 @@
                 // Load photos from JSON
                 const loadPhotos = async () => {
                     try {
-                        const response = await fetch('https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/photos.js');
+                        const response = await fetch('https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/photos.json');
                         const data = await response.json();
                         photos.value = data.photos;
                         initializeRandomPositions();
