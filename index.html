@@ -237,23 +237,29 @@
 
         <!-- Navigation -->
         <nav ref="navBar" 
-             class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
-             :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
+            class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
+            :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
             
-            <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
-                <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
-                    <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
-                    <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
-                </div>
-            </button>
+            <div class="flex items-center gap-4">
+                <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
+                    <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
+                        <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
+                        <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
+                    </div>
+                </button>
+                
+                <a href="https://gitmichaelqiu.github.io/blog/" target="_blank" class="nav-glass group w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </a>
+            </div>
             
             <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50"
-                 ref="navCapsule"
-                 @click="toggleCapsuleNav"
-                 @mouseenter="isCapsuleOpen = true" 
-                 @mouseleave="isCapsuleOpen = false">
+                ref="navCapsule"
+                @click="toggleCapsuleNav"
+                @mouseenter="isCapsuleOpen = true" 
+                @mouseleave="isCapsuleOpen = false">
                 <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
-                     :class="[isCapsuleOpen ? 'w-[400px]' : 'w-[160px]', navCapsuleColor]">
+                    :class="[isCapsuleOpen ? 'w-[400px]' : 'w-[160px]', navCapsuleColor]">
                     <div class="w-full h-full flex items-center justify-center">
                         <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
                             {{ activeSection.toUpperCase() }}
@@ -273,11 +279,11 @@
                 </div>
                 <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
                     <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
-                     <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
-                          pathLength="100"
-                          :stroke-dasharray="100" 
-                          :stroke-dashoffset="capsuleDashOffset"
-                          class="opacity-100" />
+                    <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
+                        pathLength="100"
+                        :stroke-dasharray="100" 
+                        :stroke-dashoffset="capsuleDashOffset"
+                        class="opacity-100" />
                 </svg>
             </div>
 
