@@ -86,7 +86,7 @@
         }
 
         .gallery-mover {
-            /* Handled exclusively by GSAP Draggable. No CSS transitions on transform! */
+            /* Handled exclusively by GSAP Draggable */
             width: 300vw;
             height: 300vh;
             position: absolute;
@@ -96,7 +96,7 @@
         }
 
         .gallery-scaler {
-            /* Handled exclusively by GSAP. No CSS transitions on transform! */
+            /* Handled exclusively by GSAP */
             width: 100%;
             height: 100%;
             transform-origin: 0 0; 
@@ -176,8 +176,7 @@
             background: #000;
         }
         
-        /* The image inside the clone - IMPORTANT: Start as cover, end as cover (but container matches ratio) */
-        .detail-img {
+        .detail-img-clone {
             width: 100%;
             height: 100%;
             object-fit: cover; 
@@ -192,23 +191,38 @@
             transform: translate(-50%, -50%);
             width: 90vw;
             height: 90vh;
+            visibility: hidden; 
+            pointer-events: none;
+            z-index: 2000;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            border-radius: 24px;
+        }
+
+        .detail-panel.active {
+            visibility: visible;
+            pointer-events: all;
+        }
+        
+        .detail-panel-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(10, 10, 15, 0.95);
             backdrop-filter: blur(40px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            overflow: hidden;
             box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1; 
         }
-
-        .detail-panel.active {
+        
+        .detail-panel.active .detail-panel-bg {
             opacity: 1;
-            pointer-events: all;
         }
 
         @media (max-width: 768px) {
@@ -228,18 +242,22 @@
             justify-content: center;
             overflow: hidden;
             padding: 20px;
-            /* Ensure the image container is above other panel elements if needed, 
-               but usually content is on the right */
-            z-index: 2002; 
+            z-index: 10;
         }
 
-        /* The image inside detail-photo is injected via JS */
+        /* The image inside detail-photo (Final State) */
         .detail-photo img {
             border-radius: 4px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Maintain cover since container is sized to ratio */
+            /* Important: We don't force width/height 100% here anymore.
+               We rely on JS setting specific px dimensions on land, 
+               or fallback to max-width/max-height for responsiveness. */
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover; /* cover == contain when dimensions match exactly */
         }
 
         .detail-content {
@@ -248,8 +266,15 @@
             flex-direction: column;
             overflow-y: auto;
             position: relative;
-            z-index: 2002;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.2s;
         }
+        
+        .detail-panel.active .detail-content {
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             .detail-content { padding: 30px; }
         }
@@ -314,7 +339,13 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 2005; /* Above everything */
+            z-index: 2005;
+            opacity: 0;
+        }
+        
+        .detail-panel.active .close-button {
+            opacity: 1;
+            transition-delay: 0.3s;
         }
 
         .close-button:hover {
@@ -470,9 +501,7 @@
 
         <!-- Main Gallery Container -->
         <div class="gallery-viewport" ref="galleryViewport" @wheel="handleWheel">
-            <!-- GSAP handles transform directly. No Vue binding for style to avoid conflicts. -->
             <div class="gallery-mover" ref="galleryMover">
-                <!-- GSAP handles scale directly via handleWheel logic -->
                 <div class="gallery-scaler" ref="galleryScaler">
                     <!-- Orbital Rings -->
                     <div v-for="(ring, index) in orbitals" 
@@ -511,11 +540,13 @@
 
         <!-- Detail Panel -->
         <div class="detail-panel" :class="{ 'active': expandedPhoto }">
+            <div class="detail-panel-bg"></div>
+            
             <div class="close-button" @click="closeDetailPanel">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </div>
             
-            <!-- Target container for the image. We physically move the img node here. -->
+            <!-- Target container for the image. -->
             <div class="detail-photo" ref="detailPhotoContainer"></div>
             
             <div class="detail-content" v-if="selectedPhoto">
@@ -569,7 +600,7 @@
                 const photos = ref([]);
                 const orbitals = ref([]);
                 
-                // Camera State (Used for Canvas Sync, DOM is driven by GSAP)
+                // Camera State
                 const offset = ref({ x: 0, y: 0 }); 
                 const scale = ref(1.0);
                 
@@ -668,7 +699,6 @@
                     });
                 };
 
-                // --- ZOOM LOGIC (Fixed Jiggle & Cursor Centering) ---
                 const handleWheel = (e) => {
                     if (expandedPhoto.value) return; 
                     e.preventDefault();
@@ -680,45 +710,38 @@
                     
                     if (Math.abs(newScale - oldScale) < 0.0001) return;
 
-                    // 1. Get current Draggable state (Source of Truth for X/Y)
                     const drag = Draggable.get(galleryMover.value);
                     if (!drag) return;
                     
                     const currentX = drag.x;
                     const currentY = drag.y;
 
-                    // 2. Calculate Stable Point Math
                     const mouseX = e.clientX;
                     const mouseY = e.clientY;
                     const scaleRatio = newScale / oldScale;
                     
-                    // New position = Mouse - (Mouse - OldPos) * ratio
                     const newX = mouseX - (mouseX - currentX) * scaleRatio;
                     const newY = mouseY - (mouseY - currentY) * scaleRatio;
 
-                    // 3. Update State
                     scale.value = newScale;
-                    offset.value.x = -newX; // Canvas uses inverse
+                    offset.value.x = -newX; 
                     offset.value.y = -newY;
 
-                    // 4. Update DOM immediately (Bypass Vue binding)
                     gsap.set(galleryMover.value, { x: newX, y: newY });
                     gsap.set(galleryScaler.value, { scale: newScale });
                     
-                    // 5. Sync Draggable so physics work on next drag
                     drag.x = newX;
                     drag.y = newY;
-                    drag.update(); // Crucial: tells Draggable the transform changed
+                    drag.update(); 
                 };
 
-                // --- ANIMATION LOGIC (FLIP + Aspect Ratio Morph) ---
+                // --- ANIMATION LOGIC ---
                 const selectPhoto = async (photo) => {
                     if (expandedPhoto.value === photo.id || activePhoto.value) return;
                     
                     activePhoto.value = photo.id;
                     selectedPhoto.value = photo;
                     
-                    // Clear any existing content in detail panel
                     const targetContainer = detailPhotoContainer.value;
                     if (targetContainer) targetContainer.innerHTML = '';
                     
@@ -729,13 +752,11 @@
                     const originalEl = document.getElementById(`photo-electron-${photo.id}`);
                     if (!originalEl) return;
 
-                    // 1. Setup Clone
+                    // 1. Setup Clone (Match Thumbnail exactly)
                     const startRect = originalEl.getBoundingClientRect();
                     const clone = document.createElement('div');
                     clone.id = 'active-clone';
                     clone.className = 'animation-clone';
-                    
-                    // Clone starts exactly over the original
                     gsap.set(clone, {
                         left: startRect.left,
                         top: startRect.top,
@@ -744,26 +765,24 @@
                         borderRadius: '12px'
                     });
                     
-                    // Create IMG element (New Node)
+                    // Create IMG element (Cover mode initially)
                     const img = document.createElement('img');
                     img.src = photo.url;
-                    img.className = 'detail-img';
+                    img.className = 'detail-img-clone'; 
                     clone.appendChild(img);
                     
                     document.getElementById('clone-container').appendChild(clone);
 
-                    // 2. Calculate Final Target Dimensions (Fit natural ratio into container)
+                    // 2. Calculate Final Fitted Dimensions
+                    // We morph the wrapper to the natural image aspect ratio so "cover" == "contain"
                     const contRect = targetContainer.getBoundingClientRect();
-                    
-                    // Determine natural ratio
-                    let ratio = 2/3; // Default fallback
+                    let ratio = 2/3; 
                     const sourceImg = originalEl.querySelector('img');
                     if (sourceImg && sourceImg.naturalWidth) {
                         ratio = sourceImg.naturalWidth / sourceImg.naturalHeight;
                     }
 
                     const contRatio = contRect.width / contRect.height;
-                    
                     let targetW, targetH;
                     if (ratio > contRatio) {
                         targetW = contRect.width;
@@ -773,13 +792,10 @@
                         targetW = targetH * ratio;
                     }
 
-                    // Center it
                     const targetLeft = contRect.left + (contRect.width - targetW) / 2;
                     const targetTop = contRect.top + (contRect.height - targetH) / 2;
                     
-                    // 3. Animate Clone Wrapper
-                    // Since 'detail-img' is object-fit: cover, and the wrapper matches the image ratio at the end,
-                    // it will visually "un-crop" smoothly as the container changes shape.
+                    // 3. Animate Clone
                     gsap.to(clone, {
                         left: targetLeft,
                         top: targetTop,
@@ -788,25 +804,34 @@
                         borderRadius: 4, 
                         duration: 0.8,
                         ease: "power4.inOut",
-                        onComplete: () => {
+                        onComplete: async () => {
+                            // 4. Zero Flash Handoff
+                            
+                            // A: Make panel structure visible
                             expandedPhoto.value = photo.id;
                             
-                            // 4. Reparenting - Move the IMG node to the panel
-                            // This preserves the loaded pixel data (No Flash)
+                            // B: Wait for Vue to apply classes (visibility: visible)
+                            await nextTick();
+                            
+                            // C: Reparent Image
                             if (targetContainer && img) {
-                                // Important: Set size styles on the img before moving 
-                                // to match the parent constraints immediately
-                                img.style.width = '100%';
-                                img.style.height = '100%';
+                                // Apply EXACT dimensions to the landing image element
+                                // This matches the end state of animation frame perfectly
+                                img.className = ''; 
+                                img.style.width = targetW + 'px';
+                                img.style.height = targetH + 'px';
+                                
+                                // Shadow and Radius are applied via CSS on the img element
+                                // which now hugs the content exactly.
                                 targetContainer.appendChild(img);
                             }
                             
-                            // Remove empty clone
+                            // D: Remove clone
                             clone.remove();
                         }
                     });
 
-                    // 4. Push others away
+                    // Push others away
                     photos.value.forEach(p => {
                         if (p.id !== photo.id) {
                             gsap.to(`#photo-electron-${p.id}`, { opacity: 0.1, duration: 0.5 });
@@ -814,22 +839,21 @@
                     });
                 };
 
-                const closeDetailPanel = () => {
+                const closeDetailPanel = async () => {
                     const photo = selectedPhoto.value;
-                    expandedPhoto.value = null;
-                    
                     const img = detailPhotoContainer.value.querySelector('img');
                     const originalEl = document.getElementById(`photo-electron-${photo.id}`);
 
                     if (img && originalEl) {
-                        // 1. Re-create Clone for return journey
+                        // 1. Re-create Clone
+                        // Since we sized the image element tightly, this rect is the EXACT image content rect
                         const startRect = img.getBoundingClientRect();
                         
                         const clone = document.createElement('div');
                         clone.id = 'return-clone';
                         clone.className = 'animation-clone';
                         
-                        // Start where the detail image is
+                        // Start exactly where the image is
                         gsap.set(clone, {
                             left: startRect.left,
                             top: startRect.top,
@@ -839,12 +863,27 @@
                             zIndex: 9999
                         });
                         
-                        clone.appendChild(img); // Move img back to clone
+                        // 2. Move img back to clone
+                        // Clone is now the same aspect ratio as the full image.
+                        // Setting object-fit: cover inside a matched container means NO visible crop.
+                        img.className = 'detail-img-clone'; 
+                        
+                        // Clear the fixed pixel width/height we added on land, so it fills clone
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        
+                        clone.appendChild(img); 
                         document.getElementById('clone-container').appendChild(clone);
+                        
+                        // 3. Hide Panel
+                        expandedPhoto.value = null;
+                        await nextTick();
 
-                        // 2. Animate back to orbital position
+                        // 4. Animate back to thumbnail
                         const destRect = originalEl.getBoundingClientRect();
-
+                        
+                        // As the clone morphs from Image Ratio -> Thumbnail Ratio, 
+                        // object-fit: cover will gently crop it.
                         gsap.to(clone, {
                             left: destRect.left,
                             top: destRect.top,
@@ -862,6 +901,7 @@
                         });
                     } else {
                         // Fallback
+                        expandedPhoto.value = null;
                         activePhoto.value = null;
                         selectedPhoto.value = null;
                         if(dragInstance.value) dragInstance.value.enable();
@@ -883,7 +923,6 @@
                     window.location.href = 'index.html';
                 };
 
-                // --- BACKGROUND CANVAS ---
                 const initBackgroundCanvas = () => {
                     const canvas = bgCanvas.value;
                     if(!canvas) return;
@@ -901,9 +940,7 @@
                         if (loading.value) { requestAnimationFrame(drawField); return; }
                         
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        
                         ctx.save();
-                        // Apply Camera Transform
                         ctx.translate(-offset.value.x, -offset.value.y);
                         ctx.scale(scale.value, scale.value);
                         
@@ -943,14 +980,10 @@
                     return () => window.removeEventListener('resize', resizeCanvas);
                 };
 
-                // --- DRAGGABLE ---
                 const initDrag = () => {
                     const el = galleryMover.value;
-                    // Initial centering
                     offset.value.x = window.innerWidth;
                     offset.value.y = window.innerHeight;
-                    
-                    // Initial Set
                     gsap.set(el, { x: -offset.value.x, y: -offset.value.y });
 
                     dragInstance.value = Draggable.create(el, {
@@ -984,6 +1017,16 @@
                     document.addEventListener('keydown', (e) => {
                         if (e.key === 'Escape' && expandedPhoto.value) {
                             closeDetailPanel();
+                        }
+                    });
+                    
+                    // Safety: reset image dimensions on resize
+                    window.addEventListener('resize', () => {
+                        const img = document.querySelector('.detail-photo img');
+                        if (img && expandedPhoto.value) {
+                            // Reset to responsive
+                            img.style.width = 'auto';
+                            img.style.height = 'auto';
                         }
                     });
                     
