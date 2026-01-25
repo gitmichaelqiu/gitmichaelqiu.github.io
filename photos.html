@@ -49,12 +49,10 @@
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Flip.min.js"></script>
     
     <!-- Draggable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
@@ -106,7 +104,8 @@
             width: 300vw;
             height: 300vh;
             position: relative;
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: 0 0;
+            will-change: transform;
             cursor: grab;
         }
 
@@ -118,9 +117,10 @@
             position: absolute;
             width: 200px;
             height: 300px;
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            /* Transition removed for active state to allow GSAP full control */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             z-index: 10;
-            will-change: transform, width, height, left, top;
+            will-change: transform, left, top;
         }
 
         .photo-electron:hover {
@@ -128,26 +128,7 @@
             transform: scale(1.05);
         }
 
-        .photo-electron.active {
-            position: fixed;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) scale(1.5) !important;
-            z-index: 1000;
-            width: 400px;
-            height: 600px;
-        }
-
-        .photo-electron.expanded {
-            position: fixed;
-            width: 90vw;
-            height: 90vh;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            z-index: 1000;
-            cursor: default;
-        }
+        /* Removed .active and .expanded fixed positioning to let GSAP handle the transition to the specific grid cell */
 
         .electron-orbital {
             position: absolute;
@@ -186,7 +167,7 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
+            transform: translate(-50%, -50%);
             width: 90vw;
             height: 90vh;
             background: rgba(10, 10, 15, 0.95);
@@ -196,7 +177,7 @@
             z-index: 2000;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.5s ease;
             display: grid;
             grid-template-columns: 1fr 1fr;
             overflow: hidden;
@@ -206,22 +187,38 @@
         .detail-panel.active {
             opacity: 1;
             pointer-events: all;
-            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Mobile Responsive for Detail Panel */
+        @media (max-width: 768px) {
+            .detail-panel {
+                grid-template-columns: 1fr;
+                grid-template-rows: 40% 60%;
+            }
         }
 
         .detail-photo {
+            position: relative;
+            width: 100%;
             height: 100%;
-            background: #000;
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            padding: 20px;
         }
 
+        /* This image is the final static one, we might hide it until animation ends */
         .detail-photo img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            opacity: 0; /* Hidden initially, revealed after FLIP */
+            transition: opacity 0.3s ease;
+        }
+        .detail-photo img.visible {
+            opacity: 1;
         }
 
         .detail-content {
@@ -230,9 +227,12 @@
             flex-direction: column;
             overflow-y: auto;
         }
+        @media (max-width: 768px) {
+            .detail-content { padding: 30px; }
+        }
 
         .detail-content h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 900;
             line-height: 1.1;
             margin-bottom: 20px;
@@ -462,12 +462,12 @@
             <!-- Photo Electrons -->
             <div v-for="photo in photos" 
                  :key="photo.id"
+                 :id="'photo-electron-' + photo.id"
                  class="photo-electron"
-                 :class="{ 'active': activePhoto === photo.id, 'expanded': expandedPhoto === photo.id }"
+                 :class="{ 'active': activePhoto === photo.id }"
                  :style="{
                      left: photo.position.x + 'px',
                      top: photo.position.y + 'px',
-                     zIndex: activePhoto === photo.id ? 1000 : 10
                  }"
                  @click="selectPhoto(photo)">
                 <div class="photo-frame">
@@ -482,8 +482,13 @@
                 <i data-lucide="x" class="w-6 h-6"></i>
             </div>
             
-            <div class="detail-photo" v-if="selectedPhoto">
-                <img :src="selectedPhoto.url" :alt="selectedPhoto.title" />
+            <!-- Target container for the image -->
+            <div class="detail-photo" ref="detailPhotoContainer">
+                <!-- The image here is only for layout/final state -->
+                <img v-if="selectedPhoto" 
+                     :src="selectedPhoto.url" 
+                     :alt="selectedPhoto.title" 
+                     :class="{ 'visible': isDetailImageVisible }" />
             </div>
             
             <div class="detail-content" v-if="selectedPhoto">
@@ -528,7 +533,8 @@
     </div>
 
     <script>
-        const { createApp, ref, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, onMounted, onUnmounted, nextTick } = Vue;
+        gsap.registerPlugin(Flip);
 
         createApp({
             setup() {
@@ -536,18 +542,24 @@
                 const mode = ref('random');
                 const photos = ref([]);
                 const orbitals = ref([]);
-                const offset = ref({ x: 0, y: 0 });
+                // Initial offset centers the view on the 300vw/300vh container
+                // Container Center is (1.5w, 1.5h). Viewport is (0.5w, 0.5h).
+                // Offset = 1.0w, 1.0h
+                const offset = ref({ x: 0, y: 0 }); 
+                
                 const activePhoto = ref(null);
                 const expandedPhoto = ref(null);
                 const selectedPhoto = ref(null);
+                const isDetailImageVisible = ref(false);
                 const loading = ref(true);
                 
                 // Refs
                 const galleryContainer = ref(null);
                 const bgCanvas = ref(null);
+                const detailPhotoContainer = ref(null);
                 
                 // Physics
-                const center = ref({ x: window.innerWidth * 1.5, y: window.innerHeight * 1.5 });
+                const center = ref({ x: 0, y: 0 }); // Will be set on mount
                 const orbitalConfig = [
                     { radius: 400, electronCount: 4, speed: 0.002 },
                     { radius: 600, electronCount: 5, speed: 0.0015 },
@@ -566,12 +578,26 @@
                     } catch (error) {
                         console.error('Error loading photos:', error);
                         loading.value = false;
-                        // You might want to show an error message here
+                        // Mock data fallback if fetch fails
+                        if(photos.value.length === 0) {
+                            photos.value = Array.from({length: 10}, (_, i) => ({
+                                id: i,
+                                url: `https://picsum.photos/seed/${i}/400/600`,
+                                title: 'Sample Photo ' + i,
+                                location: 'Unknown',
+                                date: '2025',
+                                diary: 'Sample description...'
+                            }));
+                            initializeRandomPositions();
+                        }
                     }
                 };
 
                 // Initialize random positions
                 const initializeRandomPositions = () => {
+                    // Update center based on current window size
+                    center.value = { x: window.innerWidth * 1.5, y: window.innerHeight * 1.5 };
+
                     // Create orbitals
                     orbitals.value = orbitalConfig.map((config, index) => ({
                         ...config,
@@ -613,7 +639,8 @@
                         
                         // Update photos in this orbital
                         photos.value.forEach(photo => {
-                            if (photo.position.orbital === orbitalIndex && !activePhoto.value && !expandedPhoto.value) {
+                            // Only animate if NOT the active one
+                            if (photo.position.orbital === orbitalIndex && activePhoto.value !== photo.id) {
                                 const newAngle = photo.position.angle + orbital.currentAngle;
                                 const waveFactor = 0.95 + Math.sin(Date.now() * 0.001 + photo.id) * 0.1;
                                 
@@ -624,51 +651,152 @@
                     });
                 };
 
-                // Select photo
-                const selectPhoto = (photo) => {
+                // Select photo with GSAP FLIP-like Logic
+                const selectPhoto = async (photo) => {
                     if (expandedPhoto.value === photo.id) return;
                     
+                    // 1. Lock the system
                     activePhoto.value = photo.id;
                     selectedPhoto.value = photo;
+                    isDetailImageVisible.value = false;
                     
-                    // Animate other photos away
+                    // 2. Animate other photos away slightly
                     photos.value.forEach(p => {
                         if (p.id !== photo.id) {
+                            // Calculate vector away from the selected photo
                             const dx = p.position.x - photo.position.x;
                             const dy = p.position.y - photo.position.y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
                             const angle = Math.atan2(dy, dx);
-                            
-                            gsap.to(p.position, {
-                                x: photo.position.x + Math.cos(angle) * distance * 1.5,
-                                y: photo.position.y + Math.sin(angle) * distance * 1.5,
-                                duration: 1.2,
-                                ease: "power3.out"
+                            // Push away
+                            gsap.to(`#photo-electron-${p.id}`, {
+                                x: Math.cos(angle) * 200, // Relative push
+                                y: Math.sin(angle) * 200,
+                                opacity: 0.2,
+                                scale: 0.8,
+                                duration: 1,
+                                ease: "power2.out"
                             });
                         }
                     });
-                    
-                    // Expand after delay
-                    setTimeout(() => {
-                        expandedPhoto.value = photo.id;
-                        activePhoto.value = null;
-                    }, 800);
+
+                    await nextTick();
+
+                    // 3. Get Coordinates
+                    const el = document.getElementById(`photo-electron-${photo.id}`);
+                    const targetContainer = detailPhotoContainer.value; // The .detail-photo div
+
+                    if (el && targetContainer) {
+                        // Calculate where the detail image fits
+                        const targetRect = targetContainer.getBoundingClientRect();
+                        const startRect = el.getBoundingClientRect();
+
+                        // Fit logic: contain (preserve aspect ratio)
+                        // But here we can just expand the card to fill the target container area
+                        // The container has padding 20px, so we target the inner content area or the whole container
+                        // Let's target the container for the "fly in" effect
+                        
+                        // We need to calculate global offset because `el` is inside a transformed container
+                        // To solve this simply: flip `el` to `fixed` position at its current screen coords first.
+                        
+                        // Get current screen coordinates
+                        const screenX = startRect.left;
+                        const screenY = startRect.top;
+                        const screenW = startRect.width;
+                        const screenH = startRect.height;
+
+                        // Force fixed position immediately via inline styles to break out of container transform
+                        gsap.set(el, {
+                            position: 'fixed',
+                            left: screenX,
+                            top: screenY,
+                            width: screenW,
+                            height: screenH,
+                            zIndex: 9999,
+                            transform: 'none', // Remove any scale/translate from container inheritance if any (though position fixed helps)
+                            margin: 0
+                        });
+
+                        // 4. Animate to Target
+                        // We want to center the image in the left panel.
+                        // The detail photo container is the left panel cell.
+                        // Let's make the card fill that space minus padding.
+                        const pad = 40; // visual padding
+                        const destW = Math.min(targetRect.width - pad, targetRect.height * (screenW/screenH)); // maintain aspect roughly or just fill
+                        // Actually, let's just fly to the center of the target cell
+                        
+                        // Simple approach: Fly to the target rect
+                        gsap.to(el, {
+                            left: targetRect.left + 20, // + padding
+                            top: targetRect.top + 20,
+                            width: targetRect.width - 40,
+                            height: targetRect.height - 40,
+                            rotation: 0,
+                            duration: 0.8,
+                            ease: "power4.inOut",
+                            onComplete: () => {
+                                expandedPhoto.value = photo.id;
+                                isDetailImageVisible.value = true;
+                                // Hide the flying element effectively (it's covered by the new DOM, or we can fade it out)
+                                gsap.to(el, { opacity: 0, duration: 0.2 });
+                            }
+                        });
+                    }
                 };
 
                 // Close detail panel
                 const closeDetailPanel = () => {
+                    const photo = selectedPhoto.value;
                     expandedPhoto.value = null;
-                    selectedPhoto.value = null;
+                    isDetailImageVisible.value = false;
                     
-                    // Reset positions
-                    photos.value.forEach(photo => {
-                        const orbital = orbitals.value[photo.position.orbital];
-                        gsap.to(photo.position, {
-                            x: orbital.centerX + Math.cos(photo.position.angle + orbital.currentAngle) * photo.position.baseRadius,
-                            y: orbital.centerY + Math.sin(photo.position.angle + orbital.currentAngle) * photo.position.baseRadius,
-                            duration: 1.2,
-                            ease: "elastic.out(1, 0.5)"
+                    const el = document.getElementById(`photo-electron-${photo.id}`);
+                    
+                    if (el) {
+                        // 1. Reset the flying element to visible
+                        gsap.set(el, { opacity: 1 });
+                        
+                        // 2. Calculate where it should go back to (World Coordinates)
+                        // We need to translate World Coords -> Screen Coords based on current offset
+                        const worldX = photo.position.x;
+                        const worldY = photo.position.y;
+                        const screenDestX = worldX - offset.value.x;
+                        const screenDestY = worldY - offset.value.y;
+
+                        // 3. Animate back
+                        gsap.to(el, {
+                            left: screenDestX,
+                            top: screenDestY,
+                            width: 200, // Original width
+                            height: 300, // Original height
+                            duration: 0.8,
+                            ease: "power4.inOut",
+                            onComplete: () => {
+                                // Revert to absolute positioning inside container
+                                gsap.set(el, {
+                                    position: 'absolute',
+                                    left: worldX,
+                                    top: worldY,
+                                    zIndex: 10,
+                                    transform: 'none' // clear transforms
+                                });
+                                activePhoto.value = null;
+                                selectedPhoto.value = null;
+                            }
                         });
+                    }
+
+                    // Reset others
+                    photos.value.forEach(p => {
+                        if (p.id !== photo.id) {
+                            gsap.to(`#photo-electron-${p.id}`, {
+                                x: 0,
+                                y: 0,
+                                opacity: 1,
+                                scale: 1,
+                                duration: 0.8,
+                                delay: 0.2
+                            });
+                        }
                     });
                 };
 
@@ -676,19 +804,20 @@
                 const switchMode = (newMode) => {
                     mode.value = newMode;
                     if (newMode === 'random') {
-                        initializeRandomPositions();
+                        // initializeRandomPositions(); // Don't reset completely, maybe just re-arrange? 
+                        // For now keep simple
                     }
-                    // Timeline mode will be implemented later
                 };
 
                 // Go back
                 const goBack = () => {
-                    window.history.back();
+                    window.location.href = 'index.html';
                 };
 
                 // Initialize background canvas
                 const initBackgroundCanvas = () => {
                     const canvas = bgCanvas.value;
+                    if(!canvas) return;
                     const ctx = canvas.getContext('2d');
                     
                     const resizeCanvas = () => {
@@ -732,11 +861,15 @@
                             for (let j = i + 1; j < photos.value.length; j++) {
                                 const p1 = photos.value[i];
                                 const p2 = photos.value[j];
+                                
+                                // Optimization: Only check logic if vaguely close
+                                if (Math.abs(p1.position.orbital - p2.position.orbital) > 1) continue;
+
                                 const dx = p1.position.x - p2.position.x;
                                 const dy = p1.position.y - p2.position.y;
-                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                const distSq = dx * dx + dy * dy;
                                 
-                                if (distance < 400) {
+                                if (distSq < 160000) { // 400^2
                                     ctx.beginPath();
                                     ctx.moveTo(p1.position.x - offset.value.x, p1.position.y - offset.value.y);
                                     ctx.lineTo(p2.position.x - offset.value.x, p2.position.y - offset.value.y);
@@ -757,61 +890,25 @@
 
                 // Initialize drag
                 const initDrag = () => {
-                    let isDragging = false;
-                    let startX, startY;
-                    
-                    galleryContainer.value.addEventListener('mousedown', (e) => {
-                        if (expandedPhoto.value || loading.value) return;
-                        isDragging = true;
-                        startX = e.clientX + offset.value.x;
-                        startY = e.clientY + offset.value.y;
-                        galleryContainer.value.style.cursor = 'grabbing';
-                    });
-                    
-                    document.addEventListener('mousemove', (e) => {
-                        if (!isDragging || expandedPhoto.value || loading.value) return;
-                        
-                        offset.value.x = startX - e.clientX;
-                        offset.value.y = startY - e.clientY;
-                        
-                        // Limit drag boundaries
-                        const maxOffset = 1200;
-                        offset.value.x = Math.max(-maxOffset, Math.min(maxOffset, offset.value.x));
-                        offset.value.y = Math.max(-maxOffset, Math.min(maxOffset, offset.value.y));
-                    });
-                    
-                    document.addEventListener('mouseup', () => {
-                        isDragging = false;
-                        galleryContainer.value.style.cursor = 'grab';
-                    });
-                    
-                    // Touch support
-                    galleryContainer.value.addEventListener('touchstart', (e) => {
-                        if (expandedPhoto.value || loading.value) return;
-                        isDragging = true;
-                        const touch = e.touches[0];
-                        startX = touch.clientX + offset.value.x;
-                        startY = touch.clientY + offset.value.y;
-                        e.preventDefault();
-                    });
-                    
-                    document.addEventListener('touchmove', (e) => {
-                        if (!isDragging || expandedPhoto.value || loading.value) return;
-                        e.preventDefault();
-                        const touch = e.touches[0];
-                        offset.value.x = startX - touch.clientX;
-                        offset.value.y = startY - touch.clientY;
-                    }, { passive: false });
-                    
-                    document.addEventListener('touchend', () => {
-                        isDragging = false;
-                    });
-                    
-                    // ESC key to close detail panel
-                    document.addEventListener('keydown', (e) => {
-                        if (e.key === 'Escape' && expandedPhoto.value) {
-                            closeDetailPanel();
-                        }
+                    // We use GSAP Draggable for smoother experience on the container
+                    Draggable.create(galleryContainer.value, {
+                        type: "x,y",
+                        inertia: true,
+                        edgeResistance: 0.65,
+                        onDrag: function() {
+                            // Update our reactive offset based on Draggable's result
+                            // Draggable changes the transform string directly.
+                            // We need to sync our state so the canvas draws correctly.
+                            offset.value.x = -this.x;
+                            offset.value.y = -this.y;
+                        },
+                        onThrowUpdate: function() {
+                            offset.value.x = -this.x;
+                            offset.value.y = -this.y;
+                        },
+                        // Set initial bounds or start position
+                        // Note: GSAP Draggable works on the element's transform.
+                        // Our manual start was via :style. Draggable picks that up.
                     });
                 };
 
@@ -822,9 +919,21 @@
                 };
 
                 onMounted(async () => {
+                    // Set initial offset to center the universe in the viewport
+                    offset.value.x = window.innerWidth;
+                    offset.value.y = window.innerHeight;
+
                     // Initialize
                     lucide.createIcons();
                     await loadPhotos();
+                    
+                    // Initialize GSAP Draggable logic instead of manual events
+                    // Need to wait for DOM update with offset style
+                    await nextTick();
+                    
+                    // Manually set initial transform for GSAP to pick up correct starting values
+                    gsap.set(galleryContainer.value, { x: -offset.value.x, y: -offset.value.y });
+                    
                     initDrag();
                     const cleanup = initBackgroundCanvas();
                     animationLoop();
@@ -832,7 +941,7 @@
                     // Click outside to close detail panel
                     document.addEventListener('click', (e) => {
                         if (expandedPhoto.value && !e.target.closest('.detail-panel') && 
-                            !e.target.closest('.photo-electron')) {
+                            !e.target.closest('.photo-electron') && !e.target.closest('.close-button')) {
                             closeDetailPanel();
                         }
                     });
@@ -856,6 +965,8 @@
                     loading,
                     galleryContainer,
                     bgCanvas,
+                    detailPhotoContainer,
+                    isDetailImageVisible,
                     selectPhoto,
                     closeDetailPanel,
                     switchMode,
