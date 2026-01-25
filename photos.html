@@ -29,16 +29,11 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-20px)' },
                         }
                     }
                 }
@@ -51,10 +46,6 @@
     
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Flip.min.js"></script>
-    
-    <!-- Draggable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
 
     <!-- Lucide Icons -->
@@ -66,7 +57,6 @@
     <style>
         :root {
             --klein-blue: #002FA7;
-            --electron-radius: 400;
         }
 
         body {
@@ -80,19 +70,6 @@
             user-select: none;
         }
 
-        html.dark body {
-            background-color: #050505;
-            color: #ffffff;
-        }
-
-        .glass-card { 
-            background: rgba(20, 20, 20, 0.3); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
-            will-change: transform, box-shadow;
-        }
-
         /* --- GALLERY LAYOUT --- */
         .gallery-viewport {
             position: fixed;
@@ -102,13 +79,14 @@
             height: 100%;
             overflow: hidden;
             cursor: grab;
+            touch-action: none;
         }
         .gallery-viewport:active {
             cursor: grabbing;
         }
 
         .gallery-mover {
-            /* This div is moved by Draggable (X/Y) */
+            /* Handled exclusively by GSAP Draggable. No CSS transitions on transform! */
             width: 300vw;
             height: 300vh;
             position: absolute;
@@ -118,30 +96,28 @@
         }
 
         .gallery-scaler {
-            /* This div is scaled by Vue (Zoom) */
+            /* Handled exclusively by GSAP. No CSS transitions on transform! */
             width: 100%;
             height: 100%;
-            transform-origin: center center; /* Zoom from center relative to the mover */
+            transform-origin: 0 0; 
             will-change: transform;
-            transition: transform 0.1s linear; /* Smooth zoom */
         }
 
+        /* --- PHOTO ITEMS --- */
         .photo-electron {
             position: absolute;
             width: 200px;
             height: 300px;
-            /* No transition on transform to avoid fighting the physics loop */
-            transition: box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease, opacity 0.3s ease;
             z-index: 10;
             will-change: transform, left, top;
         }
 
         .photo-electron:hover {
             z-index: 100;
-            transform: scale(1.05); /* Local hover effect */
+            transform: scale(1.05);
         }
         
-        /* When active, we hide the original because the clone takes over */
         .photo-electron.is-hidden {
             opacity: 0 !important;
             pointer-events: none;
@@ -170,6 +146,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            pointer-events: none;
         }
 
         .photo-electron:hover .photo-frame {
@@ -191,15 +168,20 @@
         .animation-clone {
             position: fixed;
             transform-origin: top left;
-            box-shadow: 0 30px 80px rgba(0, 47, 167, 0.5);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
             border-radius: 12px;
             overflow: hidden;
             z-index: 9999;
+            will-change: transform, width, height, top, left;
+            background: #000;
         }
-        .animation-clone img {
+        
+        /* The image inside the clone - IMPORTANT: Start as cover, end as cover (but container matches ratio) */
+        .detail-img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; 
+            display: block;
         }
 
         /* --- DETAIL PANEL --- */
@@ -246,17 +228,18 @@
             justify-content: center;
             overflow: hidden;
             padding: 20px;
+            /* Ensure the image container is above other panel elements if needed, 
+               but usually content is on the right */
+            z-index: 2002; 
         }
 
+        /* The image inside detail-photo is injected via JS */
         .detail-photo img {
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            opacity: 0; 
-            transition: opacity 0.3s ease;
-        }
-        .detail-photo img.visible {
-            opacity: 1;
+            object-fit: cover; /* Maintain cover since container is sized to ratio */
         }
 
         .detail-content {
@@ -264,6 +247,8 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            position: relative;
+            z-index: 2002;
         }
         @media (max-width: 768px) {
             .detail-content { padding: 30px; }
@@ -329,7 +314,7 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 1001;
+            z-index: 2005; /* Above everything */
         }
 
         .close-button:hover {
@@ -404,6 +389,7 @@
             display: flex;
             gap: 12px;
             align-items: center;
+            pointer-events: none;
         }
 
         .canvas-bg {
@@ -484,8 +470,10 @@
 
         <!-- Main Gallery Container -->
         <div class="gallery-viewport" ref="galleryViewport" @wheel="handleWheel">
+            <!-- GSAP handles transform directly. No Vue binding for style to avoid conflicts. -->
             <div class="gallery-mover" ref="galleryMover">
-                <div class="gallery-scaler" :style="{ transform: `scale(${scale})` }">
+                <!-- GSAP handles scale directly via handleWheel logic -->
+                <div class="gallery-scaler" ref="galleryScaler">
                     <!-- Orbital Rings -->
                     <div v-for="(ring, index) in orbitals" 
                          :key="'ring-'+index" 
@@ -527,12 +515,8 @@
                 <i data-lucide="x" class="w-6 h-6"></i>
             </div>
             
-            <div class="detail-photo" ref="detailPhotoContainer">
-                <img v-if="selectedPhoto" 
-                     :src="selectedPhoto.url" 
-                     :alt="selectedPhoto.title" 
-                     :class="{ 'visible': isDetailImageVisible }" />
-            </div>
+            <!-- Target container for the image. We physically move the img node here. -->
+            <div class="detail-photo" ref="detailPhotoContainer"></div>
             
             <div class="detail-content" v-if="selectedPhoto">
                 <h1>{{ selectedPhoto.title }}</h1>
@@ -585,7 +569,7 @@
                 const photos = ref([]);
                 const orbitals = ref([]);
                 
-                // Camera State
+                // Camera State (Used for Canvas Sync, DOM is driven by GSAP)
                 const offset = ref({ x: 0, y: 0 }); 
                 const scale = ref(1.0);
                 
@@ -593,13 +577,13 @@
                 const activePhoto = ref(null);
                 const expandedPhoto = ref(null);
                 const selectedPhoto = ref(null);
-                const isDetailImageVisible = ref(false);
                 const loading = ref(true);
                 const dragInstance = ref(null);
                 
                 // Refs
                 const galleryViewport = ref(null);
                 const galleryMover = ref(null);
+                const galleryScaler = ref(null);
                 const bgCanvas = ref(null);
                 const detailPhotoContainer = ref(null);
                 
@@ -669,7 +653,7 @@
                 };
 
                 const updateElectronPositions = () => {
-                    if (loading.value || activePhoto.value) return; // Pause physics when viewing
+                    if (loading.value || activePhoto.value) return; 
                     
                     orbitals.value.forEach((orbital, orbitalIndex) => {
                         orbital.currentAngle += orbital.speed;
@@ -684,79 +668,147 @@
                     });
                 };
 
-                // --- ZOOM LOGIC ---
+                // --- ZOOM LOGIC (Fixed Jiggle & Cursor Centering) ---
                 const handleWheel = (e) => {
-                    if (expandedPhoto.value) return; // Disable zoom when detail is open
+                    if (expandedPhoto.value) return; 
                     e.preventDefault();
                     
                     const zoomSensitivity = 0.001;
                     const delta = -e.deltaY * zoomSensitivity;
-                    const newScale = Math.min(Math.max(0.1, scale.value + delta), 2.0);
+                    const oldScale = scale.value;
+                    const newScale = Math.min(Math.max(0.1, oldScale + delta), 4.0);
                     
-                    // Optional: Zoom towards mouse cursor could go here, 
-                    // but simple center zoom is cleaner for this layout.
+                    if (Math.abs(newScale - oldScale) < 0.0001) return;
+
+                    // 1. Get current Draggable state (Source of Truth for X/Y)
+                    const drag = Draggable.get(galleryMover.value);
+                    if (!drag) return;
+                    
+                    const currentX = drag.x;
+                    const currentY = drag.y;
+
+                    // 2. Calculate Stable Point Math
+                    const mouseX = e.clientX;
+                    const mouseY = e.clientY;
+                    const scaleRatio = newScale / oldScale;
+                    
+                    // New position = Mouse - (Mouse - OldPos) * ratio
+                    const newX = mouseX - (mouseX - currentX) * scaleRatio;
+                    const newY = mouseY - (mouseY - currentY) * scaleRatio;
+
+                    // 3. Update State
                     scale.value = newScale;
+                    offset.value.x = -newX; // Canvas uses inverse
+                    offset.value.y = -newY;
+
+                    // 4. Update DOM immediately (Bypass Vue binding)
+                    gsap.set(galleryMover.value, { x: newX, y: newY });
+                    gsap.set(galleryScaler.value, { scale: newScale });
+                    
+                    // 5. Sync Draggable so physics work on next drag
+                    drag.x = newX;
+                    drag.y = newY;
+                    drag.update(); // Crucial: tells Draggable the transform changed
                 };
 
-                // --- ANIMATION LOGIC (CLONE STRATEGY) ---
+                // --- ANIMATION LOGIC (FLIP + Aspect Ratio Morph) ---
                 const selectPhoto = async (photo) => {
                     if (expandedPhoto.value === photo.id || activePhoto.value) return;
                     
-                    // 1. Lock state
                     activePhoto.value = photo.id;
                     selectedPhoto.value = photo;
-                    isDetailImageVisible.value = false;
-                    if(dragInstance.value) dragInstance.value.disable(); // Disable drag
+                    
+                    // Clear any existing content in detail panel
+                    const targetContainer = detailPhotoContainer.value;
+                    if (targetContainer) targetContainer.innerHTML = '';
+                    
+                    if(dragInstance.value) dragInstance.value.disable(); 
 
                     await nextTick();
 
-                    // 2. Create Clone
                     const originalEl = document.getElementById(`photo-electron-${photo.id}`);
                     if (!originalEl) return;
 
-                    const rect = originalEl.getBoundingClientRect();
+                    // 1. Setup Clone
+                    const startRect = originalEl.getBoundingClientRect();
                     const clone = document.createElement('div');
                     clone.id = 'active-clone';
                     clone.className = 'animation-clone';
-                    clone.style.left = rect.left + 'px';
-                    clone.style.top = rect.top + 'px';
-                    clone.style.width = rect.width + 'px';
-                    clone.style.height = rect.height + 'px';
                     
-                    // Copy Image
+                    // Clone starts exactly over the original
+                    gsap.set(clone, {
+                        left: startRect.left,
+                        top: startRect.top,
+                        width: startRect.width,
+                        height: startRect.height,
+                        borderRadius: '12px'
+                    });
+                    
+                    // Create IMG element (New Node)
                     const img = document.createElement('img');
                     img.src = photo.url;
+                    img.className = 'detail-img';
                     clone.appendChild(img);
                     
                     document.getElementById('clone-container').appendChild(clone);
 
-                    // 3. Calculate Target
-                    const targetContainer = detailPhotoContainer.value;
-                    const targetRect = targetContainer.getBoundingClientRect();
+                    // 2. Calculate Final Target Dimensions (Fit natural ratio into container)
+                    const contRect = targetContainer.getBoundingClientRect();
                     
-                    // Simple fit logic for target dimension (keeping aspect ratio of card roughly or simply filling target area)
-                    // We'll fill the target area minus some padding
-                    const pad = 0; 
+                    // Determine natural ratio
+                    let ratio = 2/3; // Default fallback
+                    const sourceImg = originalEl.querySelector('img');
+                    if (sourceImg && sourceImg.naturalWidth) {
+                        ratio = sourceImg.naturalWidth / sourceImg.naturalHeight;
+                    }
+
+                    const contRatio = contRect.width / contRect.height;
                     
-                    // 4. Animate Clone
+                    let targetW, targetH;
+                    if (ratio > contRatio) {
+                        targetW = contRect.width;
+                        targetH = targetW / ratio;
+                    } else {
+                        targetH = contRect.height;
+                        targetW = targetH * ratio;
+                    }
+
+                    // Center it
+                    const targetLeft = contRect.left + (contRect.width - targetW) / 2;
+                    const targetTop = contRect.top + (contRect.height - targetH) / 2;
+                    
+                    // 3. Animate Clone Wrapper
+                    // Since 'detail-img' is object-fit: cover, and the wrapper matches the image ratio at the end,
+                    // it will visually "un-crop" smoothly as the container changes shape.
                     gsap.to(clone, {
-                        left: targetRect.left + pad,
-                        top: targetRect.top + pad,
-                        width: targetRect.width - (pad*2),
-                        height: targetRect.height - (pad*2),
+                        left: targetLeft,
+                        top: targetTop,
+                        width: targetW,
+                        height: targetH,
+                        borderRadius: 4, 
                         duration: 0.8,
                         ease: "power4.inOut",
                         onComplete: () => {
                             expandedPhoto.value = photo.id;
-                            isDetailImageVisible.value = true;
-                            gsap.set(clone, { opacity: 0 }); // Hide clone, show real detail image
+                            
+                            // 4. Reparenting - Move the IMG node to the panel
+                            // This preserves the loaded pixel data (No Flash)
+                            if (targetContainer && img) {
+                                // Important: Set size styles on the img before moving 
+                                // to match the parent constraints immediately
+                                img.style.width = '100%';
+                                img.style.height = '100%';
+                                targetContainer.appendChild(img);
+                            }
+                            
+                            // Remove empty clone
+                            clone.remove();
                         }
                     });
 
-                    // 5. Push others away
+                    // 4. Push others away
                     photos.value.forEach(p => {
                         if (p.id !== photo.id) {
-                            // Simple opacity fade out for cleaner focus
                             gsap.to(`#photo-electron-${p.id}`, { opacity: 0.1, duration: 0.5 });
                         }
                     });
@@ -765,26 +817,40 @@
                 const closeDetailPanel = () => {
                     const photo = selectedPhoto.value;
                     expandedPhoto.value = null;
-                    isDetailImageVisible.value = false;
                     
-                    const clone = document.getElementById('active-clone');
+                    const img = detailPhotoContainer.value.querySelector('img');
                     const originalEl = document.getElementById(`photo-electron-${photo.id}`);
 
-                    if (clone && originalEl) {
-                        // 1. Show clone again
-                        gsap.set(clone, { opacity: 1 });
+                    if (img && originalEl) {
+                        // 1. Re-create Clone for return journey
+                        const startRect = img.getBoundingClientRect();
                         
-                        // 2. Get current position of the hidden original element
-                        // Since physics was paused, it should be where we left it.
-                        // However, we need its SCREEN coordinates.
-                        const rect = originalEl.getBoundingClientRect();
+                        const clone = document.createElement('div');
+                        clone.id = 'return-clone';
+                        clone.className = 'animation-clone';
+                        
+                        // Start where the detail image is
+                        gsap.set(clone, {
+                            left: startRect.left,
+                            top: startRect.top,
+                            width: startRect.width,
+                            height: startRect.height,
+                            borderRadius: '4px',
+                            zIndex: 9999
+                        });
+                        
+                        clone.appendChild(img); // Move img back to clone
+                        document.getElementById('clone-container').appendChild(clone);
 
-                        // 3. Animate back
+                        // 2. Animate back to orbital position
+                        const destRect = originalEl.getBoundingClientRect();
+
                         gsap.to(clone, {
-                            left: rect.left,
-                            top: rect.top,
-                            width: rect.width,
-                            height: rect.height,
+                            left: destRect.left,
+                            top: destRect.top,
+                            width: destRect.width,
+                            height: destRect.height,
+                            borderRadius: '12px',
                             duration: 0.8,
                             ease: "power4.inOut",
                             onComplete: () => {
@@ -794,6 +860,11 @@
                                 if(dragInstance.value) dragInstance.value.enable();
                             }
                         });
+                    } else {
+                        // Fallback
+                        activePhoto.value = null;
+                        selectedPhoto.value = null;
+                        if(dragInstance.value) dragInstance.value.enable();
                     }
 
                     // Restore others
@@ -831,64 +902,22 @@
                         
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         
-                        // Apply Camera Transform to Context
                         ctx.save();
-                        // 1. Translate to center of screen (optional, but good for zooming from center)
-                        // Actually, we are applying transform to the DOM elements: translate(-offset) scale(scale)
-                        // We must match that here.
-                        
-                        // The DOM structure: Mover (Translate) -> Scaler (Scale) -> Elements (Position)
-                        // So a point P(x,y) in world space becomes:
-                        // ScreenX = (P.x * scale) + (MoverX)
-                        // Wait, Mover is outside Scaler.
-                        // ScreenX = (P.x * scale) + MoverX ?? No.
-                        // Structure: viewport -> mover -> scaler -> element
-                        // Element is at x,y inside scaler.
-                        // Scaler applies scale.
-                        // Mover applies translate(-offset.x, -offset.y).
-                        // So ScreenX = (x * scale) - offset.x ? No, translate is on parent.
-                        // Transforms multiply. 
-                        // Matrix: Translate(-off.x, -off.y) * Scale(s) * Point(x,y)
-                        // Actually, translate is on outer div, scale on inner.
-                        // So visually: The scaler origin is 0,0 of mover.
-                        // Mover is at -off.x, -off.y relative to viewport.
-                        // Scaler center is 50% 50% of mover? No, transform-origin is center.
-                        // Let's simplify: Scaler is width 100%, height 100% of Mover (300vw/300vh).
-                        // Mover is 300vw/300vh.
-                        // Transform origin center means it scales from the center of the universe (1.5w, 1.5h).
-                        
-                        // To match canvas drawing:
-                        // We need to transform the context similarly.
-                        
-                        // The Mover translation
+                        // Apply Camera Transform
                         ctx.translate(-offset.value.x, -offset.value.y);
-                        
-                        // The Scaler scaling
-                        // We need to scale around the center of the mover div.
-                        const universeW = window.innerWidth * 3; // 300vw approx (initial calc)
-                        const universeH = window.innerHeight * 3;
-                        const centerX = center.value.x; // This was initialized as window * 1.5
-                        const centerY = center.value.y;
-                        
-                        ctx.translate(centerX, centerY);
                         ctx.scale(scale.value, scale.value);
-                        ctx.translate(-centerX, -centerY);
                         
-                        // Draw Orbitals
                         ctx.strokeStyle = 'rgba(0, 47, 167, 0.1)';
-                        ctx.lineWidth = 1 / scale.value; // Keep lines thin
+                        ctx.lineWidth = 1 / scale.value;
                         orbitals.value.forEach(orbital => {
                             ctx.beginPath();
                             ctx.arc(orbital.centerX, orbital.centerY, orbital.radius, 0, Math.PI * 2);
                             ctx.stroke();
                         });
 
-                        // Draw Connections
                         ctx.strokeStyle = 'rgba(0, 47, 167, 0.05)';
                         ctx.lineWidth = 0.5 / scale.value;
                         
-                        // Simple proximity check optimization
-                        // Only draw connections if not zoomed out too far (optimization)
                         if (scale.value > 0.2) {
                             for (let i = 0; i < photos.value.length; i++) {
                                 for (let j = i + 1; j < photos.value.length; j++) {
@@ -906,7 +935,6 @@
                                 }
                             }
                         }
-
                         ctx.restore();
                         requestAnimationFrame(drawField);
                     };
@@ -921,6 +949,8 @@
                     // Initial centering
                     offset.value.x = window.innerWidth;
                     offset.value.y = window.innerHeight;
+                    
+                    // Initial Set
                     gsap.set(el, { x: -offset.value.x, y: -offset.value.y });
 
                     dragInstance.value = Draggable.create(el, {
@@ -962,7 +992,7 @@
 
                 return {
                     mode, photos, orbitals, scale, activePhoto, expandedPhoto, selectedPhoto, loading,
-                    galleryViewport, galleryMover, bgCanvas, detailPhotoContainer, isDetailImageVisible,
+                    galleryViewport, galleryMover, galleryScaler, bgCanvas, detailPhotoContainer,
                     selectPhoto, closeDetailPanel, switchMode, goBack, handleWheel
                 };
             }
