@@ -61,552 +61,582 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
+        /* ------------------------- Scaling system (RK Inspired) --------------------------------- */
         :root {
             --klein-blue: #002FA7;
+            --pure-black: #000000;
+            --pure-white: #ffffff;
+            --pale-blue: #F8F9FB; /* Slightly cooler, cleaner light mode */
+            --silver-light: #F2F2F7;
+            
+            --size-unit: 16;
+            --size-container-ideal: 1920;
+            --size-container-min: 320px;
+            --size-container-max: 2240px;
+            --size-container: clamp(var(--size-container-min), 100dvw, var(--size-container-max));
+            --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
+            
+            --vh: 1vh;
+            --full-screen-height: 100dvh;
+            
+            /* Theme Tokens (Forced Light Mode) */
+            --bg-primary: var(--pale-blue);
+            --bg-secondary: var(--pure-white);
+            --text-primary: var(--pure-black);
+            --text-secondary: rgba(0, 0, 0, 0.6);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-bg: var(--klein-blue);
+            --selection-text: var(--pure-white);
+            
+            --radius-btn: 0.25rem;
         }
 
-        body {
-            background-color: #F2F2F7;
-            color: #111;
-            transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 100vw;
-            overflow-x: hidden;
+        .theme-base {
+            --bg-primary: var(--pale-blue);
+            --bg-secondary: var(--pure-white);
+            --text-primary: var(--pure-black);
+            --text-secondary: rgba(0, 0, 0, 0.6);
+            --border-color: rgba(0, 0, 0, 0.08);
         }
-        
+
+        /* Responsive ideal sizes */
+        @media screen and (max-width: 991px) { :root { --size-container-ideal: 991; } }
+        @media screen and (max-width: 767px) { :root { --size-container-ideal: 767; } }
+        @media screen and (max-width: 479px) { :root { --size-container-ideal: 479; } }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html, body {
+            font-size: var(--size-font);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            text-rendering: optimizeLegibility;
+            overflow-x: hidden;
+            width: 100%;
+            transition: background-color 0.8s cubic-bezier(0.65, 0, 0.35, 1), color 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* --- RK Typography --- */
+        h1, h2, h3, h4, .heading-xl, .heading-l {
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            line-height: 0.85;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .heading-xl {
+            font-size: clamp(4rem, 15vw, 16rem);
+            letter-spacing: -0.07em;
+        }
+
+        .heading-l {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+        }
+
+        .paragraph-l {
+            font-size: clamp(1.25rem, 3vw, 3rem);
+            line-height: 1.1;
+            font-weight: 500;
+            letter-spacing: -0.03em;
+        }
+
+        .paragraph-m {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            line-height: 1.4;
+            letter-spacing: -0.01em;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--size-container);
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+        }
+
+        /* --- RK Buttons (Sharp) --- */
+        [data-btn] {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2em 2.4em;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.4s ease, color 0.4s ease;
+        }
+
+        [data-btn]::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 0%;
+            background: var(--klein-blue);
+            transition: height 0.5s cubic-bezier(0.625, 0.05, 0, 1);
+            z-index: -1;
+        }
+
+        [data-btn]:hover::before { height: 100%; }
+        [data-btn]:hover { color: white; border-color: var(--klein-blue); }
+
+        /* --- RK Grid Icons (Bolt) --- */
+        .bolt-rk {
+            position: absolute;
+            width: 0.75rem;
+            height: 0.75rem;
+            color: var(--border-color);
+            z-index: 10;
+        }
+        .bolt-tl { top: -0.375rem; left: -0.375rem; }
+        .bolt-tr { top: -0.375rem; right: -0.375rem; }
+        .bolt-bl { bottom: -0.375rem; left: -0.375rem; }
+        .bolt-br { bottom: -0.375rem; right: -0.375rem; }
+
+        /* --- RK Section Layout --- */
+        .section-rk {
+            position: relative;
+            border-top: 1px solid var(--border-color);
+            padding-top: 8rem;
+            padding-bottom: 8rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 0; /* Pure RK uses borders as gaps */
+        }
+
+        .card-rk {
+            grid-column: span 4;
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            aspect-ratio: 1 / 1;
+            transition: background-color 0.4s ease;
+        }
+
+        .card-rk:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .col-span-4 { grid-column: span 4; }
+        .col-span-8 { grid-column: span 8; }
+        .col-span-12 { grid-column: span 12; }
+
+        /* --- Custom Cursor --- */
+        @media (hover: hover) and (pointer: fine) {
+            body, button, a, input, [role="button"], .cursor-pointer { cursor: none !important; }
+            .cursor-dot { display: block; position: fixed; pointer-events: none; z-index: 20000; mix-blend-mode: difference; width: 4px; height: 4px; background-color: white; border-radius: 50%; transform: translate(-50%, -50%); }
+        }
+
+        /* --- Lenis Smooth Scroll --- */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+
+        /* Utility classes */
+        .text-klein { color: var(--klein-blue); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @media (max-width: 768px) {
+            .card-rk { grid-column: span 12; aspect-ratio: auto; }
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        @keyframes scroll-line {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .animate-scroll-line {
+            animation: scroll-line 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+        }
+
         body.is-booting {
             overflow: hidden;
             height: 100vh;
         }
 
-        html.dark body {
-            background-color: #050505;
-            color: #ffffff;
+        /* Nav Dock Styles */
+        .nav-dock {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 9999;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            backdrop-blur: 10px;
+            transition: opacity 1s ease;
         }
 
-        /* Lenis */
-        html.lenis { height: auto; }
-        .lenis.lenis-smooth { scroll-behavior: auto; }
-        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-        .lenis.lenis-stopped { overflow: hidden; }
-        .lenis.lenis-scrolling iframe { pointer-events: none; }
-
-        /* Custom Cursor */
-        @media (hover: hover) and (pointer: fine) {
-            body, button, a, input, [role="button"], .cursor-pointer { cursor: none !important; }
-            .cursor-dot, .cursor-outline { display: block; }
-        }
-        .cursor-dot, .cursor-outline {
-            position: fixed; top: 0; left: 0;
-            transform: translate(-50%, -50%); border-radius: 50%;
-            z-index: 20000; pointer-events: none; mix-blend-mode: difference;
-        }
-        .cursor-dot { width: 8px; height: 8px; background-color: white; }
-        .cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: width 0.2s, height 0.2s; }
-        body:hover .cursor-outline { width: 30px; height: 30px; }
-
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.6); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(0, 0, 0, 0.1); 
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
-            will-change: transform, box-shadow;
-        }
-        html.dark .glass-card { background: rgba(20, 20, 20, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
-        
-        .glass-card:hover { 
-            border-color: var(--klein-blue); 
-            background: rgba(0, 47, 167, 0.05); 
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
-            z-index: 20;
+        .nav-dock__btn {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
 
-        .connect-card {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .connect-card:hover {
-            border-color: var(--klein-blue); 
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.2);
-            z-index: 20;
+        .nav-dock__btn:hover, .nav-dock__btn.active {
+            border-color: var(--border-color);
+            background: rgba(0, 0, 0, 0.05);
         }
 
-        .card-corner-glow {
-            position: absolute; top: 0; right: 0; width: 300px; height: 300px;
-            background: radial-gradient(circle at 100% 0%, rgba(0, 47, 167, 0.4) 0%, transparent 70%); 
-            opacity: 0; transition: opacity 0.6s ease; pointer-events: none; z-index: 0;
-        }
-        .group:hover .card-corner-glow { opacity: 1; }
-        
-        .ambient-glow {
-            position: absolute; width: 40vmax; height: 40vmax;
-            background: radial-gradient(circle, rgba(0, 47, 167, 0.15) 0%, transparent 70%);
-            filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.6;
+        .nav-dock__label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0 1.5rem;
+            opacity: 0.5;
         }
 
-        .card-content { position: relative; z-index: 10; }
-        .magnetic-ball-line { stroke: currentColor; stroke-width: 1px; }
-
-        .hover-solid-blue:hover { background-color: var(--klein-blue) !important; border-color: var(--klein-blue) !important; }
-        .hover-solid-gray:hover { background-color: #333 !important; border-color: #333 !important; }
-        html.dark .hover-solid-gray:hover { background-color: #eee !important; border-color: #eee !important; }
-        html.dark .hover-solid-gray:hover h3, html.dark .hover-solid-gray:hover i, html.dark .hover-solid-gray:hover p { color: black !important; }
-
-        .app-card-glass {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
-            backdrop-filter: blur(60px) saturate(180%); -webkit-backdrop-filter: blur(60px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 30px 60px -10px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(255,255,255,0.2);
-            transform: translateZ(0); will-change: transform, backdrop-filter;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        html.dark .app-card-glass {
-            background: linear-gradient(180deg, rgba(30, 30, 35, 0.7) 0%, rgba(10, 10, 15, 0.6) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 40px 80px -15px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
-        }
-        .app-card-glass:hover { transform: translateY(-8px) scale(1.01) translateZ(0); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.25); }
-        html.dark .app-card-glass:hover { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 50px 100px -20px rgba(0, 47, 167, 0.3); }
-
-        /* --- PHOTOS SECTION REDESIGN --- */
-        #photos-wrapper {
-            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            background-color: #050505;
-            color: #ffffff;
-            position: relative;
-        }
-        #photos-wrapper.light-mode { background-color: #ffffff; color: #002FA7; }
-        #photos-wrapper.dark-mode { background-color: #020412; color: #ffffff; }
-
-        a-waves {
-            --x: -0.5rem; --y: 50%; --dash-offset: 20000;
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 0;
-        }
-        a-waves svg { display: block; width: 100%; height: 100%; }
-        a-waves svg path {
-            fill: none; stroke-width: 1px; vector-effect: non-scaling-stroke; transition: stroke 0.5s ease;
-            stroke-dasharray: 20000; 
-            stroke-dashoffset: var(--dash-offset);
-        }
-        a-waves svg path { stroke: rgba(255, 255, 255, 0.1); }
-        #photos-wrapper.light-mode a-waves svg path { stroke: rgba(0, 47, 167, 0.15); }
-
-        .photo-card-wrapper {
-            opacity: 0; transform: translateY(50px);
-            will-change: transform, opacity;
+        /* Sidebar Massive Transitions */
+        .sidebar-rk {
+            background-color: var(--bg-primary);
+            transition: background-color 0.8s ease;
         }
 
-        .photo-card-vertical {
-            transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
-            transform: scale(1);
-            width: 100%; height: 100%; position: relative; z-index: 10;
-        }
-        .photo-card-vertical:hover {
-            transform: scale(1.03); 
-            z-index: 50; 
-            box-shadow: 0 20px 40px rgba(0, 47, 167, 0.3);
+        .sidebar-link-text {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.06em;
+            text-transform: uppercase;
+            display: block;
+            overflow: hidden;
         }
 
-        .nav-glass {
-            background: rgba(150, 150, 150, 0.1); 
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: width 0.3s ease, background 0.3s ease, color 0.2s ease;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        .sidebar-link-inner {
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.625, 0.05, 0, 1);
         }
-        .sidebar-enter-active, .sidebar-leave-active { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
-        .backdrop-enter-active, .backdrop-leave-active { transition: opacity 0.5s ease; }
-        .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
 
-        main.grayscale .glass-card, 
-        main.grayscale .app-card-glass,
-        main.grayscale .photo-card-vertical,
-        main.grayscale .nav-glass {
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
+        .sidebar-link:hover .sidebar-link-inner {
+            transform: translateY(-100%);
         }
+
     </style>
 </head>
-<body :class="{ 'is-booting': isBooting }">
-    <div id="app" class="relative min-h-screen selection:bg-white selection:text-klein-blue">
+<body :class="[{ 'is-booting': isBooting }, 'theme-base']">
+    <div id="app" class="relative min-h-screen">
         
         <div class="cursor-dot hidden md:block"></div>
-        <div class="cursor-outline hidden md:block"></div>
 
-        <!-- Navigation -->
-        <nav ref="navBar" 
-            class="fixed top-0 left-0 w-full z-[9990] px-6 py-6 md:px-10 md:py-8 flex justify-between items-center pointer-events-none transition-opacity duration-1000"
-            :class="{ 'opacity-0 pointer-events-none': isBooting, 'opacity-100': !isBooting }">
-            
-            <div class="flex items-center gap-4">
-                <button @click="toggleSidebar" ref="navBtnLeft" class="nav-glass group w-12 h-12 rounded-full flex flex-col justify-center items-center gap-1.5 pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
-                    <div class="flex flex-col items-center justify-center gap-1.5 w-full h-full">
-                        <span class="w-5 h-0.5 bg-current transition-all duration-300 group-hover:w-7"></span>
-                        <span class="w-7 h-0.5 bg-current transition-all duration-300 group-hover:w-5"></span>
-                    </div>
-                </button>
-                
-                <a href="https://gitmichaelqiu.github.io/blog/" target="_blank" class="nav-glass group w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto hover:scale-105 transition-transform" :class="navLeftColor">
-                    <i data-lucide="book-open" class="w-5 h-5"></i>
-                </a>
-            </div>
-            
-            <div class="absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50"
-                ref="navCapsule"
-                @click="toggleCapsuleNav"
-                @mouseenter="isCapsuleOpen = true" 
-                @mouseleave="isCapsuleOpen = false">
-                <div class="nav-glass rounded-full h-12 flex items-center justify-center overflow-hidden"
-                    :class="[isCapsuleOpen ? 'w-[400px]' : 'w-[160px]', navCapsuleColor]">
-                    <div class="w-full h-full flex items-center justify-center">
-                        <div v-if="!isCapsuleOpen" class="font-mono text-xs font-bold tracking-[0.2em] px-6 animate-fade-in">
-                            {{ activeSection.toUpperCase() }}
-                        </div>
-                        <div v-else class="flex gap-5 font-mono text-[10px] font-bold px-6 animate-fade-in whitespace-nowrap">
-                            <a href="#home" @click.prevent="handleNavClick('home')" class="hover:opacity-60 transition-opacity">HOME</a>
-                            <span>/</span>
-                            <a href="#profile" @click.prevent="handleNavClick('profile')" class="hover:opacity-60 transition-opacity">PROFILE</a>
-                            <span>/</span>
-                            <a href="#works" @click.prevent="handleNavClick('works')" class="hover:opacity-60 transition-opacity">WORKS</a>
-                            <span>/</span>
-                            <a href="#photos" @click.prevent="handleNavClick('photos')" class="hover:opacity-60 transition-opacity">PHOTOS</a>
-                            <span>/</span>
-                            <a href="#connect" @click.prevent="handleNavClick('connect')" class="hover:opacity-60 transition-opacity">CONNECT</a>
-                        </div>
-                    </div>
-                </div>
-                <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible;" :class="navCapsuleColor">
-                    <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="transparent" stroke-width="2" />
-                    <rect x="0" y="0" width="100%" height="100%" rx="24" ry="24" fill="none" stroke="currentColor" stroke-width="2"
-                        pathLength="100"
-                        :stroke-dasharray="100" 
-                        :stroke-dashoffset="capsuleDashOffset"
-                        class="opacity-100" />
-                </svg>
-            </div>
-
-            <div class="pointer-events-auto">
-                <button @click="cycleTheme" ref="navBtnRight" class="nav-glass w-12 h-12 rounded-full flex items-center justify-center hover:rotate-180 hover:scale-105 transition-transform" :class="navRightColor">
-                    <div class="flex items-center justify-center w-full h-full">
-                        <span v-show="themeMode === 'light'" class="animate-fade-in"><i data-lucide="sun" class="w-5 h-5"></i></span>
-                        <span v-show="themeMode === 'dark'" class="animate-fade-in"><i data-lucide="moon" class="w-5 h-5"></i></span>
-                        <span v-show="themeMode === 'auto'" class="animate-fade-in"><i data-lucide="monitor" class="w-5 h-5"></i></span>
-                    </div>
-                </button>
-            </div>
-        </nav>
+        <!-- Navigation Dock (RK Style) -->
+        <div class="nav-dock hide-mobile" :class="{ 'opacity-0': isBooting }">
+            <a href="/" class="nav-dock__btn" :class="{ 'active': activeSection === 'home' }">
+                <i data-lucide="home" class="w-5 h-5"></i>
+            </a>
+            <div class="nav-dock__label">{{ activeSection }}</div>
+            <button @click="toggleSidebar" class="nav-dock__btn">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
 
         <transition name="backdrop">
-            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[10000]"></div>
+            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[10000]"></div>
         </transition>
 
+        <!-- Sidebar (RK Massive Style) -->
         <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full md:w-[40vw] h-full bg-[#F2F2F7] dark:bg-[#080808] text-black dark:text-white z-[10001] border-r border-gray-200 dark:border-white/10 flex flex-col shadow-2xl overflow-y-auto overflow-x-hidden" style="container-type: inline-size;">
-                <div class="absolute top-8 left-8 md:left-12 right-12 flex items-center justify-between z-50">
-                    <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border-2 border-gray-200 dark:border-white/10 rounded-full hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
+            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full h-full sidebar-rk z-[10001] flex flex-col overflow-hidden">
+                <div class="absolute top-12 left-12 right-12 flex items-center justify-between z-50">
+                    <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
-                    <svg class="h-12 w-auto text-klein-blue" viewBox="0 0 1000 500" fill="currentColor">
-                        <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
-                        <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
-                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
-                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
-                    </svg>
+                    <span class="font-mono opacity-50 tracking-[0.5em]">DIRECTORY</span>
                 </div>
 
-                <div class="flex flex-col gap-8 relative z-10 mt-48 w-full">
-                    <div class="font-mono text-sm text-klein-blue mb-4 tracking-[0.3em] font-bold pl-8 md:pl-12">SYSTEM MAP</div>
-                    
-                    <a href="#home" 
-                    @click.prevent="handleNavClick('home')"
-                    class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" 
-                    style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(2rem, 8cqi, 5rem);">
-                        <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2" style="font-size: 1rem;">01</span>
-                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] break-words">HOME</span>
-                        <span class="opacity-0 -ml-8 group-hover:ml-0 group-hover:opacity-100 transition-all duration-500 delay-100"><i data-lucide="arrow-right" class="w-8 h-8 text-klein-blue"></i></span>
-                    </a>
+                <div class="flex-1 flex flex-col justify-center px-12 md:px-24">
+                    <div class="flex flex-col gap-4">
+                        <a v-for="(link, i) in [
+                            {id: 'home', label: 'Overview'},
+                            {id: 'profile', label: 'Persona'},
+                            {id: 'works', label: 'Repertoire'},
+                            {id: 'photos', label: 'Narrative'},
+                            {id: 'connect', label: 'Liaison'}
+                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)" class="sidebar-link group">
+                            <span class="sidebar-link-text">
+                                <span class="sidebar-link-inner group-hover:-translate-y-full transition-transform duration-700">
+                                    <span class="block">{{ link.label }}</span>
+                                    <span class="block text-klein-blue">{{ link.label }}</span>
+                                </span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
 
-                    <a href="https://gitmichaelqiu.github.io/blog/" 
-                    class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" 
-                    style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(2rem, 8cqi, 5rem);">
-                        <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2" style="font-size: 1rem;">02</span>
-                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] break-words">BLOG</span>
-                        <span class="opacity-0 -ml-8 group-hover:ml-0 group-hover:opacity-100 transition-all duration-500 delay-100"><i data-lucide="external-link" class="w-8 h-8 text-klein-blue"></i></span>
-                    </a>
-
-                    <a href="#works" 
-                    @click.prevent="handleNavClick('works')"
-                    class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" 
-                    style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(2rem, 8cqi, 5rem);">
-                        <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2" style="font-size: 1rem;">03</span>
-                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] break-words">APPS</span>
-                        <span class="opacity-0 -ml-8 group-hover:ml-0 group-hover:opacity-100 transition-all duration-500 delay-100"><i data-lucide="arrow-right" class="w-8 h-8 text-klein-blue"></i></span>
-                    </a>
-
-                    <a href="#photos" 
-                    @click.prevent="handleNavClick('photos')"
-                    class="group flex items-center gap-6 font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 dark:from-white dark:via-gray-400 dark:to-white hover:to-klein-blue transition-all duration-500 py-2 pl-8 md:pl-12 pr-12 block w-full leading-none" 
-                    style="-webkit-text-stroke: 1px rgba(128,128,128,0.2); font-size: clamp(2rem, 8cqi, 5rem);">
-                        <span class="font-mono text-sm text-klein-blue opacity-50 group-hover:opacity-100 transition-opacity translate-y-2" style="font-size: 1rem;">04</span>
-                        <span class="group-hover:translate-x-6 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] break-words">PHOTOS</span>
-                        <span class="opacity-0 -ml-8 group-hover:ml-0 group-hover:opacity-100 transition-all duration-500 delay-100"><i data-lucide="camera" class="w-8 h-8 text-klein-blue"></i></span>
-                    </a>
+                <div class="p-12 border-t border-white/10 flex justify-between items-end font-mono text-[10px] opacity-30">
+                    <div>DESIGNED BY ANTIGRAVITY</div>
+                    <div>&copy; {{ new Date().getFullYear() }} MICHAEL QIU</div>
                 </div>
             </aside>
         </transition>
 
-        <main class="transition-all duration-500" :class="{ 'scale-95 blur-sm grayscale': isSidebarOpen }">
+        <main class="transition-all duration-700" :class="{ 'scale-95 blur-md grayscale opacity-50': isSidebarOpen }">
             
-            <section id="home" class="relative w-full h-[250vh] bg-klein-blue text-white">
-                <div class="sticky top-0 w-full h-screen overflow-hidden">
-                    <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto" id="magnetic-wrapper">
-                         <div id="magnetic-container" class="w-full h-full relative cursor-crosshair"></div>
-                    </div>
-                    <div class="absolute inset-0 z-10 flex flex-col justify-end items-start pointer-events-none">
-                        <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-klein-blue/90 via-klein-blue/40 to-transparent pointer-events-none"></div>
-                        <div class="hero-text-container w-full px-6 md:px-12 pb-32 md:pb-24 flex flex-col items-start transition-transform duration-75 ease-out origin-bottom-left z-20 opacity-0">
-                            <div class="relative">
-                                <h1 class="text-[8vw] leading-none font-black tracking-tighter text-white mix-blend-normal whitespace-nowrap" id="hero-name">
-                                    MICHAEL QIU
-                                </h1>
-                                <div id="temp-underline" class="absolute bottom-0 left-0 w-full h-[0.3vw] bg-white origin-left transform scale-x-100 transition-opacity duration-300"></div>
-                            </div>
-                            <div class="intro-text opacity-0 mt-6 pl-2 w-full max-w-[85vw] md:max-w-xl transition-opacity duration-500 relative pr-4">
-                                <p class="text-base md:text-2xl font-light leading-relaxed break-words whitespace-normal">
-                                    Development is not a science; it is an <span class="font-bold italic text-white/90">art</span>.
+            <!-- Hero Section (RK Style) -->
+            <section id="home" class="relative w-full h-screen flex flex-col justify-center overflow-hidden">
+                <div class="container relative z-10">
+                    <div class="flex flex-col items-start">
+                        <div class="font-mono text-klein-blue mb-8 tracking-[0.4em] flex items-center gap-4">
+                            <span class="w-8 h-px bg-klein-blue"></span>
+                            CORE_SYSTEM_V4
+                        </div>
+                        <h1 class="heading-xl -ml-2 mb-4">
+                            Michael<br/>Qiu
+                        </h1>
+                        <div class="grid-layout w-full border-t border-white/10 pt-12">
+                            <div class="col-span-8">
+                                <p class="paragraph-l max-w-4xl">
+                                    Software engineer specializing in the intersection of <span class="text-klein-blue">technical architecture</span> and <span class="text-klein-blue">visual narrative</span>.
                                 </p>
                             </div>
-                        </div>
-                        <div class="scroll-hint absolute bottom-8 right-8 flex flex-col items-end gap-2 font-mono text-xs opacity-70 animate-pulse z-20">
-                            <span>SCROLL TO BEGIN</span>
-                            <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="w-full h-[60vh] bg-[#020202] text-white flex items-center justify-center relative overflow-hidden z-20">
-                <div class="w-full transform scale-50 opacity-0 transition-transform duration-100 ease-out" id="creative-banner">
-                    <h2 class="text-[12vw] font-black text-center leading-none tracking-tighter text-white mix-blend-difference">
-                        ABOUT<br>ME
-                    </h2>
-                </div>
-            </section>
-
-            <!-- Profile Section -->
-            <section id="profile" class="w-full py-12 px-6 md:px-12 relative bg-[#F2F2F7] dark:bg-[#050505] z-30 overflow-hidden">
-                <div class="ambient-glow top-[-10%] right-[-10%] opacity-40"></div>
-                <div class="ambient-glow bottom-[-10%] left-[-10%] opacity-30 animate-pulse-slow"></div>
-
-                <div class="max-w-[90vw] mx-auto relative z-10">
-                    <div class="flex items-end justify-between mb-12 border-b border-gray-200 dark:border-white/10 pb-8">
-                        <h2 class="text-3xl font-light text-gray-500">The Architect</h2>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 auto-rows-[minmax(220px,auto)]">
-                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-2 glass-card p-10 flex flex-col justify-between relative overflow-hidden group">
-                             <div class="card-corner-glow"></div>
-                             <div class="card-content">
-                                 <h3 class="font-mono text-xs text-klein-blue mb-6 tracking-widest border border-klein-blue/30 inline-block px-3 py-1 rounded-full">ABOUT_ME</h3>
-                                 <p class="text-2xl md:text-3xl font-light leading-snug text-gray-900 dark:text-gray-100">
-                                     I don't just write code; <span class="font-bold border-b-2 border-klein-blue">I design workflows.</span> My background in C++ and Python allows me to build rigorous back-end systems.
-                                 </p>
-                             </div>
-                             <div class="mt-12 flex justify-between items-end border-t border-gray-200 dark:border-white/10 pt-6 card-content">
-                                 <div><span class="block font-mono text-xs text-gray-500 mb-1">LOCATION</span><span class="font-bold text-xl text-black dark:text-white">Hangzhou, China</span></div>
-                                 <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
-                             </div>
-                        </div>
-                        
-                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-blue transition-all duration-300 group">
-                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">STACK</h3><i data-lucide="layers" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
-                            <ul class="space-y-3 mt-4 font-bold text-2xl text-black dark:text-white group-hover:text-white card-content"><li>C++</li><li>Python</li><li>SwiftUI</li></ul>
-                        </div>
-                        
-                        <div class="col-span-1 md:col-span-1 glass-card p-8 flex flex-col justify-between hover-solid-gray transition-all duration-300 group">
-                            <div class="flex justify-between items-start card-content"><h3 class="font-mono text-xs opacity-60 text-black dark:text-white group-hover:text-white">FOCUS</h3><i data-lucide="crosshair" class="w-6 h-6 opacity-60 text-black dark:text-white group-hover:text-white"></i></div>
-                             <div class="mt-4 card-content"><p class="text-4xl font-black leading-none text-black dark:text-white group-hover:text-white">System<br>Utils</p></div>
-                        </div>
-                        
-                        <div class="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 glass-card p-10 flex flex-col justify-center relative overflow-hidden group border-l-4 border-l-klein-blue">
-                             <div class="card-corner-glow"></div>
-                             <div class="card-content">
-                                 <h3 class="font-mono text-xs text-gray-500 mb-4 relative z-10">PHILOSOPHY</h3>
-                                 <p class="text-2xl md:text-3xl font-serif italic text-gray-800 dark:text-gray-200 relative z-10 leading-tight">"Give people wonderful tools, and they'll do wonderful things."</p>
-                                 <p class="text-right text-sm font-bold mt-4 text-klein-blue relative z-10">— Steve Jobs</p>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Works Section -->
-            <section id="works" class="relative bg-[#050505] z-30">
-                <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden z-0">
-                    <div class="w-full h-full" ref="canvasContainer"></div>
-                </div>
-
-                <div class="relative z-10">
-                    <div class="h-[50vh] flex flex-col justify-center items-center pointer-events-none">
-                        <h2 class="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 mix-blend-difference">WORKS</h2>
-                        <p class="font-mono text-klein-blue tracking-widest">UTILITIES FOR POWER USERS</p>
-                    </div>
-
-                    <div v-for="(app, i) in apps" :key="app.id" class="app-section min-h-screen flex items-center px-6 md:px-24" :data-index="i">
-                        <div class="hidden md:block w-1/2 h-full"></div>
-                        <div class="w-full md:w-1/2 flex justify-center md:justify-end">
-                            <div class="app-card-glass w-full max-w-2xl rounded-[2.5rem] p-8 md:p-12 relative group overflow-hidden cursor-pointer backdrop-blur-3xl">
-                                <div class="card-corner-glow"></div>
-                                <div class="card-content flex flex-col gap-8" style="container-type: inline-size;">
-                                    <div class="flex items-center gap-4">
-                                        <span class="font-display font-bold text-3xl text-black/20 dark:text-white/30 group-hover:text-klein-blue transition-colors">0{{i+1}}</span>
-                                        <span class="font-mono text-[10px] tracking-[0.2em] text-gray-600 dark:text-gray-400 uppercase">System Utility</span>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-black text-gray-900 dark:text-white mb-6 tracking-tighter leading-[0.9] break-words" style="font-size: clamp(2rem, 11cqi, 3.75rem);">{{ app.name }}</h3>
-                                        <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed font-light">{{ app.desc }}</p>
-                                    </div>
-                                    <div class="pt-6 mt-4 border-t border-black/10 dark:border-white/5 flex items-center justify-between">
-                                        <div class="flex gap-2">
-                                            <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">MACOS</span>
-                                            <span class="px-3 py-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full text-[10px] font-mono text-gray-600 dark:text-gray-400">SWIFT</span>
-                                        </div>
-                                        <a :href="app.url" target="_blank" class="flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-white/20 shadow-lg text-gray-900 dark:text-white font-bold text-sm hover:scale-105 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300">
-                                            <span>View</span>
-                                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                        </a>
-                                    </div>
-                                </div>
+                            <div class="col-span-4 flex justify-end items-end">
+                                <a href="#profile" @click.prevent="handleNavClick('profile')" data-btn>
+                                    Initialize Persona
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Background Element -->
+                <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+                    <div id="magnetic-container" class="w-full h-full"></div>
+                </div>
             </section>
 
-            <!-- PHOTOS SECTION -->
-            <div id="photos-wrapper" :class="[activeTheme === 'light' ? 'light-mode' : 'dark-mode']">
-                <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                     <a-waves class="w-full h-full"></a-waves>
+            <section class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container text-center py-24">
+                    <h2 class="heading-l mb-12">Building systems that leave a mark.</h2>
+                    <div class="font-mono opacity-50 tracking-[0.5em]">REPERTOIRE // August 2024 — NOW</div>
                 </div>
+            </section>
 
-                <section id="photos-intro" class="h-screen flex items-center justify-center relative z-10 sticky top-0 overflow-hidden">
-                    <div class="relative w-full h-full flex items-center justify-center pointer-events-none">
-                        <h2 class="gallery-title absolute text-[15vw] md:text-[18vw] font-black tracking-tighter leading-none opacity-0">
-                            GALLERY
-                        </h2>
-                        <div class="gallery-quote absolute text-center opacity-0 max-w-3xl px-6 w-full transform translate-y-12">
-                            <p class="font-serif italic text-3xl md:text-5xl leading-tight mb-2">
-                                "Code creates the logic. Photography captures the soul."
+            <!-- Profile Section (RK Style) -->
+            <section id="profile" class="w-full py-24 bg-deep-navy text-white">
+                <div class="container">
+                    <div class="mb-24 flex items-end justify-between border-b border-white/10 pb-8">
+                        <h2 class="heading-l">The Architect</h2>
+                        <span class="font-mono text-[10px] opacity-50 uppercase tracking-widest">EST. 1999</span>
+                    </div>
+
+                    <div class="grid-layout">
+                        <!-- About Me Card -->
+                        <div class="card-rk col-span-8 aspect-auto min-h-[400px]">
+                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">ABOUT_ME</div>
+                            <p class="paragraph-l">
+                                I don't just write code; <span class="font-bold border-b border-klein-blue">I design workflows.</span> 
+                                My background in C++ and Python allows me to build rigorous back-end systems with precision and scalability.
+                            </p>
+                            <div class="mt-12 flex justify-between items-end border-t border-white/10 pt-6">
+                                <div>
+                                    <span class="block font-mono text-[10px] opacity-50 mb-1">LOCATION</span>
+                                    <span class="font-bold text-xl uppercase">Hangzhou, China</span>
+                                </div>
+                                <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Stack Card -->
+                        <div class="card-rk col-span-4">
+                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">STACK</div>
+                            <ul class="space-y-4 font-bold text-3xl uppercase tracking-tighter">
+                                <li>C++</li>
+                                <li>Python</li>
+                                <li>SwiftUI</li>
+                            </ul>
+                        </div>
+
+                        <!-- Focus Card -->
+                        <div class="card-rk col-span-4">
+                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">FOCUS</div>
+                            <h3 class="heading-l">System<br/>Utils</h3>
+                        </div>
+
+                        <!-- Philosophy Card -->
+                        <div class="card-rk col-span-8 aspect-auto">
+                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">PHILOSOPHY</div>
+                            <p class="paragraph-l italic">
+                                "Give people wonderful tools, and they'll do wonderful things."
+                            </p>
+                            <div class="mt-8 text-right">
+                                <span class="font-mono text-[10px] opacity-50">— STEVE JOBS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>            <!-- Persona / Profile Section (RK Style) -->
+            <section id="profile" class="section-rk">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="bolt-rk bolt-tr"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container">
+                    <div class="grid-layout">
+                        <div class="col-span-12 mb-24">
+                            <h2 class="heading-l mb-8">Engineering<br/>Integrity.</h2>
+                            <p class="font-mono text-klein-blue tracking-[0.5em]">SYSTEM_ARCHITECT // 02</p>
+                        </div>
+                        
+                        <div class="card-rk col-span-4">
+                            <div class="bolt-rk bolt-tl"><i data-lucide="square" class="w-2 h-2 fill-current"></i></div>
+                            <span class="font-mono opacity-50 mb-12">STACK_V1</span>
+                            <h3 class="text-3xl font-black mb-8">FRONTEND</h3>
+                            <ul class="font-mono text-[10px] space-y-3 opacity-70">
+                                <li>VUE.JS / REACT</li>
+                                <li>THREE.JS / WEBGL</li>
+                                <li>GSAP / MOTION</li>
+                                <li>VANILLA CSS</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-rk col-span-4">
+                            <div class="bolt-rk bolt-tl"><i data-lucide="square" class="w-2 h-2 fill-current"></i></div>
+                            <span class="font-mono opacity-50 mb-12">STACK_V2</span>
+                            <h3 class="text-3xl font-black mb-8">SYSTEMS</h3>
+                            <ul class="font-mono text-[10px] space-y-3 opacity-70">
+                                <li>C++ / SWIFT</li>
+                                <li>PYTHON / AI</li>
+                                <li>SHELL SCRIPTING</li>
+                                <li>GIT WORKFLOWS</li>
+                            </ul>
+                        </div>
+
+                        <div class="card-rk col-span-4">
+                            <div class="bolt-rk bolt-tl"><i data-lucide="square" class="w-2 h-2 fill-current"></i></div>
+                            <span class="font-mono opacity-50 mb-12">MANTRA</span>
+                            <p class="paragraph-m italic mt-auto">
+                                "Rigorous logic meets aesthetic precision."
                             </p>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section id="photos" class="relative z-20 pb-32 px-6 md:px-12 w-full max-w-[95vw] mx-auto min-h-screen">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
-                        <!-- Column 1 -->
-                        <div class="flex flex-col gap-6 md:gap-10">
-                            <div v-for="(photo, index) in photoColumns[0]" :key="'c1-'+index" class="photo-card-wrapper">
-                                <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover" loading="lazy" alt="Gallery Image">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Repertoire / Works Section (RK Style) -->
+            <section id="works" class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container">
+                    <div class="mb-32">
+                        <h2 class="heading-xl">Selected<br/>Works.</h2>
+                        <p class="font-mono text-klein-blue mt-8 tracking-[0.3em]">HIGH_PERFORMANCE_UTILITIES</p>
+                    </div>
 
-                        <!-- Column 2 -->
-                        <div class="flex flex-col gap-6 md:gap-10 md:mt-12">
-                            <div v-for="(photo, index) in photoColumns[1]" :key="'c2-'+index" class="photo-card-wrapper">
-                                <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover" loading="lazy" alt="Gallery Image">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
-                                    </div>
-                                </div>
+                    <div class="grid-layout border-l border-t border-black/5">
+                        <div v-for="(app, i) in apps" :key="app.id" 
+                            class="card-rk col-span-6 group/work border-r border-b border-black/5 p-12 md:p-24 aspect-auto">
+                            <div class="flex justify-between items-start mb-24">
+                                <span class="font-mono text-klein-blue">0{{i+1}}</span>
+                                <i :data-lucide="app.icon" class="w-12 h-12 opacity-20 group-hover/work:opacity-100 transition-opacity"></i>
                             </div>
-                        </div>
-
-                        <!-- Column 3 -->
-                        <div class="flex flex-col gap-6 md:gap-10 md:mt-24">
-                            <div v-for="(photo, index) in photoColumns[2]" :key="'c3-'+index" class="photo-card-wrapper">
-                                <div class="photo-card-vertical group relative w-full aspect-[3/4] overflow-hidden rounded-sm bg-neutral-900 shadow-2xl">
-                                    <img :src="photo.url" class="absolute inset-0 w-full h-full object-cover" loading="lazy" alt="Gallery Image">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-                                        <span class="font-mono text-xs tracking-widest text-blue-200 mb-2">{{ photo.date }}</span>
-                                        <h3 class="font-bold text-2xl tracking-tight leading-none text-white">{{ photo.title }}</h3>
-                                    </div>
-                                </div>
-                            </div>
-                             <a href="https://gitmichaelqiu.github.io/photos" class="photo-card-wrapper block">
-                                <div class="photo-card-vertical group relative w-full aspect-square bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 flex flex-col items-center justify-center overflow-hidden hover:border-klein-blue shadow-2xl transition-all duration-500">
-                                    <div class="absolute inset-0 bg-klein-blue/5 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-3xl"></div>
-                                    <div class="w-20 h-20 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center mb-6 group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:scale-110 transition-all duration-300 relative z-10">
-                                        <i data-lucide="arrow-right" class="w-8 h-8 text-gray-900 dark:text-white group-hover:text-white"></i>
-                                    </div>
-                                    <h3 class="font-display text-2xl font-bold tracking-tighter relative z-10 text-gray-900 dark:text-white group-hover:text-klein-blue transition-colors">VIEW ALL</h3>
-                                    <p class="font-mono text-xs text-gray-500 mt-2 relative z-10 group-hover:text-klein-blue/70">ENTER GALLERY</p>
-                                </div>
+                            <h3 class="heading-l mb-6 group-hover/work:text-klein-blue transition-colors duration-500">{{ app.name }}</h3>
+                            <p class="paragraph-m opacity-50 mb-16 max-w-sm">{{ app.desc }}</p>
+                            <a :href="app.link" target="_blank" data-btn class="mt-auto self-start">
+                                VIEW_PROJECT
                             </a>
                         </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Connect Section -->
-            <section id="connect" class="w-full min-h-screen flex flex-col justify-center items-center py-12 px-6 md:px-12 bg-[#F2F2F7] dark:bg-[#050505] transition-colors duration-500 relative z-30 overflow-hidden">
-                <div class="ambient-glow top-[10%] left-[10%] opacity-50 bg-[#002FA7]"></div>
-                <div class="ambient-glow bottom-[10%] right-[10%] opacity-30 bg-[#20BEFF] animate-pulse-slow"></div>
-
-                <div class="max-w-7xl mx-auto w-full relative z-10">
-                    <div class="flex items-center justify-center gap-3 mb-12 w-full text-center">
-                        <span class="w-3 h-3 bg-klein-blue rounded-full"></span>
-                        <span class="font-display font-bold tracking-widest text-xl text-black dark:text-white">CONNECT</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <a href="https://github.com/gitmichaelqiu/" target="_blank" class="connect-card group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
-                            <div class="card-corner-glow"></div>
-                            <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
-                                <div class="flex justify-between items-start">
-                                    <i data-lucide="github" class="w-12 h-12 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-klein-blue group-hover:border-klein-blue group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
-                                </div>
-                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">GitHub</h3><p class="text-gray-500 group-hover:text-klein-blue transition-colors text-xl">Explore source code</p></div>
-                            </div>
-                        </a>
-                        <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="connect-card group relative block h-80 overflow-hidden rounded-3xl bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 transition-all duration-500">
-                            <div class="card-corner-glow" style="background: radial-gradient(circle at 100% 0%, rgba(32, 190, 255, 0.6) 0%, transparent 60%);"></div>
-                            <div class="relative z-10 h-full p-10 flex flex-col justify-between card-content">
-                                <div class="flex justify-between items-start">
-                                    <div class="text-4xl font-black text-gray-400 group-hover:text-[#20BEFF] transition-colors">K</div>
-                                    <span class="w-12 h-12 rounded-full border border-gray-200 dark:border-white/20 flex items-center justify-center group-hover:bg-[#20BEFF] group-hover:border-[#20BEFF] group-hover:text-white transition-all"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></span>
-                                </div>
-                                <div><h3 class="text-4xl font-bold mb-3 text-black dark:text-white">Kaggle</h3><p class="text-gray-500 group-hover:text-[#20BEFF] transition-colors text-xl">Data Science</p></div>
-                            </div>
-                        </a>
                     </div>
                 </div>
             </section>
 
-            <footer class="w-full py-12 px-6 md:px-12 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-black text-gray-500 flex flex-col md:flex-row justify-between items-center text-sm font-mono transition-colors duration-500 relative z-30">
-                <p>&copy; {{ new Date().getFullYear() }} MICHAEL QIU.</p>
-                <a href="#home" class="group flex items-center justify-center hover:scale-105 transition-transform duration-300">
-                    <svg class="h-10 w-auto text-gray-400 group-hover:text-klein-blue transition-colors" viewBox="0 0 1000 500" fill="currentColor">
-                        <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
-                        <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
-                        <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
-                        <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
-                    </svg>
-                </a>
-                <div class="flex gap-8 mt-6 md:mt-0">
-                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-white/10 hover:border-klein-blue hover:text-white hover:bg-klein-blue transition-all duration-300">
-                        <i data-lucide="arrow-up" class="w-5 h-5"></i>
-                    </button>
+            <!-- Narrative / Photos Section (RK Style) -->
+            <section id="photos" class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container">
+                    <div class="grid-layout mb-32">
+                        <div class="col-span-8">
+                            <h2 class="heading-xl">Visual<br/>Narrative.</h2>
+                        </div>
+                        <div class="col-span-4 flex items-end justify-end">
+                            <p class="font-mono text-klein-blue tracking-[0.3em]">CAPTURED_MOMENTS</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-layout">
+                        <div v-for="(photo, index) in photos.slice(0, 4)" :key="index" 
+                            class="card-rk col-span-3 p-0 overflow-hidden group aspect-[4/5]">
+                            <img :src="photo.url" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" loading="lazy">
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+                                <span class="font-mono text-[8px] text-klein-blue mb-2">{{ photo.date }}</span>
+                                <h3 class="text-lg font-black uppercase">{{ photo.title }}</h3>
+                            </div>
+                        </div>
+                        <div class="card-rk col-span-12 flex items-center justify-center border-t-0 p-12">
+                             <a href="https://gitmichaelqiu.github.io/photos" target="_blank" data-btn>
+                                ENTER_ARCHIVE
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Liaison / Connect Section (RK Style) -->
+            <section id="connect" class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container">
+                    <div class="grid-layout">
+                        <div class="col-span-12 mb-32">
+                            <h2 class="heading-xl">Let's<br/>Talk.</h2>
+                        </div>
+                        <div class="col-span-12 grid-layout border-t border-black/5">
+                            <a v-for="link in [
+                                { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
+                                { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' },
+                                { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' }
+                            ]" :key="link.label" :href="link.url" target="_blank"
+                            class="col-span-4 p-12 border-r border-black/5 hover:bg-klein-blue group transition-colors flex items-center justify-between">
+                                <span class="font-black text-2xl group-hover:translate-x-4 transition-transform">{{ link.label }}</span>
+                                <i data-lucide="arrow-up-right" class="w-6 h-6 opacity-30 group-hover:opacity-100"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer (RK Style) -->
+            <footer class="section-rk py-12 border-t border-black/5 font-mono text-[10px] opacity-30">
+                <div class="container flex justify-between items-center">
+                    <div>BUILD_LOG // VERSION_2024.4</div>
+                    <button @click="scrollToTop" class="hover:opacity-100 transition-opacity">SCROLL_TO_TOP</button>
+                    <div>&copy; MICHAEL QIU</div>
                 </div>
             </footer>
         </main>
@@ -615,381 +645,61 @@
     <script>
         const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
 
-        class Noise {
-            constructor(seed) {
-                this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
-                this.p = [];
-                for (var i=0; i<256; i++) { this.p[i] = Math.floor(Math.random()*256); }
-                this.perm = []; 
-                for(var i=0; i<512; i++) { this.perm[i]=this.p[i & 255]; }
-            }
-            dot(g, x, y) { return g[0]*x + g[1]*y; }
-            mix(a, b, t) { return (1-t)*a + t*b; }
-            fade(t) { return t*t*t*(t*(t*6-15)+10); }
-            perlin2(x, y) {
-                var X = Math.floor(x), Y = Math.floor(y);
-                x = x - X; y = y - Y;
-                X = X & 255; Y = Y & 255;
-                var n00 = this.dot(this.grad3[this.perm[X+this.perm[Y]] % 12], x, y);
-                var n01 = this.dot(this.grad3[this.perm[X+this.perm[Y+1]] % 12], x, y-1);
-                var n10 = this.dot(this.grad3[this.perm[X+1+this.perm[Y]] % 12], x-1, y);
-                var n11 = this.dot(this.grad3[this.perm[X+1+this.perm[Y+1]] % 12], x-1, y-1);
-                var u = this.fade(x); return this.mix(this.mix(n00, n10, u), this.mix(n01, n11, u), this.fade(y));
-            }
-        }
-
-        class AWaves extends HTMLElement {
-            constructor() {
-                super();
-                this._progress = 0;
-                this.maxLength = 20000;
-            }
-            get progress() { return this._progress; }
-            set progress(val) { this._progress = val; }
-            connectedCallback() {
-                this.svg = this.querySelector('.js-svg');
-                if (!this.svg) {
-                    this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    this.svg.classList.add("js-svg");
-                    this.appendChild(this.svg);
-                }
-                this.mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };
-                this.lines = []; this.paths = []; this.noise = new Noise(Math.random());
-                this.amplitude = 1; 
-
-                this.setSize(); this.setLines(); this.bindEvents();
-                
-                this.resizeObserver = new ResizeObserver(entries => {
-                    if(this.resizeTimer) clearTimeout(this.resizeTimer);
-                    this.resizeTimer = setTimeout(() => {
-                        this.onResize();
-                    }, 100);
-                });
-                this.resizeObserver.observe(this);
-
-                this.rafId = requestAnimationFrame(this.tick.bind(this));
-            }
-            disconnectedCallback() {
-                cancelAnimationFrame(this.rafId);
-                if(this.resizeObserver) this.resizeObserver.disconnect();
-                window.removeEventListener('resize', this.onResize);
-                window.removeEventListener('mousemove', this.onMouseMove);
-            }
-            bindEvents() {
-                this.onResize = this.onResize.bind(this);
-                this.onMouseMove = this.onMouseMove.bind(this);
-                window.addEventListener('resize', this.onResize);
-                window.addEventListener('mousemove', this.onMouseMove);
-                this.addEventListener('touchmove', this.onTouchMove.bind(this));
-            }
-            onResize() { this.setSize(); this.setLines(); }
-            onMouseMove(e) { this.updateMousePosition(e.clientX, e.clientY); }
-            onTouchMove(e) { e.preventDefault(); const touch = e.touches[0]; this.updateMousePosition(touch.clientX, touch.clientY); }
-            updateMousePosition(x, y) {
-                const rect = this.getBoundingClientRect();
-                this.mouse.x = x - rect.left; this.mouse.y = y - rect.top;
-                if (!this.mouse.set) { this.mouse.sx = this.mouse.x; this.mouse.sy = this.mouse.y; this.mouse.lx = this.mouse.x; this.mouse.ly = this.mouse.y; this.mouse.set = true; }
-            }
-            setSize() {
-                this.bounding = this.getBoundingClientRect();
-                if (this.bounding.width === 0) this.bounding.width = window.innerWidth;
-                if (this.bounding.height === 0) this.bounding.height = window.innerHeight;
-                this.svg.style.width = `${this.bounding.width}px`; this.svg.style.height = `${this.bounding.height}px`;
-            }
-            setLines() {
-                const { width, height } = this.bounding;
-                this.lines = []; this.svg.innerHTML = ''; this.paths = [];
-                const xGap = 30; const yGap = 80; 
-                const oWidth = width + 200; const oHeight = height + 30;
-                const totalLines = Math.ceil(oWidth / xGap); const totalPoints = Math.ceil(oHeight / yGap);
-                const xStart = (width - xGap * totalLines) / 2; const yStart = (height - yGap * totalPoints) / 2;
-                
-                const pathLength = 20000;
-
-                for (let i = 0; i <= totalLines; i++) {
-                    const points = [];
-                    for (let j = 0; j <= totalPoints; j++) {
-                        points.push({ x: xStart + xGap * i, y: yStart + yGap * j, wave: { x: 0, y: 0 }, cursor: { x: 0, y: 0, vx: 0, vy: 0 } });
-                    }
-                    const speed = 0.8 + Math.random() * 0.4; const threshold = Math.random() * 0.2;
-                    this.lines.push({ points, speed, threshold });
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.classList.add('a__line'); path.classList.add('js-line');
-                    path.style.strokeDasharray = `${pathLength}`; 
-                    path.style.strokeDashoffset = `var(--dash-offset, ${pathLength})`; 
-                    this.svg.appendChild(path); this.paths.push(path);
-                }
-            }
-            movePoints(time) {
-                const { lines, mouse, noise } = this; const amp = this.amplitude; 
-                lines.forEach((lineObj) => {
-                    lineObj.points.forEach((p) => {
-                        const move = noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
-                        p.wave.x = Math.cos(move) * 32 * amp; p.wave.y = Math.sin(move) * 16 * amp;
-                        p.cursor.vx += (0 - p.cursor.x) * 0.005; p.cursor.vy += (0 - p.cursor.y) * 0.005;
-                        p.cursor.vx *= 0.925; p.cursor.vy *= 0.925;
-                        p.cursor.x += p.cursor.vx * 2; p.cursor.y += p.cursor.vy * 2;
-                        p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x)); p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
-                    });
-                });
-            }
-            moved(point, withCursorForce = true) {
-                return { x: Math.round((point.x + point.wave.x + (withCursorForce ? point.cursor.x : 0)) * 10) / 10, y: Math.round((point.y + point.wave.y + (withCursorForce ? point.cursor.y : 0)) * 10) / 10 };
-            }
-            drawLines() {
-                const { lines, moved, paths } = this;
-                lines.forEach((lineObj, lIndex) => {
-                    const points = lineObj.points; const lastIdx = points.length - 1;
-                    let pStart = moved(points[lastIdx], false); 
-                    let d = `M ${pStart.x} ${pStart.y}`;
-                    
-                    for (let i = lastIdx - 1; i >= 0; i--) { 
-                        const p = moved(points[i], true);
-                        const pNext = (i > 0) ? moved(points[i-1], true) : p;
-                        
-                        if (i > 0) {
-                            const midX = (p.x + pNext.x) / 2;
-                            const midY = (p.y + pNext.y) / 2;
-                            d += `Q ${p.x} ${p.y} ${midX} ${midY}`;
-                        } else {
-                             d += `L ${p.x} ${p.y}`;
-                        }
-                    }
-                    if (paths[lIndex]) paths[lIndex].setAttribute('d', d);
-                });
-            }
-            tick(time) {
-                const { mouse } = this;
-                mouse.sx += (mouse.x - mouse.sx) * 0.1; mouse.sy += (mouse.y - mouse.sy) * 0.1;
-                const dx = mouse.x - mouse.lx; const dy = mouse.y - mouse.ly; const d = Math.hypot(dx, dy);
-                mouse.v = d; mouse.vs += (d - mouse.vs) * 0.1; mouse.vs = Math.min(100, mouse.vs);
-                mouse.lx = mouse.x; mouse.ly = mouse.y; mouse.a = Math.atan2(dy, dx);
-                this.style.setProperty('--x', `${mouse.sx}px`); this.style.setProperty('--y', `${mouse.sy}px`);
-                this.movePoints(time); this.drawLines();
-                this.rafId = requestAnimationFrame(this.tick.bind(this));
-            }
-        }
-        if(!customElements.get('a-waves')) { customElements.define('a-waves', AWaves); }
-
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
-                const themeMode = ref('auto'); 
-                const activeTheme = ref('dark'); 
-                const scrollProgress = ref(0);
+                const activeTheme = ref('theme-base'); 
                 const activeSection = ref('home');
-                const isCapsuleOpen = ref(false);
-                const loader = ref(null);
-                const canvasContainer = ref(null);
                 const isBooting = ref(true);
                 
-                const navLeftColor = ref('text-white');
-                const navCapsuleColor = ref('text-white');
-                const navRightColor = ref('text-white');
-                
-                const navBtnLeft = ref(null);
-                const navCapsule = ref(null);
-                const navBtnRight = ref(null);
-
                 const handleNavClick = (targetId) => {
-                    const wasSidebarOpen = isSidebarOpen.value;
                     isSidebarOpen.value = false;
-                    
-                    const performScroll = () => {
-                        const el = document.getElementById(targetId);
-                        if (el && lenis) {
-                            lenis.scrollTo(el, {
-                                duration: 1.5,
-                                onComplete: () => {
-                                    ScrollTrigger.refresh();
-                                    ScrollTrigger.update();
-                                }
-                            });
-                        }
-                    };
-
-                    if (wasSidebarOpen) {
-                        setTimeout(performScroll, 400);
-                    } else {
-                        performScroll();
-                    }
+                    const el = document.getElementById(targetId);
+                    if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
                 };
 
-                const handleLinkClick = (event, link) => {
-                    if (!link.isExternal) {
-                        event.preventDefault();
-                        handleNavClick(link.targetId);
-                    }
+                const scrollToTop = () => {
+                    if (lenis) lenis.scrollTo(0, { duration: 1.2 });
                 };
                                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png', url: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/opt-clicker.png', url: 'https://gitmichaelqiu.github.io/OptClicker' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/space-switcher.png', url: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', icon: 'monitor', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', icon: 'mouse-pointer-2', link: 'https://gitmichaelqiu.github.io/OptClicker' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', icon: 'layout-grid', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
                 ];
 
                 const photos = [
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023' },
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023' },
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025' }
+                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' }
                 ];
 
-                let scene, camera, renderer, appsGroup;
-                let icons = []; 
-                let mouseX = 0, mouseY = 0;
                 let lenis;
                 let ballsRef = []; 
 
-                const capsuleDashOffset = computed(() => {
-                    const progress = Math.min(100, Math.max(0, scrollProgress.value));
-                    return 100 - progress;
-                });
-
-                const photoColumns = computed(() => {
-                    const cols = [[], [], []];
-                    photos.forEach((photo, i) => { cols[i % 3].push(photo); });
-                    return cols;
-                });
-
-                const toggleCapsuleNav = () => { isCapsuleOpen.value = !isCapsuleOpen.value; };
                 const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value; };
 
-                watch(isSidebarOpen, (newVal) => { if (newVal) nextTick(() => lucide.createIcons()); });
-
-                const resolveTheme = () => {
-                    let resolved = 'dark';
-                    if (themeMode.value === 'auto') {
-                        resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                    } else {
-                        resolved = themeMode.value;
-                    }
-                    activeTheme.value = resolved;
-                    if (resolved === 'dark') document.documentElement.classList.add('dark');
-                    else document.documentElement.classList.remove('dark');
-                    updateNavColors(); 
-                };
-
-                const cycleTheme = () => {
-                    if (themeMode.value === 'auto') themeMode.value = 'light';
-                    else if (themeMode.value === 'light') themeMode.value = 'dark';
-                    else themeMode.value = 'auto';
-                    resolveTheme();
-                };
-
-                const getLuminance = (colorStr) => {
-                    const canvas = document.createElement("canvas");
-                    canvas.width = 1; canvas.height = 1;
-                    const ctx = canvas.getContext("2d");
-                    ctx.fillStyle = colorStr;
-                    ctx.fillRect(0, 0, 1, 1);
-                    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-                    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-                };
-
-                const checkElementContrast = (el) => {
-                    if (!el) return 'text-white';
-                    const rect = el.getBoundingClientRect();
-                    const x = rect.left + rect.width / 2;
-                    const y = rect.top + rect.height / 2;
-                    if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) return 'text-white';
-                    const elements = document.elementsFromPoint(x, y);
-                    let bgLuminance = 0; 
-                    for (let e of elements) {
-                        if (e.tagName === 'NAV' || e.closest('nav') || e.classList.contains('cursor-dot') || e.classList.contains('cursor-outline')) continue;
-                        const style = window.getComputedStyle(e);
-                        const bgColor = style.backgroundColor;
-                        if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') continue;
-                        bgLuminance = getLuminance(bgColor);
-                        break;
-                    }
-                    return bgLuminance > 128 ? 'text-black' : 'text-white';
-                };
-
-                const updateNavColors = () => {
-                    navLeftColor.value = checkElementContrast(navBtnLeft.value);
-                    navCapsuleColor.value = checkElementContrast(navCapsule.value);
-                    navRightColor.value = checkElementContrast(navBtnRight.value);
-                };
-
                 const updateScrollProgress = () => {
-                    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-                    const docHeight = document.documentElement.scrollHeight;
                     const winHeight = window.innerHeight;
-                    const scrollTotal = docHeight - winHeight;
-                    
-                    let progress = scrollTotal > 0 ? (scrollTop / scrollTotal) * 100 : 0;
-                    progress = Math.min(100, Math.max(0, progress));
-                    scrollProgress.value = progress;
-                    
-                    window.lastScrollY = scrollTop;
-
                     const sections = ['home', 'profile', 'works', 'photos', 'connect'];
                     let current = 'home';
-                    for (const section of sections) {
-                        const el = document.getElementById(section);
+                    sections.forEach(id => {
+                        const el = document.getElementById(id);
                         if (el) {
                             const rect = el.getBoundingClientRect();
-                            if (rect.top <= winHeight * 0.5) {
-                                current = section;
-                            }
+                            if (rect.top <= winHeight * 0.4) current = id;
                         }
-                    }
+                    });
                     activeSection.value = current;
-                    updateNavColors();
-
-                    const magContainer = document.getElementById('magnetic-container');
-                    const heroText = document.querySelector('.hero-text-container');
-                    const introText = document.querySelector('.intro-text');
-                    const creativeBanner = document.getElementById('creative-banner');
-                    
-                    if (scrollTop < winHeight * 2) {
-                        if(magContainer && !isBooting.value) {
-                            const fadeProgress = Math.min(1, scrollTop / (winHeight * 0.8));
-                            magContainer.style.opacity = Math.max(0.1, 1 - fadeProgress); 
-                            magContainer.style.transform = `scale(${1 - fadeProgress * 0.1})`; 
-                        }
-                        if(heroText) {
-                            const moveProgress = Math.min(1, scrollTop / (winHeight * 1.2)); 
-                            const targetY = -winHeight * 0.45 * moveProgress; 
-                            const targetScale = 1 + (moveProgress * 0.3); 
-                            heroText.style.transform = `translateY(${targetY}px) scale(${targetScale})`;
-                            if(introText) {
-                                if (moveProgress > 0.1) {
-                                    const textFade = (moveProgress - 0.1) / 0.4; 
-                                    introText.style.opacity = textFade;
-                                } else {
-                                    introText.style.opacity = 0;
-                                }
-                            }
-                        }
-                    }
-
-                    if(creativeBanner) {
-                        const bannerRect = document.getElementById('creative-banner').parentNode.getBoundingClientRect();
-                        const triggerPoint = winHeight * 0.8; 
-                        if(bannerRect.top < triggerPoint && bannerRect.bottom > 0) {
-                            const progress = 1 - (bannerRect.top / triggerPoint);
-                            const scale = 0.5 + Math.max(0, progress) * 0.5; 
-                            creativeBanner.style.transform = `scale(${scale})`;
-                            creativeBanner.style.opacity = Math.min(1, progress * 1.5);
-                        }
-                    }
                 };
 
                 const initCursor = () => {
                     const dot = document.querySelector('.cursor-dot');
-                    const outline = document.querySelector('.cursor-outline');
-                    if(dot && outline) {
+                    if(dot) {
                         window.addEventListener('mousemove', (e) => {
-                            const posX = e.clientX;
-                            const posY = e.clientY;
-                            dot.style.left = `${posX}px`; 
-                            dot.style.top = `${posY}px`;
-                            outline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+                            dot.style.left = `${e.clientX}px`; 
+                            dot.style.top = `${e.clientY}px`;
                         });
                     }
                 };
@@ -997,7 +707,6 @@
                 const initMagneticLogo = () => {
                     const container = document.getElementById('magnetic-container');
                     if (!container) return;
-                    if(ballsRef.length > 0) { gsap.ticker.remove(rotateBalls); ballsRef = []; container.innerHTML = ''; }
                     const logoPaths = [
                         "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
                         "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
@@ -1007,352 +716,107 @@
                     const width = container.clientWidth;
                     const height = container.clientHeight;
                     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    svg.setAttribute("width", "100%");
-                    svg.setAttribute("height", "100%");
+                    svg.setAttribute("width", "100%"); svg.setAttribute("height", "100%");
                     svg.style.overflow = "visible";
                     container.appendChild(svg);
+                    
                     const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
-                    const logoScale = Math.min(width, height) / 500 * 0.9; 
+                    const logoScale = Math.min(width, height) / 500 * 0.7; 
                     const offsetX = (width - 848.58 * logoScale) / 2;
                     const offsetY = (height - 494.09 * logoScale) / 2;
-                    ctx.fillStyle = "black";
-                    ctx.save();
-                    ctx.translate(offsetX, offsetY);
-                    ctx.scale(logoScale, logoScale);
-                    logoPaths.forEach(pathD => { const p = new Path2D(pathD); ctx.fill(p); });
-                    ctx.restore();
-                    const step = 28; 
-                    const mouseRadius = 150; 
-                    let ballIndex = 0;
-                    const circleRadius = Math.min(width, height) * 0.15;
-                    const centerScreenX = width / 2;
-                    const centerScreenY = height / 2;
+                    ctx.save(); ctx.translate(offsetX, offsetY); ctx.scale(logoScale, logoScale);
+                    logoPaths.forEach(pathD => { ctx.fill(new Path2D(pathD)); }); ctx.restore();
+                    
+                    const step = 20; 
+                    const circleRadius = Math.min(width, height) * 0.2;
+                    const centerX = width / 2; const centerY = height / 2;
+                    
                     for (let y = 0; y < height; y += step) {
                         for (let x = 0; x < width; x += step) {
-                            const pixel = ctx.getImageData(x, y, 1, 1).data;
-                            if (pixel[3] > 128) {
-                                ballIndex++;
+                            if (ctx.getImageData(x, y, 1, 1).data[3] > 128) {
                                 const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                ball.setAttribute("class", "text-white fill-current magnetic-ball");
-                                ball.setAttribute("r", 5); 
-                                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                                line.setAttribute("class", "text-white magnetic-ball-line");
-                                svg.appendChild(line);
+                                ball.setAttribute("class", "fill-current text-klein-blue magnetic-ball");
+                                ball.setAttribute("r", 2);
                                 svg.appendChild(ball);
-                                let initialX, initialY;
-                                if (isBooting.value) {
-                                    const angle = (ballIndex * 0.1) + (Math.random() * 0.5);
-                                    const r = circleRadius + (Math.random() * 20 - 10);
-                                    initialX = centerScreenX + Math.cos(angle) * r;
-                                    initialY = centerScreenY + Math.sin(angle) * r;
-                                    ball.loadAngle = angle;
-                                    ball.loadRadius = r;
-                                    ball.loadSpeed = 0.001 + Math.random() * 0.002;
-                                    line.style.opacity = '0';
-                                } else {
-                                    initialX = x; initialY = y;
-                                    line.style.opacity = '0.15';
-                                }
-                                ball.setAttribute("cx", initialX); ball.setAttribute("cy", initialY);
-                                line.setAttribute("x1", initialX); line.setAttribute("y1", initialY);
-                                line.setAttribute("x2", initialX); line.setAttribute("y2", initialY);
+                                
+                                const angle = Math.random() * Math.PI * 2;
+                                const r = circleRadius + (Math.random() * 40 - 20);
+                                const initX = centerX + Math.cos(angle) * r;
+                                const initY = centerY + Math.sin(angle) * r;
+                                
                                 ballsRef.push({ 
-                                    el: ball, line: line, ori_x: x, ori_y: y,
-                                    loadAngle: ball.loadAngle, loadRadius: ball.loadRadius, loadSpeed: ball.loadSpeed
+                                    el: ball, ori_x: x, ori_y: y,
+                                    cur_x: initX, cur_y: initY,
+                                    angle: angle, radius: r, speed: 0.002 + Math.random() * 0.004
                                 });
                             }
                         }
                     }
-                    container.addEventListener('mousemove', (e) => {
-                        if (isBooting.value) return; 
-                        const rect = container.getBoundingClientRect();
-                        const mouseX = e.clientX - rect.left;
-                        const mouseY = e.clientY - rect.top;
-                        ballsRef.forEach(ball => {
-                            const dx = ball.ori_x - mouseX;
-                            const dy = ball.ori_y - mouseY;
-                            const dist = Math.sqrt(dx * dx + dy * dy);
-                            if (dist < mouseRadius) {
-                                const angle = Math.atan2(dy, dx);
-                                const moveDist = ((mouseRadius - dist) / mouseRadius) * 60; 
-                                const tx = ball.ori_x + Math.cos(angle) * moveDist;
-                                const ty = ball.ori_y + Math.sin(angle) * moveDist;
-                                if (ball.animater) ball.animater.kill();
-                                ball.animater = gsap.timeline()
-                                    .to(ball.el, { attr: { cx: tx, cy: ty }, duration: 0.3, ease: "power3.out" })
-                                    .to(ball.line, { attr: { x2: tx, y2: ty }, duration: 0.3, ease: "power3.out" }, "<")
-                                    .to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, ">0.05")
-                                    .to(ball.line, { attr: { x2: ball.ori_x, y2: ball.ori_y }, duration: 1.0, ease: "elastic.out(1, 0.3)" }, "<");
-                            }
-                        });
-                    });
-                    if(isBooting.value) { gsap.ticker.add(rotateBalls); }
+                    gsap.ticker.add(rotateBalls);
                 };
 
-                function rotateBalls(time, deltaTime, frame) {
+                function rotateBalls(time, deltaTime) {
                     if (!isBooting.value) return;
                     const container = document.getElementById('magnetic-container');
                     if(!container) return;
-                    const centerX = container.clientWidth / 2;
-                    const centerY = container.clientHeight / 2;
-                    ballsRef.forEach(ball => {
-                        ball.loadAngle += (ball.loadSpeed * deltaTime);
-                        const x = centerX + Math.cos(ball.loadAngle) * ball.loadRadius;
-                        const y = centerY + Math.sin(ball.loadAngle) * ball.loadRadius;
-                        ball.el.setAttribute('cx', x);
-                        ball.el.setAttribute('cy', y);
+                    const cx = container.clientWidth / 2; const cy = container.clientHeight / 2;
+                    ballsRef.forEach(b => {
+                        b.angle += b.speed * deltaTime * 0.1;
+                        b.cur_x = cx + Math.cos(b.angle) * b.radius;
+                        b.cur_y = cy + Math.sin(b.angle) * b.radius;
+                        b.el.setAttribute('cx', b.cur_x); b.el.setAttribute('cy', b.cur_y);
                     });
                 }
                 
                 const finishBootSequence = () => {
                     isBooting.value = false;
                     gsap.ticker.remove(rotateBalls);
-                    ballsRef.forEach(ball => {
-                        gsap.to(ball.el, { attr: { cx: ball.ori_x, cy: ball.ori_y }, duration: 1.6, ease: "power4.inOut", delay: Math.random() * 0.1 });
-                        ball.line.setAttribute('x1', ball.ori_x); ball.line.setAttribute('y1', ball.ori_y);
-                        ball.line.setAttribute('x2', ball.ori_x); ball.line.setAttribute('y2', ball.ori_y);
-                        gsap.to(ball.line, { opacity: 0.15, duration: 1, delay: 1 });
-                    });
-                    gsap.to(".hero-text-container", { opacity: 1, duration: 2, ease: "power4.out", delay: 1.0 });
-                };
-
-                const createSquircleShape = (size) => {
-                    const shape = new THREE.Shape();
-                    const width = size; const height = size;
-                    const x = -width / 2; const y = -height / 2;
-                    const r = 0.7; 
-                    shape.moveTo( x, y + r );
-                    shape.lineTo( x, y + height - r );
-                    shape.quadraticCurveTo( x, y + height, x + r, y + height );
-                    shape.lineTo( x + width - r, y + height );
-                    shape.quadraticCurveTo( x + width, y + height, x + width, y + height - r );
-                    shape.lineTo( x + width, y + r );
-                    shape.quadraticCurveTo( x + width, y, x + width - r, y );
-                    shape.lineTo( x + r, y );
-                    shape.quadraticCurveTo( x, y, x, y + r );
-                    return shape;
-                };
-
-                const createFallbackTexture = (text) => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 2048; canvas.height = 2048; 
-                    const ctx = canvas.getContext('2d');
-                    ctx.fillStyle = '#050505';
-                    ctx.fillRect(0, 0, 2048, 2048);
-                    ctx.strokeStyle = '#222';
-                    ctx.lineWidth = 10;
-                    for(let i=0; i<2048; i+=256) {
-                        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 2048); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(2048, i); ctx.stroke();
-                    }
-                    ctx.strokeStyle = '#002FA7';
-                    ctx.lineWidth = 40;
-                    ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(80, 80, 1888, 1888, 300);
-                    else ctx.rect(80, 80, 1888, 1888);
-                    ctx.stroke();
-                    ctx.fillStyle = 'white';
-                    ctx.font = 'bold 600px "Inter", sans-serif'; 
-                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                    ctx.fillText(text.substring(0, 2).toUpperCase(), 1024, 1024);
-                    const tex = new THREE.CanvasTexture(canvas);
-                    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                    return tex;
-                };
-
-                const initThreeJS = () => {
-                    if (!canvasContainer.value) return;
-                    const width = canvasContainer.value.clientWidth;
-                    const height = canvasContainer.value.clientHeight;
-                    scene = new THREE.Scene();
-                    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-                    camera.position.z = 12;
-                    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                    renderer.setSize(width, height);
-                    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-                    renderer.toneMappingExposure = 1.2;
-                    canvasContainer.value.appendChild(renderer.domElement);
-                    appsGroup = new THREE.Group();
-                    scene.add(appsGroup);
-                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
-                    scene.add(ambientLight);
-                    const keyLight = new THREE.SpotLight(0xffffff, 2);
-                    keyLight.position.set(-10, 10, 10);
-                    scene.add(keyLight);
-                    const backLight = new THREE.DirectionalLight(0x002FA7, 2);
-                    backLight.position.set(0, 5, -10);
-                    scene.add(backLight);
-                    const size = 3; 
-                    const extrudeSettings = { depth: 0.4, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
-                    const shape = createSquircleShape(size); 
-                    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                    geometry.computeBoundingBox();
-                    const max = geometry.boundingBox.max; const min = geometry.boundingBox.min;
-                    const range = new THREE.Vector2(max.x - min.x, max.y - min.y);
-                    const uvAttribute = geometry.attributes.uv; const posAttribute = geometry.attributes.position;
-                    for (let i = 0; i < posAttribute.count; i++) {
-                        const x = posAttribute.getX(i); const y = posAttribute.getY(i);
-                        uvAttribute.setXY(i, (x - min.x) / range.x, (y - min.y) / range.y);
-                    }
-                    geometry.attributes.uv.needsUpdate = true;
-                    geometry.center();
-                    const texLoader = new THREE.TextureLoader();
-                    apps.forEach((app, i) => {
-                        const sideMaterial = new THREE.MeshPhysicalMaterial({ color: 0x001133, roughness: 0.2, metalness: 0.8 });
-                        const frontMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.1 });
-                        texLoader.load(app.img, 
-                            (texture) => {
-                                texture.encoding = THREE.sRGBEncoding;
-                                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                                frontMaterial.map = texture;
-                                frontMaterial.needsUpdate = true;
-                            },
-                            undefined,
-                            () => {
-                                const fallback = createFallbackTexture(app.name);
-                                frontMaterial.map = fallback;
-                                frontMaterial.needsUpdate = true;
-                            }
-                        );
-                        const mesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial]);
-                        mesh.position.set(0, -10, 0); 
-                        appsGroup.add(mesh);
-                        icons.push(mesh);
-                    });
-                    document.addEventListener('mousemove', (event) => {
-                        mouseX = (event.clientX - window.innerWidth / 2) * 0.0005;
-                        mouseY = (event.clientY - window.innerHeight / 2) * 0.0005;
-                    });
-                    window.addEventListener('resize', () => {
-                        if(!canvasContainer.value) return;
-                        const w = canvasContainer.value.clientWidth;
-                        const h = canvasContainer.value.clientHeight;
-                        camera.aspect = w / h;
-                        camera.updateProjectionMatrix();
-                        renderer.setSize(w, h);
-                        initMagneticLogo();
-                    });
-                    const animate = () => {
-                        requestAnimationFrame(animate);
-                        icons.forEach((icon, i) => {
-                            icon.rotation.x += 0.05 * (mouseY * 0.5 - icon.rotation.x);
-                            icon.rotation.y += 0.05 * (mouseX * 0.5 - icon.rotation.y);
-                        });
-                        renderer.render(scene, camera);
-                    };
-                    animate();
-                    const sections = document.querySelectorAll('.app-section');
-                    sections.forEach((section, index) => {
-                        ScrollTrigger.create({
-                            trigger: section,
-                            start: "top 75%",
-                            end: "bottom 75%",
-                            onEnter: () => animateIconIn(index),
-                            onEnterBack: () => animateIconIn(index),
-                            onLeave: () => animateIconOut(index, 1),
-                            onLeaveBack: () => animateIconOut(index, -1)
+                    ballsRef.forEach((b, i) => {
+                        gsap.to(b.el, {
+                            attr: { cx: b.ori_x, cy: b.ori_y },
+                            duration: 2,
+                            ease: "expo.inOut",
+                            delay: Math.random() * 0.3
                         });
                     });
-                };
-
-                const animateIconIn = (index) => {
-                    const icon = icons[index];
-                    if(!icon) return;
-                    const isMobile = window.innerWidth < 768;
-                    const targetX = isMobile ? 0 : -3.5; 
-                    const targetY = isMobile ? 2.5 : 0; 
-                    gsap.to(icon.position, { x: targetX, y: targetY, duration: 1.2, ease: "power3.out", overwrite: true });
-                    gsap.to(icon.scale, { x: 1.1, y: 1.1, z: 1.1, duration: 1.2, ease: "elastic.out(1, 0.8)", overwrite: true });
-                    gsap.to(icon.rotation, { x: 0, y: 0.2, z: 0, duration: 1.2, overwrite: true });
-                };
-
-                const animateIconOut = (index, direction) => {
-                    const icon = icons[index];
-                    if(!icon) return;
-                    const targetY = direction > 0 ? 15 : -15; 
-                    gsap.to(icon.position, { y: targetY, x: 0, duration: 0.8, ease: "power3.in", overwrite: true });
-                    gsap.to(icon.scale, { x: 0.5, y: 0.5, z: 0.5, duration: 0.8, overwrite: true });
+                    gsap.from(".heading-xl", { opacity: 0, y: 100, duration: 2, ease: "expo.out", delay: 1 });
+                    gsap.from(".paragraph-l", { opacity: 0, y: 50, duration: 1.5, ease: "expo.out", delay: 1.5 });
                 };
 
                 const initLenis = () => {
-                    lenis = new Lenis({
-                        duration: 1.5, 
-                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                        direction: 'vertical',
-                        gestureDirection: 'vertical',
-                        smooth: true,
-                        mouseMultiplier: 1,
-                        smoothTouch: false,
-                        touchMultiplier: 2,
-                    });
-                    function raf(time) {
-                        lenis.raf(time);
-                        ScrollTrigger.update();
-                        requestAnimationFrame(raf);
-                    }
+                    lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+                    function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
                     requestAnimationFrame(raf);
                 };
 
-                let ticking = false;
-                const onScroll = () => {
-                    if (!ticking) {
-                        window.requestAnimationFrame(() => {
-                            updateScrollProgress();
-                            ticking = false;
-                        });
-                        ticking = true;
-                    }
-                };
-
                 onMounted(async () => {
-                    setTimeout(() => { finishBootSequence(); }, 1500);
                     initMagneticLogo();
+                    setTimeout(finishBootSequence, 2000);
                     lucide.createIcons();
-                    resolveTheme(); 
-                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resolveTheme);
-                    initThreeJS();
                     initCursor();
-                    initLenis(); 
-                    window.addEventListener('scroll', onScroll);
+                    initLenis();
+                    window.addEventListener('scroll', updateScrollProgress);
+                    
                     await nextTick();
-                    const waves = document.querySelector('a-waves');
-                    if (waves) { waves.setSize(); waves.setLines(); }
-                    const introTl = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: "#photos-intro",
-                            start: "top top",
-                            end: "+=2000",
-                            pin: true,
-                            scrub: true,
-                            id: "photos-intro-trigger"
-                        }
-                    });
-                    introTl
-                        .to("a-waves", { "--dash-offset": 0, duration: 2, ease: "none" })
-                        .to(".gallery-title", { opacity: 1, scale: 1, duration: 1, ease: "power2.out" }, "<")
-                        .to(".gallery-title", { opacity: 0, scale: 1.5, filter: "blur(10px)", duration: 1 }, "+=0.5")
-                        .to(".gallery-quote", { opacity: 1, y: 0, duration: 1 }, "-=0.5")
-                        .to(".gallery-quote", { opacity: 0, y: -50, duration: 1 }, "+=1");
-                    ScrollTrigger.batch(".photo-card-wrapper", {
-                        onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: "power3.out" }),
-                        start: "top 85%"
+                    gsap.utils.toArray('.section-rk').forEach(sec => {
+                        gsap.from(sec.querySelectorAll('.heading-xl, .heading-l, .card-rk'), {
+                            opacity: 0, y: 100, stagger: 0.1, duration: 1.5, ease: "expo.out",
+                            scrollTrigger: { trigger: sec, start: "top 80%" }
+                        });
                     });
                 });
                 
                 onUnmounted(() => {
-                    window.removeEventListener('scroll', onScroll);
-                    window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', resolveTheme);
+                    window.removeEventListener('scroll', updateScrollProgress);
                     if(lenis) lenis.destroy();
                     gsap.ticker.remove(rotateBalls);
                 });
 
                 return {
-                    isSidebarOpen, themeMode, activeTheme, scrollProgress, activeSection, isCapsuleOpen, capsuleDashOffset, toggleSidebar, toggleCapsuleNav, cycleTheme, loader, canvasContainer, apps, photos, photoColumns,
-                    navLeftColor, navCapsuleColor, navRightColor, navCapsule, navBtnLeft, navBtnRight, handleNavClick, handleLinkClick, isBooting
+                    isSidebarOpen, activeTheme, activeSection, toggleSidebar, apps, photos,
+                    handleNavClick, isBooting, scrollToTop
                 };
             }
         }).mount('#app');
