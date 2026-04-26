@@ -415,9 +415,9 @@
             color: var(--klein-blue);
             padding-top: 0.5rem;
             font-family: 'Inter', sans-serif;
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
         }
 
         .content-body {
@@ -493,17 +493,6 @@
             text-decoration: none;
             color: var(--text-primary);
             transition: color 0.4s var(--mi-smooth);
-            overflow: hidden;
-        }
-
-        .sidebar-link .mask-inner {
-            display: inline-block;
-            transition: transform 0.5s var(--mi-smooth), color 0.4s var(--mi-smooth);
-        }
-
-        .sidebar-link:hover .mask-inner {
-            transform: translateY(-0.15em);
-            color: var(--klein-blue);
         }
 
         .sidebar-link:hover {
@@ -637,9 +626,9 @@
             align-items: center;
             gap: 0.5rem;
             font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             color: rgba(255, 255, 255, 0.45);
             margin-bottom: 0.35rem;
         }
@@ -653,9 +642,9 @@
 
         .hero__quicknav-link {
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.04em;
             color: rgba(255, 255, 255, 0.65);
             text-decoration: none;
             transition: color 0.35s var(--mi-smooth);
@@ -675,9 +664,9 @@
 
         .hero__quicknav-scroll-label {
             font-family: 'Inter', sans-serif;
-            font-size: 0.55rem;
+            font-size: 0.65rem;
             font-weight: 500;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             color: rgba(255, 255, 255, 0.5);
         }
 
@@ -923,9 +912,11 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="parallax-wrap aspect-[16/10] mb-12">
+                            <div class="parallax-wrap aspect-[16/10] mb-8">
                                 <img :src="app.img" class="w-full h-full object-contain parallax-img" loading="lazy">
                             </div>
+
+                            <p class="paragraph-m mb-8 max-w-md">{{ app.desc }}</p>
 
                             <div class="work-meta border-t-0 pt-0">
                                 <a :href="app.link" target="_blank" data-btn class="ml-auto" style="font-size: 1rem;">
@@ -994,9 +985,9 @@
                                     { label: 'Email', url: 'mailto:contact@michaelqiu.com' },
                                     { label: 'Kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank"
-                                    class="flex justify-between items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group overflow-hidden">
-                                    <i data-lucide="arrow-up-right" class="w-10 h-10 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 flex-shrink-0 mr-4"></i>
-                                    <span class="heading-l text-4xl group-hover:translate-x-6 transition-transform duration-500">{{ link.label }}</span>
+                                    class="relative flex items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group overflow-hidden">
+                                    <i data-lucide="arrow-up-right" class="absolute left-0 w-10 h-10 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
+                                    <span class="heading-l text-4xl group-hover:translate-x-10 transition-transform duration-500">{{ link.label }}</span>
                                     <i data-lucide="arrow-up-right" class="w-10 h-10 opacity-20 group-hover:opacity-0 group-hover:translate-x-4 transition-all duration-500 ml-auto"></i>
                                 </a>
                             </div>
