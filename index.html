@@ -566,38 +566,19 @@
 
         <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
             <!-- Hero Section (RK Style) -->
-            <section id="home" class="section-rk min-h-screen flex flex-col justify-end pb-32 relative overflow-hidden border-t-0">
-                <div class="container">
-                    <!-- Tagline Wrapper -->
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M0 0L14 14H0V0Z" fill="currentColor"></path></svg></div>
-                            <div class="font-mono">MICHAEL QIU</div>
-                        </div>
-                        <div class="tagline-item col-span-3">
-                            <div class="font-mono opacity-40">SYSTEM_INIT_V4.1</div>
-                        </div>
-                        <div class="tagline-item col-span-6 justify-self-end">
-                            <div class="font-mono text-klein-blue">AVAILABILITY // OPEN_FOR_RELIABLE_WORK</div>
-                        </div>
-                    </div>
-
-                    <div class="content-grid pt-12 pb-24">
-                        <div class="content-body flex flex-col justify-end">
-                            <div class="w-full flex justify-center mask-wrap mb-12">
-                                <svg class="mask-inner w-full max-w-[80%] h-auto" viewBox="0 0 1000 500" fill="var(--klein-blue)">
-                                    <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
-                                    <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
-                                    <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
-                                    <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
-                                </svg>
-                            </div>
-                            <div class="divider-rk mb-8 opacity-30"></div>
-                            <div class="mask-wrap flex justify-between items-end">
-                                <h1 class="heading-l mask-inner">Michael Qiu. Systems that scale.</h1>
-                            </div>
-                        </div>
-                    </div>
+            <section id="home" class="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden bg-white border-b border-black/5">
+                <div class="absolute inset-0 flex items-center justify-center p-12 md:p-32">
+                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" class="w-full max-w-6xl h-auto" fill="var(--klein-blue)">
+                        <g>
+                            <path fill-rule="evenodd" d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z"/>
+                            <path fill-rule="evenodd" d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z"/>
+                        </g>
+                        <path d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z"/>
+                        <path d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z"/>
+                    </svg>
+                </div>
+                <div class="absolute bottom-12 w-full text-center mask-wrap">
+                    <p class="font-mono tracking-widest text-[10px] md:text-xs opacity-60 mask-inner">MICHAEL QIU // SYSTEMS THAT SCALE</p>
                 </div>
             </section>
 
@@ -627,8 +608,7 @@
                         </div>
                     </div>
 
-                    <div class="parallax-wrap aspect-[21/9] mt-16" style="background-color: var(--klein-blue);">
-                    </div>
+                    <div class="pb-12"></div>
                 </div>
             </section>
 
@@ -706,10 +686,9 @@
                         <div v-for="(photo, i) in photos" :key="photo.title" 
                              class="parallax-wrap group border border-black/5"
                              :class="{ 
-                                 'col-span-1 md:col-span-8 aspect-[16/9]': i === 0,
-                                 'col-span-1 md:col-span-4 aspect-[16/9]': i === 1,
-                                 'col-span-1 md:col-span-6 aspect-[4/3]': i === 2 || i === 3,
-                                 'col-span-1 md:col-span-4 aspect-[1/1]': i > 3
+                                 'col-span-1 md:col-span-4 aspect-[3/4]': true,
+                                 'md:mt-16': i % 3 === 1,
+                                 'md:mt-32': i % 3 === 2
                              }">
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
@@ -759,22 +738,16 @@
             </section>
         </main>
 
-        <footer class="w-full bg-klein-blue text-white" style="background-color: var(--klein-blue); color: var(--pure-white);">
-            <div class="container py-32 flex flex-col items-center">
-                <div class="text-[clamp(3rem,10vw,10rem)] font-bold tracking-tighter leading-none mb-16">
-                    MICHAEL QIU
+        <footer class="w-full bg-klein-blue text-white py-12" style="background-color: var(--klein-blue); color: var(--pure-white);">
+            <div class="container flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="text-xl md:text-2xl font-bold tracking-tight mb-8 md:mb-0">
+                    Michael Qiu.
                 </div>
                 
-                <div class="w-full h-px bg-white/20 mb-12"></div>
-                
-                <div class="w-full flex flex-col md:flex-row justify-between font-mono text-[10px] opacity-70 gap-8">
-                    <div>© 2024 — FUTURE // VERSION_4.1 // SYSTEM_OPTIMIZED</div>
-                    <div class="flex gap-12 items-center">
-                        <div>DESIGNED_BY_ANTIGRAVITY</div>
-                        <button @click="scrollToTop" class="hover:text-white transition-colors border border-white/20 px-6 py-3 rounded-full hover:bg-white hover:text-klein-blue">
-                            BACK_TO_TOP ↑
-                        </button>
-                    </div>
+                <div class="flex gap-8 font-mono text-xs opacity-80">
+                    <a href="https://github.com/gitmichaelqiu/" class="hover:text-white transition-colors opacity-70 hover:opacity-100">GitHub</a>
+                    <a href="mailto:contact@michaelqiu.com" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Email</a>
+                    <a href="https://www.kaggle.com/michaelqiu0606" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Kaggle</a>
                 </div>
             </div>
         </footer>
