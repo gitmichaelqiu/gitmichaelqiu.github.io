@@ -183,14 +183,6 @@
             color: var(--text-secondary);
         }
 
-        .font-mono {
-            font-family: 'Inter', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-size: 0.6rem;
-            font-weight: 700;
-        }
-
         /* --- RK Layout Grid --- */
         .container {
             width: 100%;
@@ -266,12 +258,9 @@
             will-change: transform, opacity;
         }
 
-        /* --- High-Fidelity RK Button [data-btn] --- */
+        /* --- Button [data-btn] --- */
         [data-btn] {
             --elastic-ease-out: linear(0, 0.5737 7.6%, 0.8382 11.87%, 0.9463 14.19%, 1.0292 16.54%, 1.0886 18.97%, 1.1258 21.53%, 1.137 22.97%, 1.1424 24.48%, 1.1423 26.1%, 1.1366 27.86%, 1.1165 31.01%, 1.0507 38.62%, 1.0219 42.57%, 0.9995 46.99%, 0.9872 51.63%, 0.9842 58.77%, 1.0011 81.26%, 1);
-            --smooth-ease: cubic-bezier(.32, .72, 0, 1);
-            --transform-ease: cubic-bezier(.59, 1, .88, 1.01);
-            --bounce-cubic-ease: cubic-bezier(.34, 2.27, .64, 1);
 
             position: relative;
             display: inline-flex;
@@ -279,11 +268,10 @@
             justify-content: center;
             background: transparent;
             font-size: 0.65rem;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.1em;
             font-family: 'Inter', sans-serif;
-            text-transform: uppercase;
-            font-weight: 700;
-            transition: transform .45s var(--elastic-ease-out);
+            font-weight: 600;
+            transition: background 0.35s var(--mi-smooth), color 0.35s var(--mi-smooth), transform .45s var(--elastic-ease-out);
             -webkit-tap-highlight-color: transparent;
             padding: 1.2rem 2.5rem;
             border: 1px solid var(--border-color);
@@ -300,59 +288,24 @@
         [data-btn-bg] {
             position: absolute;
             inset: 0;
-            background: var(--bg-secondary);
+            background: transparent;
             z-index: 0;
-            transition: scale .15s var(--transform-ease), transform .15s var(--transform-ease);
+            transition: background 0.35s var(--mi-smooth);
         }
 
-        [data-btn] [data-btn-inner] {
+        [data-btn] span {
             position: relative;
             z-index: 1;
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: 1fr;
-            align-items: center;
-        }
-
-        [data-btn] [data-btn-inner]::after {
-            content: attr(data-text);
-            display: block;
-            grid-area: 1 / 1;
-            transition: clip-path .4s var(--smooth-ease), scale .3s var(--bounce-cubic-ease), translate .35s var(--smooth-ease);
-            clip-path: inset(0% 0% 100% 0%);
-            translate: 0 -.25em 0;
-            scale: 1.05;
-            transform-origin: top center;
-            color: var(--klein-blue);
-        }
-
-        [data-btn] [data-btn-text] {
-            grid-area: 1/1;
-            clip-path: inset(0% 0% 0% 0%);
-            transition: clip-path .4s var(--smooth-ease), scale .3s var(--bounce-cubic-ease), translate .35s var(--smooth-ease);
-            translate: 0 0 0;
-            scale: 1;
-            transform-origin: bottom center;
         }
 
         @media (hover: hover) and (pointer: fine) {
+            [data-btn]:is(:hover, :focus-visible) {
+                background: var(--klein-blue);
+                color: var(--pure-white);
+                border-color: var(--klein-blue);
+            }
             [data-btn]:is(:hover, :focus-visible) [data-btn-bg] {
-                scale: .975 .945;
-                transform: scale(calc(1/.975), calc(1/.945));
-                transition: scale .15s var(--transform-ease), transform .35s .15s var(--bounce-cubic-ease);
-            }
-
-            [data-btn]:is(:hover, :focus-visible) [data-btn-inner]::after {
-                clip-path: inset(0% 0% 0% 0%);
-                scale: 1;
-                translate: 0 0 0;
-                transition-delay: .075s;
-            }
-
-            [data-btn]:is(:hover, :focus-visible) [data-btn-text] {
-                clip-path: inset(100% 0% 0% 0%);
-                translate: 0 .25em 0;
-                scale: .95;
+                background: var(--klein-blue);
             }
         }
 
@@ -426,6 +379,10 @@
             grid-column: span 3;
             color: var(--klein-blue);
             padding-top: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
         }
 
         .content-body {
@@ -480,7 +437,6 @@
             font-weight: 500 !important;
             letter-spacing: -0.06em;
             line-height: 0.8;
-            text-transform: uppercase;
             margin: 4rem 0;
             color: var(--text-primary);
         }
@@ -497,7 +453,6 @@
             font-weight: 500 !important;
             letter-spacing: -0.06em;
             line-height: 0.9;
-            text-transform: uppercase;
             display: block;
             margin-bottom: 1rem;
             text-decoration: none;
@@ -560,9 +515,8 @@
         .nav-dock__label {
             font-family: 'Inter', sans-serif;
             font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-weight: 500;
+            letter-spacing: 0.05em;
             padding: 0 1rem;
         }
 
@@ -638,9 +592,8 @@
             gap: 0.5rem;
             font-family: 'Inter', sans-serif;
             font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
+            font-weight: 600;
+            letter-spacing: 0.1em;
             color: rgba(255, 255, 255, 0.45);
             margin-bottom: 0.35rem;
         }
@@ -654,10 +607,9 @@
 
         .hero__quicknav-link {
             font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
             color: rgba(255, 255, 255, 0.65);
             text-decoration: none;
             transition: color 0.35s var(--mi-smooth);
@@ -678,9 +630,8 @@
         .hero__quicknav-scroll-label {
             font-family: 'Inter', sans-serif;
             font-size: 0.55rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
+            font-weight: 500;
+            letter-spacing: 0.1em;
             color: rgba(255, 255, 255, 0.5);
         }
 
@@ -854,7 +805,7 @@
             <a href="/" class="nav-dock__btn" :class="{ 'active': activeSection === 'home' }">
                 <i data-lucide="home" class="w-5 h-5"></i>
             </a>
-            <div class="nav-dock__label">{{ activeSection }}</div>
+            <div class="nav-dock__label">{{ sectionLabels[activeSection] || activeSection }}</div>
             <button @click="toggleSidebar" class="nav-dock__btn" :class="{ 'active': isSidebarOpen }">
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
@@ -938,8 +889,8 @@
 
 
                     <div class="content-grid mb-24">
-                        <div class="content-label font-mono">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>_PHILOSOPHY</div>
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>Philosophy</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-12 mask-inner">Refusing to settle for the default.</h2>
@@ -967,8 +918,8 @@
 
 
                     <div class="content-grid mb-16">
-                        <div class="content-label font-mono">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>_PROJECTS</div>
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>Projects</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-8 mask-inner">Crafted for precision.</h2>
@@ -979,21 +930,18 @@
                     <div class="works-grid">
                         <div v-for="(app, i) in apps" :key="app.id" class="work-card group">
                             <div class="flex justify-between items-start mb-8">
-                                <span class="font-mono text-klein-blue !text-2xl md:!text-4xl font-light">0{{i+1}}</span>
+                                <span class="text-klein-blue !text-2xl md:!text-4xl font-light" style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">0{{i+1}}</span>
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div
-                                class="parallax-wrap aspect-[16/10] mb-12 bg-white border border-black/5 flex items-center justify-center p-12 transition-colors group-hover:bg-[#f8f9fb]">
+                            <div class="parallax-wrap aspect-[16/10] mb-12">
                                 <img :src="app.img" class="w-full h-full object-contain parallax-img" loading="lazy">
                             </div>
 
                             <div class="work-meta border-t-0 pt-0">
                                 <a :href="app.link" target="_blank" data-btn class="ml-auto" style="font-size: 1rem;">
                                     <div data-btn-bg></div>
-                                    <div data-btn-inner data-text="ENTER_ARCHIVE →">
-                                        <span data-btn-text>VIEW_PROJECT</span>
-                                    </div>
+                                    <span>View Project</span>
                                 </a>
                             </div>
                         </div>
@@ -1008,8 +956,8 @@
 
 
                     <div class="content-grid mb-24">
-                        <div class="content-label font-mono">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><rect width="14" height="14"/></svg>_STORY</div>
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><rect width="14" height="14"/></svg>Story</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-8 mask-inner">Moments captured in between.</h2>
@@ -1027,7 +975,7 @@
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <p class="font-mono text-[9px] text-white mb-2">{{ photo.date }}</p>
+                                <p class="text-[9px] text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:0.05em;">{{ photo.date }}</p>
                                 <h4 class="font-bold uppercase text-xs tracking-widest text-white">{{ photo.title }}
                                 </h4>
                             </div>
@@ -1042,23 +990,25 @@
                 <div class="container">
 
 
-                    <div class="content-grid mb-48">
-                        <div class="content-label font-mono">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>_CONTACT</div>
+                    <div class="content-grid mb-16">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>Contact</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-16 mask-inner">Let's build the future together.</h2>
                             </div>
                             <div class="flex flex-col">
                                 <a v-for="link in [
-                                    { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
-                                    { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' },
-                                    { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' }
+                                    { label: 'GitHub', url: 'https://github.com/gitmichaelqiu/' },
+                                    { label: 'Email', url: 'mailto:contact@michaelqiu.com' },
+                                    { label: 'Kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank"
-                                    class="flex justify-between items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group">
-                                    <span class="heading-l text-4xl group-hover:translate-x-8 transition-transform">{{
-                                        link.label }}</span>
-                                    <i data-lucide="arrow-up-right" class="w-10 h-10 opacity-20"></i>
+                                    class="flex justify-between items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group overflow-hidden">
+                                    <span class="heading-l text-4xl group-hover:translate-x-6 transition-transform duration-500">{{ link.label }}</span>
+                                    <span class="relative w-10 h-10 flex-shrink-0">
+                                        <i data-lucide="arrow-up-right" class="absolute inset-0 w-10 h-10 opacity-20 group-hover:opacity-0 group-hover:translate-x-4 transition-all duration-500"></i>
+                                        <i data-lucide="arrow-up-right" class="absolute inset-0 w-10 h-10 text-klein-blue opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
+                                    </span>
                                 </a>
                             </div>
                         </div>
@@ -1068,7 +1018,7 @@
             </section>
         </main>
 
-        <footer class="w-full bg-klein-blue text-white pt-32 pb-16"
+        <footer class="w-full bg-klein-blue text-white pt-16 pb-16"
             style="background-color: var(--klein-blue); color: var(--pure-white);">
             <div class="container">
                 <div class="text-[clamp(4rem,15vw,15rem)] font-black tracking-tighter leading-none mb-12 text-left">
@@ -1113,6 +1063,7 @@
                 const isBooting = ref(true);
                 const showNavDock = ref(false);
                 const navDockBottom = ref('2rem');
+                const sectionLabels = { home: 'Home', profile: 'Profile', works: 'Works', photos: 'Photos', connect: 'Connect' };
 
                 const handleNavClick = (targetId) => {
                     isSidebarOpen.value = false;
@@ -1265,7 +1216,7 @@
 
                 return {
                     isSidebarOpen, activeSection, toggleSidebar, apps, photos,
-                    handleNavClick, isBooting, scrollToTop, showNavDock, navDockBottom
+                    handleNavClick, isBooting, scrollToTop, showNavDock, navDockBottom, sectionLabels
                 };
             }
         }).mount('#app');
