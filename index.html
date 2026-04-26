@@ -23,7 +23,7 @@
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        mono: ['Inter', 'sans-serif'],
                         display: ['Syncopate', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
                     },
@@ -60,7 +60,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
 
     <style>
@@ -184,9 +184,9 @@
         }
 
         .font-mono {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             text-transform: uppercase;
-            letter-spacing: 0.3em;
+            letter-spacing: 0.15em;
             font-size: 0.6rem;
             font-weight: 700;
         }
@@ -280,7 +280,7 @@
             background: transparent;
             font-size: 0.65rem;
             letter-spacing: 0.15em;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             text-transform: uppercase;
             font-weight: 700;
             transition: transform .45s var(--elastic-ease-out);
@@ -558,7 +558,7 @@
         }
 
         .nav-dock__label {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 0.6rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -582,10 +582,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background:
-                radial-gradient(ellipse 60% 50% at 50% 35%, rgba(0, 47, 167, 0.35) 0%, transparent 70%),
-                radial-gradient(ellipse 80% 40% at 20% 80%, rgba(0, 47, 167, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 30% at 80% 20%, rgba(0, 47, 167, 0.08) 0%, transparent 50%);
+            background: linear-gradient(180deg, #000000 0%, var(--klein-blue) 100%);
             pointer-events: none;
             z-index: 0;
         }
@@ -639,7 +636,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 0.6rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -656,7 +653,7 @@
         }
 
         .hero__quicknav-link {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -679,7 +676,7 @@
         }
 
         .hero__quicknav-scroll-label {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 0.55rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -701,6 +698,7 @@
 
         .hero__logo {
             width: min(80%, 32rem);
+            max-height: 40vh;
             height: auto;
             margin-bottom: 1rem;
         }
@@ -852,7 +850,7 @@
 
 
         <!-- Navigation Dock -->
-        <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }">
+        <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }" :style="{ bottom: navDockBottom }">
             <a href="/" class="nav-dock__btn" :class="{ 'active': activeSection === 'home' }">
                 <i data-lucide="home" class="w-5 h-5"></i>
             </a>
@@ -911,7 +909,7 @@
                 <!-- Hero Content -->
                 <div class="hero__content">
                     <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48"
-                        class="hero-logo" fill="white">
+                        class="hero__logo" fill="white">
                         <g>
                             <path fill-rule="evenodd"
                                 d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
@@ -1070,16 +1068,11 @@
             </section>
         </main>
 
-        <footer class="w-full pt-32 pb-16"
+        <footer class="w-full bg-klein-blue text-white pt-32 pb-16"
             style="background-color: var(--klein-blue); color: var(--pure-white);">
             <div class="container">
-                <div class="content-grid">
-                    <div class="content-label font-mono" style="color:rgba(255,255,255,0.5)">
-                        <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor" style="color:rgba(255,255,255,0.6)"><rect width="14" height="14"/></svg>_FOOTER
-                    </div>
-                    <div class="content-body">
-                        <div class="footer-logo">Michael Qiu.</div>
-                    </div>
+                <div class="text-[clamp(4rem,15vw,15rem)] font-black tracking-tighter leading-none mb-12 text-left">
+                    Michael Qiu.
                 </div>
             </div>
         </footer>
@@ -1119,6 +1112,7 @@
                 const activeSection = ref('home');
                 const isBooting = ref(true);
                 const showNavDock = ref(false);
+                const navDockBottom = ref('2rem');
 
                 const handleNavClick = (targetId) => {
                     isSidebarOpen.value = false;
@@ -1166,7 +1160,7 @@
 
                 const updateScrollProgress = () => {
                     const winHeight = window.innerHeight;
-                    showNavDock.value = window.scrollY > winHeight * 0.5;
+                    showNavDock.value = window.scrollY > winHeight * 0.2;
                     const sections = ['home', 'profile', 'works', 'photos', 'connect'];
                     let current = 'home';
                     sections.forEach(id => {
@@ -1177,6 +1171,17 @@
                         }
                     });
                     activeSection.value = current;
+
+                    const footer = document.querySelector('footer');
+                    if (footer) {
+                        const footerRect = footer.getBoundingClientRect();
+                        if (footerRect.top < winHeight) {
+                            const offset = winHeight - footerRect.top + 16;
+                            navDockBottom.value = offset + 'px';
+                        } else {
+                            navDockBottom.value = '2rem';
+                        }
+                    }
                 };
 
                 const initLenis = () => {
@@ -1200,7 +1205,7 @@
                         .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
                         .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
                         .from('.hero__quicknav', { opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
-                        .from('.hero-logo', { scale: 0.9, opacity: 0, y: 40, duration: 1.8, ease: "power4.out" }, "-=0.3")
+                        .from('.hero__logo', { scale: 0.9, opacity: 0, y: 40, duration: 1.8, ease: "power4.out" }, "-=0.3")
                         .from('.hero__text .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "power4.out" }, "-=1.5")
                         .from('.scroll-indicator', { opacity: 0, duration: 0.6, ease: "power2.out" }, "-=0.6");
 
@@ -1260,7 +1265,7 @@
 
                 return {
                     isSidebarOpen, activeSection, toggleSidebar, apps, photos,
-                    handleNavClick, isBooting, scrollToTop, showNavDock
+                    handleNavClick, isBooting, scrollToTop, showNavDock, navDockBottom
                 };
             }
         }).mount('#app');
