@@ -87,6 +87,7 @@
             --text-primary: var(--pure-black);
             --text-secondary: rgba(0, 0, 0, 0.4);
             --border-color: rgba(0, 0, 0, 0.08);
+            --deep-navy: #020412;
 
             --mi-smooth: cubic-bezier(0.32, 0.72, 0, 1);
         }
@@ -134,7 +135,6 @@
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            cursor: auto !important;
         }
 
         html,
@@ -405,6 +405,14 @@
             .scroll-dot {
                 display: none;
             }
+
+            .scroll-indicator {
+                display: none;
+            }
+
+            .hero__quicknav {
+                display: none;
+            }
         }
 
         /* RK 12-Column Content Grid */
@@ -529,6 +537,7 @@
             border-radius: 50%;
             color: var(--text-primary);
             transition: all 0.3s var(--mi-smooth);
+            cursor: pointer !important;
         }
 
         .nav-dock__btn:hover {
@@ -548,6 +557,217 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             padding: 0 1rem;
+        }
+
+        /* --- Hero Quicknav (RK-style top bar) --- */
+        .hero {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--deep-navy);
+            color: var(--pure-white);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0, 47, 167, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero__quicknav {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: start;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .hero__quicknav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero__quicknav-logo svg {
+            width: 2rem;
+            height: 2rem;
+            color: var(--pure-white);
+        }
+
+        .hero__quicknav-cols {
+            display: flex;
+            gap: 4rem;
+            justify-content: center;
+        }
+
+        .hero__quicknav-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .hero__quicknav-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.25rem;
+        }
+
+        .hero__quicknav-label-icon {
+            width: 0.5rem;
+            height: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .hero__quicknav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.35s var(--mi-smooth);
+            cursor: pointer !important;
+        }
+
+        .hero__quicknav-link:hover {
+            color: var(--pure-white);
+        }
+
+        .hero__quicknav-scroll {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+        }
+
+        .hero__quicknav-scroll-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero__content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .hero__logo {
+            width: min(80%, 32rem);
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .hero__text {
+            text-align: center;
+        }
+
+        .hero__name {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 500 !important;
+            letter-spacing: -0.06em;
+            line-height: 1;
+            color: var(--pure-white);
+            margin-bottom: 0.75rem;
+        }
+
+        .hero__tagline {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 300;
+            opacity: 0.6;
+            letter-spacing: -0.02em;
+        }
+
+        /* --- Scroll Indicator --- */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            width: 1px;
+            height: 7em;
+            background: rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+
+        .scroll-indicator::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 33px;
+            height: 1.9em;
+            background: rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            clip-path: polygon(18% 0%, 82% 0%, 82% 100%, 18% 100%);
+            animation: scroll-comet 2.8s cubic-bezier(0.7, 0.05, 0.13, 1) infinite;
+            pointer-events: none;
+            will-change: transform, opacity, clip-path;
+        }
+
+        @keyframes scroll-comet {
+            0% {
+                transform: translate(-50%, -160%) scaleY(.8);
+                opacity: 0;
+                clip-path: polygon(20% 0%, 80% 0%, 80% 100%, 20% 100%);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(-50%, -120%) scaleY(.95);
+                clip-path: polygon(16% 0%, 84% 0%, 84% 100%, 16% 100%);
+            }
+            40% {
+                transform: translate(-50%, 170%) scaleY(1.35);
+                clip-path: polygon(22% 0%, 78% 0%, 92% 32%, 86% 100%, 14% 100%, 8% 32%);
+            }
+            60% {
+                transform: translate(-50%, 260%) scaleY(1.3);
+                opacity: 0.6;
+                clip-path: polygon(24% 0%, 76% 0%, 90% 28%, 84% 100%, 16% 100%, 10% 28%);
+            }
+            100% {
+                transform: translate(-50%, 380%) scaleY(0.5);
+                opacity: 0;
+                clip-path: polygon(28% 0%, 72% 0%, 82% 14%, 78% 100%, 22% 100%, 18% 14%);
+            }
+        }
+
+        /* --- Section Label Shape Icons --- */
+        .section-label-icon {
+            width: 0.6rem;
+            height: 0.6rem;
+            display: inline-block;
+            margin-right: 0.5rem;
+            color: var(--klein-blue);
+            vertical-align: middle;
+            margin-top: -0.15em;
         }
 
         /* Transitions */
@@ -622,11 +842,54 @@
 
         <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
             <!-- Hero Section (RK Style) -->
-            <section id="home"
-                class="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden bg-gradient-to-b from-black to-[#0000ff] border-b border-black/5">
-                <div class="absolute inset-0 flex flex-col items-center justify-center p-12 md:p-32 z-10">
+            <section id="home" class="hero">
+                <!-- Top Quicknav -->
+                <nav class="hero__quicknav hide-mobile">
+                    <div class="hero__quicknav-logo">
+                        <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white" style="width:2.4rem;height:auto">
+                                <path fill-rule="evenodd" d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z"/>
+                                <path fill-rule="evenodd" d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z"/>
+                                <path d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z"/>
+                                <path d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="hero__quicknav-cols">
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">
+                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>
+                                Projects
+                            </div>
+                            <a @click.prevent="handleNavClick('works')" href="#works" class="hero__quicknav-link">Works</a>
+                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="hero__quicknav-link">Photos</a>
+                        </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">
+                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>
+                                Narrative
+                            </div>
+                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="hero__quicknav-link">Profile</a>
+                            <a href="https://github.com/gitmichaelqiu/" target="_blank" class="hero__quicknav-link">GitHub</a>
+                        </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">
+                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><rect width="14" height="14"/></svg>
+                                Liaison
+                            </div>
+                            <a href="mailto:contact@michaelqiu.com" class="hero__quicknav-link">Email</a>
+                            <a @click.prevent="handleNavClick('connect')" href="#connect" class="hero__quicknav-link">Connect</a>
+                        </div>
+                    </div>
+                    <div class="hero__quicknav-scroll">
+                        <span class="hero__quicknav-scroll-label">Discover</span>
+                    </div>
+                </nav>
+
+                <!-- Hero Content -->
+                <div class="hero__content">
                     <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48"
-                        class="hero-logo w-full max-w-4xl h-auto mb-12" fill="white">
+                        class="hero-logo" fill="white">
                         <g>
                             <path fill-rule="evenodd"
                                 d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
@@ -638,11 +901,14 @@
                         <path
                             d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                     </svg>
-                    <div class="hero-text text-white text-center mask-wrap overflow-hidden">
-                        <h1 class="mask-inner text-[clamp(2.5rem,8vw,6rem)] font-bold tracking-tight leading-none mb-4">Michael Qiu</h1>
-                        <p class="mask-inner text-xl md:text-2xl font-light opacity-80">Systems that scale with elegant precision.</p>
+                    <div class="hero__text">
+                        <div class="mask-wrap"><h1 class="hero__name mask-inner">Michael Qiu</h1></div>
+                        <div class="mask-wrap"><p class="hero__tagline mask-inner">Systems that scale with elegant precision.</p></div>
                     </div>
                 </div>
+
+                <!-- Scroll Indicator -->
+                <div class="scroll-indicator"></div>
             </section>
 
             <!-- Profile Section (RK Style) -->
@@ -652,7 +918,8 @@
 
 
                     <div class="content-grid mb-24">
-                        <div class="content-label font-mono !text-lg">_PHILOSOPHY</div>
+                        <div class="content-label font-mono">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>_PHILOSOPHY</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-12 mask-inner">Refusing to settle for the default.</h2>
@@ -680,7 +947,8 @@
 
 
                     <div class="content-grid mb-16">
-                        <div class="content-label font-mono !text-lg">_PROJECTS</div>
+                        <div class="content-label font-mono">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>_PROJECTS</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-8 mask-inner">Crafted for precision.</h2>
@@ -720,7 +988,8 @@
 
 
                     <div class="content-grid mb-24">
-                        <div class="content-label font-mono !text-lg">_STORY</div>
+                        <div class="content-label font-mono">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><rect width="14" height="14"/></svg>_STORY</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-8 mask-inner">Moments captured in between.</h2>
@@ -754,7 +1023,8 @@
 
 
                     <div class="content-grid mb-48">
-                        <div class="content-label font-mono !text-lg">_CONTACT</div>
+                        <div class="content-label font-mono">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>_CONTACT</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-16 mask-inner">Let's build the future together.</h2>
@@ -778,11 +1048,20 @@
             </section>
         </main>
 
-        <footer class="w-full bg-klein-blue text-white pt-32 pb-16"
-            style="background-color: var(--klein-blue); color: var(--pure-white);">
+        <footer class="w-full pt-32 pb-16 border-t border-black/5"
+            style="background-color: var(--bg-primary);">
             <div class="container">
-                <div class="text-[clamp(4rem,15vw,15rem)] font-black tracking-tighter leading-none mb-12 text-left">
-                    Michael Qiu.
+                <div class="content-grid mb-16">
+                    <div class="content-label font-mono">
+                        <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><rect width="14" height="14"/></svg>_FOOTER
+                    </div>
+                    <div class="content-body">
+                        <div class="footer-logo">Michael Qiu.</div>
+                        <div class="flex gap-8 font-mono text-[10px] opacity-30 mt-8">
+                            <span>DESIGNED WITH PRECISION</span>
+                            <span>SYSTEM_V4.1</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>
@@ -918,8 +1197,10 @@
                         .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
                         .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
                         .from('.nav-dock', { y: 50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
-                        .from('.hero-logo', { scale: 0.9, opacity: 0, y: 50, duration: 1.8, ease: "power4.out" }, "-=0.3")
-                        .from('.hero-text .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "power4.out" }, "-=1.5");
+                        .from('.hero__quicknav', { opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.4")
+                        .from('.hero-logo', { scale: 0.9, opacity: 0, y: 40, duration: 1.8, ease: "power4.out" }, "-=0.3")
+                        .from('.hero__text .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "power4.out" }, "-=1.5")
+                        .from('.scroll-indicator', { opacity: 0, duration: 0.6, ease: "power2.out" }, "-=0.6");
 
                     // Mask Reveals for subsequent sections
                     gsap.utils.toArray('.section-rk:not(#home)').forEach(sec => {
