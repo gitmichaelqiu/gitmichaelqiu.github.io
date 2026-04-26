@@ -587,35 +587,6 @@
             z-index: 0;
         }
 
-        /* --- Preloader (RK-style geometric) --- */
-        #preloader {
-            background-color: #01071a;
-        }
-        .preloader-mark {
-            filter: drop-shadow(0 0 18px rgba(0, 47, 167, 0.5));
-        }
-        .preloader-track {
-            width: 48px;
-            height: 1px;
-            background: rgba(0, 47, 167, 0.12);
-            margin-top: 2rem;
-            overflow: hidden;
-        }
-        .preloader-bar {
-            height: 100%;
-            width: 0%;
-            background: #002FA7;
-        }
-        .preloader-label {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 400;
-            letter-spacing: 0.22em;
-            color: rgba(0, 47, 167, 0.5);
-            margin-top: 1.25rem;
-            text-transform: uppercase;
-        }
-
         /* --- Particle Constellation Layer --- */
         .hero__particles {
             position: absolute;
@@ -805,17 +776,7 @@
 
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[10002] flex flex-col items-center justify-center">
-        <svg class="preloader-mark" width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <path d="M20 3 L35 20 L20 37 L5 20 Z" stroke="#002FA7" stroke-width="1.2" opacity="0.25"/>
-            <path d="M20 9 L29 20 L20 31 L11 20 Z" fill="#002FA7" opacity="0.8"/>
-            <circle cx="20" cy="20" r="2" fill="#002FA7"/>
-        </svg>
-        <div class="preloader-track">
-            <div class="preloader-bar"></div>
-        </div>
-        <div class="preloader-label">Michael Qiu</div>
-    </div>
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
 
     <div id="app" class="relative min-h-screen">
         <!-- Architectural Grid Lines -->
@@ -1320,31 +1281,21 @@
                     // ── Animation Sequence ──
                     const tl = gsap.timeline();
 
-                    // Phase 1: Preloader intro (0 → 1.3s)
+                    // Brief pause, then preloader fades → hero reveals
                     tl.set('body', { opacity: 1 })
-                        .from('.preloader-mark', { scale: 0.8, opacity: 0, duration: 0.5, ease: "power3.out" })
-                        .from('.preloader-label', { opacity: 0, duration: 0.4, ease: "power2.out" }, "-=0.2")
-                        .to('.preloader-bar', { width: '100%', duration: 0.7, ease: "power2.inOut" }, "-=0.1")
-
-                    // Phase 2: Dissolve — mark bursts, preloader fades, particles emerge (1.5 → 2.5s)
-                        .to('.preloader-mark', { scale: 2.5, opacity: 0, duration: 0.6, ease: "power3.in" }, "+=0.2")
-                        .to('.preloader-label', { opacity: 0, duration: 0.3, ease: "power2.in" }, "-=0.4")
-                        .to('#preloader', { opacity: 0, duration: 0.7, ease: "power2.inOut", onComplete: () => {
+                        .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: () => {
                             const el = document.getElementById('preloader');
                             if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
-                        } }, "-=0.3")
-                        .to('#particle-layer', { opacity: 1, duration: 0.5, ease: "power2.in" }, "-=0.7")
-                        .to('.hero__bg', { opacity: 1, duration: 1.0, ease: "power2.inOut" }, "-=0.5")
-
-                    // Phase 3: Hero elements — tight cadence, layered through fading preloader (2.0 → 2.95s)
-                        .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=1.0")
-                        .from('.hero__text .mask-inner', { y: "100%", duration: 0.6, stagger: 0.06, ease: "power3.out" }, "-=0.9")
-                        .from('.hero__logo', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out" }, "-=0.75")
-                        .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.65");
+                        } })
+                        .to('.hero__bg', { opacity: 1, duration: 1.2, ease: "power2.inOut" }, "-=0.5")
+                        .to('#particle-layer', { opacity: 1, duration: 0.6, ease: "power2.in" }, "-=0.8")
+                        .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
+                        .from('.hero__text .mask-inner', { y: "100%", duration: 0.6, stagger: 0.06, ease: "power3.out" }, "-=0.6")
+                        .from('.hero__logo', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out" }, "-=0.45")
+                        .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.4");
 
                     // Particle dissolve: spread from center to constellation
-                    console.log('[Particles] Dissolve scheduled — starts in 1.8s, lasts 3.0s');
-                    gsap.to(pState, { progress: 1, duration: 3.0, ease: "power2.out", delay: 1.8 });
+                    gsap.to(pState, { progress: 1, duration: 3.0, ease: "power2.out", delay: 1.5 });
                     } // end if (typeof THREE !== 'undefined')
 
                     // Mask Reveals for subsequent sections
