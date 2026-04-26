@@ -568,7 +568,7 @@
             <!-- Hero Section (RK Style) -->
             <section id="home" class="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden bg-white border-b border-black/5">
                 <div class="absolute inset-0 flex items-center justify-center p-12 md:p-32">
-                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" class="w-full max-w-6xl h-auto" fill="var(--klein-blue)">
+                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" class="hero-logo w-full max-w-6xl h-auto" fill="var(--klein-blue)">
                         <g>
                             <path fill-rule="evenodd" d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z"/>
                             <path fill-rule="evenodd" d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z"/>
@@ -577,24 +577,14 @@
                         <path d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z"/>
                     </svg>
                 </div>
-                <div class="absolute bottom-12 w-full text-center mask-wrap">
-                    <p class="font-mono tracking-widest text-[10px] md:text-xs opacity-60 mask-inner">MICHAEL QIU // SYSTEMS THAT SCALE</p>
-                </div>
+
             </section>
 
             <!-- Profile Section (RK Style) -->
             <section id="profile" class="section-rk">
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
-                            <div class="font-mono">PERSONA</div>
-                        </div>
-                        <div class="tagline-item col-span-9">
-                            <div class="font-mono opacity-40">2024 — FOREVER // PERSISTENT_LOGIC</div>
-                        </div>
-                    </div>
+
 
                     <div class="content-grid mb-24">
                         <div class="content-label font-mono">_PHILOSOPHY</div>
@@ -608,7 +598,9 @@
                         </div>
                     </div>
 
-                    <div class="pb-12"></div>
+                    <div class="parallax-wrap aspect-[21/9] mt-16 overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/05.jpeg" class="w-full h-full object-cover parallax-img" style="object-position: center bottom;" loading="lazy">
+                    </div>
                 </div>
             </section>
 
@@ -616,15 +608,7 @@
             <section id="works" class="section-rk">
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-4">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M0 0L14 14H0V0Z" fill="currentColor"></path></svg></div>
-                            <div class="font-mono">REPERTOIRE</div>
-                        </div>
-                        <div class="tagline-item col-span-8">
-                            <div class="font-mono opacity-40">SELECTED_WORKS_01 — 03</div>
-                        </div>
-                    </div>
+
 
                     <div class="content-grid mb-16">
                         <div class="content-label font-mono">_PROJECTS</div>
@@ -663,15 +647,7 @@
             <section id="photos" class="section-rk">
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="currentColor"></circle></svg></div>
-                            <div class="font-mono">NARRATIVE</div>
-                        </div>
-                        <div class="tagline-item col-span-9">
-                            <div class="font-mono opacity-40">VISUAL_JOURNAL // 2023 — 2025 // KO_CHANG // HANGZHOU // HOKKAIDO</div>
-                        </div>
-                    </div>
+
 
                     <div class="content-grid mb-24">
                         <div class="content-label font-mono">_STORY</div>
@@ -704,15 +680,7 @@
             <section id="connect" class="section-rk">
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
-                            <div class="font-mono">LIAISON</div>
-                        </div>
-                        <div class="tagline-item col-span-9">
-                            <div class="font-mono opacity-40">AVAILABLE_FOR_NEW_INITIATIVES</div>
-                        </div>
-                    </div>
+
 
                     <div class="content-grid mb-48">
                         <div class="content-label font-mono">_CONTACT</div>
@@ -738,16 +706,20 @@
             </section>
         </main>
 
-        <footer class="w-full bg-klein-blue text-white py-12" style="background-color: var(--klein-blue); color: var(--pure-white);">
-            <div class="container flex flex-col md:flex-row justify-between items-start md:items-center">
-                <div class="text-xl md:text-2xl font-bold tracking-tight mb-8 md:mb-0">
+        <footer class="w-full bg-klein-blue text-white pt-32 pb-16" style="background-color: var(--klein-blue); color: var(--pure-white);">
+            <div class="container">
+                <div class="text-[clamp(4rem,15vw,15rem)] font-black tracking-tighter leading-none mb-12 text-left">
                     Michael Qiu.
                 </div>
                 
-                <div class="flex gap-8 font-mono text-xs opacity-80">
-                    <a href="https://github.com/gitmichaelqiu/" class="hover:text-white transition-colors opacity-70 hover:opacity-100">GitHub</a>
-                    <a href="mailto:contact@michaelqiu.com" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Email</a>
-                    <a href="https://www.kaggle.com/michaelqiu0606" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Kaggle</a>
+                <div class="w-full h-px bg-white/20 mb-8"></div>
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center font-mono text-xs opacity-80 gap-8">
+                    <div class="flex gap-8">
+                        <a href="https://github.com/gitmichaelqiu/" class="hover:text-white transition-colors opacity-70 hover:opacity-100">GitHub</a>
+                        <a href="mailto:contact@michaelqiu.com" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Email</a>
+                        <a href="https://www.kaggle.com/michaelqiu0606" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Kaggle</a>
+                    </div>
                 </div>
             </div>
         </footer>
@@ -862,7 +834,7 @@
                 };
 
                 const initLenis = () => {
-                    lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+                    lenis = new Lenis({ duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
                     function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
                     requestAnimationFrame(raf);
                 };
@@ -882,7 +854,7 @@
                       .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
                       .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
                       .from('.nav-dock', { y: 50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
-                      .from('#home .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "expo.out" }, "-=0.3");
+                      .from('.hero-logo', { scale: 0.9, opacity: 0, y: 50, duration: 1.8, ease: "power4.out" }, "-=0.3");
 
                     // Mask Reveals for subsequent sections
                     gsap.utils.toArray('.section-rk:not(#home)').forEach(sec => {
@@ -890,12 +862,12 @@
                         if (masks.length > 0) {
                             gsap.from(masks, {
                                 y: "100%",
-                                duration: 1.5,
-                                stagger: 0.1,
-                                ease: "expo.out",
+                                duration: 1.8,
+                                stagger: 0.15,
+                                ease: "power4.out",
                                 scrollTrigger: {
                                     trigger: sec,
-                                    start: "top 80%",
+                                    start: "top 85%",
                                 }
                             });
                         }
