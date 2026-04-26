@@ -587,9 +587,23 @@
             z-index: 0;
         }
 
+        /* --- Particle Constellation Layer --- */
+        .hero__particles {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .hero__particles canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
         .hero__quicknav {
             position: relative;
-            z-index: 2;
+            z-index: 4;
             display: grid;
             grid-template-columns: auto 1fr auto;
             align-items: start;
@@ -677,7 +691,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            z-index: 1;
+            z-index: 3;
             padding: 2rem;
             gap: 2rem;
         }
@@ -794,6 +808,8 @@
         <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
             <!-- Hero Section (RK Style) -->
             <section id="home" class="hero">
+                <!-- Particle Constellation Layer -->
+                <div id="particle-layer" class="hero__particles"></div>
                 <!-- Top Quicknav -->
                 <nav class="hero__quicknav hide-mobile">
                     <div class="hero__quicknav-logo">
@@ -1068,6 +1084,9 @@
                 ];
 
                 let lenis;
+                let pAnimId, pRenderer, pSpriteTex, pHandleResize;
+                const pLayers = [];
+                const pState = { progress: 0 };
 
                 const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value; };
 
@@ -1124,16 +1143,167 @@
                     await nextTick();
                     lucide.createIcons();
 
+                    // ── Particle Constellation System ──
+                    if (typeof THREE === 'undefined') { console.warn('Three.js not loaded — skipping particles.'); }
+                    else {
+                    console.log('[Particles] Three.js r128 detected, initializing...');
+                    const pContainer = document.getElementById('particle-layer');
+                    const isMobile = window.innerWidth < 768;
+                    pState.progress = 0;
+
+                    // Soft radial sprite (128×128 canvas → texture) — bright white-blue core
+                    const spriteCanvas = document.createElement('canvas');
+                    spriteCanvas.width = spriteCanvas.height = 128;
+                    const sctx = spriteCanvas.getContext('2d');
+                    const grad = sctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+                    grad.addColorStop(0, 'rgba(255,255,255,1)');
+                    grad.addColorStop(0.08, 'rgba(180,210,255,0.9)');
+                    grad.addColorStop(0.25, 'rgba(0,47,167,0.5)');
+                    grad.addColorStop(0.55, 'rgba(0,47,167,0.08)');
+                    grad.addColorStop(1, 'rgba(0,47,167,0)');
+                    sctx.fillStyle = grad;
+                    sctx.fillRect(0, 0, 128, 128);
+                    pSpriteTex = new THREE.CanvasTexture(spriteCanvas);
+                    pSpriteTex.needsUpdate = true;
+
+                    const scene = new THREE.Scene();
+                    const camera = new THREE.PerspectiveCamera(
+                        60, pContainer.clientWidth / Math.max(pContainer.clientHeight, 1), 0.1, 100
+                    );
+                    camera.position.z = 5;
+
+                    pRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+                    pRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    pRenderer.setSize(pContainer.clientWidth, pContainer.clientHeight);
+                    pRenderer.setClearColor(0x000000, 0);
+                    pContainer.appendChild(pRenderer.domElement);
+
+                    // Layer definitions: [count, size, opacity, color, blending]
+                    const layerDefs = [
+                        { count: isMobile ? 25 : 50, size: 0.28, opacity: 0.85, color: '#e0ecff', blend: THREE.NormalBlending },
+                        { count: isMobile ? 40 : 80, size: 0.16, opacity: 0.55, color: '#4d7fdb', blend: THREE.AdditiveBlending },
+                        { count: isMobile ? 35 : 70, size: 0.09, opacity: 0.30, color: '#002FA7', blend: THREE.AdditiveBlending },
+                    ];
+
+                    pLayers.length = 0;
+                    const allParticles = [];
+                    const rand = (a, b) => a + Math.random() * (b - a);
+                    const gauss = (s) => {
+                        const u = 1 - Math.random(), v = Math.random();
+                        return Math.sqrt(-2 * Math.log(Math.max(u, 0.0001))) * Math.cos(2 * Math.PI * v) * s;
+                    };
+
+                    layerDefs.forEach((def, li) => {
+                        const count = def.count;
+                        const positions = new Float32Array(count * 3);
+                        const targets = new Float32Array(count * 3);
+                        const asp = pContainer.clientWidth / Math.max(pContainer.clientHeight, 1);
+                        const rX = 2.8 * Math.max(asp / 1.6, 1);
+                        const rY = 1.6 * Math.max(1.6 / asp, 1);
+                        const sigma = [0.3, 0.6, 1.0][li];
+
+                        for (let i = 0; i < count; i++) {
+                            const r = Math.abs(gauss(sigma));
+                            const a = Math.random() * Math.PI * 2;
+                            let tx = Math.cos(a) * r * rX;
+                            let ty = Math.sin(a) * r * rY;
+                            // ~30% cluster near existing particles
+                            if (Math.random() < 0.3 && allParticles.length > 0) {
+                                const parent = allParticles[Math.floor(Math.random() * allParticles.length)];
+                                tx = parent.baseX + rand(-0.25, 0.25);
+                                ty = parent.baseY + rand(-0.25, 0.25);
+                            }
+                            const tz = rand(-3, 3);
+                            targets[i * 3] = tx;
+                            targets[i * 3 + 1] = ty;
+                            targets[i * 3 + 2] = tz;
+                            positions[i * 3] = 0;
+                            positions[i * 3 + 1] = 0;
+                            positions[i * 3 + 2] = 0;
+                            allParticles.push({
+                                baseX: tx, baseY: ty, baseZ: tz,
+                                initX: rand(-0.08, 0.08), initY: rand(-0.08, 0.08),
+                                fx: rand(0.15, 0.5), fy: rand(0.15, 0.5),
+                                px: rand(0, Math.PI * 2), py: rand(0, Math.PI * 2), pz: rand(0, Math.PI * 2),
+                                ampX: rand(0.03, 0.12), ampY: rand(0.03, 0.12),
+                            });
+                        }
+
+                        const geo = new THREE.BufferGeometry();
+                        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                        geo.userData = { targets, count };
+                        const mat = new THREE.PointsMaterial({
+                            map: pSpriteTex, color: new THREE.Color(def.color),
+                            size: def.size, sizeAttenuation: true, transparent: true, opacity: def.opacity,
+                            blending: def.blend, depthWrite: false, depthTest: true,
+                        });
+                        const pts = new THREE.Points(geo, mat);
+                        scene.add(pts);
+                        pLayers.push(pts);
+                    });
+
+                    // Animation loop
+                    function animateParticles() {
+                        pAnimId = requestAnimationFrame(animateParticles);
+                        if (document.hidden) return;
+                        const heroEl = document.getElementById('home');
+                        if (!heroEl) return;
+                        const hr = heroEl.getBoundingClientRect();
+                        if (hr.bottom < -window.innerHeight * 2 || hr.top > window.innerHeight * 2) return;
+                        const scrollF = hr.top / window.innerHeight;
+                        const time = performance.now() * 0.001;
+                        const ep = pState.progress;
+                        const driftFac = Math.max(0, (ep - 0.15) / 0.85);
+
+                        let pi = 0;
+                        pLayers.forEach((layer) => {
+                            const pos = layer.geometry.attributes.position.array;
+                            const tgt = layer.geometry.userData.targets;
+                            const cnt = layer.geometry.userData.count;
+                            for (let i = 0; i < cnt; i++) {
+                                const p = allParticles[pi++];
+                                const dx = Math.sin(time * p.fx + p.px) * p.ampX * driftFac;
+                                const dy = Math.cos(time * p.fy + p.py) * p.ampY * driftFac;
+                                const py = scrollF * (p.baseZ / 4) * 0.3;
+                                const fade = 1 - ep;
+                                pos[i * 3] = p.baseX * ep + dx + p.initX * fade;
+                                pos[i * 3 + 1] = p.baseY * ep + dy + py + p.initY * fade;
+                                pos[i * 3 + 2] = p.baseZ * ep;
+                            }
+                            layer.geometry.attributes.position.needsUpdate = true;
+                        });
+                        pRenderer.render(scene, camera);
+                    }
+                    requestAnimationFrame(animateParticles);
+
+                    console.log('[Particles] Initialized: ' + allParticles.length + ' particles across ' + pLayers.length +
+                        ' layers, container ' + pContainer.clientWidth + '×' + pContainer.clientHeight +
+                        ', mobile=' + isMobile + ', DPR=' + Math.min(window.devicePixelRatio, 2));
+
+                    pHandleResize = () => {
+                        const w = pContainer.clientWidth, h = pContainer.clientHeight;
+                        pRenderer.setSize(w, h);
+                        camera.aspect = w / Math.max(h, 1);
+                        camera.updateProjectionMatrix();
+                    };
+                    window.addEventListener('resize', pHandleResize);
+
                     // Sequenced Entry with Preloader
                     const tl = gsap.timeline();
                     tl.set('body', { opacity: 1 })
                         .to('.preloader-text', { y: "0%", duration: 1, ease: "expo.out", delay: 0.2 })
                         .to('.preloader-text', { y: "-100%", duration: 0.8, ease: "expo.in", delay: 0.5 })
                         .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
+                        .to('#particle-layer', { opacity: 1, duration: 0.8, ease: "power2.in" }, "-=0.6")
                         .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
                         .from('.hero__quicknav', { opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.5")
                         .from('.hero__logo', { scale: 0.9, opacity: 0, y: 40, duration: 1.8, ease: "power4.out" }, "-=0.3")
-                        .from('.hero__text .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "power4.out" }, "-=1.5")
+                        .from('.hero__text .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "power4.out" }, "-=1.5");
+
+                    // Particle dissolve: spread from center to constellation (delayed to be visible after preloader exits)
+                    console.log('[Particles] Dissolve scheduled — starts in 3.0s, lasts 3.0s');
+                    gsap.to(pState, { progress: 1, duration: 3.0, ease: "power2.out", delay: 3.0 });
+                    } // end if (typeof THREE !== 'undefined')
 
                     // Mask Reveals for subsequent sections
                     gsap.utils.toArray('.section-rk:not(#home)').forEach(sec => {
@@ -1186,6 +1356,17 @@
 
                 onUnmounted(() => {
                     window.removeEventListener('scroll', updateScrollProgress);
+                    if (pHandleResize) window.removeEventListener('resize', pHandleResize);
+                    if (pAnimId) cancelAnimationFrame(pAnimId);
+                    if (pLayers.length) {
+                        pLayers.forEach(layer => {
+                            layer.geometry.dispose();
+                            layer.material.map.dispose();
+                            layer.material.dispose();
+                        });
+                    }
+                    if (pRenderer) { pRenderer.dispose(); pRenderer.domElement.remove(); }
+                    if (pSpriteTex) pSpriteTex.dispose();
                     if (lenis) lenis.destroy();
                 });
 
