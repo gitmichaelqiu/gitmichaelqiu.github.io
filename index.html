@@ -582,14 +582,19 @@
                         </div>
                     </div>
 
-                    <div class="content-grid pt-12">
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <h1 class="heading-xl mb-12 mask-inner">Michael Qiu.<br>Systems that scale.</h1>
+                    <div class="content-grid pt-12 pb-24">
+                        <div class="content-body flex flex-col justify-end">
+                            <div class="w-full flex justify-center mask-wrap mb-12">
+                                <svg class="mask-inner w-full max-w-[80%] h-auto" viewBox="0 0 1000 500" fill="var(--klein-blue)">
+                                    <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
+                                    <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
+                                    <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
+                                    <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
+                                </svg>
                             </div>
-                            <div class="divider-rk mb-12 opacity-30"></div>
-                            <div class="mask-wrap">
-                                <p class="paragraph-l max-w-4xl mask-inner">Creative Engineer at the intersection of technical architecture and visual narrative.</p>
+                            <div class="divider-rk mb-8 opacity-30"></div>
+                            <div class="mask-wrap flex justify-between items-end">
+                                <h1 class="heading-l mask-inner">Michael Qiu. Systems that scale.</h1>
                             </div>
                         </div>
                     </div>
@@ -622,8 +627,7 @@
                         </div>
                     </div>
 
-                    <div class="parallax-wrap aspect-[21/9] bg-black/5 mt-16">
-                        <img src="https://picsum.photos/seed/abstract/2100/900" class="w-full h-full object-cover parallax-img" loading="lazy">
+                    <div class="parallax-wrap aspect-[21/9] mt-16" style="background-color: var(--klein-blue);">
                     </div>
                 </div>
             </section>
@@ -658,13 +662,12 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
                             
-                            <div class="parallax-wrap aspect-[16/10] mb-12 bg-black/5">
-                                <img :src="`https://picsum.photos/seed/${app.id}/1600/1000`" class="w-full h-full object-cover parallax-img" loading="lazy">
+                            <div class="parallax-wrap aspect-[16/10] mb-12 bg-white border border-black/5 flex items-center justify-center p-12 transition-colors group-hover:bg-[#f8f9fb]">
+                                <img :src="app.img" class="w-full h-full object-contain parallax-img" loading="lazy">
                             </div>
 
-                            <div class="work-meta">
-                                <div class="font-mono text-[9px] opacity-40">MACOS // SWIFT</div>
-                                <a :href="app.link" target="_blank" data-btn>
+                            <div class="work-meta border-t-0 pt-0">
+                                <a :href="app.link" target="_blank" data-btn class="ml-auto">
                                     <div data-btn-bg></div>
                                     <div data-btn-inner data-text="ENTER_ARCHIVE →">
                                         <span data-btn-text>VIEW_PROJECT</span>
@@ -704,9 +707,9 @@
                              class="parallax-wrap group border border-black/5"
                              :class="{ 
                                  'col-span-1 md:col-span-8 aspect-[16/9]': i === 0,
-                                 'col-span-1 md:col-span-4 aspect-[4/5]': i === 1,
-                                 'col-span-1 md:col-span-6 aspect-[1/1]': i === 2 || i === 3,
-                                 'col-span-1 md:col-span-4 aspect-[4/5]': i > 3
+                                 'col-span-1 md:col-span-4 aspect-[16/9]': i === 1,
+                                 'col-span-1 md:col-span-6 aspect-[4/3]': i === 2 || i === 3,
+                                 'col-span-1 md:col-span-4 aspect-[1/1]': i > 3
                              }">
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
@@ -752,23 +755,29 @@
                         </div>
                     </div>
 
-                    <div class="footer-logo">MICHAEL QIU</div>
-                    <div class="divider-rk mb-12 opacity-30"></div>
-                    <div class="flex justify-between font-mono text-[9px] opacity-30 pb-16 items-center">
-                        <div>© 2024 — FUTURE // VERSION_4.1 // SYSTEM_OPTIMIZED</div>
-                        <div class="flex gap-12 items-center">
-                            <div>DESIGNED_BY_ANTIGRAVITY</div>
-                            <button @click="scrollToTop" data-btn style="padding: 0.8rem 1.5rem; font-size: 0.5rem;">
-                                <div data-btn-bg></div>
-                                <div data-btn-inner data-text="BACK_TO_TOP ↑">
-                                    <span data-btn-text>BACK_TO_TOP ↑</span>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </section>
         </main>
+
+        <footer class="w-full bg-klein-blue text-white" style="background-color: var(--klein-blue); color: var(--pure-white);">
+            <div class="container py-32 flex flex-col items-center">
+                <div class="text-[clamp(3rem,10vw,10rem)] font-bold tracking-tighter leading-none mb-16">
+                    MICHAEL QIU
+                </div>
+                
+                <div class="w-full h-px bg-white/20 mb-12"></div>
+                
+                <div class="w-full flex flex-col md:flex-row justify-between font-mono text-[10px] opacity-70 gap-8">
+                    <div>© 2024 — FUTURE // VERSION_4.1 // SYSTEM_OPTIMIZED</div>
+                    <div class="flex gap-12 items-center">
+                        <div>DESIGNED_BY_ANTIGRAVITY</div>
+                        <button @click="scrollToTop" class="hover:text-white transition-colors border border-white/20 px-6 py-3 rounded-full hover:bg-white hover:text-klein-blue">
+                            BACK_TO_TOP ↑
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         <!-- Sidebar (RK Massive Style) -->
         <transition name="fade">
