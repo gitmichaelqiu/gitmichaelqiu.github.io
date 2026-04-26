@@ -585,11 +585,11 @@
                     <div class="content-grid pt-12">
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h1 class="heading-xl mb-16 mask-inner">Crafting digital tools with systematic precision.</h1>
+                                <h1 class="heading-xl mb-12 mask-inner">Michael Qiu.<br>Systems that scale.</h1>
                             </div>
-                            <div class="divider-rk mb-16 opacity-30"></div>
+                            <div class="divider-rk mb-12 opacity-30"></div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-2xl mask-inner">Creative Engineer at the intersection of technical architecture and visual narrative. Building digital experiences that are as invisible as they are powerful.</p>
+                                <p class="paragraph-l max-w-4xl mask-inner">Creative Engineer at the intersection of technical architecture and visual narrative.</p>
                             </div>
                         </div>
                     </div>
@@ -610,32 +610,20 @@
                         </div>
                     </div>
 
-                    <div class="content-grid mb-48">
+                    <div class="content-grid mb-24">
                         <div class="content-label font-mono">_PHILOSOPHY</div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-16 mask-inner">Refusing to settle for the default experience.</h2>
+                                <h2 class="heading-l mb-12 mask-inner">Refusing to settle for the default.</h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Software should be a force that leaves a mark. I develop utilities that enhance the native experience, primarily within the macOS ecosystem, focusing on high-performance logic and minimalist aesthetics.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">Software should be a force that leaves a mark. I develop utilities that enhance the native experience with high-performance logic.</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="content-grid">
-                        <div class="content-label font-mono">_REPERTOIRE</div>
-                        <div class="content-body grid grid-cols-1 md:grid-cols-3 gap-16">
-                            <div v-for="focus in [
-                                { title: 'SYSTEM_TOOLS', text: 'Developing utilities that enhance the native macOS experience through low-level API hooks.' },
-                                { title: 'VISUAL_LOGIC', text: 'Crafting interfaces that leverage motion and geometry to drive user engagement.' },
-                                { title: 'AUTOMATION', text: 'Bridging the gap between manual workflows and intelligent processes.' }
-                            ]" :key="focus.title" class="mask-wrap">
-                                <div class="mask-inner">
-                                    <h3 class="font-mono text-klein-blue mb-6">{{ focus.title }}</h3>
-                                    <p class="paragraph-m">{{ focus.text }}</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="parallax-wrap aspect-[21/9] bg-black/5 mt-16">
+                        <img src="https://picsum.photos/seed/abstract/2100/900" class="w-full h-full object-cover parallax-img" loading="lazy">
                     </div>
                 </div>
             </section>
@@ -665,30 +653,23 @@
 
                     <div class="works-grid">
                         <div v-for="(app, i) in apps" :key="app.id" class="work-card group">
-                            <div class="flex justify-between items-start mb-16">
+                            <div class="flex justify-between items-start mb-8">
                                 <span class="font-mono text-klein-blue">0{{i+1}}</span>
-                                <div class="w-16 h-16 bg-white border border-black/5 p-3 flex items-center justify-center">
-                                    <img :src="app.img" :alt="app.name" class="w-full h-full object-contain">
-                                </div>
+                                <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
                             
-                            <div class="parallax-wrap aspect-[16/11] mb-12 bg-[#F0F1F3]">
-                                <img :src="`https://picsum.photos/seed/${app.id}/1600/1100`" class="w-full h-full object-cover parallax-img" loading="lazy">
+                            <div class="parallax-wrap aspect-[16/10] mb-12 bg-black/5">
+                                <img :src="`https://picsum.photos/seed/${app.id}/1600/1000`" class="w-full h-full object-cover parallax-img" loading="lazy">
                             </div>
 
-                            <div class="pr-12">
-                                <h3 class="heading-l mb-6">{{ app.name }}</h3>
-                                <p class="paragraph-m mb-12 max-w-md">{{ app.desc }}</p>
-                                
-                                <div class="work-meta">
-                                    <div class="font-mono text-[9px] opacity-30">MACOS_V1.4 // SWIFT_REPERTOIRE</div>
-                                    <a :href="app.link" target="_blank" data-btn>
-                                        <div data-btn-bg></div>
-                                        <div data-btn-inner data-text="ENTER_ARCHIVE →">
-                                            <span data-btn-text>VIEW_PROJECT</span>
-                                        </div>
-                                    </a>
-                                </div>
+                            <div class="work-meta">
+                                <div class="font-mono text-[9px] opacity-40">MACOS // SWIFT</div>
+                                <a :href="app.link" target="_blank" data-btn>
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="ENTER_ARCHIVE →">
+                                        <span data-btn-text>VIEW_PROJECT</span>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -718,14 +699,19 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
                         <div v-for="(photo, i) in photos" :key="photo.title" 
-                             class="parallax-wrap group aspect-[4/5] border border-black/5"
-                             :class="{ 'md:mt-24': i % 2 === 1 }">
+                             class="parallax-wrap group border border-black/5"
+                             :class="{ 
+                                 'col-span-1 md:col-span-8 aspect-[16/9]': i === 0,
+                                 'col-span-1 md:col-span-4 aspect-[4/5]': i === 1,
+                                 'col-span-1 md:col-span-6 aspect-[1/1]': i === 2 || i === 3,
+                                 'col-span-1 md:col-span-4 aspect-[4/5]': i > 3
+                             }">
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
-                            <div class="absolute inset-0 bg-white/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <p class="font-mono text-[9px] text-klein-blue mb-2">{{ photo.date }}</p>
-                                <h4 class="font-bold uppercase text-xs tracking-widest text-black">{{ photo.title }}</h4>
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+                                <p class="font-mono text-[9px] text-white mb-2">{{ photo.date }}</p>
+                                <h4 class="font-bold uppercase text-xs tracking-widest text-white">{{ photo.title }}</h4>
                             </div>
                         </div>
                     </div>
