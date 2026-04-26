@@ -549,9 +549,9 @@
 
         .nav-dock__label {
             font-family: 'Inter', sans-serif;
-            font-size: 0.6rem;
+            font-size: 0.72rem;
             font-weight: 500;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.04em;
             padding: 0 1rem;
         }
 
@@ -809,7 +809,6 @@
                     <div class="hero__quicknav-cols">
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
-                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>
                                 Projects
                             </div>
                             <a @click.prevent="handleNavClick('works')" href="#works" class="hero__quicknav-link">Works</a>
@@ -817,7 +816,6 @@
                         </div>
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
-                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="7"/></svg>
                                 Narrative
                             </div>
                             <a @click.prevent="handleNavClick('profile')" href="#profile" class="hero__quicknav-link">Profile</a>
@@ -825,7 +823,6 @@
                         </div>
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
-                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><rect width="14" height="14"/></svg>
                                 Liaison
                             </div>
                             <a href="mailto:contact@michaelqiu.com" class="hero__quicknav-link">Email</a>
@@ -916,7 +913,7 @@
                                 <img :src="app.img" class="w-full h-full object-contain parallax-img" loading="lazy">
                             </div>
 
-                            <p class="paragraph-m mb-8 max-w-md">{{ app.desc }}</p>
+                            <p class="text-base opacity-70 mb-8 max-w-md" style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;">{{ app.desc }}</p>
 
                             <div class="work-meta border-t-0 pt-0">
                                 <a :href="app.link" target="_blank" data-btn class="ml-auto" style="font-size: 1rem;">
@@ -957,9 +954,8 @@
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <p class="text-[9px] text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:0.05em;">{{ photo.date }}</p>
-                                <h4 class="font-bold uppercase text-xs tracking-widest text-white">{{ photo.title }}
-                                </h4>
+                                <p class="text-sm text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:0.05em;">{{ photo.date }}</p>
+                                <h4 class="font-bold text-lg tracking-wide text-white">{{ photo.title }}</h4>
                             </div>
                         </div>
                     </div>
