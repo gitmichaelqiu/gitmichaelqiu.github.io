@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michael Qiu | R-K Inspired Design</title>
+    <title>Michael Qiu | Design & Code</title>
     <link rel="shortcut icon" type="image/png" href="resources/favicon.png">
     
     <!-- Tailwind CSS -->
@@ -17,7 +17,8 @@
                     colors: {
                         'klein-blue': '#002FA7',
                         'bg-light': '#F8F9FB',
-                        'text-primary': '#050505',
+                        'bg-white': '#FFFFFF',
+                        'text-primary': '#000000',
                         'text-secondary': 'rgba(0, 0, 0, 0.4)',
                         'border-color': 'rgba(0, 0, 0, 0.08)',
                     },
@@ -46,7 +47,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
         /* =====================================================================
@@ -63,10 +64,11 @@
             --klein-blue: #002FA7;
             --bg-light: #F8F9FB;
             --bg-white: #FFFFFF;
-            --text-primary: #050505;
+            --text-primary: #000000;
             --border-color: rgba(0, 0, 0, 0.08);
 
             --smooth-ease: cubic-bezier(.32, .72, 0, 1);
+            --transform-ease: cubic-bezier(0.59, 1, 0.88, 1.01);
         }
 
         @media screen and (max-width: 991px) {
@@ -94,7 +96,7 @@
         /* Basic Resets & Scrollbars */
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            cursor: auto !important; /* Disabling custom cursor for now */
+            cursor: auto !important; /* Disabling custom cursor for native feel */
         }
         body {
             font-size: var(--size-font);
@@ -111,32 +113,32 @@
         /* Typography */
         h1, h2, h3, h4, h5, h6 {
             font-weight: 500;
-            line-height: 1;
+            line-height: 0.95;
             letter-spacing: -0.04em;
         }
 
         .heading-huge {
-            font-size: clamp(4rem, 8vw, 10rem);
+            font-size: clamp(4.5rem, 10vw, 12rem);
             font-weight: 600;
             letter-spacing: -0.06em;
-            line-height: 0.9;
+            line-height: 0.85;
         }
 
         .heading-xl {
-            font-size: clamp(3rem, 6vw, 6rem);
+            font-size: clamp(3rem, 7vw, 7rem);
             font-weight: 500;
             letter-spacing: -0.05em;
         }
 
         .heading-l {
-            font-size: clamp(2rem, 4vw, 4rem);
+            font-size: clamp(2.5rem, 5vw, 5rem);
             font-weight: 500;
             letter-spacing: -0.04em;
         }
 
         .paragraph-l {
-            font-size: clamp(1.2rem, 2vw, 2.4rem);
-            line-height: 1.2;
+            font-size: clamp(1.2rem, 2vw, 2.2rem);
+            line-height: 1.25;
             font-weight: 400;
             letter-spacing: -0.02em;
         }
@@ -158,7 +160,7 @@
         }
 
         /* =====================================================================
-           RK ELASTIC BUTTONS [data-btn]
+           RK SQUARE ELASTIC BUTTONS [data-btn]
         ===================================================================== */
         [data-btn] {
             --elastic-ease-out: linear(0, 0.5737 7.6%, 0.8382 11.87%, 0.9463 14.19%, 1.0292 16.54%, 1.0886 18.97%, 1.1258 21.53%, 1.137 22.97%, 1.1424 24.48%, 1.1423 26.1%, 1.1366 27.86%, 1.1165 31.01%, 1.0507 38.62%, 1.0219 42.57%, 0.9995 46.99%, 0.9872 51.63%, 0.9842 58.77%, 1.0011 81.26%, 1);
@@ -180,8 +182,8 @@
             inset: 0;
             background-color: var(--bg-white);
             border: 1px solid var(--border-color);
-            border-radius: 999px;
-            transition: transform 0.4s var(--smooth-ease);
+            border-radius: 0; /* Changed from pill to square */
+            transition: transform 0.4s var(--smooth-ease), background-color 0.4s ease;
             transform-origin: center;
             z-index: 0;
         }
@@ -194,12 +196,11 @@
         [data-btn] [data-btn-inner] {
             position: relative;
             z-index: 1;
-            padding: 1em 2em;
+            padding: 1.2em 2.5em;
             display: grid;
             align-items: center;
         }
 
-        /* The ::after element acts as the hovered text */
         [data-btn] [data-btn-inner]::after {
             content: attr(data-text);
             display: block;
@@ -208,12 +209,12 @@
             translate: 0 -0.25em 0;
             scale: 1.05;
             transform-origin: top center;
-            color: var(--klein-blue);
+            color: var(--bg-white); /* White text on hover */
             transition: clip-path 0.4s var(--smooth-ease), scale 0.3s var(--bounce-cubic-ease), translate 0.35s var(--smooth-ease);
         }
 
         [data-btn-theme="blue"] [data-btn-inner]::after {
-            color: var(--bg-light);
+            color: var(--klein-blue);
         }
 
         [data-btn] [data-btn-text] {
@@ -231,8 +232,15 @@
 
         @media (hover: hover) and (pointer: fine) {
             [data-btn]:hover [data-btn-bg] {
-                transform: scaleX(0.96) scaleY(0.96);
+                transform: scaleX(0.96) scaleY(0.92); /* Sharper squish for square */
+                background-color: var(--klein-blue); /* Fill blue on hover */
+                border-color: var(--klein-blue);
             }
+            [data-btn-theme="blue"]:hover [data-btn-bg] {
+                background-color: var(--bg-white);
+                border-color: var(--bg-white);
+            }
+            
             [data-btn]:hover [data-btn-inner]::after {
                 clip-path: inset(0% 0% 0% 0%);
                 scale: 1;
@@ -269,7 +277,6 @@
             justify-content: center;
             padding: 4rem;
             
-            /* Hidden by default */
             clip-path: inset(0 0 100% 0);
             transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
@@ -293,13 +300,12 @@
         
         .menu-link:hover {
             color: white;
-            transform: translateX(1rem);
+            transform: translateX(1.5rem);
         }
 
-        /* Hamburger lines animation */
         .hamburger-line {
             width: 1.5rem;
-            height: 1px;
+            height: 2px; /* Thicker for a squarer feel */
             background: currentColor;
             display: block;
             margin: 4px 0;
@@ -308,17 +314,17 @@
         }
         
         .menu-open-active .hamburger-line:nth-child(1) {
-            transform: translateY(2.5px) rotate(45deg);
+            transform: translateY(3px) rotate(45deg);
         }
         .menu-open-active .hamburger-line:nth-child(2) {
-            transform: translateY(-2.5px) rotate(-45deg);
+            transform: translateY(-3px) rotate(-45deg);
         }
 
         /* =====================================================================
            LAYOUT & MASKS
         ===================================================================== */
         .section-padding {
-            padding: 8rem 0;
+            padding: 10rem 0;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -343,12 +349,14 @@
         .mask-inner {
             display: block;
             will-change: transform;
+            transform-origin: bottom left;
         }
 
+        /* Image Parallax & Scale Animation */
         .parallax-wrap {
             overflow: hidden;
             position: relative;
-            background: rgba(0,0,0,0.05);
+            background: var(--bg-white);
         }
         
         .parallax-img {
@@ -357,33 +365,65 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .work-card {
-            border-right: 1px solid var(--border-color);
-            padding: 4rem;
-            transition: background-color 0.4s var(--smooth-ease);
+        /* Hover effect for standalone images */
+        .img-hover-scale:hover .parallax-img {
+            transform: scale(1.05) !important; /* Forces scale over GSAP slightly */
         }
 
-        .work-card:hover {
-            background-color: var(--bg-white);
+        /* Simplified App Cards */
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 8rem;
+            padding-bottom: 8rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .project-card:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
 
-        .works-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            border-top: 1px solid var(--border-color);
-            border-left: 1px solid var(--border-color);
+        .project-image {
+            width: 100%;
+            aspect-ratio: 16/9;
         }
 
-        .works-grid .work-card:nth-child(even) {
-            padding-top: 8rem;
+        /* Contact Links */
+        .contact-link {
+            font-size: clamp(3rem, 8vw, 10rem);
+            font-weight: 600;
+            letter-spacing: -0.06em;
+            line-height: 0.9;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: color 0.4s var(--smooth-ease);
         }
-        
-        @media (max-width: 768px) {
-            .works-grid { grid-template-columns: 1fr; border-left: none; }
-            .works-grid .work-card:nth-child(even) { padding-top: 4rem; }
-            .work-card { border-right: none; border-bottom: 1px solid var(--border-color); padding: 2rem 0; }
+
+        .contact-link:hover {
+            color: var(--klein-blue);
+        }
+
+        .contact-link .icon-arrow {
+            width: clamp(3rem, 6vw, 6rem);
+            height: clamp(3rem, 6vw, 6rem);
+            opacity: 0.1;
+            transition: all 0.5s var(--smooth-ease);
+            transform-origin: center;
+        }
+
+        .contact-link:hover .icon-arrow {
+            opacity: 1;
+            transform: translate(1rem, -1rem) scale(1.1);
         }
 
         /* Footer Logo */
@@ -393,6 +433,7 @@
             letter-spacing: -0.06em;
             line-height: 0.8;
             text-transform: uppercase;
+            color: rgba(0,0,0,0.05);
         }
 
     </style>
@@ -435,8 +476,16 @@
         <main class="transition-all duration-700">
             
             <!-- Hero Section -->
-            <section class="min-h-screen flex flex-col justify-end pb-16 relative border-b border-black/10">
-                <div class="container">
+            <section class="min-h-screen flex flex-col justify-end pb-16 relative border-b border-black/10 overflow-hidden">
+                <!-- Massive Architectural SVG from Backup -->
+                <svg class="h-full w-auto text-klein-blue opacity-10 absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/4 pointer-events-none" viewBox="0 0 1000 500" fill="currentColor">
+                    <path d="M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z" />
+                    <path d="M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z" />
+                    <path d="M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z" />
+                    <path d="M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z" />
+                </svg>
+
+                <div class="container relative z-10">
                     <div class="mask-wrap mb-8">
                         <h1 class="heading-huge mask-inner">Michael Qiu.</h1>
                     </div>
@@ -444,15 +493,15 @@
                     <div class="content-grid items-end">
                         <div class="col-span-8">
                             <div class="mask-wrap">
-                                <h2 class="heading-xl mask-inner">Design & Code for</h2>
+                                <h2 class="heading-xl mask-inner text-klein-blue">Design & Code for</h2>
                             </div>
                             <div class="mask-wrap">
-                                <h2 class="heading-xl mask-inner">systems that scale.</h2>
+                                <h2 class="heading-xl mask-inner text-klein-blue">systems that scale.</h2>
                             </div>
                         </div>
                         <div class="col-span-4 pb-4">
                             <p class="font-mono text-black/40 mb-4">AVAILABLE NOW</p>
-                            <p class="font-mono">Creative Engineer building digital experiences that are as invisible as they are powerful.</p>
+                            <p class="font-mono">Creative Engineer building invisible logic.</p>
                         </div>
                     </div>
                 </div>
@@ -467,18 +516,19 @@
                         </div>
                         <div class="col-span-8">
                             <div class="mask-wrap mb-12">
-                                <h2 class="heading-l mask-inner">Refusing to settle for the default. Software should be a force that leaves a mark.</h2>
+                                <h2 class="heading-l mask-inner">Refusing to settle.</h2>
                             </div>
+                            <!-- Balanced, shorter text -->
                             <div class="mask-wrap mb-16">
-                                <p class="paragraph-l mask-inner">I develop utilities that enhance the native experience, primarily within the macOS ecosystem, focusing on high-performance logic and minimalist aesthetics.</p>
+                                <p class="paragraph-l mask-inner">I build utilities that enhance the native experience. My focus is on high-performance logic paired with minimalist aesthetics, creating tools that are powerful yet completely invisible.</p>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-12 border-t border-black/10">
                                 <div v-for="focus in [
-                                    { title: 'SYSTEM_TOOLS', text: 'Developing utilities that enhance the native macOS experience through low-level API hooks.' },
-                                    { title: 'VISUAL_LOGIC', text: 'Crafting interfaces that leverage motion and geometry to drive user engagement.' },
+                                    { title: 'SYSTEM_TOOLS', text: 'Low-level API hooks for macOS utilities.' },
+                                    { title: 'VISUAL_LOGIC', text: 'Interfaces driven by geometric motion.' },
                                 ]" :key="focus.title">
-                                    <h3 class="font-mono mb-4 text-black">{{ focus.title }}</h3>
+                                    <h3 class="font-mono mb-4 text-klein-blue">{{ focus.title }}</h3>
                                     <p class="font-mono text-black/50 leading-relaxed text-sm">{{ focus.text }}</p>
                                 </div>
                             </div>
@@ -487,10 +537,10 @@
                 </div>
             </section>
 
-            <!-- Works Section -->
-            <section id="works" class="section-padding !p-0">
-                <div class="container pt-32 pb-16">
-                    <div class="content-grid">
+            <!-- Works Section (Simplified) -->
+            <section id="works" class="section-padding">
+                <div class="container">
+                    <div class="content-grid mb-16">
                         <div class="col-span-4">
                             <p class="font-mono text-klein-blue mb-8">( REPERTOIRE )</p>
                         </div>
@@ -500,38 +550,40 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="works-grid">
-                    <div v-for="(app, i) in apps" :key="app.id" class="work-card flex flex-col">
-                        <div class="flex justify-between items-start mb-8">
-                            <span class="font-mono">0{{i+1}}</span>
-                            <i :data-lucide="app.icon" class="w-6 h-6 text-black/20"></i>
-                        </div>
-                        
-                        <div class="parallax-wrap aspect-[16/10] mb-8 overflow-hidden rounded-lg">
-                            <img :src="`https://picsum.photos/seed/${app.id}/1600/1000`" class="parallax-img" loading="lazy">
-                        </div>
-                        
-                        <h3 class="heading-xl mb-4">{{ app.name }}</h3>
-                        <p class="font-mono text-black/50 text-sm mb-12 flex-1">{{ app.desc }}</p>
-                        
-                        <div class="flex justify-between items-end border-t border-black/10 pt-8 mt-auto">
-                            <span class="font-mono text-xs text-black/40">MACOS // SWIFT</span>
+                    <div class="w-full">
+                        <div v-for="(app, i) in apps" :key="app.id" class="project-card">
+                            <div class="flex justify-between items-center">
+                                <h3 class="heading-xl">{{ app.name }}</h3>
+                                <span class="font-mono text-klein-blue">0{{i+1}}</span>
+                            </div>
                             
-                            <a :href="app.link" target="_blank" data-btn data-btn-theme="blue" class="font-mono text-xs">
-                                <div data-btn-bg></div>
-                                <div data-btn-inner data-text="VIEW_APP">
-                                    <span data-btn-text>DISCOVER</span>
-                                </div>
+                            <a :href="app.link" target="_blank" class="parallax-wrap project-image img-hover-scale block">
+                                <img :src="`https://picsum.photos/seed/${app.id}/1600/900`" class="parallax-img" loading="lazy">
                             </a>
+                            
+                            <div class="content-grid">
+                                <div class="col-span-4 flex items-center gap-4 text-black/40">
+                                    <i :data-lucide="app.icon" class="w-6 h-6"></i>
+                                    <span class="font-mono text-xs uppercase">macOS Utility</span>
+                                </div>
+                                <div class="col-span-8 flex justify-between items-end">
+                                    <p class="paragraph-l text-black/60">{{ app.desc }}</p>
+                                    <a :href="app.link" target="_blank" data-btn class="font-mono text-xs">
+                                        <div data-btn-bg></div>
+                                        <div data-btn-inner data-text="VIEW_APP">
+                                            <span data-btn-text>DISCOVER</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Photos Section -->
-            <section id="photos" class="section-padding">
+            <section id="photos" class="section-padding bg-bg-white">
                 <div class="container">
                     <div class="content-grid mb-16">
                         <div class="col-span-4">
@@ -544,12 +596,12 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div v-for="photo in photos" :key="photo.title" class="parallax-wrap group aspect-[4/5] bg-black/5 rounded overflow-hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div v-for="photo in photos" :key="photo.title" class="parallax-wrap group aspect-[4/5] overflow-hidden img-hover-scale">
                             <img :src="photo.url" class="parallax-img">
-                            <div class="absolute inset-0 bg-klein-blue/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
                                 <p class="font-mono text-[10px] text-white/70 mb-1">{{ photo.date }}</p>
-                                <h4 class="text-white font-mono">{{ photo.title }}</h4>
+                                <h4 class="text-white font-mono uppercase">{{ photo.title }}</h4>
                             </div>
                         </div>
                     </div>
@@ -557,7 +609,7 @@
             </section>
 
             <!-- Connect Section / Footer -->
-            <section id="connect" class="pt-32 pb-8 bg-white">
+            <section id="connect" class="pt-32 pb-8 bg-bg-light">
                 <div class="container">
                     <div class="content-grid mb-32">
                         <div class="col-span-4">
@@ -570,19 +622,19 @@
                             
                             <div class="flex flex-col border-t border-black/10">
                                 <a v-for="link in [
-                                    { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
-                                    { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' },
-                                    { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' }
+                                    { label: 'Github', url: 'https://github.com/gitmichaelqiu/' },
+                                    { label: 'Email', url: 'mailto:contact@michaelqiu.com' },
+                                    { label: 'Kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank" 
-                                class="flex justify-between items-center py-8 border-b border-black/10 hover:text-klein-blue transition-colors group">
-                                    <span class="heading-l font-mono group-hover:translate-x-4 transition-transform duration-500">{{ link.label }}</span>
-                                    <i data-lucide="arrow-up-right" class="w-8 h-8 opacity-20 group-hover:opacity-100 group-hover:-translate-y-2 group-hover:translate-x-2 transition-all duration-500"></i>
+                                class="contact-link group">
+                                    <span>{{ link.label }}</span>
+                                    <i data-lucide="arrow-up-right" class="icon-arrow"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="footer-logo text-center mb-16 text-black/5">MICHAEL QIU</div>
+                    <div class="footer-logo text-center mb-16">MICHAEL QIU</div>
 
                     <div class="flex flex-col md:flex-row justify-between items-center font-mono text-xs text-black/40 pt-8 border-t border-black/10">
                         <div class="mb-4 md:mb-0">© 2026 — FUTURE // VERSION 4.1</div>
@@ -628,8 +680,8 @@
                         lenis.stop();
                         // Animate menu links
                         gsap.fromTo('.menu-link', 
-                            { y: 50, opacity: 0 }, 
-                            { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power4.out", delay: 0.2 }
+                            { x: -50, opacity: 0 }, 
+                            { x: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power4.out", delay: 0.2 }
                         );
                     } else {
                         lenis.start();
@@ -658,15 +710,17 @@
                     await nextTick();
                     lucide.createIcons();
 
-                    // Mask Reveals for Headings and Paragraphs
+                    // Mask Reveals for Headings and Paragraphs (More dramatic slide up)
                     gsap.utils.toArray('.mask-wrap').forEach(wrap => {
                         const inner = wrap.querySelector('.mask-inner');
                         if (inner) {
                             gsap.fromTo(inner, {
-                                y: "100%"
+                                y: "110%",
+                                rotation: 2, // Slight rotation for premium RK feel
                             }, {
                                 y: "0%",
-                                duration: 1.2,
+                                rotation: 0,
+                                duration: 1.4,
                                 ease: "power4.out",
                                 scrollTrigger: {
                                     trigger: wrap,
@@ -676,13 +730,15 @@
                         }
                     });
 
-                    // Image Parallax
+                    // Image Parallax (More pronounced)
                     gsap.utils.toArray('.parallax-wrap').forEach(wrap => {
                         const img = wrap.querySelector('.parallax-img');
                         gsap.fromTo(img, {
-                            y: "-15%"
+                            y: "-15%",
+                            scale: 1.15
                         }, {
                             y: "15%",
+                            scale: 1.15, // Keeps it scaled so borders don't show
                             ease: "none",
                             scrollTrigger: {
                                 trigger: wrap,
