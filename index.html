@@ -66,8 +66,7 @@
             --klein-blue: #002FA7;
             --pure-black: #000000;
             --pure-white: #ffffff;
-            --pale-blue: #F8F9FB; /* Slightly cooler, cleaner light mode */
-            --silver-light: #F2F2F7;
+            --pale-silver: #F8F9FB; 
             
             --size-unit: 16;
             --size-container-ideal: 1920;
@@ -77,81 +76,65 @@
             --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
             
             --vh: 1vh;
-            --full-screen-height: 100dvh;
             
-            /* Theme Tokens (Forced Light Mode) */
-            --bg-primary: var(--pale-blue);
+            /* Theme Tokens */
+            --bg-primary: var(--pale-silver);
             --bg-secondary: var(--pure-white);
             --text-primary: var(--pure-black);
-            --text-secondary: rgba(0, 0, 0, 0.6);
+            --text-secondary: rgba(0, 0, 0, 0.4);
             --border-color: rgba(0, 0, 0, 0.08);
-            --selection-bg: var(--klein-blue);
-            --selection-text: var(--pure-white);
             
-            --radius-btn: 0.25rem;
+            --mi-smooth: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
-        .theme-base {
-            --bg-primary: var(--pale-blue);
-            --bg-secondary: var(--pure-white);
-            --text-primary: var(--pure-black);
-            --text-secondary: rgba(0, 0, 0, 0.6);
-            --border-color: rgba(0, 0, 0, 0.08);
-        }
-
-        /* Responsive ideal sizes */
         @media screen and (max-width: 991px) { :root { --size-container-ideal: 991; } }
         @media screen and (max-width: 767px) { :root { --size-container-ideal: 767; } }
         @media screen and (max-width: 479px) { :root { --size-container-ideal: 479; } }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            cursor: auto !important;
         }
 
         html, body {
             font-size: var(--size-font);
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            text-rendering: optimizeLegibility;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             width: 100%;
-            transition: background-color 0.8s cubic-bezier(0.65, 0, 0.35, 1), color 0.8s cubic-bezier(0.65, 0, 0.35, 1);
         }
 
         /* --- RK Typography --- */
-        h1, h2, h3, h4, .heading-xl, .heading-l {
+        .heading-xl {
+            font-size: clamp(4rem, 12vw, 12rem);
             font-weight: 900;
             letter-spacing: -0.06em;
-            line-height: 0.85;
-            text-transform: uppercase;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .heading-xl {
-            font-size: clamp(4rem, 15vw, 16rem);
-            letter-spacing: -0.07em;
+            line-height: 0.9;
+            text-transform: none;
         }
 
         .heading-l {
-            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-size: clamp(2rem, 5vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            line-height: 1;
         }
 
         .paragraph-l {
-            font-size: clamp(1.25rem, 3vw, 3rem);
-            line-height: 1.1;
+            font-size: clamp(1.2rem, 2.5vw, 2.8rem);
+            line-height: 1.15;
             font-weight: 500;
             letter-spacing: -0.03em;
         }
 
         .paragraph-m {
-            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            font-size: 1.125rem;
             line-height: 1.4;
             letter-spacing: -0.01em;
+            color: var(--text-secondary);
         }
 
         .font-mono {
@@ -162,123 +145,51 @@
             font-weight: 700;
         }
 
+        /* --- RK Layout Grid --- */
         .container {
             width: 100%;
             max-width: var(--size-container);
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 2.5rem;
-            padding-right: 2.5rem;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        /* --- RK Buttons (Sharp) --- */
-        [data-btn] {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.2em 2.4em;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            text-decoration: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.4s ease, color 0.4s ease;
-        }
-
-        [data-btn]::before {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 0%;
-            background: var(--klein-blue);
-            transition: height 0.5s cubic-bezier(0.625, 0.05, 0, 1);
-            z-index: -1;
-        }
-
-        [data-btn]:hover::before { height: 100%; }
-        [data-btn]:hover { color: white; border-color: var(--klein-blue); }
-
-        /* --- RK Grid Icons (Bolt) --- */
-        .bolt-rk {
-            position: absolute;
-            width: 0.75rem;
-            height: 0.75rem;
-            color: var(--border-color);
-            z-index: 10;
-        }
-        .bolt-tl { top: -0.375rem; left: -0.375rem; }
-        .bolt-tr { top: -0.375rem; right: -0.375rem; }
-        .bolt-bl { bottom: -0.375rem; left: -0.375rem; }
-        .bolt-br { bottom: -0.375rem; right: -0.375rem; }
-
-        /* --- RK Section Layout --- */
         .section-rk {
             position: relative;
+            padding: 8rem 0;
             border-top: 1px solid var(--border-color);
-            padding-top: 8rem;
-            padding-bottom: 8rem;
         }
 
-        .grid-layout {
+        /* RK Tagline Wrapper (The horizontal metadata bar) */
+        .tagline-wrapper {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
-            gap: 0; /* Pure RK uses borders as gaps */
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            margin-bottom: 4rem;
+            align-items: center;
         }
 
-        .card-rk {
-            grid-column: span 4;
-            border: 1px solid var(--border-color);
-            padding: 3rem;
-            position: relative;
+        .tagline-item {
             display: flex;
-            flex-direction: column;
-            aspect-ratio: 1 / 1;
-            transition: background-color 0.4s ease;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .card-rk:hover {
-            background-color: var(--bg-secondary);
+        .tagline-icon {
+            width: 0.8rem;
+            height: 0.8rem;
+            flex-shrink: 0;
         }
 
-        .col-span-4 { grid-column: span 4; }
-        .col-span-8 { grid-column: span 8; }
-        .col-span-12 { grid-column: span 12; }
-
-        /* --- System Cursor --- */
-        * { cursor: auto !important; }
-
-        /* --- Lenis Smooth Scroll --- */
-        html.lenis { height: auto; }
-        .lenis.lenis-smooth { scroll-behavior: auto; }
-        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-        .lenis.lenis-stopped { overflow: hidden; }
-
-        /* Utility classes */
-        .text-klein { color: var(--klein-blue); }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* RK Body Text Patterns */
+        /* RK 12-Column Content Grid */
         .content-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             gap: 0;
-            width: 100%;
         }
 
         .content-label {
             grid-column: span 3;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
             color: var(--klein-blue);
             padding-top: 0.5rem;
         }
@@ -287,104 +198,142 @@
             grid-column: 5 / span 8;
         }
 
-        .content-body p {
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            line-height: 1.25;
-            font-weight: 400;
-            letter-spacing: -0.02em;
-            margin-bottom: 2rem;
+        /* RK Buttons (The animated text swap) */
+        [data-btn] {
+            position: relative;
+            display: inline-flex;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            overflow: hidden;
+            transition: border-color 0.4s var(--mi-smooth);
         }
 
+        [data-btn-inner] {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+            place-items: center;
+        }
+
+        [data-btn-text] {
+            grid-area: 1/1;
+            transition: transform 0.4s var(--mi-smooth), opacity 0.4s var(--mi-smooth);
+        }
+
+        [data-btn-hover] {
+            grid-area: 1/1;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.4s var(--mi-smooth), opacity 0.4s var(--mi-smooth);
+            color: var(--klein-blue);
+        }
+
+        [data-btn]:hover {
+            border-color: var(--klein-blue);
+        }
+
+        [data-btn]:hover [data-btn-text] {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        [data-btn]:hover [data-btn-hover] {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* RK Dividers */
         .divider-rk {
             width: 100%;
             height: 1px;
             background-color: var(--border-color);
-            margin: 4rem 0;
         }
 
-        @media (max-width: 768px) {
-            .card-rk { grid-column: span 12; aspect-ratio: auto; }
-            .grid-layout { grid-template-columns: 1fr; }
+        /* RK Works Grid */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0;
+            border-left: 1px solid var(--border-color);
         }
 
-        @keyframes scroll-line {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-        .animate-scroll-line {
-            animation: scroll-line 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-        }
-
-        body.is-booting {
-            overflow: hidden;
-            height: 100vh;
+        .work-card {
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 4rem;
+            transition: background-color 0.6s var(--mi-smooth);
         }
 
-        /* Nav Dock Styles */
-        .nav-dock {
-            position: fixed;
-            top: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            z-index: 9999;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem;
-            backdrop-blur: 10px;
-            transition: opacity 1s ease;
+        .work-card:hover {
+            background-color: var(--bg-secondary);
         }
 
-        .nav-dock__btn {
-            width: 3rem;
-            height: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid transparent;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
+        .work-card:nth-child(even) {
+            padding-top: 8rem;
         }
 
-        .nav-dock__btn:hover, .nav-dock__btn.active {
-            border-color: var(--border-color);
-            background: rgba(0, 0, 0, 0.05);
+        /* Plus Icon bolt */
+        .bolt-plus {
+            position: absolute;
+            top: -0.5rem;
+            left: -0.5rem;
+            width: 1rem;
+            height: 1rem;
+            color: var(--border-color);
+            z-index: 5;
         }
 
-        .nav-dock__label {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
+        /* Footer Large Logo */
+        .footer-logo {
+            font-size: clamp(4rem, 15vw, 15rem);
+            font-weight: 900;
+            letter-spacing: -0.08em;
+            line-height: 0.8;
             text-transform: uppercase;
-            padding: 0 1.5rem;
-            opacity: 0.5;
+            margin: 4rem 0;
+            color: var(--text-primary);
         }
 
-        /* Sidebar Massive Transitions */
+        /* Sidebar RK Style */
         .sidebar-rk {
             background-color: var(--bg-primary);
-            transition: background-color 0.8s ease;
+            padding: 4rem;
         }
 
-        .sidebar-link-text {
-            font-size: clamp(3rem, 10vw, 8rem);
+        .sidebar-link {
+            font-size: clamp(3rem, 8vw, 8rem);
             font-weight: 900;
-            line-height: 0.85;
             letter-spacing: -0.06em;
+            line-height: 0.9;
             text-transform: uppercase;
             display: block;
-            overflow: hidden;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: color 0.4s var(--mi-smooth);
         }
 
-        .sidebar-link-inner {
-            display: block;
-            transition: transform 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+        .sidebar-link:hover {
+            color: var(--klein-blue);
         }
 
-        .sidebar-link:hover .sidebar-link-inner {
-            transform: translateY(-100%);
+        /* Transitions */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+        @media (max-width: 768px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .content-label { margin-bottom: 1rem; }
+            .content-body { grid-column: 1 / -1; }
+            .works-grid { grid-template-columns: 1fr; }
+            .tagline-wrapper { display: none; }
         }
 
     </style>
@@ -404,206 +353,230 @@
         </div>
 
         <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
-            <!-- Hero / Origin Section -->
-            <section id="home" class="section-rk min-h-screen flex flex-col justify-center relative theme-base overflow-hidden">
-                <div class="absolute inset-0 z-0 opacity-40">
-                    <div id="magnetic-container" class="w-full h-full"></div>
-                </div>
-                <div class="container relative z-10">
-                    <div class="hero-text-container opacity-0 translate-y-10">
-                        <div class="font-mono text-klein-blue mb-8 tracking-[0.4em]">SYSTEM_INITIALIZED_V4</div>
-                        <h1 class="heading-xl mb-4">Michael<br/>Qiu.</h1>
-                        <div class="divider-rk my-8"></div>
-                        <div class="content-grid">
-                            <div class="content-body">
-                                <p class="paragraph-l">Creative Engineer specializing in the intersection of <span class="text-klein-blue">technical architecture</span> and <span class="text-klein-blue">visual narrative</span>.</p>
-                            </div>
+            <!-- Hero Section (RK Style) -->
+            <section id="home" class="section-rk min-h-screen flex flex-col justify-center relative overflow-hidden border-t-0">
+                <div class="container">
+                    <!-- Tagline Wrapper -->
+                    <div class="tagline-wrapper">
+                        <div class="tagline-item col-span-4">
+                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M0 0L14 14H0V0Z" fill="currentColor"></path></svg></div>
+                            <div class="font-mono">MICHAEL QIU</div>
+                        </div>
+                        <div class="tagline-item col-span-4">
+                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="currentColor"></circle></svg></div>
+                            <div class="font-mono">SYSTEM_INIT_V4</div>
+                        </div>
+                        <div class="tagline-item col-span-4 justify-self-end">
+                            <div class="font-mono text-klein-blue">AVAILABLE_NOW</div>
                         </div>
                     </div>
-                </div>
-                <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
-                    <span class="font-mono text-[10px]">SCROLL_TO_EXPLORE</span>
-                    <div class="w-px h-16 bg-black overflow-hidden relative">
-                        <div class="absolute inset-0 bg-klein-blue animate-scroll-line"></div>
+
+                    <div class="content-grid pt-12">
+                        <div class="content-body">
+                            <h1 class="heading-xl mb-12">Michael Qiu. Design & Code for systems that scale.</h1>
+                            <div class="divider-rk mb-12"></div>
+                            <p class="paragraph-l max-w-4xl">Creative Engineer at the intersection of technical architecture and visual narrative. Building digital experiences that are as invisible as they are powerful.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Profile / Philosophy Section (RK Style) -->
-            <section id="profile" class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container py-32 md:py-48">
-                    <div class="content-grid mb-24">
-                        <div class="content-label">_PHILOSOPHY</div>
-                        <div class="content-body">
-                            <h2 class="heading-l mb-12">Building systems<br/>that feel like magic.</h2>
-                            <p>I am a developer who believes that software should be as invisible as it is powerful. My work focuses on the intersection of minimalist design and high-performance utility, primarily within the macOS ecosystem.</p>
+            <!-- Profile Section (RK Style) -->
+            <section id="profile" class="section-rk">
+                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                <div class="container">
+                    <div class="tagline-wrapper">
+                        <div class="tagline-item col-span-4">
+                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
+                            <div class="font-mono">PHILOSOPHY</div>
+                        </div>
+                        <div class="tagline-item col-span-8">
+                            <div class="font-mono opacity-40">AUGUST 2024 — FUTURE</div>
                         </div>
                     </div>
-                    
-                    <div class="divider-rk"></div>
+
+                    <div class="content-grid mb-32">
+                        <div class="content-label font-mono">_OVERVIEW</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-12">Refusing to settle for the default.</h2>
+                            <p class="paragraph-l">Software should be a force that leaves a mark. I develop utilities that enhance the native experience, primarily within the macOS ecosystem, focusing on high-performance logic and minimalist aesthetics.</p>
+                        </div>
+                    </div>
+
+                    <div class="divider-rk mb-24"></div>
 
                     <div class="content-grid">
-                        <div class="content-label">_CORE_FOCUS</div>
-                        <div class="content-body grid grid-cols-1 md:grid-cols-3 gap-12">
-                            <div>
-                                <h3 class="text-xl font-black mb-4">SYSTEM_TOOLS</h3>
-                                <p class="paragraph-m opacity-60">Developing utilities that enhance the native macOS experience through Swift and low-level API hooks.</p>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-black mb-4">VISUAL_LOGIC</h3>
-                                <p class="paragraph-m opacity-60">Crafting interfaces that leverage motion, geometry, and high-contrast aesthetics to drive user engagement.</p>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-black mb-4">AUTOMATION</h3>
-                                <p class="paragraph-m opacity-60">Bridging the gap between manual workflows and intelligent background processes.</p>
+                        <div class="content-label font-mono">_REPERTOIRE</div>
+                        <div class="content-body grid grid-cols-1 md:grid-cols-3 gap-16">
+                            <div v-for="focus in [
+                                { title: 'SYSTEM_TOOLS', text: 'Developing utilities that enhance the native macOS experience through low-level API hooks.' },
+                                { title: 'VISUAL_LOGIC', text: 'Crafting interfaces that leverage motion and geometry to drive user engagement.' },
+                                { title: 'AUTOMATION', text: 'Bridging the gap between manual workflows and intelligent processes.' }
+                            ]" :key="focus.title">
+                                <h3 class="font-mono text-klein-blue mb-4">{{ focus.title }}</h3>
+                                <p class="paragraph-m">{{ focus.text }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-
-            <!-- Repertoire / Works Section (RK Style) -->
-            <section id="works" class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container py-32">
-                    <div class="content-grid mb-32">
-                        <div class="content-label">_REPERTOIRE</div>
-                        <div class="content-body">
-                            <h2 class="heading-l mb-8">Selected Works.</h2>
-                            <p>High-performance utilities and visual experiments designed for precision.</p>
+            </section>            <!-- Works Section (RK Style) -->
+            <section id="works" class="section-rk">
+                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                <div class="container">
+                    <div class="tagline-wrapper">
+                        <div class="tagline-item col-span-4">
+                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M0 0L14 14H0V0Z" fill="currentColor"></path></svg></div>
+                            <div class="font-mono">REPERTOIRE</div>
+                        </div>
+                        <div class="tagline-item col-span-8">
+                            <div class="font-mono opacity-40">SELECTED_WORKS_01 — 03</div>
                         </div>
                     </div>
 
-                    <div class="grid-layout border-l border-t border-black/5">
-                        <div v-for="(app, i) in apps" :key="app.id" 
-                            class="card-rk col-span-6 group/work border-r border-b border-black/5 p-12 md:p-24 aspect-auto">
-                            <div class="flex justify-between items-start mb-24">
+                    <div class="content-grid mb-16">
+                        <div class="content-label font-mono">_PROJECTS</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-8">Crafted for precision.</h2>
+                        </div>
+                    </div>
+
+                    <div class="works-grid">
+                        <div v-for="(app, i) in apps" :key="app.id" class="work-card">
+                            <div class="flex justify-between items-start mb-12">
                                 <span class="font-mono text-klein-blue">0{{i+1}}</span>
-                                <i :data-lucide="app.icon" class="w-12 h-12 opacity-20 group-hover/work:opacity-100 transition-opacity"></i>
+                                <i :data-lucide="app.icon" class="w-8 h-8 opacity-20"></i>
                             </div>
-                            <h3 class="heading-l mb-6 group-hover/work:text-klein-blue transition-colors duration-500">{{ app.name }}</h3>
-                            <p class="paragraph-m opacity-50 mb-16 max-w-sm">{{ app.desc }}</p>
-                            <a :href="app.link" target="_blank" data-btn class="mt-auto self-start">
-                                VIEW_PROJECT
+                            <h3 class="heading-l mb-4">{{ app.name }}</h3>
+                            <p class="paragraph-m mb-8">{{ app.desc }}</p>
+                            <a :href="app.link" target="_blank" data-btn>
+                                <div data-btn-inner>
+                                    <span data-btn-text>VIEW_PROJECT</span>
+                                    <span data-btn-hover>EXPLORE_ARCHIVE →</span>
+                                </div>
                             </a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Narrative / Photos Section (RK Style) -->
-            <section id="photos" class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container py-32">
-                    <div class="content-grid mb-32">
-                        <div class="content-label">_NARRATIVE</div>
-                        <div class="content-body">
-                            <h2 class="heading-l mb-8">Visual Storytelling.</h2>
-                            <p>Moments captured across geography and time.</p>
+            <!-- Photos Section (RK Style) -->
+            <section id="photos" class="section-rk">
+                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                <div class="container">
+                    <div class="tagline-wrapper">
+                        <div class="tagline-item col-span-4">
+                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="currentColor"></circle></svg></div>
+                            <div class="font-mono">NARRATIVE</div>
+                        </div>
+                        <div class="tagline-item col-span-8">
+                            <div class="font-mono opacity-40">VISUAL_JOURNAL // 2023 — 2025</div>
                         </div>
                     </div>
 
-                    <div class="grid-layout">
-                        <div v-for="(photo, index) in photos.slice(0, 4)" :key="index" 
-                            class="card-rk col-span-3 p-0 overflow-hidden group aspect-[4/5]">
-                            <img :src="photo.url" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" loading="lazy">
-                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <span class="font-mono text-[8px] text-klein-blue mb-2">{{ photo.date }}</span>
-                                <h3 class="text-lg font-black uppercase text-white">{{ photo.title }}</h3>
-                            </div>
+                    <div class="content-grid mb-16">
+                        <div class="content-label font-mono">_STORY</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-8">Moments in time.</h2>
                         </div>
-                        <div class="card-rk col-span-12 flex items-center justify-center border-t-0 p-12">
-                             <a href="https://gitmichaelqiu.github.io/photos" target="_blank" data-btn>
-                                ENTER_ARCHIVE
-                            </a>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div v-for="photo in photos" :key="photo.title" class="relative group overflow-hidden aspect-[4/5] border border-black/5">
+                            <img :src="photo.url" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
+                                <p class="font-mono text-[10px] text-white mb-1">{{ photo.date }}</p>
+                                <h4 class="text-white font-bold uppercase">{{ photo.title }}</h4>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Liaison / Connect Section (RK Style) -->
-            <section id="connect" class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container py-32">
-                    <div class="content-grid mb-32">
-                        <div class="content-label">_LIAISON</div>
-                        <div class="content-body">
-                            <h2 class="heading-l mb-8">Let's Talk.</h2>
+            <section id="connect" class="section-rk">
+                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                <div class="container">
+                    <div class="tagline-wrapper">
+                        <div class="tagline-item col-span-4">
+                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
+                            <div class="font-mono">LIAISON</div>
+                        </div>
+                        <div class="tagline-item col-span-8">
+                            <div class="font-mono opacity-40">CONNECT_WITH_ME</div>
                         </div>
                     </div>
-                    <div class="grid-layout border-t border-black/5">
-                        <a v-for="link in [
-                            { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
-                            { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' },
-                            { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' }
-                        ]" :key="link.label" :href="link.url" target="_blank"
-                        class="col-span-4 p-12 border-r border-black/5 hover:bg-klein-blue group transition-colors flex items-center justify-between">
-                            <span class="font-black text-2xl group-hover:translate-x-4 transition-transform">{{ link.label }}</span>
-                            <i data-lucide="arrow-up-right" class="w-6 h-6 opacity-30 group-hover:opacity-100"></i>
-                        </a>
+
+                    <div class="content-grid mb-24">
+                        <div class="content-label font-mono">_CONTACT</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-12">Let's build the future together.</h2>
+                            <div class="flex flex-col gap-6">
+                                <a v-for="link in [
+                                    { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
+                                    { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' },
+                                    { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' }
+                                ]" :key="link.label" :href="link.url" target="_blank" 
+                                class="flex justify-between items-center py-8 border-b border-black/5 hover:text-klein-blue transition-colors group">
+                                    <span class="heading-l text-4xl group-hover:translate-x-4 transition-transform">{{ link.label }}</span>
+                                    <i data-lucide="arrow-up-right" class="w-8 h-8 opacity-20"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container mt-32">
+                    <div class="footer-logo">MICHAEL QIU</div>
+                    <div class="divider-rk mb-8"></div>
+                    <div class="flex justify-between font-mono text-[10px] opacity-40 pb-12">
+                        <div>© 2024 — FUTURE // VERSION_4.0</div>
+                        <div>BUILT_WITH_GSAP_AND_VUE</div>
+                        <button @click="scrollToTop" class="hover:text-klein-blue transition-colors">SCROLL_TO_TOP ↑</button>
                     </div>
                 </div>
             </section>
-
-            <!-- Footer (RK Style) -->
-            <footer class="section-rk py-12 border-t border-black/5 font-mono text-[10px] opacity-30">
-                <div class="container flex justify-between items-center">
-                    <div>BUILD_LOG // VERSION_2024.4</div>
-                    <button @click="scrollToTop" class="hover:opacity-100 transition-opacity">SCROLL_TO_TOP</button>
-                    <div>&copy; MICHAEL QIU</div>
-                </div>
-            </footer>
         </main>
 
-        <transition name="backdrop">
-            <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[10000]"></div>
-        </transition>
-
         <!-- Sidebar (RK Massive Style) -->
-        <transition name="sidebar">
-            <aside v-if="isSidebarOpen" class="fixed top-0 left-0 w-full h-full sidebar-rk z-[10001] flex flex-col overflow-hidden">
-                <div class="absolute top-12 left-12 right-12 flex items-center justify-between z-50">
-                    <button @click="toggleSidebar" class="w-12 h-12 flex items-center justify-center border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                    <span class="font-mono opacity-50 tracking-[0.5em]">DIRECTORY</span>
-                </div>
+        <transition name="fade">
+            <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
+                <div class="container flex-1 flex flex-col justify-center">
+                    <div class="absolute top-12 left-12">
+                        <button @click="toggleSidebar" class="font-mono text-klein-blue border border-klein-blue/20 px-4 py-2 hover:bg-klein-blue hover:text-white transition-all">
+                            CLOSE_DIRECTORY
+                        </button>
+                    </div>
 
-                <div class="flex-1 flex flex-col justify-center px-12 md:px-24">
-                    <div class="flex flex-col gap-4">
-                        <a v-for="(link, i) in [
+                    <div class="flex flex-col">
+                        <a v-for="link in [
                             {id: 'home', label: 'Overview'},
                             {id: 'profile', label: 'Persona'},
                             {id: 'works', label: 'Repertoire'},
                             {id: 'photos', label: 'Narrative'},
                             {id: 'connect', label: 'Liaison'}
-                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)" class="sidebar-link group">
-                            <span class="sidebar-link-text">
-                                <span class="sidebar-link-inner group-hover:-translate-y-full transition-transform duration-700">
-                                    <span class="block">{{ link.label }}</span>
-                                    <span class="block text-klein-blue">{{ link.label }}</span>
-                                </span>
-                            </span>
+                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)" class="sidebar-link">
+                            {{ link.label }}
                         </a>
                     </div>
                 </div>
-
-                <div class="p-12 border-t border-white/10 flex justify-between items-end font-mono text-[10px] opacity-30">
-                    <div>DESIGNED BY ANTIGRAVITY</div>
-                    <div>&copy; {{ new Date().getFullYear() }} MICHAEL QIU</div>
+                
+                <div class="container pb-12">
+                    <div class="divider-rk mb-8"></div>
+                    <div class="flex justify-between font-mono text-[10px] opacity-40">
+                        <div>DESIGNED_BY_ANTIGRAVITY</div>
+                        <div>SYSTEM_VERSION_4.1</div>
+                    </div>
                 </div>
             </aside>
         </transition>
     </div>
 
     <script>
-        const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
+        const { createApp, ref, onMounted, onUnmounted, nextTick } = Vue;
 
         createApp({
             setup() {
                 const isSidebarOpen = ref(false);
-                const activeTheme = ref('theme-base'); 
                 const activeSection = ref('home');
                 const isBooting = ref(true);
                 
@@ -631,7 +604,6 @@
                 ];
 
                 let lenis;
-                let ballsRef = []; 
 
                 const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value; };
 
@@ -649,87 +621,6 @@
                     activeSection.value = current;
                 };
 
-                const initMagneticLogo = () => {
-                    const container = document.getElementById('magnetic-container');
-                    if (!container) return;
-                    const logoPaths = [
-                        "M443.24,16.93l-149.03,273.93c-3.34,6.14-5.12,13.33-5.12,20.68v145.02c0,20.73,13.85,37.54,30.94,37.54h149.03c17.09,0,30.94-16.81,30.94-37.54V37.61c0-37.23-39.85-51.75-56.75-20.68Z",
-                        "M232.72,17.08L5.16,435.89c-13.56,24.96,1.19,58.2,25.83,58.2H167.51c10.4,0,20.1-6.34,25.83-16.88l91.04-167.55c3.33-6.13,5.11-13.32,5.11-20.66V37.74c0-37.24-39.87-51.75-56.76-20.66Z",
-                        "M841.59,437.09l-178.07-239.47c-7.36-9.89-19.53-15.81-32.53-15.81h-60.8c-21.79,0-39.45,16.3-39.45,36.4v239.47c0,20.11,17.66,36.4,39.45,36.4h238.88c31.75,0,50.49-32.84,32.53-57Z",
-                        "M693.68,164.05l86.8-117.52c13.58-18.38,.45-44.39-22.4-44.39h-173.6c-22.85,0-35.98,26.01-22.4,44.39l86.8,117.52c11.13,15.07,33.67,15.07,44.8,0Z"
-                    ];
-                    const width = container.clientWidth;
-                    const height = container.clientHeight;
-                    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    svg.setAttribute("width", "100%"); svg.setAttribute("height", "100%");
-                    svg.style.overflow = "visible";
-                    container.appendChild(svg);
-                    
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    const logoScale = Math.min(width, height) / 500 * 0.7; 
-                    const offsetX = (width - 848.58 * logoScale) / 2;
-                    const offsetY = (height - 494.09 * logoScale) / 2;
-                    ctx.save(); ctx.translate(offsetX, offsetY); ctx.scale(logoScale, logoScale);
-                    logoPaths.forEach(pathD => { ctx.fill(new Path2D(pathD)); }); ctx.restore();
-                    
-                    const step = 20; 
-                    const circleRadius = Math.min(width, height) * 0.2;
-                    const centerX = width / 2; const centerY = height / 2;
-                    
-                    for (let y = 0; y < height; y += step) {
-                        for (let x = 0; x < width; x += step) {
-                            if (ctx.getImageData(x, y, 1, 1).data[3] > 128) {
-                                const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                                ball.setAttribute("class", "fill-current text-klein-blue magnetic-ball");
-                                ball.setAttribute("r", 2);
-                                svg.appendChild(ball);
-                                
-                                const angle = Math.random() * Math.PI * 2;
-                                const r = circleRadius + (Math.random() * 40 - 20);
-                                const initX = centerX + Math.cos(angle) * r;
-                                const initY = centerY + Math.sin(angle) * r;
-                                
-                                ballsRef.push({ 
-                                    el: ball, ori_x: x, ori_y: y,
-                                    cur_x: initX, cur_y: initY,
-                                    angle: angle, radius: r, speed: 0.002 + Math.random() * 0.004
-                                });
-                            }
-                        }
-                    }
-                    gsap.ticker.add(rotateBalls);
-                };
-
-                function rotateBalls(time, deltaTime) {
-                    if (!isBooting.value) return;
-                    const container = document.getElementById('magnetic-container');
-                    if(!container) return;
-                    const cx = container.clientWidth / 2; const cy = container.clientHeight / 2;
-                    ballsRef.forEach(b => {
-                        b.angle += b.speed * deltaTime * 0.1;
-                        b.cur_x = cx + Math.cos(b.angle) * b.radius;
-                        b.cur_y = cy + Math.sin(b.angle) * b.radius;
-                        b.el.setAttribute('cx', b.cur_x); b.el.setAttribute('cy', b.cur_y);
-                    });
-                }
-                
-                const finishBootSequence = () => {
-                    isBooting.value = false;
-                    gsap.ticker.remove(rotateBalls);
-                    ballsRef.forEach((b, i) => {
-                        gsap.to(b.el, {
-                            attr: { cx: b.ori_x, cy: b.ori_y },
-                            duration: 2,
-                            ease: "expo.inOut",
-                            delay: Math.random() * 0.3
-                        });
-                    });
-                    gsap.from(".heading-xl", { opacity: 0, y: 100, duration: 2, ease: "expo.out", delay: 1 });
-                    gsap.from(".paragraph-l", { opacity: 0, y: 50, duration: 1.5, ease: "expo.out", delay: 1.5 });
-                };
-
                 const initLenis = () => {
                     lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
                     function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
@@ -737,16 +628,20 @@
                 };
 
                 onMounted(async () => {
-                    initMagneticLogo();
-                    setTimeout(finishBootSequence, 2000);
-                    lucide.createIcons();
                     initLenis();
                     window.addEventListener('scroll', updateScrollProgress);
                     
+                    // Reveal sequence
+                    gsap.to('body', { opacity: 1, duration: 1 });
+                    isBooting.value = false;
+
                     await nextTick();
+                    lucide.createIcons();
+
+                    // Scroll reveals
                     gsap.utils.toArray('.section-rk').forEach(sec => {
-                        gsap.from(sec.querySelectorAll('.heading-xl, .heading-l, .card-rk'), {
-                            opacity: 0, y: 100, stagger: 0.1, duration: 1.5, ease: "expo.out",
+                        gsap.from(sec.querySelectorAll('.heading-xl, .heading-l, .tagline-wrapper, .paragraph-l'), {
+                            opacity: 0, y: 40, stagger: 0.1, duration: 1.2, ease: "expo.out",
                             scrollTrigger: { trigger: sec, start: "top 80%" }
                         });
                     });
@@ -755,11 +650,10 @@
                 onUnmounted(() => {
                     window.removeEventListener('scroll', updateScrollProgress);
                     if(lenis) lenis.destroy();
-                    gsap.ticker.remove(rotateBalls);
                 });
 
                 return {
-                    isSidebarOpen, activeTheme, activeSection, toggleSidebar, apps, photos,
+                    isSidebarOpen, activeSection, toggleSidebar, apps, photos,
                     handleNavClick, isBooting, scrollToTop
                 };
             }
