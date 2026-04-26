@@ -61,16 +61,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
-        /* ------------------------- Scaling system (RK Inspired) --------------------------------- */
+        /* ------------------------- Scaling system (RK) --------------------------------- */
         :root {
             --klein-blue: #002FA7;
             --pure-black: #000000;
             --pure-white: #ffffff;
             --pale-silver: #F8F9FB; 
             
+            /* RK Desktop */
             --size-unit: 16;
             --size-container-ideal: 1920;
-            --size-container-min: 320px;
+            --size-container-min: 992px;
             --size-container-max: 2240px;
             --size-container: clamp(var(--size-container-min), 100dvw, var(--size-container-max));
             --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
@@ -87,9 +88,33 @@
             --mi-smooth: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
-        @media screen and (max-width: 991px) { :root { --size-container-ideal: 991; } }
-        @media screen and (max-width: 767px) { :root { --size-container-ideal: 767; } }
-        @media screen and (max-width: 479px) { :root { --size-container-ideal: 479; } }
+        /* Tablet */
+        @media screen and (max-width: 991px) {
+            :root {
+                --size-container-ideal: 991;
+                --size-container-min: 768px;
+                --size-container-max: 991px;
+            }
+        }
+        /* Mobile Landscape */
+        @media screen and (max-width: 767px) {
+            :root {
+                --size-container-ideal: 767;
+                --size-container-min: 480px;
+                --size-container-max: 767px;
+            }
+        }
+        /* Mobile Portrait */
+        @media screen and (max-width: 479px) {
+            :root {
+                --size-container-ideal: 479;
+                --size-container-min: 320px;
+                --size-container-max: 479px;
+            }
+        }
+
+        ::selection { background: var(--klein-blue); color: var(--pure-white); }
+        ::-moz-selection { background: var(--klein-blue); color: var(--pure-white); }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
@@ -109,18 +134,22 @@
 
         /* --- RK Typography --- */
         .heading-xl {
+            font-family: 'Inter', sans-serif;
             font-size: clamp(4rem, 11vw, 11rem);
-            font-weight: 900;
-            letter-spacing: -0.07em;
-            line-height: 0.85;
+            font-weight: 500 !important;
+            color: var(--text-primary);
+            letter-spacing: -0.06em;
+            line-height: 1;
             text-transform: none;
         }
 
         .heading-l {
+            font-family: 'Inter', sans-serif;
             font-size: clamp(2rem, 4.5vw, 4.5rem);
-            font-weight: 900;
+            font-weight: 500 !important;
+            color: var(--text-primary);
             letter-spacing: -0.06em;
-            line-height: 0.95;
+            line-height: 1;
         }
 
         .paragraph-l {
@@ -161,7 +190,7 @@
             border-top: 1px solid var(--border-color);
         }
 
-        /* RK Tagline Wrapper (The horizontal metadata bar) */
+        /* RK Tagline Wrapper */
         .tagline-wrapper {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
@@ -219,44 +248,90 @@
             will-change: transform, opacity;
         }
 
-        /* --- Refined Buttons (RK Inset Swap) --- */
+        /* --- High-Fidelity RK Button [data-btn] --- */
         [data-btn] {
-            --btn-smooth: cubic-bezier(0.32, 0.72, 0, 1);
-            border: 1px solid var(--border-color);
+            --elastic-ease-out: linear(0, 0.5737 7.6%, 0.8382 11.87%, 0.9463 14.19%, 1.0292 16.54%, 1.0886 18.97%, 1.1258 21.53%, 1.137 22.97%, 1.1424 24.48%, 1.1423 26.1%, 1.1366 27.86%, 1.1165 31.01%, 1.0507 38.62%, 1.0219 42.57%, 0.9995 46.99%, 0.9872 51.63%, 0.9842 58.77%, 1.0011 81.26%, 1);
+            --smooth-ease: cubic-bezier(.32, .72, 0, 1);
+            --transform-ease: cubic-bezier(.59, 1, .88, 1.01);
+            --bounce-cubic-ease: cubic-bezier(.34, 2.27, .64, 1);
+
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: transparent;
-            padding: 1.2rem 2.5rem;
             font-size: 0.65rem;
             letter-spacing: 0.15em;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            font-weight: 700;
+            transition: transform .45s var(--elastic-ease-out);
+            -webkit-tap-highlight-color: transparent;
+            padding: 1.2rem 2.5rem;
+            border: 1px solid var(--border-color);
+            cursor: pointer !important;
+            text-decoration: none;
+            color: var(--text-primary);
+            overflow: hidden;
         }
-        
+
+        [data-btn]:active { transform: scaleX(0.955) scaleY(0.954); }
+
+        [data-btn-bg] {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-secondary);
+            z-index: 0;
+            transition: scale .15s var(--transform-ease), transform .15s var(--transform-ease);
+        }
+
         [data-btn] [data-btn-inner] {
+            position: relative;
+            z-index: 1;
             display: grid;
             grid-template-columns: 1fr;
             grid-template-rows: 1fr;
+            align-items: center;
+        }
+
+        [data-btn] [data-btn-inner]::after {
+            content: attr(data-text);
+            display: block;
+            grid-area: 1 / 1;
+            transition: clip-path .4s var(--smooth-ease), scale .3s var(--bounce-cubic-ease), translate .35s var(--smooth-ease);
+            clip-path: inset(0% 0% 100% 0%);
+            translate: 0 -.25em 0;
+            scale: 1.05;
+            transform-origin: top center;
+            color: var(--klein-blue);
         }
 
         [data-btn] [data-btn-text] {
             grid-area: 1/1;
             clip-path: inset(0% 0% 0% 0%);
-            transition: clip-path 0.5s var(--btn-smooth), transform 0.5s var(--btn-smooth);
+            transition: clip-path .4s var(--smooth-ease), scale .3s var(--bounce-cubic-ease), translate .35s var(--smooth-ease);
+            translate: 0 0 0;
+            scale: 1;
+            transform-origin: bottom center;
         }
 
-        [data-btn] [data-btn-hover] {
-            grid-area: 1/1;
-            clip-path: inset(100% 0% 0% 0%);
-            transform: translateY(20%);
-            transition: clip-path 0.5s var(--btn-smooth), transform 0.5s var(--btn-smooth);
-            color: var(--klein-blue);
-        }
-
-        [data-btn]:hover [data-btn-text] {
-            clip-path: inset(0% 0% 100% 0%);
-            transform: translateY(-20%);
-        }
-
-        [data-btn]:hover [data-btn-hover] {
-            clip-path: inset(0% 0% 0% 0%);
-            transform: translateY(0%);
+        @media (hover: hover) and (pointer: fine) {
+            [data-btn]:is(:hover, :focus-visible) [data-btn-bg] {
+                scale: .975 .945;
+                transform: scale(calc(1/.975), calc(1/.945));
+                transition: scale .15s var(--transform-ease), transform .35s .15s var(--bounce-cubic-ease);
+            }
+            [data-btn]:is(:hover, :focus-visible) [data-btn-inner]::after {
+                clip-path: inset(0% 0% 0% 0%);
+                scale: 1;
+                translate: 0 0 0;
+                transition-delay: .075s;
+            }
+            [data-btn]:is(:hover, :focus-visible) [data-btn-text] {
+                clip-path: inset(100% 0% 0% 0%);
+                translate: 0 .25em 0;
+                scale: .95;
+            }
         }
 
         /* --- Project Card Refinement --- */
@@ -363,8 +438,9 @@
         /* Footer Large Logo */
         .footer-logo {
             font-size: clamp(4rem, 15vw, 15rem);
-            font-weight: 900;
-            letter-spacing: -0.08em;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500 !important;
+            letter-spacing: -0.06em;
             line-height: 0.8;
             text-transform: uppercase;
             margin: 4rem 0;
@@ -379,7 +455,8 @@
 
         .sidebar-link {
             font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 900;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500 !important;
             letter-spacing: -0.06em;
             line-height: 0.9;
             text-transform: uppercase;
@@ -394,6 +471,51 @@
             color: var(--klein-blue);
         }
 
+        /* --- Nav Dock (Floating Navigation) --- */
+        .nav-dock {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        }
+        .nav-dock__btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            color: var(--text-primary);
+            transition: all 0.3s var(--mi-smooth);
+        }
+        .nav-dock__btn:hover {
+            background: var(--bg-primary);
+            color: var(--klein-blue);
+        }
+        .nav-dock__btn.active {
+            background: var(--klein-blue);
+            color: var(--pure-white);
+        }
+        .nav-dock__label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0 1rem;
+        }
+
         /* Transitions */
         .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
@@ -404,11 +526,21 @@
             .content-body { grid-column: 1 / -1; }
             .works-grid { grid-template-columns: 1fr; }
             .tagline-wrapper { display: none; }
+            .nav-dock.hide-mobile { display: none; }
         }
 
     </style>
 </head>
-<body class="theme-base">
+<body class="theme-base" style="opacity: 0;">
+    <!-- RK Style Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[10002] flex items-center justify-center font-mono bg-white" style="background-color: var(--bg-primary);">
+        <div class="overflow-hidden">
+            <div class="preloader-text text-klein-blue text-xs tracking-[0.3em] font-bold" style="transform: translateY(100%);">
+                SYSTEM_INIT_V4.1
+            </div>
+        </div>
+    </div>
+
     <div id="app" class="relative min-h-screen">
         <!-- Architectural Grid Lines -->
         <div class="grid-lines">
@@ -551,9 +683,9 @@
                                 <div class="work-meta">
                                     <div class="font-mono text-[9px] opacity-30">MACOS_V1.4 // SWIFT_REPERTOIRE</div>
                                     <a :href="app.link" target="_blank" data-btn>
-                                        <div data-btn-inner>
+                                        <div data-btn-bg></div>
+                                        <div data-btn-inner data-text="ENTER_ARCHIVE →">
                                             <span data-btn-text>VIEW_PROJECT</span>
-                                            <span data-btn-hover>ENTER_ARCHIVE →</span>
                                         </div>
                                     </a>
                                 </div>
@@ -636,11 +768,16 @@
 
                     <div class="footer-logo">MICHAEL QIU</div>
                     <div class="divider-rk mb-12 opacity-30"></div>
-                    <div class="flex justify-between font-mono text-[9px] opacity-30 pb-16">
+                    <div class="flex justify-between font-mono text-[9px] opacity-30 pb-16 items-center">
                         <div>© 2024 — FUTURE // VERSION_4.1 // SYSTEM_OPTIMIZED</div>
-                        <div class="flex gap-12">
+                        <div class="flex gap-12 items-center">
                             <div>DESIGNED_BY_ANTIGRAVITY</div>
-                            <button @click="scrollToTop" class="hover:text-klein-blue transition-colors underline decoration-dotted">BACK_TO_TOP ↑</button>
+                            <button @click="scrollToTop" data-btn style="padding: 0.8rem 1.5rem; font-size: 0.5rem;">
+                                <div data-btn-bg></div>
+                                <div data-btn-inner data-text="BACK_TO_TOP ↑">
+                                    <span data-btn-text>BACK_TO_TOP ↑</span>
+                                </div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -652,8 +789,11 @@
             <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
                 <div class="container flex-1 flex flex-col justify-center">
                     <div class="absolute top-12 left-12">
-                        <button @click="toggleSidebar" class="font-mono text-klein-blue border border-klein-blue/20 px-4 py-2 hover:bg-klein-blue hover:text-white transition-all">
-                            CLOSE_DIRECTORY
+                        <button @click="toggleSidebar" data-btn>
+                            <div data-btn-bg></div>
+                            <div data-btn-inner data-text="CLOSE_DIRECTORY">
+                                <span data-btn-text>CLOSE_DIRECTORY</span>
+                            </div>
                         </button>
                     </div>
 
@@ -766,11 +906,14 @@
                     await nextTick();
                     lucide.createIcons();
 
-                    // Sequenced Entry
+                    // Sequenced Entry with Preloader
                     const tl = gsap.timeline();
                     tl.set('body', { opacity: 1 })
-                      .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" })
-                      .from('.nav-dock', { y: -50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
+                      .to('.preloader-text', { y: "0%", duration: 1, ease: "expo.out", delay: 0.2 })
+                      .to('.preloader-text', { y: "-100%", duration: 0.8, ease: "expo.in", delay: 0.5 })
+                      .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
+                      .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
+                      .from('.nav-dock', { y: 50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
                       .from('#home .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "expo.out" }, "-=0.3");
 
                     // Mask Reveals for subsequent sections
