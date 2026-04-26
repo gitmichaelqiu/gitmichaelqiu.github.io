@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michael Qiu | A Development Enthusiast</title>
+    <title>Michael Qiu | R-K Inspired Design</title>
     <link rel="shortcut icon" type="image/png" href="resources/favicon.png">
     
     <!-- Tailwind CSS -->
@@ -16,25 +16,16 @@
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
-                        'bg-dark': '#050505',
-                        'bg-light': '#F2F2F7', 
-                        'deep-navy': '#020412',
+                        'bg-light': '#F8F9FB',
+                        'text-primary': '#050505',
+                        'text-secondary': 'rgba(0, 0, 0, 0.4)',
+                        'border-color': 'rgba(0, 0, 0, 0.08)',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                         display: ['Syncopate', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
                     }
                 }
             }
@@ -44,110 +35,121 @@
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-
+    
     <!-- Lenis (Smooth Scroll) -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ------------------------- Scaling system (RK Inspired) --------------------------------- */
+        /* =====================================================================
+           RK SCALING SYSTEM
+        ===================================================================== */
         :root {
-            --klein-blue: #002FA7;
-            --pure-black: #000000;
-            --pure-white: #ffffff;
-            --pale-silver: #F8F9FB; 
-            
             --size-unit: 16;
             --size-container-ideal: 1920;
-            --size-container-min: 320px;
+            --size-container-min: 992px;
             --size-container-max: 2240px;
             --size-container: clamp(var(--size-container-min), 100dvw, var(--size-container-max));
             --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
             
-            --vh: 1vh;
-            
-            /* Theme Tokens */
-            --bg-primary: var(--pale-silver);
-            --bg-secondary: var(--pure-white);
-            --text-primary: var(--pure-black);
-            --text-secondary: rgba(0, 0, 0, 0.4);
+            --klein-blue: #002FA7;
+            --bg-light: #F8F9FB;
+            --bg-white: #FFFFFF;
+            --text-primary: #050505;
             --border-color: rgba(0, 0, 0, 0.08);
-            
-            --mi-smooth: cubic-bezier(0.32, 0.72, 0, 1);
+
+            --smooth-ease: cubic-bezier(.32, .72, 0, 1);
         }
 
-        @media screen and (max-width: 991px) { :root { --size-container-ideal: 991; } }
-        @media screen and (max-width: 767px) { :root { --size-container-ideal: 767; } }
-        @media screen and (max-width: 479px) { :root { --size-container-ideal: 479; } }
+        @media screen and (max-width: 991px) {
+            :root {
+                --size-container-ideal: 991;
+                --size-container-min: 768px;
+                --size-container-max: 991px;
+            }
+        }
+        @media screen and (max-width: 767px) {
+            :root {
+                --size-container-ideal: 767;
+                --size-container-min: 480px;
+                --size-container-max: 767px;
+            }
+        }
+        @media screen and (max-width: 479px) {
+            :root {
+                --size-container-ideal: 479;
+                --size-container-min: 320px;
+                --size-container-max: 479px;
+            }
+        }
 
+        /* Basic Resets & Scrollbars */
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            cursor: auto !important;
+            cursor: auto !important; /* Disabling custom cursor for now */
         }
-
-        html, body {
+        body {
             font-size: var(--size-font);
-            background-color: var(--bg-primary);
+            background-color: var(--bg-light);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            width: 100%;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body ::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 500;
+            line-height: 1;
+            letter-spacing: -0.04em;
         }
 
-        /* --- RK Typography --- */
+        .heading-huge {
+            font-size: clamp(4rem, 8vw, 10rem);
+            font-weight: 600;
+            letter-spacing: -0.06em;
+            line-height: 0.9;
+        }
+
         .heading-xl {
-            font-size: clamp(4rem, 11vw, 11rem);
-            font-weight: 900;
-            letter-spacing: -0.07em;
-            line-height: 0.85;
-            text-transform: none;
+            font-size: clamp(3rem, 6vw, 6rem);
+            font-weight: 500;
+            letter-spacing: -0.05em;
         }
 
         .heading-l {
-            font-size: clamp(2rem, 4.5vw, 4.5rem);
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            line-height: 0.95;
+            font-size: clamp(2rem, 4vw, 4rem);
+            font-weight: 500;
+            letter-spacing: -0.04em;
         }
 
         .paragraph-l {
-            font-size: clamp(1.1rem, 2.2vw, 2.5rem);
-            line-height: 1.1;
+            font-size: clamp(1.2rem, 2vw, 2.4rem);
+            line-height: 1.2;
             font-weight: 400;
             letter-spacing: -0.02em;
-            opacity: 0.9;
-        }
-
-        .paragraph-m {
-            font-size: 1rem;
-            line-height: 1.5;
-            letter-spacing: 0;
-            font-weight: 400;
-            color: var(--text-secondary);
         }
 
         .font-mono {
             font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.3em;
-            font-size: 0.6rem;
-            font-weight: 700;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
 
-        /* --- RK Layout Grid --- */
+        /* Container */
         .container {
             width: 100%;
             max-width: var(--size-container);
@@ -155,352 +157,329 @@
             padding: 0 2rem;
         }
 
-        .section-rk {
+        /* =====================================================================
+           RK ELASTIC BUTTONS [data-btn]
+        ===================================================================== */
+        [data-btn] {
+            --elastic-ease-out: linear(0, 0.5737 7.6%, 0.8382 11.87%, 0.9463 14.19%, 1.0292 16.54%, 1.0886 18.97%, 1.1258 21.53%, 1.137 22.97%, 1.1424 24.48%, 1.1423 26.1%, 1.1366 27.86%, 1.1165 31.01%, 1.0507 38.62%, 1.0219 42.57%, 0.9995 46.99%, 0.9872 51.63%, 0.9842 58.77%, 1.0011 81.26%, 1);
+            --bounce-cubic-ease: cubic-bezier(.34, 2.27, .64, 1);
+            
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
-            padding: 8rem 0;
-            border-top: 1px solid var(--border-color);
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.45s var(--elastic-ease-out);
+            border: none;
+            background: transparent;
         }
 
-        /* RK Tagline Wrapper (The horizontal metadata bar) */
-        .tagline-wrapper {
+        [data-btn] [data-btn-bg] {
+            position: absolute;
+            inset: 0;
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            transition: transform 0.4s var(--smooth-ease);
+            transform-origin: center;
+            z-index: 0;
+        }
+
+        [data-btn-theme="blue"] [data-btn-bg] {
+            background-color: var(--klein-blue);
+            border-color: var(--klein-blue);
+        }
+
+        [data-btn] [data-btn-inner] {
+            position: relative;
+            z-index: 1;
+            padding: 1em 2em;
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem 0;
-            margin-bottom: 4rem;
             align-items: center;
         }
 
-        .tagline-item {
+        /* The ::after element acts as the hovered text */
+        [data-btn] [data-btn-inner]::after {
+            content: attr(data-text);
+            display: block;
+            grid-area: 1 / 1;
+            clip-path: inset(0% 0% 100% 0%);
+            translate: 0 -0.25em 0;
+            scale: 1.05;
+            transform-origin: top center;
+            color: var(--klein-blue);
+            transition: clip-path 0.4s var(--smooth-ease), scale 0.3s var(--bounce-cubic-ease), translate 0.35s var(--smooth-ease);
+        }
+
+        [data-btn-theme="blue"] [data-btn-inner]::after {
+            color: var(--bg-light);
+        }
+
+        [data-btn] [data-btn-text] {
+            grid-area: 1 / 1;
+            clip-path: inset(0% 0% 0% 0%);
+            translate: 0 0 0;
+            scale: 1;
+            transform-origin: bottom center;
+            transition: clip-path 0.4s var(--smooth-ease), scale 0.3s var(--bounce-cubic-ease), translate 0.35s var(--smooth-ease);
+        }
+
+        [data-btn-theme="blue"] [data-btn-text] {
+            color: white;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            [data-btn]:hover [data-btn-bg] {
+                transform: scaleX(0.96) scaleY(0.96);
+            }
+            [data-btn]:hover [data-btn-inner]::after {
+                clip-path: inset(0% 0% 0% 0%);
+                scale: 1;
+                translate: 0 0 0;
+            }
+            [data-btn]:hover [data-btn-text] {
+                clip-path: inset(100% 0% 0% 0%);
+                translate: 0 0.25em 0;
+                scale: 0.95;
+            }
+        }
+
+        /* =====================================================================
+           NAV DOCK & MENU OVERLAY
+        ===================================================================== */
+        .nav-dock {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
+            z-index: 100;
         }
 
-        .tagline-icon {
-            width: 0.8rem;
-            height: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        /* --- Architectural Grid --- */
-        .grid-lines {
+        .menu-overlay {
             position: fixed;
             inset: 0;
-            pointer-events: none;
-            z-index: -1;
+            background-color: var(--klein-blue);
+            color: white;
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+            
+            /* Hidden by default */
+            clip-path: inset(0 0 100% 0);
+            transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .menu-overlay.is-open {
+            clip-path: inset(0 0 0 0);
+        }
+
+        .menu-link {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 500;
+            letter-spacing: -0.06em;
+            line-height: 0.9;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            color: rgba(255,255,255,0.5);
+            transition: color 0.4s var(--smooth-ease), transform 0.4s var(--smooth-ease);
+            display: inline-block;
+            transform-origin: left;
+        }
+        
+        .menu-link:hover {
+            color: white;
+            transform: translateX(1rem);
+        }
+
+        /* Hamburger lines animation */
+        .hamburger-line {
+            width: 1.5rem;
+            height: 1px;
+            background: currentColor;
+            display: block;
+            margin: 4px 0;
+            transition: transform 0.4s cubic-bezier(.65, 0, 0, 1);
+            transform-origin: center;
+        }
+        
+        .menu-open-active .hamburger-line:nth-child(1) {
+            transform: translateY(2.5px) rotate(45deg);
+        }
+        .menu-open-active .hamburger-line:nth-child(2) {
+            transform: translateY(-2.5px) rotate(-45deg);
+        }
+
+        /* =====================================================================
+           LAYOUT & MASKS
+        ===================================================================== */
+        .section-padding {
+            padding: 8rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .content-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
-            gap: 0;
-            opacity: 0.03;
-        }
-        .grid-line {
-            border-right: 1px solid var(--text-primary);
-            height: 100%;
+            gap: 2rem;
         }
 
-        /* --- Parallax Support --- */
-        .parallax-wrap {
-            overflow: hidden;
-            position: relative;
-        }
-        .parallax-img {
-            scale: 1.2;
-            will-change: transform;
+        .col-span-4 { grid-column: span 4; }
+        .col-span-8 { grid-column: span 8; }
+        
+        @media (max-width: 768px) {
+            .content-grid { display: flex; flex-direction: column; }
         }
 
-        /* --- Mask Reveal --- */
         .mask-wrap {
             overflow: hidden;
             display: block;
         }
+        
         .mask-inner {
             display: block;
-            will-change: transform, opacity;
+            will-change: transform;
         }
 
-        /* --- Refined Buttons (RK Inset Swap) --- */
-        [data-btn] {
-            --btn-smooth: cubic-bezier(0.32, 0.72, 0, 1);
-            border: 1px solid var(--border-color);
-            background: transparent;
-            padding: 1.2rem 2.5rem;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
+        .parallax-wrap {
+            overflow: hidden;
+            position: relative;
+            background: rgba(0,0,0,0.05);
         }
         
-        [data-btn] [data-btn-inner] {
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: 1fr;
-        }
-
-        [data-btn] [data-btn-text] {
-            grid-area: 1/1;
-            clip-path: inset(0% 0% 0% 0%);
-            transition: clip-path 0.5s var(--btn-smooth), transform 0.5s var(--btn-smooth);
-        }
-
-        [data-btn] [data-btn-hover] {
-            grid-area: 1/1;
-            clip-path: inset(100% 0% 0% 0%);
-            transform: translateY(20%);
-            transition: clip-path 0.5s var(--btn-smooth), transform 0.5s var(--btn-smooth);
-            color: var(--klein-blue);
-        }
-
-        [data-btn]:hover [data-btn-text] {
-            clip-path: inset(0% 0% 100% 0%);
-            transform: translateY(-20%);
-        }
-
-        [data-btn]:hover [data-btn-hover] {
-            clip-path: inset(0% 0% 0% 0%);
-            transform: translateY(0%);
-        }
-
-        /* --- Project Card Refinement --- */
-        .work-card {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        .work-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: auto;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* --- Scroll Progress Dot --- */
-        .scroll-dot {
-            position: fixed;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            z-index: 100;
-        }
-        .dot-item {
-            width: 0.25rem;
-            height: 0.25rem;
-            background: var(--border-color);
-            border-radius: 50%;
-            transition: all 0.4s var(--mi-smooth);
-        }
-        .dot-item.active {
-            background: var(--klein-blue);
-            transform: scale(2.5);
-        }
-
-        @media (max-width: 768px) {
-            .grid-lines { display: none; }
-            .scroll-dot { display: none; }
-        }
-
-        /* RK 12-Column Content Grid */
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 0;
-        }
-
-        .content-label {
-            grid-column: span 3;
-            color: var(--klein-blue);
-            padding-top: 0.5rem;
-        }
-
-        .content-body {
-            grid-column: 5 / span 8;
-        }
-
-        /* RK Dividers */
-        .divider-rk {
+        .parallax-img {
+            scale: 1.2;
+            will-change: transform;
             width: 100%;
-            height: 1px;
-            background-color: var(--border-color);
-        }
-
-        /* RK Works Grid */
-        .works-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0;
-            border-left: 1px solid var(--border-color);
+            height: 100%;
+            object-fit: cover;
         }
 
         .work-card {
             border-right: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
             padding: 4rem;
-            transition: background-color 0.6s var(--mi-smooth);
+            transition: background-color 0.4s var(--smooth-ease);
         }
 
         .work-card:hover {
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-white);
         }
 
-        .work-card:nth-child(even) {
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            border-top: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+        }
+
+        .works-grid .work-card:nth-child(even) {
             padding-top: 8rem;
         }
-
-        /* Plus Icon bolt */
-        .bolt-plus {
-            position: absolute;
-            top: -0.5rem;
-            left: -0.5rem;
-            width: 1rem;
-            height: 1rem;
-            color: var(--border-color);
-            z-index: 5;
+        
+        @media (max-width: 768px) {
+            .works-grid { grid-template-columns: 1fr; border-left: none; }
+            .works-grid .work-card:nth-child(even) { padding-top: 4rem; }
+            .work-card { border-right: none; border-bottom: 1px solid var(--border-color); padding: 2rem 0; }
         }
 
-        /* Footer Large Logo */
+        /* Footer Logo */
         .footer-logo {
-            font-size: clamp(4rem, 15vw, 15rem);
-            font-weight: 900;
-            letter-spacing: -0.08em;
+            font-size: clamp(3rem, 12vw, 15rem);
+            font-weight: 600;
+            letter-spacing: -0.06em;
             line-height: 0.8;
             text-transform: uppercase;
-            margin: 4rem 0;
-            color: var(--text-primary);
-        }
-
-        /* Sidebar RK Style */
-        .sidebar-rk {
-            background-color: var(--bg-primary);
-            padding: 4rem;
-        }
-
-        .sidebar-link {
-            font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            line-height: 0.9;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 1rem;
-            text-decoration: none;
-            color: var(--text-primary);
-            transition: color 0.4s var(--mi-smooth);
-        }
-
-        .sidebar-link:hover {
-            color: var(--klein-blue);
-        }
-
-        /* Transitions */
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-        @media (max-width: 768px) {
-            .content-grid { grid-template-columns: 1fr; }
-            .content-label { margin-bottom: 1rem; }
-            .content-body { grid-column: 1 / -1; }
-            .works-grid { grid-template-columns: 1fr; }
-            .tagline-wrapper { display: none; }
         }
 
     </style>
 </head>
-<body class="theme-base">
+<body>
     <div id="app" class="relative min-h-screen">
-        <!-- Architectural Grid Lines -->
-        <div class="grid-lines">
-            <div v-for="i in 12" :key="i" class="grid-line"></div>
-        </div>
-
-        <!-- Scroll Progress Dots -->
-        <div class="scroll-dot">
-            <div v-for="sec in ['home', 'profile', 'works', 'photos', 'connect']" 
-                 :key="sec" class="dot-item" :class="{ 'active': activeSection === sec }"></div>
-        </div>
         
-        <!-- Navigation Dock (RK Style) -->
-        <div class="nav-dock hide-mobile">
-            <a href="/" class="nav-dock__btn" :class="{ 'active': activeSection === 'home' }">
-                <i data-lucide="home" class="w-5 h-5"></i>
+        <!-- Navigation Dock -->
+        <div class="nav-dock">
+            <!-- Home Button -->
+            <a href="/" data-btn class="font-mono">
+                <div data-btn-bg></div>
+                <div data-btn-inner data-text="HOME">
+                    <span data-btn-text>MQ_</span>
+                </div>
             </a>
-            <div class="nav-dock__label">{{ activeSection }}</div>
-            <button @click="toggleSidebar" class="nav-dock__btn">
-                <i data-lucide="menu" class="w-5 h-5"></i>
+            
+            <!-- Menu Toggle Button -->
+            <button data-btn @click="toggleMenu" :class="{ 'menu-open-active': isMenuOpen }">
+                <div data-btn-bg></div>
+                <div data-btn-inner data-text="MENU">
+                    <span data-btn-text class="flex flex-col items-center justify-center">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </span>
+                </div>
             </button>
         </div>
 
-        <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
-            <!-- Hero Section (RK Style) -->
-            <section id="home" class="section-rk min-h-screen flex flex-col justify-end pb-32 relative overflow-hidden border-t-0">
-                <div class="container">
-                    <!-- Tagline Wrapper -->
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M0 0L14 14H0V0Z" fill="currentColor"></path></svg></div>
-                            <div class="font-mono">MICHAEL QIU</div>
-                        </div>
-                        <div class="tagline-item col-span-3">
-                            <div class="font-mono opacity-40">SYSTEM_INIT_V4.1</div>
-                        </div>
-                        <div class="tagline-item col-span-6 justify-self-end">
-                            <div class="font-mono text-klein-blue">AVAILABILITY // OPEN_FOR_RELIABLE_WORK</div>
-                        </div>
-                    </div>
+        <!-- Fullscreen Menu Overlay -->
+        <div class="menu-overlay" :class="{ 'is-open': isMenuOpen }">
+            <div class="container relative z-10 flex flex-col h-full justify-center">
+                <a href="#profile" @click.prevent="handleNav('profile')" class="menu-link">Profile</a>
+                <a href="#works" @click.prevent="handleNav('works')" class="menu-link">Repertoire</a>
+                <a href="#photos" @click.prevent="handleNav('photos')" class="menu-link">Narrative</a>
+                <a href="#connect" @click.prevent="handleNav('connect')" class="menu-link">Liaison</a>
+            </div>
+        </div>
 
-                    <div class="content-grid pt-12">
-                        <div class="content-body">
+        <main class="transition-all duration-700">
+            
+            <!-- Hero Section -->
+            <section class="min-h-screen flex flex-col justify-end pb-16 relative border-b border-black/10">
+                <div class="container">
+                    <div class="mask-wrap mb-8">
+                        <h1 class="heading-huge mask-inner">Michael Qiu.</h1>
+                    </div>
+                    
+                    <div class="content-grid items-end">
+                        <div class="col-span-8">
                             <div class="mask-wrap">
-                                <h1 class="heading-xl mb-16 mask-inner">Crafting digital tools with systematic precision.</h1>
+                                <h2 class="heading-xl mask-inner">Design & Code for</h2>
                             </div>
-                            <div class="divider-rk mb-16 opacity-30"></div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-2xl mask-inner">Creative Engineer at the intersection of technical architecture and visual narrative. Building digital experiences that are as invisible as they are powerful.</p>
+                                <h2 class="heading-xl mask-inner">systems that scale.</h2>
                             </div>
+                        </div>
+                        <div class="col-span-4 pb-4">
+                            <p class="font-mono text-black/40 mb-4">AVAILABLE NOW</p>
+                            <p class="font-mono">Creative Engineer building digital experiences that are as invisible as they are powerful.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Profile Section (RK Style) -->
-            <section id="profile" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+            <!-- Profile Section -->
+            <section id="profile" class="section-padding">
                 <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
-                            <div class="font-mono">PERSONA</div>
-                        </div>
-                        <div class="tagline-item col-span-9">
-                            <div class="font-mono opacity-40">2024 — FOREVER // PERSISTENT_LOGIC</div>
-                        </div>
-                    </div>
-
-                    <div class="content-grid mb-48">
-                        <div class="content-label font-mono">_PHILOSOPHY</div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <h2 class="heading-l mb-16 mask-inner">Refusing to settle for the default experience.</h2>
-                            </div>
-                            <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Software should be a force that leaves a mark. I develop utilities that enhance the native experience, primarily within the macOS ecosystem, focusing on high-performance logic and minimalist aesthetics.</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="content-grid">
-                        <div class="content-label font-mono">_REPERTOIRE</div>
-                        <div class="content-body grid grid-cols-1 md:grid-cols-3 gap-16">
-                            <div v-for="focus in [
-                                { title: 'SYSTEM_TOOLS', text: 'Developing utilities that enhance the native macOS experience through low-level API hooks.' },
-                                { title: 'VISUAL_LOGIC', text: 'Crafting interfaces that leverage motion and geometry to drive user engagement.' },
-                                { title: 'AUTOMATION', text: 'Bridging the gap between manual workflows and intelligent processes.' }
-                            ]" :key="focus.title" class="mask-wrap">
-                                <div class="mask-inner">
-                                    <h3 class="font-mono text-klein-blue mb-6">{{ focus.title }}</h3>
-                                    <p class="paragraph-m">{{ focus.text }}</p>
+                        <div class="col-span-4">
+                            <p class="font-mono text-klein-blue mb-8">( PHILOSOPHY )</p>
+                        </div>
+                        <div class="col-span-8">
+                            <div class="mask-wrap mb-12">
+                                <h2 class="heading-l mask-inner">Refusing to settle for the default. Software should be a force that leaves a mark.</h2>
+                            </div>
+                            <div class="mask-wrap mb-16">
+                                <p class="paragraph-l mask-inner">I develop utilities that enhance the native experience, primarily within the macOS ecosystem, focusing on high-performance logic and minimalist aesthetics.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-12 border-t border-black/10">
+                                <div v-for="focus in [
+                                    { title: 'SYSTEM_TOOLS', text: 'Developing utilities that enhance the native macOS experience through low-level API hooks.' },
+                                    { title: 'VISUAL_LOGIC', text: 'Crafting interfaces that leverage motion and geometry to drive user engagement.' },
+                                ]" :key="focus.title">
+                                    <h3 class="font-mono mb-4 text-black">{{ focus.title }}</h3>
+                                    <p class="font-mono text-black/50 leading-relaxed text-sm">{{ focus.text }}</p>
                                 </div>
                             </div>
                         </div>
@@ -508,249 +487,164 @@
                 </div>
             </section>
 
-            <!-- Works Section (RK Style) -->
-            <section id="works" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
-                <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-4">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M0 0L14 14H0V0Z" fill="currentColor"></path></svg></div>
-                            <div class="font-mono">REPERTOIRE</div>
+            <!-- Works Section -->
+            <section id="works" class="section-padding !p-0">
+                <div class="container pt-32 pb-16">
+                    <div class="content-grid">
+                        <div class="col-span-4">
+                            <p class="font-mono text-klein-blue mb-8">( REPERTOIRE )</p>
                         </div>
-                        <div class="tagline-item col-span-8">
-                            <div class="font-mono opacity-40">SELECTED_WORKS_01 — 03</div>
+                        <div class="col-span-8">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mask-inner">Crafted for precision.</h2>
+                            </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="works-grid">
+                    <div v-for="(app, i) in apps" :key="app.id" class="work-card flex flex-col">
+                        <div class="flex justify-between items-start mb-8">
+                            <span class="font-mono">0{{i+1}}</span>
+                            <i :data-lucide="app.icon" class="w-6 h-6 text-black/20"></i>
+                        </div>
+                        
+                        <div class="parallax-wrap aspect-[16/10] mb-8 overflow-hidden rounded-lg">
+                            <img :src="`https://picsum.photos/seed/${app.id}/1600/1000`" class="parallax-img" loading="lazy">
+                        </div>
+                        
+                        <h3 class="heading-xl mb-4">{{ app.name }}</h3>
+                        <p class="font-mono text-black/50 text-sm mb-12 flex-1">{{ app.desc }}</p>
+                        
+                        <div class="flex justify-between items-end border-t border-black/10 pt-8 mt-auto">
+                            <span class="font-mono text-xs text-black/40">MACOS // SWIFT</span>
+                            
+                            <a :href="app.link" target="_blank" data-btn data-btn-theme="blue" class="font-mono text-xs">
+                                <div data-btn-bg></div>
+                                <div data-btn-inner data-text="VIEW_APP">
+                                    <span data-btn-text>DISCOVER</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Photos Section -->
+            <section id="photos" class="section-padding">
+                <div class="container">
                     <div class="content-grid mb-16">
-                        <div class="content-label font-mono">_PROJECTS</div>
-                        <div class="content-body">
+                        <div class="col-span-4">
+                            <p class="font-mono text-klein-blue mb-8">( NARRATIVE )</p>
+                        </div>
+                        <div class="col-span-8">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-8 mask-inner">Crafted for precision.</h2>
+                                <h2 class="heading-l mask-inner">Moments in time.</h2>
                             </div>
                         </div>
                     </div>
 
-                    <div class="works-grid">
-                        <div v-for="(app, i) in apps" :key="app.id" class="work-card group">
-                            <div class="flex justify-between items-start mb-16">
-                                <span class="font-mono text-klein-blue">0{{i+1}}</span>
-                                <div class="w-16 h-16 bg-white border border-black/5 p-3 flex items-center justify-center">
-                                    <img :src="app.img" :alt="app.name" class="w-full h-full object-contain">
-                                </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div v-for="photo in photos" :key="photo.title" class="parallax-wrap group aspect-[4/5] bg-black/5 rounded overflow-hidden">
+                            <img :src="photo.url" class="parallax-img">
+                            <div class="absolute inset-0 bg-klein-blue/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                                <p class="font-mono text-[10px] text-white/70 mb-1">{{ photo.date }}</p>
+                                <h4 class="text-white font-mono">{{ photo.title }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Connect Section / Footer -->
+            <section id="connect" class="pt-32 pb-8 bg-white">
+                <div class="container">
+                    <div class="content-grid mb-32">
+                        <div class="col-span-4">
+                            <p class="font-mono text-klein-blue mb-8">( LIAISON )</p>
+                        </div>
+                        <div class="col-span-8">
+                            <div class="mask-wrap mb-16">
+                                <h2 class="heading-xl mask-inner">Let's build the future together.</h2>
                             </div>
                             
-                            <div class="parallax-wrap aspect-[16/11] mb-12 bg-[#F0F1F3]">
-                                <img :src="`https://picsum.photos/seed/${app.id}/1600/1100`" class="w-full h-full object-cover parallax-img" loading="lazy">
-                            </div>
-
-                            <div class="pr-12">
-                                <h3 class="heading-l mb-6">{{ app.name }}</h3>
-                                <p class="paragraph-m mb-12 max-w-md">{{ app.desc }}</p>
-                                
-                                <div class="work-meta">
-                                    <div class="font-mono text-[9px] opacity-30">MACOS_V1.4 // SWIFT_REPERTOIRE</div>
-                                    <a :href="app.link" target="_blank" data-btn>
-                                        <div data-btn-inner>
-                                            <span data-btn-text>VIEW_PROJECT</span>
-                                            <span data-btn-hover>ENTER_ARCHIVE →</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Photos Section (RK Style) -->
-            <section id="photos" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
-                <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="currentColor"></circle></svg></div>
-                            <div class="font-mono">NARRATIVE</div>
-                        </div>
-                        <div class="tagline-item col-span-9">
-                            <div class="font-mono opacity-40">VISUAL_JOURNAL // 2023 — 2025 // KO_CHANG // HANGZHOU // HOKKAIDO</div>
-                        </div>
-                    </div>
-
-                    <div class="content-grid mb-24">
-                        <div class="content-label font-mono">_STORY</div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <h2 class="heading-l mb-8 mask-inner">Moments captured in between.</h2>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <div v-for="(photo, i) in photos" :key="photo.title" 
-                             class="parallax-wrap group aspect-[4/5] border border-black/5"
-                             :class="{ 'md:mt-24': i % 2 === 1 }">
-                            <img :src="photo.url" class="w-full h-full object-cover parallax-img">
-                            <div class="absolute inset-0 bg-white/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <p class="font-mono text-[9px] text-klein-blue mb-2">{{ photo.date }}</p>
-                                <h4 class="font-bold uppercase text-xs tracking-widest text-black">{{ photo.title }}</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Liaison / Connect Section (RK Style) -->
-            <section id="connect" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
-                <div class="container">
-                    <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-3">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
-                            <div class="font-mono">LIAISON</div>
-                        </div>
-                        <div class="tagline-item col-span-9">
-                            <div class="font-mono opacity-40">AVAILABLE_FOR_NEW_INITIATIVES</div>
-                        </div>
-                    </div>
-
-                    <div class="content-grid mb-48">
-                        <div class="content-label font-mono">_CONTACT</div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <h2 class="heading-l mb-16 mask-inner">Let's build the future together.</h2>
-                            </div>
-                            <div class="flex flex-col">
+                            <div class="flex flex-col border-t border-black/10">
                                 <a v-for="link in [
                                     { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
                                     { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' },
                                     { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank" 
-                                class="flex justify-between items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group">
-                                    <span class="heading-l text-4xl group-hover:translate-x-8 transition-transform">{{ link.label }}</span>
-                                    <i data-lucide="arrow-up-right" class="w-10 h-10 opacity-20"></i>
+                                class="flex justify-between items-center py-8 border-b border-black/10 hover:text-klein-blue transition-colors group">
+                                    <span class="heading-l font-mono group-hover:translate-x-4 transition-transform duration-500">{{ link.label }}</span>
+                                    <i data-lucide="arrow-up-right" class="w-8 h-8 opacity-20 group-hover:opacity-100 group-hover:-translate-y-2 group-hover:translate-x-2 transition-all duration-500"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="footer-logo">MICHAEL QIU</div>
-                    <div class="divider-rk mb-12 opacity-30"></div>
-                    <div class="flex justify-between font-mono text-[9px] opacity-30 pb-16">
-                        <div>© 2024 — FUTURE // VERSION_4.1 // SYSTEM_OPTIMIZED</div>
-                        <div class="flex gap-12">
-                            <div>DESIGNED_BY_ANTIGRAVITY</div>
-                            <button @click="scrollToTop" class="hover:text-klein-blue transition-colors underline decoration-dotted">BACK_TO_TOP ↑</button>
-                        </div>
+                    <div class="footer-logo text-center mb-16 text-black/5">MICHAEL QIU</div>
+
+                    <div class="flex flex-col md:flex-row justify-between items-center font-mono text-xs text-black/40 pt-8 border-t border-black/10">
+                        <div class="mb-4 md:mb-0">© 2026 — FUTURE // VERSION 4.1</div>
+                        
+                        <button @click="scrollToTop" data-btn class="font-mono text-[10px]">
+                            <div data-btn-bg></div>
+                            <div data-btn-inner data-text="BACK TO TOP">
+                                <span data-btn-text>SCROLL UP</span>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </section>
         </main>
-
-        <!-- Sidebar (RK Massive Style) -->
-        <transition name="fade">
-            <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
-                <div class="container flex-1 flex flex-col justify-center">
-                    <div class="absolute top-12 left-12">
-                        <button @click="toggleSidebar" class="font-mono text-klein-blue border border-klein-blue/20 px-4 py-2 hover:bg-klein-blue hover:text-white transition-all">
-                            CLOSE_DIRECTORY
-                        </button>
-                    </div>
-
-                    <div class="flex flex-col">
-                        <a v-for="link in [
-                            {id: 'home', label: 'Overview'},
-                            {id: 'profile', label: 'Persona'},
-                            {id: 'works', label: 'Repertoire'},
-                            {id: 'photos', label: 'Narrative'},
-                            {id: 'connect', label: 'Liaison'}
-                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)" class="sidebar-link">
-                            <div class="mask-wrap">
-                                <span class="mask-inner">{{ link.label }}</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="container pb-12">
-                    <div class="divider-rk mb-8"></div>
-                    <div class="flex justify-between font-mono text-[10px] opacity-40">
-                        <div>DESIGNED_BY_ANTIGRAVITY</div>
-                        <div>SYSTEM_VERSION_4.1</div>
-                    </div>
-                </div>
-            </aside>
-        </transition>
     </div>
 
     <script>
-        const { createApp, ref, onMounted, onUnmounted, nextTick, watch } = Vue;
+        const { createApp, ref, onMounted, nextTick, watch } = Vue;
 
-        // Register GSAP Plugins
         gsap.registerPlugin(ScrollTrigger);
 
         createApp({
             setup() {
-                const isSidebarOpen = ref(false);
-                const activeSection = ref('home');
-                const isBooting = ref(true);
-                
-                const handleNavClick = (targetId) => {
-                    isSidebarOpen.value = false;
-                    const el = document.getElementById(targetId);
-                    if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
-                };
+                const isMenuOpen = ref(false);
+                let lenis;
 
-                const scrollToTop = () => {
-                    if (lenis) lenis.scrollTo(0, { duration: 1.2 });
-                };
-                                
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/opt-clicker.png', link: 'https://gitmichaelqiu.github.io/OptClicker' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/space-switcher.png', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', icon: 'monitor', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', icon: 'mouse-pointer-2', link: 'https://gitmichaelqiu.github.io/OptClicker' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', icon: 'layout-grid', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
                 ];
 
                 const photos = [
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023' },
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023' },
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025' }
+                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' }
                 ];
 
-                let lenis;
-
-                const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value; };
-
-                watch(isSidebarOpen, (val) => {
-                    if (val) {
-                        nextTick(() => {
-                            gsap.from('.sidebar-rk .mask-inner', {
-                                y: "100%",
-                                duration: 1,
-                                stagger: 0.1,
-                                ease: "expo.out",
-                                delay: 0.3
-                            });
-                        });
+                const toggleMenu = () => {
+                    isMenuOpen.value = !isMenuOpen.value;
+                    if (isMenuOpen.value) {
+                        lenis.stop();
+                        // Animate menu links
+                        gsap.fromTo('.menu-link', 
+                            { y: 50, opacity: 0 }, 
+                            { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power4.out", delay: 0.2 }
+                        );
+                    } else {
+                        lenis.start();
                     }
-                });
+                };
 
-                const updateScrollProgress = () => {
-                    const winHeight = window.innerHeight;
-                    const sections = ['home', 'profile', 'works', 'photos', 'connect'];
-                    let current = 'home';
-                    sections.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            const rect = el.getBoundingClientRect();
-                            if (rect.top <= winHeight * 0.4) current = id;
-                        }
-                    });
-                    activeSection.value = current;
+                const handleNav = (id) => {
+                    isMenuOpen.value = false;
+                    lenis.start();
+                    const el = document.getElementById(id);
+                    if (el) lenis.scrollTo(el, { offset: -100, duration: 1.5 });
+                };
+
+                const scrollToTop = () => {
+                    if (lenis) lenis.scrollTo(0, { duration: 1.5 });
                 };
 
                 const initLenis = () => {
@@ -761,30 +655,22 @@
 
                 onMounted(async () => {
                     initLenis();
-                    window.addEventListener('scroll', updateScrollProgress);
-                    
                     await nextTick();
                     lucide.createIcons();
 
-                    // Sequenced Entry
-                    const tl = gsap.timeline();
-                    tl.set('body', { opacity: 1 })
-                      .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" })
-                      .from('.nav-dock', { y: -50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
-                      .from('#home .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "expo.out" }, "-=0.3");
-
-                    // Mask Reveals for subsequent sections
-                    gsap.utils.toArray('.section-rk:not(#home)').forEach(sec => {
-                        const masks = sec.querySelectorAll('.mask-inner');
-                        if (masks.length > 0) {
-                            gsap.from(masks, {
-                                y: "100%",
-                                duration: 1.5,
-                                stagger: 0.1,
-                                ease: "expo.out",
+                    // Mask Reveals for Headings and Paragraphs
+                    gsap.utils.toArray('.mask-wrap').forEach(wrap => {
+                        const inner = wrap.querySelector('.mask-inner');
+                        if (inner) {
+                            gsap.fromTo(inner, {
+                                y: "100%"
+                            }, {
+                                y: "0%",
+                                duration: 1.2,
+                                ease: "power4.out",
                                 scrollTrigger: {
-                                    trigger: sec,
-                                    start: "top 80%",
+                                    trigger: wrap,
+                                    start: "top 85%"
                                 }
                             });
                         }
@@ -806,31 +692,9 @@
                             }
                         });
                     });
-
-                    // Bolt Rotation
-                    gsap.utils.toArray('.bolt-plus').forEach(bolt => {
-                        gsap.to(bolt, {
-                            rotation: 360,
-                            ease: "none",
-                            scrollTrigger: {
-                                trigger: bolt,
-                                start: "top bottom",
-                                end: "bottom top",
-                                scrub: 1
-                            }
-                        });
-                    });
-                });
-                
-                onUnmounted(() => {
-                    window.removeEventListener('scroll', updateScrollProgress);
-                    if(lenis) lenis.destroy();
                 });
 
-                return {
-                    isSidebarOpen, activeSection, toggleSidebar, apps, photos,
-                    handleNavClick, isBooting, scrollToTop
-                };
+                return { apps, photos, isMenuOpen, toggleMenu, handleNav, scrollToTop };
             }
         }).mount('#app');
     </script>
