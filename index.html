@@ -250,11 +250,8 @@
         .col-span-8 { grid-column: span 8; }
         .col-span-12 { grid-column: span 12; }
 
-        /* --- Custom Cursor --- */
-        @media (hover: hover) and (pointer: fine) {
-            body, button, a, input, [role="button"], .cursor-pointer { cursor: none !important; }
-            .cursor-dot { display: block; position: fixed; pointer-events: none; z-index: 20000; mix-blend-mode: difference; width: 4px; height: 4px; background-color: white; border-radius: 50%; transform: translate(-50%, -50%); }
-        }
+        /* --- System Cursor --- */
+        * { cursor: auto !important; }
 
         /* --- Lenis Smooth Scroll --- */
         html.lenis { height: auto; }
@@ -266,6 +263,44 @@
         .text-klein { color: var(--klein-blue); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* RK Body Text Patterns */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 0;
+            width: 100%;
+        }
+
+        .content-label {
+            grid-column: span 3;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--klein-blue);
+            padding-top: 0.5rem;
+        }
+
+        .content-body {
+            grid-column: 5 / span 8;
+        }
+
+        .content-body p {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            line-height: 1.25;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+        }
+
+        .divider-rk {
+            width: 100%;
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 4rem 0;
+        }
 
         @media (max-width: 768px) {
             .card-rk { grid-column: span 12; aspect-ratio: auto; }
@@ -357,8 +392,6 @@
 <body :class="[{ 'is-booting': isBooting }, 'theme-base']">
     <div id="app" class="relative min-h-screen">
         
-        <div class="cursor-dot hidden md:block"></div>
-
         <!-- Navigation Dock (RK Style) -->
         <div class="nav-dock hide-mobile" :class="{ 'opacity-0': isBooting }">
             <a href="/" class="nav-dock__btn" :class="{ 'active': activeSection === 'home' }">
@@ -369,6 +402,159 @@
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
         </div>
+
+        <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
+            <!-- Hero / Origin Section -->
+            <section id="home" class="section-rk min-h-screen flex flex-col justify-center relative theme-base overflow-hidden">
+                <div class="absolute inset-0 z-0 opacity-40">
+                    <div id="magnetic-container" class="w-full h-full"></div>
+                </div>
+                <div class="container relative z-10">
+                    <div class="hero-text-container opacity-0 translate-y-10">
+                        <div class="font-mono text-klein-blue mb-8 tracking-[0.4em]">SYSTEM_INITIALIZED_V4</div>
+                        <h1 class="heading-xl mb-4">Michael<br/>Qiu.</h1>
+                        <div class="divider-rk my-8"></div>
+                        <div class="content-grid">
+                            <div class="content-body">
+                                <p class="paragraph-l">Creative Engineer specializing in the intersection of <span class="text-klein-blue">technical architecture</span> and <span class="text-klein-blue">visual narrative</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
+                    <span class="font-mono text-[10px]">SCROLL_TO_EXPLORE</span>
+                    <div class="w-px h-16 bg-black overflow-hidden relative">
+                        <div class="absolute inset-0 bg-klein-blue animate-scroll-line"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile / Philosophy Section (RK Style) -->
+            <section id="profile" class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container py-32 md:py-48">
+                    <div class="content-grid mb-24">
+                        <div class="content-label">_PHILOSOPHY</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-12">Building systems<br/>that feel like magic.</h2>
+                            <p>I am a developer who believes that software should be as invisible as it is powerful. My work focuses on the intersection of minimalist design and high-performance utility, primarily within the macOS ecosystem.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="divider-rk"></div>
+
+                    <div class="content-grid">
+                        <div class="content-label">_CORE_FOCUS</div>
+                        <div class="content-body grid grid-cols-1 md:grid-cols-3 gap-12">
+                            <div>
+                                <h3 class="text-xl font-black mb-4">SYSTEM_TOOLS</h3>
+                                <p class="paragraph-m opacity-60">Developing utilities that enhance the native macOS experience through Swift and low-level API hooks.</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black mb-4">VISUAL_LOGIC</h3>
+                                <p class="paragraph-m opacity-60">Crafting interfaces that leverage motion, geometry, and high-contrast aesthetics to drive user engagement.</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black mb-4">AUTOMATION</h3>
+                                <p class="paragraph-m opacity-60">Bridging the gap between manual workflows and intelligent background processes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Repertoire / Works Section (RK Style) -->
+            <section id="works" class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container py-32">
+                    <div class="content-grid mb-32">
+                        <div class="content-label">_REPERTOIRE</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-8">Selected Works.</h2>
+                            <p>High-performance utilities and visual experiments designed for precision.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-layout border-l border-t border-black/5">
+                        <div v-for="(app, i) in apps" :key="app.id" 
+                            class="card-rk col-span-6 group/work border-r border-b border-black/5 p-12 md:p-24 aspect-auto">
+                            <div class="flex justify-between items-start mb-24">
+                                <span class="font-mono text-klein-blue">0{{i+1}}</span>
+                                <i :data-lucide="app.icon" class="w-12 h-12 opacity-20 group-hover/work:opacity-100 transition-opacity"></i>
+                            </div>
+                            <h3 class="heading-l mb-6 group-hover/work:text-klein-blue transition-colors duration-500">{{ app.name }}</h3>
+                            <p class="paragraph-m opacity-50 mb-16 max-w-sm">{{ app.desc }}</p>
+                            <a :href="app.link" target="_blank" data-btn class="mt-auto self-start">
+                                VIEW_PROJECT
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Narrative / Photos Section (RK Style) -->
+            <section id="photos" class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container py-32">
+                    <div class="content-grid mb-32">
+                        <div class="content-label">_NARRATIVE</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-8">Visual Storytelling.</h2>
+                            <p>Moments captured across geography and time.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-layout">
+                        <div v-for="(photo, index) in photos.slice(0, 4)" :key="index" 
+                            class="card-rk col-span-3 p-0 overflow-hidden group aspect-[4/5]">
+                            <img :src="photo.url" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" loading="lazy">
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+                                <span class="font-mono text-[8px] text-klein-blue mb-2">{{ photo.date }}</span>
+                                <h3 class="text-lg font-black uppercase text-white">{{ photo.title }}</h3>
+                            </div>
+                        </div>
+                        <div class="card-rk col-span-12 flex items-center justify-center border-t-0 p-12">
+                             <a href="https://gitmichaelqiu.github.io/photos" target="_blank" data-btn>
+                                ENTER_ARCHIVE
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Liaison / Connect Section (RK Style) -->
+            <section id="connect" class="section-rk theme-base">
+                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
+                <div class="container py-32">
+                    <div class="content-grid mb-32">
+                        <div class="content-label">_LIAISON</div>
+                        <div class="content-body">
+                            <h2 class="heading-l mb-8">Let's Talk.</h2>
+                        </div>
+                    </div>
+                    <div class="grid-layout border-t border-black/5">
+                        <a v-for="link in [
+                            { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
+                            { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' },
+                            { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' }
+                        ]" :key="link.label" :href="link.url" target="_blank"
+                        class="col-span-4 p-12 border-r border-black/5 hover:bg-klein-blue group transition-colors flex items-center justify-between">
+                            <span class="font-black text-2xl group-hover:translate-x-4 transition-transform">{{ link.label }}</span>
+                            <i data-lucide="arrow-up-right" class="w-6 h-6 opacity-30 group-hover:opacity-100"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer (RK Style) -->
+            <footer class="section-rk py-12 border-t border-black/5 font-mono text-[10px] opacity-30">
+                <div class="container flex justify-between items-center">
+                    <div>BUILD_LOG // VERSION_2024.4</div>
+                    <button @click="scrollToTop" class="hover:opacity-100 transition-opacity">SCROLL_TO_TOP</button>
+                    <div>&copy; MICHAEL QIU</div>
+                </div>
+            </footer>
+        </main>
 
         <transition name="backdrop">
             <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[10000]"></div>
@@ -409,237 +595,6 @@
                 </div>
             </aside>
         </transition>
-
-        <main class="transition-all duration-700" :class="{ 'scale-95 blur-md grayscale opacity-50': isSidebarOpen }">
-            
-            <!-- Hero Section (RK Style) -->
-            <section id="home" class="relative w-full h-screen flex flex-col justify-center overflow-hidden">
-                <div class="container relative z-10">
-                    <div class="flex flex-col items-start">
-                        <div class="font-mono text-klein-blue mb-8 tracking-[0.4em] flex items-center gap-4">
-                            <span class="w-8 h-px bg-klein-blue"></span>
-                            CORE_SYSTEM_V4
-                        </div>
-                        <h1 class="heading-xl -ml-2 mb-4">
-                            Michael<br/>Qiu
-                        </h1>
-                        <div class="grid-layout w-full border-t border-white/10 pt-12">
-                            <div class="col-span-8">
-                                <p class="paragraph-l max-w-4xl">
-                                    Software engineer specializing in the intersection of <span class="text-klein-blue">technical architecture</span> and <span class="text-klein-blue">visual narrative</span>.
-                                </p>
-                            </div>
-                            <div class="col-span-4 flex justify-end items-end">
-                                <a href="#profile" @click.prevent="handleNavClick('profile')" data-btn>
-                                    Initialize Persona
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Background Element -->
-                <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-                    <div id="magnetic-container" class="w-full h-full"></div>
-                </div>
-            </section>
-
-            <section class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container text-center py-24">
-                    <h2 class="heading-l mb-12">Building systems that leave a mark.</h2>
-                    <div class="font-mono opacity-50 tracking-[0.5em]">REPERTOIRE // August 2024 — NOW</div>
-                </div>
-            </section>
-
-            <!-- Profile Section (RK Style) -->
-            <section id="profile" class="w-full py-24 bg-deep-navy text-white">
-                <div class="container">
-                    <div class="mb-24 flex items-end justify-between border-b border-white/10 pb-8">
-                        <h2 class="heading-l">The Architect</h2>
-                        <span class="font-mono text-[10px] opacity-50 uppercase tracking-widest">EST. 1999</span>
-                    </div>
-
-                    <div class="grid-layout">
-                        <!-- About Me Card -->
-                        <div class="card-rk col-span-8 aspect-auto min-h-[400px]">
-                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">ABOUT_ME</div>
-                            <p class="paragraph-l">
-                                I don't just write code; <span class="font-bold border-b border-klein-blue">I design workflows.</span> 
-                                My background in C++ and Python allows me to build rigorous back-end systems with precision and scalability.
-                            </p>
-                            <div class="mt-12 flex justify-between items-end border-t border-white/10 pt-6">
-                                <div>
-                                    <span class="block font-mono text-[10px] opacity-50 mb-1">LOCATION</span>
-                                    <span class="font-bold text-xl uppercase">Hangzhou, China</span>
-                                </div>
-                                <i data-lucide="map-pin" class="w-6 h-6 text-klein-blue"></i>
-                            </div>
-                        </div>
-                        
-                        <!-- Stack Card -->
-                        <div class="card-rk col-span-4">
-                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">STACK</div>
-                            <ul class="space-y-4 font-bold text-3xl uppercase tracking-tighter">
-                                <li>C++</li>
-                                <li>Python</li>
-                                <li>SwiftUI</li>
-                            </ul>
-                        </div>
-
-                        <!-- Focus Card -->
-                        <div class="card-rk col-span-4">
-                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">FOCUS</div>
-                            <h3 class="heading-l">System<br/>Utils</h3>
-                        </div>
-
-                        <!-- Philosophy Card -->
-                        <div class="card-rk col-span-8 aspect-auto">
-                            <div class="font-mono text-[10px] tracking-widest text-klein-blue border border-klein-blue/30 inline-block px-3 py-1 rounded-full mb-8">PHILOSOPHY</div>
-                            <p class="paragraph-l italic">
-                                "Give people wonderful tools, and they'll do wonderful things."
-                            </p>
-                            <div class="mt-8 text-right">
-                                <span class="font-mono text-[10px] opacity-50">— STEVE JOBS</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>            <!-- Persona / Profile Section (RK Style) -->
-            <section id="profile" class="section-rk">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="bolt-rk bolt-tr"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container">
-                    <div class="grid-layout">
-                        <div class="col-span-12 mb-24">
-                            <h2 class="heading-l mb-8">Engineering<br/>Integrity.</h2>
-                            <p class="font-mono text-klein-blue tracking-[0.5em]">SYSTEM_ARCHITECT // 02</p>
-                        </div>
-                        
-                        <div class="card-rk col-span-4">
-                            <div class="bolt-rk bolt-tl"><i data-lucide="square" class="w-2 h-2 fill-current"></i></div>
-                            <span class="font-mono opacity-50 mb-12">STACK_V1</span>
-                            <h3 class="text-3xl font-black mb-8">FRONTEND</h3>
-                            <ul class="font-mono text-[10px] space-y-3 opacity-70">
-                                <li>VUE.JS / REACT</li>
-                                <li>THREE.JS / WEBGL</li>
-                                <li>GSAP / MOTION</li>
-                                <li>VANILLA CSS</li>
-                            </ul>
-                        </div>
-
-                        <div class="card-rk col-span-4">
-                            <div class="bolt-rk bolt-tl"><i data-lucide="square" class="w-2 h-2 fill-current"></i></div>
-                            <span class="font-mono opacity-50 mb-12">STACK_V2</span>
-                            <h3 class="text-3xl font-black mb-8">SYSTEMS</h3>
-                            <ul class="font-mono text-[10px] space-y-3 opacity-70">
-                                <li>C++ / SWIFT</li>
-                                <li>PYTHON / AI</li>
-                                <li>SHELL SCRIPTING</li>
-                                <li>GIT WORKFLOWS</li>
-                            </ul>
-                        </div>
-
-                        <div class="card-rk col-span-4">
-                            <div class="bolt-rk bolt-tl"><i data-lucide="square" class="w-2 h-2 fill-current"></i></div>
-                            <span class="font-mono opacity-50 mb-12">MANTRA</span>
-                            <p class="paragraph-m italic mt-auto">
-                                "Rigorous logic meets aesthetic precision."
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Repertoire / Works Section (RK Style) -->
-            <section id="works" class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container">
-                    <div class="mb-32">
-                        <h2 class="heading-xl">Selected<br/>Works.</h2>
-                        <p class="font-mono text-klein-blue mt-8 tracking-[0.3em]">HIGH_PERFORMANCE_UTILITIES</p>
-                    </div>
-
-                    <div class="grid-layout border-l border-t border-black/5">
-                        <div v-for="(app, i) in apps" :key="app.id" 
-                            class="card-rk col-span-6 group/work border-r border-b border-black/5 p-12 md:p-24 aspect-auto">
-                            <div class="flex justify-between items-start mb-24">
-                                <span class="font-mono text-klein-blue">0{{i+1}}</span>
-                                <i :data-lucide="app.icon" class="w-12 h-12 opacity-20 group-hover/work:opacity-100 transition-opacity"></i>
-                            </div>
-                            <h3 class="heading-l mb-6 group-hover/work:text-klein-blue transition-colors duration-500">{{ app.name }}</h3>
-                            <p class="paragraph-m opacity-50 mb-16 max-w-sm">{{ app.desc }}</p>
-                            <a :href="app.link" target="_blank" data-btn class="mt-auto self-start">
-                                VIEW_PROJECT
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Narrative / Photos Section (RK Style) -->
-            <section id="photos" class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container">
-                    <div class="grid-layout mb-32">
-                        <div class="col-span-8">
-                            <h2 class="heading-xl">Visual<br/>Narrative.</h2>
-                        </div>
-                        <div class="col-span-4 flex items-end justify-end">
-                            <p class="font-mono text-klein-blue tracking-[0.3em]">CAPTURED_MOMENTS</p>
-                        </div>
-                    </div>
-
-                    <div class="grid-layout">
-                        <div v-for="(photo, index) in photos.slice(0, 4)" :key="index" 
-                            class="card-rk col-span-3 p-0 overflow-hidden group aspect-[4/5]">
-                            <img :src="photo.url" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" loading="lazy">
-                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <span class="font-mono text-[8px] text-klein-blue mb-2">{{ photo.date }}</span>
-                                <h3 class="text-lg font-black uppercase">{{ photo.title }}</h3>
-                            </div>
-                        </div>
-                        <div class="card-rk col-span-12 flex items-center justify-center border-t-0 p-12">
-                             <a href="https://gitmichaelqiu.github.io/photos" target="_blank" data-btn>
-                                ENTER_ARCHIVE
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Liaison / Connect Section (RK Style) -->
-            <section id="connect" class="section-rk theme-base">
-                <div class="bolt-rk bolt-tl"><i data-lucide="plus" class="w-full h-full"></i></div>
-                <div class="container">
-                    <div class="grid-layout">
-                        <div class="col-span-12 mb-32">
-                            <h2 class="heading-xl">Let's<br/>Talk.</h2>
-                        </div>
-                        <div class="col-span-12 grid-layout border-t border-black/5">
-                            <a v-for="link in [
-                                { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
-                                { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' },
-                                { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' }
-                            ]" :key="link.label" :href="link.url" target="_blank"
-                            class="col-span-4 p-12 border-r border-black/5 hover:bg-klein-blue group transition-colors flex items-center justify-between">
-                                <span class="font-black text-2xl group-hover:translate-x-4 transition-transform">{{ link.label }}</span>
-                                <i data-lucide="arrow-up-right" class="w-6 h-6 opacity-30 group-hover:opacity-100"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Footer (RK Style) -->
-            <footer class="section-rk py-12 border-t border-black/5 font-mono text-[10px] opacity-30">
-                <div class="container flex justify-between items-center">
-                    <div>BUILD_LOG // VERSION_2024.4</div>
-                    <button @click="scrollToTop" class="hover:opacity-100 transition-opacity">SCROLL_TO_TOP</button>
-                    <div>&copy; MICHAEL QIU</div>
-                </div>
-            </footer>
-        </main>
     </div>
 
     <script>
@@ -692,16 +647,6 @@
                         }
                     });
                     activeSection.value = current;
-                };
-
-                const initCursor = () => {
-                    const dot = document.querySelector('.cursor-dot');
-                    if(dot) {
-                        window.addEventListener('mousemove', (e) => {
-                            dot.style.left = `${e.clientX}px`; 
-                            dot.style.top = `${e.clientY}px`;
-                        });
-                    }
                 };
 
                 const initMagneticLogo = () => {
@@ -795,7 +740,6 @@
                     initMagneticLogo();
                     setTimeout(finishBootSequence, 2000);
                     lucide.createIcons();
-                    initCursor();
                     initLenis();
                     window.addEventListener('scroll', updateScrollProgress);
                     
