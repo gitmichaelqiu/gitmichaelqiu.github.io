@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michael Qiu | A Development Enthusiast</title>
     <link rel="shortcut icon" type="image/png" href="resources/favicon.png">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
-            darkMode: 'class', 
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
                         'bg-dark': '#050505',
-                        'bg-light': '#F2F2F7', 
+                        'bg-light': '#F2F2F7',
                         'deep-navy': '#020412',
                     },
                     fontFamily: {
@@ -40,13 +41,13 @@
             }
         }
     </script>
-    
+
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    
+
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
+
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -58,7 +59,9 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
 
     <style>
         /* ------------------------- Scaling system (RK) --------------------------------- */
@@ -66,8 +69,8 @@
             --klein-blue: #002FA7;
             --pure-black: #000000;
             --pure-white: #ffffff;
-            --pale-silver: #F8F9FB; 
-            
+            --pale-silver: #F8F9FB;
+
             /* RK Desktop */
             --size-unit: 16;
             --size-container-ideal: 1920;
@@ -75,16 +78,16 @@
             --size-container-max: 2240px;
             --size-container: clamp(var(--size-container-min), 100dvw, var(--size-container-max));
             --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
-            
+
             --vh: 1vh;
-            
+
             /* Theme Tokens */
             --bg-primary: var(--pale-silver);
             --bg-secondary: var(--pure-white);
             --text-primary: var(--pure-black);
             --text-secondary: rgba(0, 0, 0, 0.4);
             --border-color: rgba(0, 0, 0, 0.08);
-            
+
             --mi-smooth: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
@@ -96,6 +99,7 @@
                 --size-container-max: 991px;
             }
         }
+
         /* Mobile Landscape */
         @media screen and (max-width: 767px) {
             :root {
@@ -104,6 +108,7 @@
                 --size-container-max: 767px;
             }
         }
+
         /* Mobile Portrait */
         @media screen and (max-width: 479px) {
             :root {
@@ -113,17 +118,27 @@
             }
         }
 
-        ::selection { background: var(--klein-blue); color: var(--pure-white); }
-        ::-moz-selection { background: var(--klein-blue); color: var(--pure-white); }
+        ::selection {
+            background: var(--klein-blue);
+            color: var(--pure-white);
+        }
+
+        ::-moz-selection {
+            background: var(--klein-blue);
+            color: var(--pure-white);
+        }
 
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             cursor: auto !important;
         }
 
-        html, body {
+        html,
+        body {
             font-size: var(--size-font);
             background-color: var(--bg-primary);
             color: var(--text-primary);
@@ -223,6 +238,7 @@
             gap: 0;
             opacity: 0.03;
         }
+
         .grid-line {
             border-right: 1px solid var(--text-primary);
             height: 100%;
@@ -233,6 +249,7 @@
             overflow: hidden;
             position: relative;
         }
+
         .parallax-img {
             scale: 1.2;
             will-change: transform;
@@ -243,6 +260,7 @@
             overflow: hidden;
             display: block;
         }
+
         .mask-inner {
             display: block;
             will-change: transform, opacity;
@@ -275,7 +293,9 @@
             overflow: hidden;
         }
 
-        [data-btn]:active { transform: scaleX(0.955) scaleY(0.954); }
+        [data-btn]:active {
+            transform: scaleX(0.955) scaleY(0.954);
+        }
 
         [data-btn-bg] {
             position: absolute;
@@ -321,12 +341,14 @@
                 transform: scale(calc(1/.975), calc(1/.945));
                 transition: scale .15s var(--transform-ease), transform .35s .15s var(--bounce-cubic-ease);
             }
+
             [data-btn]:is(:hover, :focus-visible) [data-btn-inner]::after {
                 clip-path: inset(0% 0% 0% 0%);
                 scale: 1;
                 translate: 0 0 0;
                 transition-delay: .075s;
             }
+
             [data-btn]:is(:hover, :focus-visible) [data-btn-text] {
                 clip-path: inset(100% 0% 0% 0%);
                 translate: 0 .25em 0;
@@ -340,6 +362,7 @@
             flex-direction: column;
             gap: 2rem;
         }
+
         .work-meta {
             display: flex;
             justify-content: space-between;
@@ -360,6 +383,7 @@
             gap: 1.5rem;
             z-index: 100;
         }
+
         .dot-item {
             width: 0.25rem;
             height: 0.25rem;
@@ -367,14 +391,20 @@
             border-radius: 50%;
             transition: all 0.4s var(--mi-smooth);
         }
+
         .dot-item.active {
             background: var(--klein-blue);
             transform: scale(2.5);
         }
 
         @media (max-width: 768px) {
-            .grid-lines { display: none; }
-            .scroll-dot { display: none; }
+            .grid-lines {
+                display: none;
+            }
+
+            .scroll-dot {
+                display: none;
+            }
         }
 
         /* RK 12-Column Content Grid */
@@ -489,6 +519,7 @@
             z-index: 1000;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
         }
+
         .nav-dock__btn {
             display: flex;
             align-items: center;
@@ -499,14 +530,17 @@
             color: var(--text-primary);
             transition: all 0.3s var(--mi-smooth);
         }
+
         .nav-dock__btn:hover {
             background: var(--bg-primary);
             color: var(--klein-blue);
         }
+
         .nav-dock__btn.active {
             background: var(--klein-blue);
             color: var(--pure-white);
         }
+
         .nav-dock__label {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6rem;
@@ -517,25 +551,51 @@
         }
 
         /* Transitions */
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-        @media (max-width: 768px) {
-            .content-grid { grid-template-columns: 1fr; }
-            .content-label { margin-bottom: 1rem; }
-            .content-body { grid-column: 1 / -1; }
-            .works-grid { grid-template-columns: 1fr; }
-            .tagline-wrapper { display: none; }
-            .nav-dock.hide-mobile { display: none; }
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: opacity 0.5s ease;
         }
 
+        .fade-enter-from,
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-label {
+                margin-bottom: 1rem;
+            }
+
+            .content-body {
+                grid-column: 1 / -1;
+            }
+
+            .works-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tagline-wrapper {
+                display: none;
+            }
+
+            .nav-dock.hide-mobile {
+                display: none;
+            }
+        }
     </style>
 </head>
+
 <body class="theme-base" style="opacity: 0;">
     <!-- RK Style Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[10002] flex items-center justify-center font-mono bg-white" style="background-color: var(--bg-primary);">
+    <div id="preloader" class="fixed inset-0 z-[10002] flex items-center justify-center font-mono bg-white"
+        style="background-color: var(--bg-primary);">
         <div class="overflow-hidden">
-            <div class="preloader-text text-klein-blue text-xs tracking-[0.3em] font-bold" style="transform: translateY(100%);">
+            <div class="preloader-text text-klein-blue text-xs tracking-[0.3em] font-bold"
+                style="transform: translateY(100%);">
                 SYSTEM_INIT_V4.1
             </div>
         </div>
@@ -549,10 +609,10 @@
 
         <!-- Scroll Progress Dots -->
         <div class="scroll-dot">
-            <div v-for="sec in ['home', 'profile', 'works', 'photos', 'connect']" 
-                 :key="sec" class="dot-item" :class="{ 'active': activeSection === sec }"></div>
+            <div v-for="sec in ['home', 'profile', 'works', 'photos', 'connect']" :key="sec" class="dot-item"
+                :class="{ 'active': activeSection === sec }"></div>
         </div>
-        
+
         <!-- Navigation Dock (RK Style) -->
         <div class="nav-dock hide-mobile">
             <a href="/" class="nav-dock__btn" :class="{ 'active': activeSection === 'home' }">
@@ -566,15 +626,21 @@
 
         <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
             <!-- Hero Section (RK Style) -->
-            <section id="home" class="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden bg-white border-b border-black/5">
+            <section id="home"
+                class="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden bg-white border-b border-black/5">
                 <div class="absolute inset-0 flex items-center justify-center p-12 md:p-32">
-                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" class="hero-logo w-full max-w-6xl h-auto" fill="var(--klein-blue)">
+                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48"
+                        class="hero-logo w-full max-w-6xl h-auto" fill="var(--klein-blue)">
                         <g>
-                            <path fill-rule="evenodd" d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z"/>
-                            <path fill-rule="evenodd" d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z"/>
+                            <path fill-rule="evenodd"
+                                d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                            <path fill-rule="evenodd"
+                                d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
                         </g>
-                        <path d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z"/>
-                        <path d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z"/>
+                        <path
+                            d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                        <path
+                            d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                     </svg>
                 </div>
 
@@ -593,13 +659,17 @@
                                 <h2 class="heading-l mb-12 mask-inner">Refusing to settle for the default.</h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Software should be a force that leaves a mark. I develop utilities that enhance the native experience with high-performance logic.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">Software should be a force that leaves a
+                                    mark. I develop utilities that enhance the native experience with high-performance
+                                    logic.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="parallax-wrap aspect-[21/9] mt-16 overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/05.jpeg" class="w-full h-full object-cover parallax-img" style="object-position: center bottom;" loading="lazy">
+                        <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/08.jpeg"
+                            class="w-full h-full object-cover parallax-img" style="object-position: center bottom;"
+                            loading="lazy">
                     </div>
                 </div>
             </section>
@@ -625,8 +695,9 @@
                                 <span class="font-mono text-klein-blue">0{{i+1}}</span>
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
-                            
-                            <div class="parallax-wrap aspect-[16/10] mb-12 bg-white border border-black/5 flex items-center justify-center p-12 transition-colors group-hover:bg-[#f8f9fb]">
+
+                            <div
+                                class="parallax-wrap aspect-[16/10] mb-12 bg-white border border-black/5 flex items-center justify-center p-12 transition-colors group-hover:bg-[#f8f9fb]">
                                 <img :src="app.img" class="w-full h-full object-contain parallax-img" loading="lazy">
                             </div>
 
@@ -659,17 +730,18 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                        <div v-for="(photo, i) in photos" :key="photo.title" 
-                             class="parallax-wrap group border border-black/5"
-                             :class="{ 
+                        <div v-for="(photo, i) in photos" :key="photo.title"
+                            class="parallax-wrap group border border-black/5" :class="{ 
                                  'col-span-1 md:col-span-4 aspect-[3/4]': true,
                                  'md:mt-16': i % 3 === 1,
                                  'md:mt-32': i % 3 === 2
                              }">
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
                                 <p class="font-mono text-[9px] text-white mb-2">{{ photo.date }}</p>
-                                <h4 class="font-bold uppercase text-xs tracking-widest text-white">{{ photo.title }}</h4>
+                                <h4 class="font-bold uppercase text-xs tracking-widest text-white">{{ photo.title }}
+                                </h4>
                             </div>
                         </div>
                     </div>
@@ -693,9 +765,10 @@
                                     { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
                                     { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' },
                                     { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' }
-                                ]" :key="link.label" :href="link.url" target="_blank" 
-                                class="flex justify-between items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group">
-                                    <span class="heading-l text-4xl group-hover:translate-x-8 transition-transform">{{ link.label }}</span>
+                                ]" :key="link.label" :href="link.url" target="_blank"
+                                    class="flex justify-between items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group">
+                                    <span class="heading-l text-4xl group-hover:translate-x-8 transition-transform">{{
+                                        link.label }}</span>
                                     <i data-lucide="arrow-up-right" class="w-10 h-10 opacity-20"></i>
                                 </a>
                             </div>
@@ -706,19 +779,24 @@
             </section>
         </main>
 
-        <footer class="w-full bg-klein-blue text-white pt-32 pb-16" style="background-color: var(--klein-blue); color: var(--pure-white);">
+        <footer class="w-full bg-klein-blue text-white pt-32 pb-16"
+            style="background-color: var(--klein-blue); color: var(--pure-white);">
             <div class="container">
                 <div class="text-[clamp(4rem,15vw,15rem)] font-black tracking-tighter leading-none mb-12 text-left">
                     Michael Qiu.
                 </div>
-                
+
                 <div class="w-full h-px bg-white/20 mb-8"></div>
-                
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center font-mono text-xs opacity-80 gap-8">
+
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center font-mono text-xs opacity-80 gap-8">
                     <div class="flex gap-8">
-                        <a href="https://github.com/gitmichaelqiu/" class="hover:text-white transition-colors opacity-70 hover:opacity-100">GitHub</a>
-                        <a href="mailto:contact@michaelqiu.com" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Email</a>
-                        <a href="https://www.kaggle.com/michaelqiu0606" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Kaggle</a>
+                        <a href="https://github.com/gitmichaelqiu/"
+                            class="hover:text-white transition-colors opacity-70 hover:opacity-100">GitHub</a>
+                        <a href="mailto:contact@michaelqiu.com"
+                            class="hover:text-white transition-colors opacity-70 hover:opacity-100">Email</a>
+                        <a href="https://www.kaggle.com/michaelqiu0606"
+                            class="hover:text-white transition-colors opacity-70 hover:opacity-100">Kaggle</a>
                     </div>
                 </div>
             </div>
@@ -744,14 +822,15 @@
                             {id: 'works', label: 'Repertoire'},
                             {id: 'photos', label: 'Narrative'},
                             {id: 'connect', label: 'Liaison'}
-                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)" class="sidebar-link">
+                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)"
+                            class="sidebar-link">
                             <div class="mask-wrap">
                                 <span class="mask-inner">{{ link.label }}</span>
                             </div>
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="container pb-12">
                     <div class="divider-rk mb-8"></div>
                     <div class="flex justify-between font-mono text-[10px] opacity-40">
@@ -774,7 +853,7 @@
                 const isSidebarOpen = ref(false);
                 const activeSection = ref('home');
                 const isBooting = ref(true);
-                
+
                 const handleNavClick = (targetId) => {
                     isSidebarOpen.value = false;
                     const el = document.getElementById(targetId);
@@ -784,7 +863,7 @@
                 const scrollToTop = () => {
                     if (lenis) lenis.scrollTo(0, { duration: 1.2 });
                 };
-                                
+
                 const apps = [
                     { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
                     { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/opt-clicker.png', link: 'https://gitmichaelqiu.github.io/OptClicker' },
@@ -842,19 +921,19 @@
                 onMounted(async () => {
                     initLenis();
                     window.addEventListener('scroll', updateScrollProgress);
-                    
+
                     await nextTick();
                     lucide.createIcons();
 
                     // Sequenced Entry with Preloader
                     const tl = gsap.timeline();
                     tl.set('body', { opacity: 1 })
-                      .to('.preloader-text', { y: "0%", duration: 1, ease: "expo.out", delay: 0.2 })
-                      .to('.preloader-text', { y: "-100%", duration: 0.8, ease: "expo.in", delay: 0.5 })
-                      .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
-                      .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
-                      .from('.nav-dock', { y: 50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
-                      .from('.hero-logo', { scale: 0.9, opacity: 0, y: 50, duration: 1.8, ease: "power4.out" }, "-=0.3");
+                        .to('.preloader-text', { y: "0%", duration: 1, ease: "expo.out", delay: 0.2 })
+                        .to('.preloader-text', { y: "-100%", duration: 0.8, ease: "expo.in", delay: 0.5 })
+                        .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
+                        .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
+                        .from('.nav-dock', { y: 50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
+                        .from('.hero-logo', { scale: 0.9, opacity: 0, y: 50, duration: 1.8, ease: "power4.out" }, "-=0.3");
 
                     // Mask Reveals for subsequent sections
                     gsap.utils.toArray('.section-rk:not(#home)').forEach(sec => {
@@ -904,10 +983,10 @@
                         });
                     });
                 });
-                
+
                 onUnmounted(() => {
                     window.removeEventListener('scroll', updateScrollProgress);
-                    if(lenis) lenis.destroy();
+                    if (lenis) lenis.destroy();
                 });
 
                 return {
@@ -918,4 +997,5 @@
         }).mount('#app');
     </script>
 </body>
+
 </html>
