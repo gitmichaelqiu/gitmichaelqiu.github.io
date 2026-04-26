@@ -607,11 +607,7 @@
             <div v-for="i in 12" :key="i" class="grid-line"></div>
         </div>
 
-        <!-- Scroll Progress Dots -->
-        <div class="scroll-dot">
-            <div v-for="sec in ['home', 'profile', 'works', 'photos', 'connect']" :key="sec" class="dot-item"
-                :class="{ 'active': activeSection === sec }"></div>
-        </div>
+
 
         <!-- Navigation Dock (RK Style) -->
         <div class="nav-dock hide-mobile">
@@ -627,10 +623,10 @@
         <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
             <!-- Hero Section (RK Style) -->
             <section id="home"
-                class="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden bg-white border-b border-black/5">
-                <div class="absolute inset-0 flex items-center justify-center p-12 md:p-32">
+                class="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden bg-gradient-to-b from-black to-[#0000ff] border-b border-black/5">
+                <div class="absolute inset-0 flex flex-col items-center justify-center p-12 md:p-32 z-10">
                     <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48"
-                        class="hero-logo w-full max-w-6xl h-auto" fill="var(--klein-blue)">
+                        class="hero-logo w-full max-w-4xl h-auto mb-12" fill="white">
                         <g>
                             <path fill-rule="evenodd"
                                 d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
@@ -642,18 +638,21 @@
                         <path
                             d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                     </svg>
+                    <div class="hero-text text-white text-center mask-wrap overflow-hidden">
+                        <h1 class="mask-inner text-[clamp(2.5rem,8vw,6rem)] font-bold tracking-tight leading-none mb-4">Michael Qiu</h1>
+                        <p class="mask-inner text-xl md:text-2xl font-light opacity-80">Systems that scale with elegant precision.</p>
+                    </div>
                 </div>
-
             </section>
 
             <!-- Profile Section (RK Style) -->
             <section id="profile" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                
                 <div class="container">
 
 
                     <div class="content-grid mb-24">
-                        <div class="content-label font-mono">_PHILOSOPHY</div>
+                        <div class="content-label font-mono !text-lg">_PHILOSOPHY</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-12 mask-inner">Refusing to settle for the default.</h2>
@@ -676,12 +675,12 @@
 
             <!-- Works Section (RK Style) -->
             <section id="works" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                
                 <div class="container">
 
 
                     <div class="content-grid mb-16">
-                        <div class="content-label font-mono">_PROJECTS</div>
+                        <div class="content-label font-mono !text-lg">_PROJECTS</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-8 mask-inner">Crafted for precision.</h2>
@@ -692,7 +691,7 @@
                     <div class="works-grid">
                         <div v-for="(app, i) in apps" :key="app.id" class="work-card group">
                             <div class="flex justify-between items-start mb-8">
-                                <span class="font-mono text-klein-blue">0{{i+1}}</span>
+                                <span class="font-mono text-klein-blue !text-2xl md:!text-4xl font-light">0{{i+1}}</span>
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
@@ -702,7 +701,7 @@
                             </div>
 
                             <div class="work-meta border-t-0 pt-0">
-                                <a :href="app.link" target="_blank" data-btn class="ml-auto">
+                                <a :href="app.link" target="_blank" data-btn class="ml-auto" style="font-size: 1rem;">
                                     <div data-btn-bg></div>
                                     <div data-btn-inner data-text="ENTER_ARCHIVE →">
                                         <span data-btn-text>VIEW_PROJECT</span>
@@ -716,12 +715,12 @@
 
             <!-- Photos Section (RK Style) -->
             <section id="photos" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                
                 <div class="container">
 
 
                     <div class="content-grid mb-24">
-                        <div class="content-label font-mono">_STORY</div>
+                        <div class="content-label font-mono !text-lg">_STORY</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-8 mask-inner">Moments captured in between.</h2>
@@ -750,12 +749,12 @@
 
             <!-- Liaison / Connect Section (RK Style) -->
             <section id="connect" class="section-rk">
-                <div class="bolt-plus"><i data-lucide="plus"></i></div>
+                
                 <div class="container">
 
 
                     <div class="content-grid mb-48">
-                        <div class="content-label font-mono">_CONTACT</div>
+                        <div class="content-label font-mono !text-lg">_CONTACT</div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-16 mask-inner">Let's build the future together.</h2>
@@ -784,20 +783,6 @@
             <div class="container">
                 <div class="text-[clamp(4rem,15vw,15rem)] font-black tracking-tighter leading-none mb-12 text-left">
                     Michael Qiu.
-                </div>
-
-                <div class="w-full h-px bg-white/20 mb-8"></div>
-
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center font-mono text-xs opacity-80 gap-8">
-                    <div class="flex gap-8">
-                        <a href="https://github.com/gitmichaelqiu/"
-                            class="hover:text-white transition-colors opacity-70 hover:opacity-100">GitHub</a>
-                        <a href="mailto:contact@michaelqiu.com"
-                            class="hover:text-white transition-colors opacity-70 hover:opacity-100">Email</a>
-                        <a href="https://www.kaggle.com/michaelqiu0606"
-                            class="hover:text-white transition-colors opacity-70 hover:opacity-100">Kaggle</a>
-                    </div>
                 </div>
             </div>
         </footer>
@@ -933,7 +918,8 @@
                         .to('#preloader', { y: "-100%", duration: 1.2, ease: "expo.inOut" })
                         .from('.grid-line', { scaleY: 0, duration: 1, stagger: 0.02, ease: "expo.inOut" }, "-=0.6")
                         .from('.nav-dock', { y: 50, opacity: 0, duration: 0.8, ease: "expo.out" }, "-=0.5")
-                        .from('.hero-logo', { scale: 0.9, opacity: 0, y: 50, duration: 1.8, ease: "power4.out" }, "-=0.3");
+                        .from('.hero-logo', { scale: 0.9, opacity: 0, y: 50, duration: 1.8, ease: "power4.out" }, "-=0.3")
+                        .from('.hero-text .mask-inner', { y: "100%", duration: 1.2, stagger: 0.1, ease: "power4.out" }, "-=1.5");
 
                     // Mask Reveals for subsequent sections
                     gsap.utils.toArray('.section-rk:not(#home)').forEach(sec => {
