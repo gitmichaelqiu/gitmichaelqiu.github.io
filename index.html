@@ -109,39 +109,41 @@
 
         /* --- RK Typography --- */
         .heading-xl {
-            font-size: clamp(4rem, 12vw, 12rem);
+            font-size: clamp(4rem, 11vw, 11rem);
             font-weight: 900;
-            letter-spacing: -0.06em;
-            line-height: 0.9;
+            letter-spacing: -0.07em;
+            line-height: 0.85;
             text-transform: none;
         }
 
         .heading-l {
-            font-size: clamp(2rem, 5vw, 5rem);
+            font-size: clamp(2rem, 4.5vw, 4.5rem);
             font-weight: 900;
-            letter-spacing: -0.05em;
-            line-height: 1;
+            letter-spacing: -0.06em;
+            line-height: 0.95;
         }
 
         .paragraph-l {
-            font-size: clamp(1.2rem, 2.5vw, 2.8rem);
-            line-height: 1.15;
-            font-weight: 500;
-            letter-spacing: -0.03em;
+            font-size: clamp(1.1rem, 2.2vw, 2.5rem);
+            line-height: 1.1;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            opacity: 0.9;
         }
 
         .paragraph-m {
-            font-size: 1.125rem;
-            line-height: 1.4;
-            letter-spacing: -0.01em;
+            font-size: 1rem;
+            line-height: 1.5;
+            letter-spacing: 0;
+            font-weight: 400;
             color: var(--text-secondary);
         }
 
         .font-mono {
             font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            font-size: 0.6rem;
             font-weight: 700;
         }
 
@@ -432,31 +434,30 @@
 
         <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
             <!-- Hero Section (RK Style) -->
-            <section id="home" class="section-rk min-h-screen flex flex-col justify-center relative overflow-hidden border-t-0">
+            <section id="home" class="section-rk min-h-screen flex flex-col justify-end pb-32 relative overflow-hidden border-t-0">
                 <div class="container">
                     <!-- Tagline Wrapper -->
                     <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-4">
+                        <div class="tagline-item col-span-3">
                             <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M0 0L14 14H0V0Z" fill="currentColor"></path></svg></div>
                             <div class="font-mono">MICHAEL QIU</div>
                         </div>
-                        <div class="tagline-item col-span-4">
-                            <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="currentColor"></circle></svg></div>
-                            <div class="font-mono">SYSTEM_INIT_V4</div>
+                        <div class="tagline-item col-span-3">
+                            <div class="font-mono opacity-40">SYSTEM_INIT_V4.1</div>
                         </div>
-                        <div class="tagline-item col-span-4 justify-self-end">
-                            <div class="font-mono text-klein-blue">AVAILABLE_NOW</div>
+                        <div class="tagline-item col-span-6 justify-self-end">
+                            <div class="font-mono text-klein-blue">AVAILABILITY // OPEN_FOR_RELIABLE_WORK</div>
                         </div>
                     </div>
 
                     <div class="content-grid pt-12">
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h1 class="heading-xl mb-12 mask-inner">Michael Qiu. Design & Code for systems that scale.</h1>
+                                <h1 class="heading-xl mb-16 mask-inner">Crafting digital tools with systematic precision.</h1>
                             </div>
-                            <div class="divider-rk mb-12"></div>
+                            <div class="divider-rk mb-16 opacity-30"></div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-4xl mask-inner">Creative Engineer at the intersection of technical architecture and visual narrative. Building digital experiences that are as invisible as they are powerful.</p>
+                                <p class="paragraph-l max-w-2xl mask-inner">Creative Engineer at the intersection of technical architecture and visual narrative. Building digital experiences that are as invisible as they are powerful.</p>
                             </div>
                         </div>
                     </div>
@@ -468,28 +469,26 @@
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
                     <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-4">
+                        <div class="tagline-item col-span-3">
                             <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
-                            <div class="font-mono">PHILOSOPHY</div>
+                            <div class="font-mono">PERSONA</div>
                         </div>
-                        <div class="tagline-item col-span-8">
-                            <div class="font-mono opacity-40">AUGUST 2024 — FUTURE</div>
+                        <div class="tagline-item col-span-9">
+                            <div class="font-mono opacity-40">2024 — FOREVER // PERSISTENT_LOGIC</div>
                         </div>
                     </div>
 
-                    <div class="content-grid mb-32">
-                        <div class="content-label font-mono">_OVERVIEW</div>
+                    <div class="content-grid mb-48">
+                        <div class="content-label font-mono">_PHILOSOPHY</div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-12 mask-inner">Refusing to settle for the default.</h2>
+                                <h2 class="heading-l mb-16 mask-inner">Refusing to settle for the default experience.</h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l mask-inner">Software should be a force that leaves a mark. I develop utilities that enhance the native experience, primarily within the macOS ecosystem, focusing on high-performance logic and minimalist aesthetics.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">Software should be a force that leaves a mark. I develop utilities that enhance the native experience, primarily within the macOS ecosystem, focusing on high-performance logic and minimalist aesthetics.</p>
                             </div>
                         </div>
                     </div>
-
-                    <div class="divider-rk mb-24"></div>
 
                     <div class="content-grid">
                         <div class="content-label font-mono">_REPERTOIRE</div>
@@ -498,14 +497,18 @@
                                 { title: 'SYSTEM_TOOLS', text: 'Developing utilities that enhance the native macOS experience through low-level API hooks.' },
                                 { title: 'VISUAL_LOGIC', text: 'Crafting interfaces that leverage motion and geometry to drive user engagement.' },
                                 { title: 'AUTOMATION', text: 'Bridging the gap between manual workflows and intelligent processes.' }
-                            ]" :key="focus.title">
-                                <h3 class="font-mono text-klein-blue mb-4">{{ focus.title }}</h3>
-                                <p class="paragraph-m">{{ focus.text }}</p>
+                            ]" :key="focus.title" class="mask-wrap">
+                                <div class="mask-inner">
+                                    <h3 class="font-mono text-klein-blue mb-6">{{ focus.title }}</h3>
+                                    <p class="paragraph-m">{{ focus.text }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>            <!-- Works Section (RK Style) -->
+            </section>
+
+            <!-- Works Section (RK Style) -->
             <section id="works" class="section-rk">
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
@@ -529,25 +532,31 @@
                     </div>
 
                     <div class="works-grid">
-                        <div v-for="(app, i) in apps" :key="app.id" class="work-card">
-                            <div class="flex justify-between items-start mb-12">
+                        <div v-for="(app, i) in apps" :key="app.id" class="work-card group">
+                            <div class="flex justify-between items-start mb-16">
                                 <span class="font-mono text-klein-blue">0{{i+1}}</span>
-                                <i :data-lucide="app.icon" class="w-8 h-8 opacity-20"></i>
+                                <div class="w-16 h-16 bg-white border border-black/5 p-3 flex items-center justify-center">
+                                    <img :src="app.img" :alt="app.name" class="w-full h-full object-contain">
+                                </div>
                             </div>
-                            <div class="parallax-wrap aspect-[16/10] mb-8 bg-black/5">
-                                <img :src="`https://picsum.photos/seed/${app.id}/1600/1000`" class="w-full h-full object-cover parallax-img" loading="lazy">
-                            </div>
-                            <h3 class="heading-l mb-4">{{ app.name }}</h3>
-                            <p class="paragraph-m mb-8">{{ app.desc }}</p>
                             
-                            <div class="work-meta">
-                                <div class="font-mono text-[10px] opacity-40">MACOS // SWIFT</div>
-                                <a :href="app.link" target="_blank" data-btn>
-                                    <div data-btn-inner>
-                                        <span data-btn-text>VIEW_PROJECT</span>
-                                        <span data-btn-hover>ENTER_ARCHIVE →</span>
-                                    </div>
-                                </a>
+                            <div class="parallax-wrap aspect-[16/11] mb-12 bg-[#F0F1F3]">
+                                <img :src="`https://picsum.photos/seed/${app.id}/1600/1100`" class="w-full h-full object-cover parallax-img" loading="lazy">
+                            </div>
+
+                            <div class="pr-12">
+                                <h3 class="heading-l mb-6">{{ app.name }}</h3>
+                                <p class="paragraph-m mb-12 max-w-md">{{ app.desc }}</p>
+                                
+                                <div class="work-meta">
+                                    <div class="font-mono text-[9px] opacity-30">MACOS_V1.4 // SWIFT_REPERTOIRE</div>
+                                    <a :href="app.link" target="_blank" data-btn>
+                                        <div data-btn-inner>
+                                            <span data-btn-text>VIEW_PROJECT</span>
+                                            <span data-btn-hover>ENTER_ARCHIVE →</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -559,30 +568,32 @@
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
                     <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-4">
+                        <div class="tagline-item col-span-3">
                             <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="currentColor"></circle></svg></div>
                             <div class="font-mono">NARRATIVE</div>
                         </div>
-                        <div class="tagline-item col-span-8">
-                            <div class="font-mono opacity-40">VISUAL_JOURNAL // 2023 — 2025</div>
+                        <div class="tagline-item col-span-9">
+                            <div class="font-mono opacity-40">VISUAL_JOURNAL // 2023 — 2025 // KO_CHANG // HANGZHOU // HOKKAIDO</div>
                         </div>
                     </div>
 
-                    <div class="content-grid mb-16">
+                    <div class="content-grid mb-24">
                         <div class="content-label font-mono">_STORY</div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-8 mask-inner">Moments in time.</h2>
+                                <h2 class="heading-l mb-8 mask-inner">Moments captured in between.</h2>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div v-for="photo in photos" :key="photo.title" class="parallax-wrap group aspect-[4/5] border border-black/5">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div v-for="(photo, i) in photos" :key="photo.title" 
+                             class="parallax-wrap group aspect-[4/5] border border-black/5"
+                             :class="{ 'md:mt-24': i % 2 === 1 }">
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
-                                <p class="font-mono text-[10px] text-white mb-1">{{ photo.date }}</p>
-                                <h4 class="text-white font-bold uppercase">{{ photo.title }}</h4>
+                            <div class="absolute inset-0 bg-white/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+                                <p class="font-mono text-[9px] text-klein-blue mb-2">{{ photo.date }}</p>
+                                <h4 class="font-bold uppercase text-xs tracking-widest text-black">{{ photo.title }}</h4>
                             </div>
                         </div>
                     </div>
@@ -594,43 +605,43 @@
                 <div class="bolt-plus"><i data-lucide="plus"></i></div>
                 <div class="container">
                     <div class="tagline-wrapper">
-                        <div class="tagline-item col-span-4">
+                        <div class="tagline-item col-span-3">
                             <div class="tagline-icon"><svg viewBox="0 0 14 14" fill="none"><rect width="14" height="14" fill="currentColor"></rect></svg></div>
                             <div class="font-mono">LIAISON</div>
                         </div>
-                        <div class="tagline-item col-span-8">
-                            <div class="font-mono opacity-40">CONNECT_WITH_ME</div>
+                        <div class="tagline-item col-span-9">
+                            <div class="font-mono opacity-40">AVAILABLE_FOR_NEW_INITIATIVES</div>
                         </div>
                     </div>
 
-                    <div class="content-grid mb-24">
+                    <div class="content-grid mb-48">
                         <div class="content-label font-mono">_CONTACT</div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-12 mask-inner">Let's build the future together.</h2>
+                                <h2 class="heading-l mb-16 mask-inner">Let's build the future together.</h2>
                             </div>
-                            <div class="flex flex-col gap-6">
+                            <div class="flex flex-col">
                                 <a v-for="link in [
                                     { label: 'GITHUB', url: 'https://github.com/gitmichaelqiu/' },
                                     { label: 'EMAIL', url: 'mailto:contact@michaelqiu.com' },
                                     { label: 'KAGGLE', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank" 
-                                class="flex justify-between items-center py-8 border-b border-black/5 hover:text-klein-blue transition-colors group">
-                                    <span class="heading-l text-4xl group-hover:translate-x-4 transition-transform">{{ link.label }}</span>
-                                    <i data-lucide="arrow-up-right" class="w-8 h-8 opacity-20"></i>
+                                class="flex justify-between items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group">
+                                    <span class="heading-l text-4xl group-hover:translate-x-8 transition-transform">{{ link.label }}</span>
+                                    <i data-lucide="arrow-up-right" class="w-10 h-10 opacity-20"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="container mt-32">
                     <div class="footer-logo">MICHAEL QIU</div>
-                    <div class="divider-rk mb-8"></div>
-                    <div class="flex justify-between font-mono text-[10px] opacity-40 pb-12">
-                        <div>© 2024 — FUTURE // VERSION_4.0</div>
-                        <div>BUILT_WITH_GSAP_AND_VUE</div>
-                        <button @click="scrollToTop" class="hover:text-klein-blue transition-colors">SCROLL_TO_TOP ↑</button>
+                    <div class="divider-rk mb-12 opacity-30"></div>
+                    <div class="flex justify-between font-mono text-[9px] opacity-30 pb-16">
+                        <div>© 2024 — FUTURE // VERSION_4.1 // SYSTEM_OPTIMIZED</div>
+                        <div class="flex gap-12">
+                            <div>DESIGNED_BY_ANTIGRAVITY</div>
+                            <button @click="scrollToTop" class="hover:text-klein-blue transition-colors underline decoration-dotted">BACK_TO_TOP ↑</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -695,16 +706,19 @@
                 };
                                 
                 const apps = [
-                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', icon: 'monitor', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
-                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', icon: 'mouse-pointer-2', link: 'https://gitmichaelqiu.github.io/OptClicker' },
-                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', icon: 'layout-grid', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
+                    { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customizes the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
+                    { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/opt-clicker.png', link: 'https://gitmichaelqiu.github.io/OptClicker' },
+                    { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/space-switcher.png', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
                 ];
 
                 const photos = [
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023' },
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023' },
                     { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024' },
-                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' }
+                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' },
+                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025' },
+                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025' },
+                    { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025' }
                 ];
 
                 let lenis;
