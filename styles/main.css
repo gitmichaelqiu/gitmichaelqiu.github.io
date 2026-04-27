@@ -751,3 +751,29 @@ html.dark .grid-lines {
         display: none;
     }
 }
+/* ============================================================
+   14. Project 3D Icons
+   ============================================================ */
+.project-3d-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    cursor: grab;
+    background: radial-gradient(circle at center, rgba(0, 47, 167, 0.03) 0%, transparent 70%);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.project-3d-wrap:active {
+    cursor: grabbing;
+}
+
+.project-3d-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+html.dark .project-3d-wrap {
+    background: radial-gradient(circle at center, rgba(0, 47, 167, 0.08) 0%, transparent 70%);
+}

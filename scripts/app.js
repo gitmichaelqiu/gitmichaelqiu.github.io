@@ -291,6 +291,13 @@
                     // Particle constellation system
                     particles = initParticles('particle-layer');
 
+                    // Project 3D Icons
+                    if (window.initProject3D) {
+                        apps.forEach(function (app) {
+                            window.initProject3D('project-3d-' + app.id, app.img);
+                        });
+                    }
+
                     // ── Animation Sequence ──
                     var tl = gsap.timeline();
 
