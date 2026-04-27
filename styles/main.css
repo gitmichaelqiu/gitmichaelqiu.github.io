@@ -392,7 +392,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     font-family: 'Inter', sans-serif;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 600;
     letter-spacing: 0em;
     color: rgba(255, 255, 255, 0.8);
@@ -408,7 +408,7 @@ body {
 
 .hero__quicknav-link {
     font-family: 'Inter', sans-serif;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 500;
     letter-spacing: 0em;
     color: rgba(255, 255, 255, 0.8);
@@ -446,6 +446,7 @@ body {
     z-index: 3;
     padding: 2rem;
     gap: 2rem;
+    margin-top: -3rem;
 }
 
 .hero__logo {
