@@ -521,7 +521,7 @@
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.25rem;
             border-radius: 100px;
             border: 1px solid var(--border-color);
             z-index: 10002;
@@ -1068,9 +1068,10 @@
                 const sectionLabels = { home: 'Home', profile: 'Philosophy', works: 'Projects', photos: 'Story', connect: 'Contact' };
 
                 const handleNavClick = (targetId) => {
-                    isSidebarOpen.value = false;
-                    const el = document.getElementById(targetId);
-                    if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
+                    closeSidebar(() => {
+                        const el = document.getElementById(targetId);
+                        if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
+                    });
                 };
 
                 const scrollToTop = () => {
@@ -1098,7 +1099,26 @@
                 const pLayers = [];
                 const pState = { progress: 0 };
 
-                const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value; };
+                const closeSidebar = (callback) => {
+                    gsap.to('.sidebar-rk .mask-inner', {
+                        y: "100%",
+                        duration: 0.5,
+                        stagger: 0.05,
+                        ease: "expo.in",
+                        onComplete: () => {
+                            isSidebarOpen.value = false;
+                            if (callback) callback();
+                        }
+                    });
+                };
+
+                const toggleSidebar = () => {
+                    if (isSidebarOpen.value) {
+                        closeSidebar();
+                    } else {
+                        isSidebarOpen.value = true;
+                    }
+                };
 
                 watch(isSidebarOpen, (val) => {
                     if (val) {
