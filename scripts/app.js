@@ -79,6 +79,7 @@
             }
 
             function scrollToTop() {
+                if (isSidebarOpen.value) return;
                 if (lenis) lenis.scrollTo(0, { duration: 1.2 });
             }
 

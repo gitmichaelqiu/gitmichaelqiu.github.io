@@ -93,7 +93,7 @@
 
         <!-- Navigation Dock -->
         <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }" :style="{ bottom: navDockBottom }">
-            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn">
+            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
                 <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
             <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>

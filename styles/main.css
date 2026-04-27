@@ -528,6 +528,11 @@ body {
     color: var(--pure-white);
 }
 
+.nav-dock__btn.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
 .nav-dock__label {
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
