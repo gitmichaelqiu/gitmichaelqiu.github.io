@@ -759,9 +759,6 @@ html.dark .grid-lines {
     width: 100%;
     overflow: hidden;
     cursor: grab;
-    background: radial-gradient(circle at center, rgba(0, 47, 167, 0.03) 0%, transparent 70%);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
 }
 
 .project-3d-wrap:active {
