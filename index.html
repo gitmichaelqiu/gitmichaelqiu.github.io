@@ -27,6 +27,16 @@
                         display: ['Syncopate', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
                     },
+                    fontSize: {
+                        xs: '1.0rem',
+                        sm: '1.4rem',
+                        base: '1.7rem',
+                        lg: '1.8rem',
+                        xl: '2.2rem',
+                        '2xl': '1.625rem',
+                        '3xl': '2rem',
+                        '4xl': '2.5rem',
+                    },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -415,7 +425,7 @@
             color: var(--klein-blue);
             padding-top: 0.5rem;
             font-family: 'Inter', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: 600;
             letter-spacing: 0em;
         }
@@ -549,7 +559,7 @@
 
         .nav-dock__label {
             font-family: 'Inter', sans-serif;
-            font-size: 0.72rem;
+            font-size: 0.9rem;
             font-weight: 500;
             letter-spacing: 0.04em;
             padding: 0 1rem;
@@ -918,7 +928,7 @@
                                 <img :src="app.img" class="w-full h-full object-contain parallax-img" loading="lazy">
                             </div>
 
-                            <p class="text-base opacity-70 mb-8 max-w-md" style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;">{{ app.desc }}</p>
+                            <p class="text-base opacity-100 mb-8 max-w-md" style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;">{{ app.desc }}</p>
 
                             <div class="work-meta border-t-0 pt-0">
                                 <a :href="app.link" target="_blank" data-btn class="ml-auto" style="font-size: 1rem;">
@@ -959,8 +969,8 @@
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <p class="text-sm text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:0.05em;">{{ photo.date }}</p>
-                                <h4 class="font-bold text-lg tracking-wide text-white">{{ photo.title }}</h4>
+                                <p class="text-sm text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:0em;">{{ photo.date }}</p>
+                                <h4 class="font-bold text-lg text-white">{{ photo.title }}</h4>
                             </div>
                         </div>
                     </div>
