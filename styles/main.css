@@ -758,11 +758,6 @@ html.dark .grid-lines {
     position: relative;
     width: 100%;
     overflow: hidden;
-    cursor: grab;
-}
-
-.project-3d-wrap:active {
-    cursor: grabbing;
 }
 
 .project-3d-wrap canvas {
