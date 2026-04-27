@@ -593,7 +593,6 @@
             inset: 0;
             z-index: 2;
             pointer-events: none;
-            opacity: 0;
         }
         .hero__particles canvas {
             display: block;
@@ -1288,14 +1287,13 @@
                             if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
                         } })
                         .to('.hero__bg', { opacity: 1, duration: 1.2, ease: "power2.inOut" }, "-=0.5")
-                        .to('#particle-layer', { opacity: 1, duration: 0.6, ease: "power2.in" }, "-=0.8")
                         .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
                         .from('.hero__text .mask-inner', { y: "100%", duration: 0.6, stagger: 0.06, ease: "power3.out" }, "-=0.6")
                         .from('.hero__logo', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out" }, "-=0.45")
                         .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.4");
 
-                    // Particle dissolve: spread from center to constellation
-                    gsap.to(pState, { progress: 1, duration: 3.0, ease: "power2.out", delay: 1.5 });
+                    // Particles start spreading immediately — already mid-dissolve when preloader fades
+                    gsap.to(pState, { progress: 1, duration: 3.0, ease: "power2.out" });
                     } // end if (typeof THREE !== 'undefined')
 
                     // Mask Reveals for subsequent sections
