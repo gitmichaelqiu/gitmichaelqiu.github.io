@@ -499,7 +499,6 @@
             letter-spacing: -0.06em;
             line-height: 0.9;
             display: block;
-            margin-bottom: 1rem;
             text-decoration: none;
             color: var(--text-primary);
             transition: color 0.4s var(--mi-smooth);
@@ -1033,7 +1032,7 @@
         <transition name="fade">
             <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
                 <div class="container flex-1 flex flex-col justify-center">
-                    <div class="flex flex-col">
+                    <div class="flex flex-col" style="gap: 1rem;">
                         <a v-for="link in [
                             {id: 'home', label: 'Overview'},
                             {id: 'profile', label: 'Philosophy'},
