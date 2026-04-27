@@ -1046,6 +1046,15 @@
                                 <span class="mask-inner">{{ link.label }}</span>
                             </div>
                         </a>
+                        <a href="https://gitmichaelqiu.github.io/blog" target="_blank"
+                            class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner" style="display:flex; align-items:center;">
+                                    Blog
+                                    <i data-lucide="arrow-up-right" style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
+                                </span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </aside>
@@ -1123,6 +1132,7 @@
                 watch(isSidebarOpen, (val) => {
                     if (val) {
                         nextTick(() => {
+                            lucide.createIcons();
                             gsap.from('.sidebar-rk .mask-inner', {
                                 y: "100%",
                                 duration: 1,
