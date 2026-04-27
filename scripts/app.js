@@ -20,7 +20,7 @@
             var isBooting = ref(true);
             var showNavDock = ref(false);
             var navDockBottom = ref('2rem');
-            var sectionLabels = { home: 'Home', profile: 'Persona', works: 'Projects', photos: 'Story', connect: 'Contact' };
+            var sectionLabels = { home: 'Home', profile: 'Persona', works: 'Projects', photos: 'Story', connect: 'Links' };
 
             var lenis;
             var particles;
