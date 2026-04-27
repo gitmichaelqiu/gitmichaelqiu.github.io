@@ -3,6 +3,7 @@
    ============================================================ */
 :root {
     --klein-blue: #002FA7;
+    --klein-blue-text: var(--klein-blue);
     --pure-black: #000000;
     --pure-white: #ffffff;
     --pale-silver: #F8F9FB;
@@ -35,6 +36,14 @@ html.dark {
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.4);
     --border-color: rgba(255, 255, 255, 0.08);
+    --klein-blue-text: #5B8DEF;
+}
+
+html.dark .text-klein-blue {
+    color: var(--klein-blue-text);
+}
+html.dark .hover\:text-klein-blue:hover {
+    color: var(--klein-blue-text);
 }
 
 /* ============================================================
@@ -203,7 +212,7 @@ body {
 
 .content-label {
     grid-column: span 3;
-    color: var(--klein-blue);
+    color: var(--klein-blue-text);
     padding-top: 0.5rem;
     font-family: 'Inter', sans-serif;
     font-size: 1.5rem;
@@ -280,7 +289,7 @@ body {
     translate: 0 -.25em 0;
     scale: 1.05;
     transform-origin: top center;
-    color: var(--klein-blue);
+    color: var(--klein-blue-text);
 }
 
 [data-btn] [data-btn-text] {
@@ -411,7 +420,7 @@ body {
     width: 0.5rem;
     height: 0.5rem;
     flex-shrink: 0;
-    color: var(--klein-blue);
+    color: var(--klein-blue-text);
 }
 
 .hero__quicknav-link {
@@ -528,7 +537,7 @@ body {
 
 .nav-dock__btn:hover {
     background: var(--bg-primary);
-    color: var(--klein-blue);
+    color: var(--klein-blue-text);
 }
 
 .nav-dock__btn.active {
@@ -584,7 +593,7 @@ html.dark .grid-lines {
 }
 
 .sidebar-link:hover {
-    color: var(--klein-blue);
+    color: var(--klein-blue-text);
 }
 
 /* ============================================================
@@ -644,7 +653,7 @@ html.dark .grid-lines {
     height: 0.6rem;
     display: inline-block;
     margin-right: 0.5rem;
-    color: var(--klein-blue);
+    color: var(--klein-blue-text);
     vertical-align: middle;
     margin-top: -0.15em;
 }
