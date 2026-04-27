@@ -186,9 +186,9 @@
         }
 
         .paragraph-m {
-            font-size: 1rem;
+            font-size: 1.5rem;
             line-height: 1.5;
-            letter-spacing: 0;
+            letter-spacing: -0.02em;
             font-weight: 400;
             color: var(--text-secondary);
         }
@@ -797,7 +797,7 @@
 
         <!-- Navigation Dock -->
         <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }" :style="{ bottom: navDockBottom }">
-            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'active': activeSection === 'home' }">
+            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn">
                 <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
             <div class="nav-dock__label">{{ sectionLabels[activeSection] || activeSection }}</div>
@@ -892,7 +892,7 @@
                                     logic.</p>
                             </div>
                             <div class="mask-wrap mt-8">
-                                <p class="paragraph-m max-w-xl mask-inner">I'm Michael, a developer based in China focused on building macOS utilities and exploring the boundaries of human-computer interaction. Currently pursuing a double major in Computer Science and Mathematics at the University of California.</p>
+                                <p class="paragraph-m max-w-xl mask-inner">I'm Michael, a high school student developer based in Hangzhou focused on building macOS utilities and exploring the boundaries of human-computer interaction.</p>
                             </div>
                         </div>
                     </div>
@@ -1005,7 +1005,6 @@
                                 <a v-for="link in [
                                     { label: 'GitHub', url: 'https://github.com/gitmichaelqiu/' },
                                     { label: 'Blog', url: 'https://gitmichaelqiu.github.io/blog' },
-                                    { label: 'Email', url: 'mailto:contact@michaelqiu.com' },
                                     { label: 'Kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank"
                                     class="relative flex items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group overflow-hidden">
