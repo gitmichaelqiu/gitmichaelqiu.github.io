@@ -20,6 +20,15 @@
     --mi-smooth: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
+/* Dark Theme */
+html.dark {
+    --bg-primary: #141414;
+    --bg-secondary: #191919;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.4);
+    --border-color: rgba(255, 255, 255, 0.08);
+}
+
 /* ============================================================
    2. Reset & Base
    ============================================================ */
@@ -524,6 +533,15 @@ body {
     font-weight: 500;
     letter-spacing: 0.04em;
     padding: 0 1rem;
+}
+
+/* Dark overrides */
+html.dark .nav-dock {
+    background: rgba(20, 20, 20, 0.8);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+html.dark .grid-lines {
+    opacity: 0.06;
 }
 
 /* Sidebar */

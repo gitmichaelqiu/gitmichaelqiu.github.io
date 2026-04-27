@@ -26,6 +26,51 @@
             var particles;
             var scrollRafPending = false;
 
+            // ── Theme ──
+            var STORAGE_KEY = 'theme';
+            var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+            function getStoredTheme() {
+                try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+            }
+            function setStoredTheme(val) {
+                try { localStorage.setItem(STORAGE_KEY, val); } catch (e) {}
+            }
+
+            function resolveTheme() {
+                var stored = getStoredTheme();
+                if (stored === 'dark' || stored === 'light') return stored;
+                return systemQuery.matches ? 'dark' : 'light';
+            }
+
+            var isDark = ref(resolveTheme() === 'dark');
+
+            function applyTheme(dark) {
+                document.documentElement.classList.toggle('dark', dark);
+            }
+
+            function toggleTheme() {
+                var next = !isDark.value;
+                isDark.value = next;
+                setStoredTheme(next ? 'dark' : 'light');
+            }
+
+            watch(isDark, function (val) {
+                applyTheme(val);
+                nextTick(function () {
+                    lucide.createIcons();
+                });
+            });
+
+            function onSystemThemeChange(e) {
+                if (getStoredTheme() === null) {
+                    isDark.value = e.matches;
+                }
+            }
+
+            // Apply theme immediately (before Vue mounts)
+            applyTheme(resolveTheme() === 'dark');
+
             function handleNavClick(targetId) {
                 closeSidebar(function () {
                     var el = document.getElementById(targetId);
@@ -140,6 +185,7 @@
             onMounted(function () {
                 initLenis();
                 window.addEventListener('scroll', onScroll, { passive: true });
+                systemQuery.addEventListener('change', onSystemThemeChange);
 
                 nextTick().then(function () {
                     lucide.createIcons();
@@ -216,6 +262,7 @@
 
             onUnmounted(function () {
                 window.removeEventListener('scroll', onScroll);
+                systemQuery.removeEventListener('change', onSystemThemeChange);
                 if (particles) particles.destroy();
                 if (lenis) lenis.destroy();
             });
@@ -231,7 +278,9 @@
                 scrollToTop: scrollToTop,
                 showNavDock: showNavDock,
                 navDockBottom: navDockBottom,
-                sectionLabels: sectionLabels
+                sectionLabels: sectionLabels,
+                isDark: isDark,
+                toggleTheme: toggleTheme
             };
         }
     }).mount('#app');

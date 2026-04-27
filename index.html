@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 
 <head>
+    <script>
+        (function(){var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark');})();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michael Qiu | A Development Enthusiast</title>
@@ -94,6 +97,10 @@
                 <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
             <div class="nav-dock__label">{{ sectionLabels[activeSection] || activeSection }}</div>
+            <button @click="toggleTheme" class="nav-dock__btn" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+                <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
+            </button>
             <button @click="toggleSidebar" class="nav-dock__btn" :class="{ 'active': isSidebarOpen }">
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
@@ -260,7 +267,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
                         <div v-for="(photo, i) in photos" :key="photo.title"
-                            class="parallax-wrap group border border-black/5" :class="{ 
+                            class="parallax-wrap group border border-black/5 dark:border-white/10" :class="{
                                  'col-span-1 md:col-span-4 aspect-[3/4]': true,
                                  'md:mt-16': i % 3 === 1,
                                  'md:mt-32': i % 3 === 2
@@ -274,7 +281,7 @@
                             </div>
                         </div>
                         <a href="https://gitmichaelqiu.github.io/photos" target="_blank"
-                            class="parallax-wrap group border border-black/5 col-span-1 md:col-span-4 aspect-[3/4] md:mt-16 flex items-center justify-center bg-klein-blue hover:bg-[#0038c8] transition-colors">
+                            class="parallax-wrap group border border-black/5 dark:border-white/10 col-span-1 md:col-span-4 aspect-[3/4] md:mt-16 flex items-center justify-center bg-klein-blue hover:bg-[#0038c8] transition-colors">
                             <div class="text-center text-white">
                                 <span class="block font-bold text-lg mb-3" style="font-family:'Inter',sans-serif;">Explore All</span>
                                 <i data-lucide="arrow-up-right" class="w-8 h-8 mx-auto opacity-70 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"></i>
@@ -303,7 +310,7 @@
                                     { label: 'GitHub', url: 'https://github.com/gitmichaelqiu' },
                                     { label: 'Kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank"
-                                    class="relative flex items-center py-10 border-b border-black/5 hover:text-klein-blue transition-colors group overflow-hidden">
+                                    class="relative flex items-center py-10 border-b border-black/5 dark:border-white/10 hover:text-klein-blue transition-colors group overflow-hidden">
                                     <i data-lucide="arrow-up-right" class="absolute left-0 w-10 h-10 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
                                     <span class="heading-l text-4xl group-hover:translate-x-10 transition-transform duration-500">{{ link.label }}</span>
                                     <i data-lucide="arrow-up-right" class="w-10 h-10 opacity-20 group-hover:opacity-0 group-hover:translate-x-4 transition-all duration-500 ml-auto"></i>
