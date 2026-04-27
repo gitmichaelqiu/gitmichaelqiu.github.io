@@ -257,19 +257,14 @@
             will-change: transform;
         }
 
-        /* Hover subimage — appears on group hover (RK-style) */
+        /* Hover subimage — cursor-following (RK-style), JS-driven */
         .hover-subimg {
             position: absolute;
             opacity: 0;
             pointer-events: none;
             z-index: 2;
             object-fit: cover;
-            transition: opacity 0.5s var(--mi-smooth), transform 0.5s var(--mi-smooth);
-            transform: scale(0.92);
-        }
-        .group:hover .hover-subimg {
-            opacity: 1;
-            transform: scale(1);
+            will-change: transform, opacity;
         }
 
         /* --- Mask Reveal --- */
