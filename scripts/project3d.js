@@ -117,18 +117,14 @@
             var centerX = rect.left + rect.width / 2;
             var centerY = rect.top + rect.height / 2;
             
-            // Normalize distance to window size for broad response
             var dx = (e.clientX - centerX) / (window.innerWidth / 2);
             var dy = (e.clientY - centerY) / (window.innerHeight / 2);
             
-            // To face the cursor:
-            // Cursor right (dx > 0) -> Rotate around Y axis to turn front towards right (Negative Y rotation)
-            // Cursor left (dx < 0) -> Positive Y rotation
-            // Cursor up (dy < 0) -> Rotate around X axis to turn front towards up (Negative X rotation)
-            // Cursor down (dy > 0) -> Positive X rotation
-            
-            targetRotation.y = -dx * 0.6;
-            targetRotation.x = dy * 0.6;
+            // To face the cursor accurately:
+            // Cursor right (dx > 0) -> Rotation Y should be positive
+            // Cursor down (dy > 0) -> Rotation X should be positive
+            targetRotation.y = dx * 0.7;
+            targetRotation.x = dy * 0.7;
         };
 
         var onMouseEnter = function () { isHovered = true; };
