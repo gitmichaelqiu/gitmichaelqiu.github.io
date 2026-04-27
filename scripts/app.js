@@ -136,6 +136,64 @@
                 }
             });
 
+            // ── Section Label Animation ──
+            var sectionLabelTween;
+
+            watch(activeSection, function (newSection, oldSection) {
+                if (!oldSection || oldSection === newSection) return;
+                if (sectionLabelTween) sectionLabelTween.kill();
+
+                var dock = document.querySelector('.nav-dock');
+                var labelText = document.querySelector('.nav-dock__label-text');
+                if (!dock || !labelText) return;
+
+                var currentWidth = dock.offsetWidth;
+
+                // Freeze dock width, clip overflow during animation
+                dock.style.width = currentWidth + 'px';
+                dock.style.overflow = 'hidden';
+
+                sectionLabelTween = gsap.to(labelText, {
+                    yPercent: -110,
+                    opacity: 0,
+                    duration: 0.18,
+                    ease: 'power2.in',
+                    onComplete: function () {
+                        nextTick(function () {
+                            // Measure natural width with new text
+                            dock.style.width = '';
+                            dock.style.overflow = 'visible';
+                            var newWidth = dock.offsetWidth;
+                            dock.style.width = currentWidth + 'px';
+                            dock.style.overflow = 'hidden';
+
+                            // Place new text below, ready to slide in
+                            gsap.set(labelText, { yPercent: 110, opacity: 0 });
+
+                            sectionLabelTween = gsap.timeline({
+                                onComplete: function () {
+                                    dock.style.width = '';
+                                    dock.style.overflow = '';
+                                    sectionLabelTween = null;
+                                }
+                            });
+                            sectionLabelTween
+                                .to(dock, {
+                                    width: newWidth,
+                                    duration: 0.4,
+                                    ease: 'power2.inOut'
+                                }, 0)
+                                .to(labelText, {
+                                    yPercent: 0,
+                                    opacity: 1,
+                                    duration: 0.3,
+                                    ease: 'power2.out'
+                                }, 0.07);
+                        });
+                    }
+                });
+            });
+
             // ── Scroll Tracking (throttled via rAF) ──
 
             function updateScrollProgress() {

@@ -22,7 +22,7 @@
 
 /* Dark Theme */
 html.dark {
-    --bg-primary: #141414;
+    --bg-primary: #161819;
     --bg-secondary: #191919;
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.4);
@@ -534,6 +534,12 @@ body {
     font-weight: 500;
     letter-spacing: 0.04em;
     padding: 0 1rem;
+    overflow: hidden;
+    line-height: 1.4;
+}
+
+.nav-dock__label-text {
+    display: block;
 }
 
 /* Dark overrides */

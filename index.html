@@ -96,7 +96,7 @@
             <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn">
                 <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
-            <div class="nav-dock__label">{{ sectionLabels[activeSection] || activeSection }}</div>
+            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>
             <button @click="toggleTheme" class="nav-dock__btn" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
                 <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
                 <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
