@@ -56,7 +56,12 @@
             }
 
             watch(isDark, function (val) {
+                document.documentElement.classList.add('theme-transitioning');
+                void document.documentElement.offsetHeight;
                 applyTheme(val);
+                setTimeout(function () {
+                    document.documentElement.classList.remove('theme-transitioning');
+                }, 600);
                 nextTick(function () {
                     lucide.createIcons();
                 });

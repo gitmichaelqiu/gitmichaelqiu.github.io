@@ -20,6 +20,14 @@
     --mi-smooth: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
+/* Theme Transition */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+    transition: background-color 0.5s var(--mi-smooth), color 0.5s var(--mi-smooth), border-color 0.5s var(--mi-smooth), box-shadow 0.5s var(--mi-smooth), text-shadow 0.5s var(--mi-smooth);
+}
+
 /* Dark Theme */
 html.dark {
     --bg-primary: #161819;
