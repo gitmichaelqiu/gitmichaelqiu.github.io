@@ -169,15 +169,15 @@
                 // Freeze dock width at current size
                 var currentWidth = dock.offsetWidth;
                 dock.style.width = currentWidth + 'px';
-                dock.style.overflow = 'hidden';
 
-                // Hide Vue-bound text (it'll get updated by Vue reactively, but invisibly)
+                // Take labelText out of flow so the clone can replace it naturally
+                labelText.style.position = 'absolute';
                 gsap.set(labelText, { opacity: 0 });
 
-                // Create a clone with the OLD text to animate out
+                // Create a clone with the OLD text — in normal flow so position matches exactly
                 sectionLabelClone = document.createElement('span');
                 sectionLabelClone.textContent = sectionLabels[oldSection] || oldSection;
-                sectionLabelClone.style.cssText = 'display:block;white-space:nowrap;position:absolute;top:0;left:0;right:0;';
+                sectionLabelClone.style.cssText = 'display:block;white-space:nowrap;';
                 label.appendChild(sectionLabelClone);
 
                 // Animate old text out in the direction of travel
@@ -194,22 +194,21 @@
                         }
                         sectionLabelTween = null;
 
-                        // Vue has updated the DOM with the new text by now
-                        // Measure natural width with new content
-                        dock.style.width = '';
-                        dock.style.overflow = 'visible';
-                        var newWidth = dock.offsetWidth;
-                        dock.style.width = currentWidth + 'px';
-                        dock.style.overflow = 'hidden';
+                        // Restore labelText to flow (Vue has updated its content by now)
+                        labelText.style.position = '';
 
-                        // Place new text ready to slide in from the travel direction
+                        // Measure natural width with new text (now in flow)
+                        dock.style.width = '';
+                        var newWidth = dock.offsetWidth;
+
+                        // Re-freeze and offset new text ready to slide in
+                        dock.style.width = currentWidth + 'px';
                         gsap.set(labelText, { yPercent: inDir, opacity: 0 });
 
                         // Animate dock width and new text in simultaneously
                         sectionLabelTween = gsap.timeline({
                             onComplete: function () {
                                 dock.style.width = '';
-                                dock.style.overflow = '';
                                 sectionLabelTween = null;
                             }
                         });
