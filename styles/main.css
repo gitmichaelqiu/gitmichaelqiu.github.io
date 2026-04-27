@@ -536,6 +536,7 @@ body {
     padding: 0 1rem;
     overflow: hidden;
     line-height: 1.4;
+    position: relative;
 }
 
 .nav-dock__label-text {

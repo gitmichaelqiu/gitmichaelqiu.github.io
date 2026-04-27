@@ -269,8 +269,8 @@
                         <div v-for="(photo, i) in photos" :key="photo.title"
                             class="parallax-wrap group border border-black/5 dark:border-white/10" :class="{
                                  'col-span-1 md:col-span-4 aspect-[3/4]': true,
-                                 'md:mt-16': i % 3 === 1,
-                                 'md:mt-32': i % 3 === 2
+                                 'md:mt-6': i % 3 === 1,
+                                 'md:mt-12': i % 3 === 2
                              }">
                             <img :src="photo.url" :alt="photo.title" class="w-full h-full object-cover parallax-img">
                             <img :src="photo.url" :alt="photo.title + ' hover'" class="hover-subimg" style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
@@ -281,7 +281,7 @@
                             </div>
                         </div>
                         <a href="https://gitmichaelqiu.github.io/photos" target="_blank"
-                            class="parallax-wrap group border border-black/5 dark:border-white/10 col-span-1 md:col-span-4 aspect-[3/4] md:mt-16 flex items-center justify-center bg-klein-blue hover:bg-[#0038c8] transition-colors">
+                            class="parallax-wrap group border border-black/5 dark:border-white/10 col-span-1 md:col-span-4 aspect-[3/4] md:mt-6 flex items-center justify-center bg-klein-blue hover:bg-[#0038c8] transition-colors">
                             <div class="text-center text-white">
                                 <span class="block font-bold text-lg mb-3" style="font-family:'Inter',sans-serif;">Explore All</span>
                                 <i data-lucide="arrow-up-right" class="w-8 h-8 mx-auto opacity-70 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"></i>

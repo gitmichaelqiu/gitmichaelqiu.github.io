@@ -138,58 +138,93 @@
 
             // ── Section Label Animation ──
             var sectionLabelTween;
+            var sectionLabelClone;
+            var sectionOrder = ['home', 'profile', 'works', 'photos', 'connect'];
 
             watch(activeSection, function (newSection, oldSection) {
                 if (!oldSection || oldSection === newSection) return;
-                if (sectionLabelTween) sectionLabelTween.kill();
+
+                // Clean up previous animation and any leftover clone
+                if (sectionLabelTween) {
+                    sectionLabelTween.kill();
+                    sectionLabelTween = null;
+                }
+                if (sectionLabelClone && sectionLabelClone.parentNode) {
+                    sectionLabelClone.remove();
+                    sectionLabelClone = null;
+                }
 
                 var dock = document.querySelector('.nav-dock');
+                var label = document.querySelector('.nav-dock__label');
                 var labelText = document.querySelector('.nav-dock__label-text');
-                if (!dock || !labelText) return;
+                if (!dock || !label || !labelText) return;
 
+                // Determine scroll direction
+                var oldIdx = sectionOrder.indexOf(oldSection);
+                var newIdx = sectionOrder.indexOf(newSection);
+                var isForward = newIdx > oldIdx;
+                var outDir = isForward ? -110 : 110;
+                var inDir = isForward ? 110 : -110;
+
+                // Freeze dock width at current size
                 var currentWidth = dock.offsetWidth;
-
-                // Freeze dock width, clip overflow during animation
                 dock.style.width = currentWidth + 'px';
                 dock.style.overflow = 'hidden';
 
-                sectionLabelTween = gsap.to(labelText, {
-                    yPercent: -110,
+                // Hide Vue-bound text (it'll get updated by Vue reactively, but invisibly)
+                gsap.set(labelText, { opacity: 0 });
+
+                // Create a clone with the OLD text to animate out
+                sectionLabelClone = document.createElement('span');
+                sectionLabelClone.textContent = sectionLabels[oldSection] || oldSection;
+                sectionLabelClone.style.cssText = 'display:block;white-space:nowrap;position:absolute;top:0;left:0;right:0;';
+                label.appendChild(sectionLabelClone);
+
+                // Animate old text out in the direction of travel
+                sectionLabelTween = gsap.to(sectionLabelClone, {
+                    yPercent: outDir,
                     opacity: 0,
-                    duration: 0.18,
+                    duration: 0.2,
                     ease: 'power2.in',
                     onComplete: function () {
-                        nextTick(function () {
-                            // Measure natural width with new text
-                            dock.style.width = '';
-                            dock.style.overflow = 'visible';
-                            var newWidth = dock.offsetWidth;
-                            dock.style.width = currentWidth + 'px';
-                            dock.style.overflow = 'hidden';
+                        // Remove clone
+                        if (sectionLabelClone && sectionLabelClone.parentNode) {
+                            sectionLabelClone.remove();
+                            sectionLabelClone = null;
+                        }
+                        sectionLabelTween = null;
 
-                            // Place new text below, ready to slide in
-                            gsap.set(labelText, { yPercent: 110, opacity: 0 });
+                        // Vue has updated the DOM with the new text by now
+                        // Measure natural width with new content
+                        dock.style.width = '';
+                        dock.style.overflow = 'visible';
+                        var newWidth = dock.offsetWidth;
+                        dock.style.width = currentWidth + 'px';
+                        dock.style.overflow = 'hidden';
 
-                            sectionLabelTween = gsap.timeline({
-                                onComplete: function () {
-                                    dock.style.width = '';
-                                    dock.style.overflow = '';
-                                    sectionLabelTween = null;
-                                }
-                            });
-                            sectionLabelTween
-                                .to(dock, {
-                                    width: newWidth,
-                                    duration: 0.4,
-                                    ease: 'power2.inOut'
-                                }, 0)
-                                .to(labelText, {
-                                    yPercent: 0,
-                                    opacity: 1,
-                                    duration: 0.3,
-                                    ease: 'power2.out'
-                                }, 0.07);
+                        // Place new text ready to slide in from the travel direction
+                        gsap.set(labelText, { yPercent: inDir, opacity: 0 });
+
+                        // Animate dock width and new text in simultaneously
+                        sectionLabelTween = gsap.timeline({
+                            onComplete: function () {
+                                dock.style.width = '';
+                                dock.style.overflow = '';
+                                sectionLabelTween = null;
+                            }
                         });
+                        sectionLabelTween
+                            .to(dock, {
+                                width: newWidth,
+                                duration: 0.4,
+                                ease: 'power2.inOut'
+                            }, 0)
+                            .to(labelText, {
+                                yPercent: 0,
+                                opacity: 1,
+                                duration: 0.3,
+                                ease: 'power2.out'
+                            }, 0.07);
                     }
                 });
             });
