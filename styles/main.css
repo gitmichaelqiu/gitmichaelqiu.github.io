@@ -41,6 +41,10 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+    font-size: clamp(13px, 0.95vw, 16px);
+}
+
 html,
 body {
     background-color: var(--bg-primary);
@@ -81,7 +85,7 @@ body {
 }
 
 .paragraph-m {
-    font-size: clamp(1rem, 1.25vw, 1.5rem);
+    font-size: 1.5rem;
     line-height: 1.5;
     letter-spacing: -0.02em;
     font-weight: 400;
@@ -185,7 +189,7 @@ body {
     color: var(--klein-blue);
     padding-top: 0.5rem;
     font-family: 'Inter', sans-serif;
-    font-size: clamp(1rem, 1.25vw, 1.5rem);
+    font-size: 1.5rem;
     font-weight: 600;
     letter-spacing: 0em;
 }
@@ -215,7 +219,7 @@ body {
     align-items: center;
     justify-content: center;
     background: transparent;
-    font-size: clamp(0.55rem, 0.54vw, 0.65rem);
+    font-size: 0.65rem;
     letter-spacing: 0.1em;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
@@ -379,7 +383,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     font-family: 'Inter', sans-serif;
-    font-size: clamp(0.9rem, 1.08vw, 1.3rem);
+    font-size: 1.3rem;
     font-weight: 600;
     letter-spacing: 0em;
     color: rgba(255, 255, 255, 0.8);
@@ -395,7 +399,7 @@ body {
 
 .hero__quicknav-link {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(0.8rem, 0.92vw, 1.1rem);
+    font-size: 1.1rem;
     font-weight: 500;
     letter-spacing: 0em;
     color: rgba(255, 255, 255, 0.8);
@@ -417,7 +421,7 @@ body {
 
 .hero__quicknav-scroll-label {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(0.55rem, 0.54vw, 0.65rem);
+    font-size: 0.65rem;
     font-weight: 500;
     letter-spacing: 0.08em;
     color: rgba(255, 255, 255, 0.5);
@@ -448,7 +452,7 @@ body {
 
 .hero__name {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-size: clamp(2.5rem, 8vw, 6rem);
     font-weight: 500;
     letter-spacing: -0.06em;
     line-height: 1;
@@ -457,7 +461,7 @@ body {
 }
 
 .hero__tagline {
-    font-size: clamp(1rem, 2vw, 2rem);
+    font-size: clamp(1rem, 2vw, 1.5rem);
     font-weight: 500;
     opacity: 0.8;
     letter-spacing: -0.02em;
@@ -516,7 +520,7 @@ body {
 
 .nav-dock__label {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(0.7rem, 0.75vw, 0.9rem);
+    font-size: 0.9rem;
     font-weight: 500;
     letter-spacing: 0.04em;
     padding: 0 1rem;
