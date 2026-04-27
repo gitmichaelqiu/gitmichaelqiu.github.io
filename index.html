@@ -234,7 +234,7 @@
                                 <img :src="app.img" :alt="app.name + ' hover'" class="hover-subimg" style="width: 35%; height: auto; bottom: 8%; right: 8%;">
                             </div>
 
-                            <p class="text-base opacity-100 mb-8 max-w-md" style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;">{{ app.desc }}</p>
+                            <p class="text-base opacity-100 mb-8 max-w-md" style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;letter-spacing: -0.04em;">{{ app.desc }}</p>
 
                             <div class="work-meta border-t-0 pt-0">
                                 <a :href="app.link" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
@@ -279,8 +279,8 @@
                             <img :src="photo.url" :alt="photo.title + ' hover'" class="hover-subimg" style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <p class="text-sm text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:0em;">{{ photo.date }}</p>
-                                <h4 class="font-bold text-lg text-white">{{ photo.title }}</h4>
+                                <p class="text-sm text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">{{ photo.date }}</p>
+                                <h4 class="font-bold text-lg text-white" style="letter-spacing: -0.02em;">{{ photo.title }}</h4>
                             </div>
                         </div>
                         <a href="https://gitmichaelqiu.github.io/photos" target="_blank"

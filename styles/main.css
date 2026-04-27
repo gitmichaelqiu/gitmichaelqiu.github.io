@@ -97,14 +97,14 @@ body {
     font-size: clamp(1.1rem, 2.2vw, 2.5rem);
     line-height: 1.1;
     font-weight: 400;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
     opacity: 0.9;
 }
 
 .paragraph-m {
     font-size: 1.5rem;
     line-height: 1.5;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
     font-weight: 400;
     color: var(--text-secondary);
 }
