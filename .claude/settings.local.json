@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -oE 'class=\"[^\"]{0,300}hover[^\"]{0,300}\"' /Users/michaelqiu/Projects/04_Web_HTML/gitmichaelqiu.github.io/tmp/www.raviklaassens.com/www.raviklaassens.com/index.html)"
+    ]
+  }
+}

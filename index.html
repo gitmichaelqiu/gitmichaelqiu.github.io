@@ -257,6 +257,21 @@
             will-change: transform;
         }
 
+        /* Hover subimage — appears on group hover (RK-style) */
+        .hover-subimg {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2;
+            object-fit: cover;
+            transition: opacity 0.5s var(--mi-smooth), transform 0.5s var(--mi-smooth);
+            transform: scale(0.92);
+        }
+        .group:hover .hover-subimg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
         /* --- Mask Reveal --- */
         .mask-wrap {
             overflow: hidden;
@@ -929,6 +944,7 @@
 
                             <div class="parallax-wrap aspect-[16/10] mb-8">
                                 <img :src="app.img" class="w-full h-full object-contain parallax-img" loading="lazy">
+                                <img :src="app.img" class="hover-subimg" style="width: 35%; height: auto; bottom: 8%; right: 8%;">
                             </div>
 
                             <p class="text-base opacity-100 mb-8 max-w-md" style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;">{{ app.desc }}</p>
@@ -970,6 +986,7 @@
                                  'md:mt-32': i % 3 === 2
                              }">
                             <img :src="photo.url" class="w-full h-full object-cover parallax-img">
+                            <img :src="photo.url" class="hover-subimg" style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
                                 <p class="text-sm text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:0em;">{{ photo.date }}</p>
