@@ -236,10 +236,15 @@
                         </div>
                     </div>
 
-                    <div class="parallax-wrap aspect-[21/9] mt-16 overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/08.jpeg"
-                            alt="Michael Qiu" class="w-full h-full object-cover parallax-img grayscale-img"
-                            style="object-position: center bottom;" loading="lazy">
+                    <div class="portrait-wrap mt-16 overflow-hidden relative"
+                        style="background: linear-gradient(135deg, var(--klein-blue) 0%, #001a5c 40%, #01071a 100%);">
+                        <div class="absolute inset-0 opacity-20"
+                            style="background: radial-gradient(circle at 70% 50%, var(--gold) 0%, transparent 60%);">
+                        </div>
+                        <img src="resources/portrait.png"
+                            alt="Michael Qiu" class="portrait-img"
+                            style="object-position: center bottom; mix-blend-mode: normal;"
+                            loading="lazy">
                     </div>
                 </div>
             </section>
@@ -247,16 +252,9 @@
             <!-- Demo Reel Section -->
             <section id="demo" class="section-rk !border-t-0 !pt-0">
                 <div class="relative w-full aspect-video overflow-hidden bg-deep-navy">
-                    <!-- Placeholder: replace with your demo reel video -->
-                    <!-- <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="w-full h-full object-cover"></video> -->
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="text-center text-white/20">
-                            <i data-lucide="play" class="w-20 h-20 mx-auto mb-4 opacity-30"></i>
-                            <p class="text-base opacity-30" style="font-family:'Inter',sans-serif;letter-spacing:0.08em;">Demo Reel — Coming Soon</p>
-                        </div>
-                    </div>
+                    <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
                     <!-- Gradient overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-bg-dark to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-bg-dark via-transparent to-transparent pointer-events-none"></div>
                 </div>
             </section>
 
@@ -292,9 +290,10 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="project-3d-wrap aspect-[16/9] mb-8" :id="'project-3d-' + app.id"
-                                :data-img="app.img">
-                                <!-- Three.js Canvas will be injected here -->
+                            <div class="project-screenshot-wrap aspect-[16/9] mb-8 overflow-hidden border border-black/5 dark:border-white/5">
+                                <img :src="app.fullImg" :alt="app.name + ' screenshot'"
+                                    class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
+                                    loading="lazy">
                             </div>
 
                             <p class="text-base opacity-100 mb-8 max-w-md"

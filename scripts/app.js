@@ -89,19 +89,19 @@
             }
 
             var apps = [
-                { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
-                { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/opt-clicker.png', link: 'https://gitmichaelqiu.github.io/OptClicker' },
-                { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/space-switcher.png', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
+                { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
+                { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', link: 'https://gitmichaelqiu.github.io/OptClicker' },
+                { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
             ];
 
             var photos = [
-                { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023' },
-                { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023' },
-                { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024' },
-                { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' },
-                { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025' },
-                { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025' },
-                { url: 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025' }
+                { url: 'resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023' },
+                { url: 'resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023' },
+                { url: 'resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024' },
+                { url: 'resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' },
+                { url: 'resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025' },
+                { url: 'resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025' },
+                { url: 'resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025' }
             ];
 
             // ── Sidebar ──
@@ -291,12 +291,12 @@
                     // Particle constellation system
                     particles = initParticles('particle-layer');
 
-                    // Project 3D Icons
-                    if (window.initProject3D) {
-                        apps.forEach(function (app) {
-                            window.initProject3D('project-3d-' + app.id, app.img);
-                        });
-                    }
+                    // Project 3D Icons (disabled — using full screenshots instead)
+                    // if (window.initProject3D) {
+                    //     apps.forEach(function (app) {
+                    //         window.initProject3D('project-3d-' + app.id, app.img);
+                    //     });
+                    // }
 
                     // ── Animation Sequence ──
                     var tl = gsap.timeline();

@@ -304,6 +304,36 @@ html.dark .glass-strong {
     grid-column: 5 / span 8;
 }
 
+/* Portrait */
+.portrait-wrap {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 70vh;
+    position: relative;
+}
+
+.portrait-img {
+    height: auto;
+    width: auto;
+    max-width: 90%;
+    max-height: 65vh;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .portrait-wrap {
+        min-height: 50vh;
+    }
+    .portrait-img {
+        max-width: 95%;
+        max-height: 45vh;
+    }
+}
+
 /* RK Dividers */
 .divider-rk {
     width: 100%;
@@ -948,6 +978,17 @@ html.dark .work-card:hover::before {
     .hero__logo {
         width: min(60%, 16rem);
     }
+}
+
+/* Project Screenshot */
+.project-screenshot-wrap {
+    position: relative;
+    border-radius: 4px;
+    background: var(--bg-secondary);
+}
+
+html.dark .project-screenshot-wrap {
+    background: rgba(255, 255, 255, 0.03);
 }
 
 /* ============================================================
