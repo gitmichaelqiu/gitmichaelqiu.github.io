@@ -20,15 +20,17 @@
                 extend: {
                     colors: {
                         'klein-blue': '#002FA7',
-                        'bg-dark': '#050505',
+                        'klein-blue-bright': '#0038c8',
+                        'bg-dark': '#0a0a0a',
                         'bg-light': '#FAFAF6',
                         'deep-navy': '#020412',
+                        'gold': '#D4A853',
+                        'gold-light': '#E8C97A',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['Inter', 'sans-serif'],
                         display: ['Syncopate', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
+                        editorial: ['Playfair Display', 'serif'],
                     },
                     fontSize: {
                         xs: '1.0rem',
@@ -39,15 +41,23 @@
                         '2xl': '1.625rem',
                         '3xl': '2rem',
                         '4xl': '2.5rem',
+                        '5xl': '3.5rem',
+                        '6xl': '5rem',
+                        '7xl': '8rem',
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scroll-bounce': 'scrollBounce 2s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scrollBounce: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(8px)' },
                         }
                     }
                 }
@@ -73,7 +83,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Syncopate:wght@700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syncopate:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="styles/main.css">
@@ -188,10 +198,16 @@
                             <h1 class="hero__name mask-inner">Michael Qiu</h1>
                         </div>
                         <div class="mask-wrap">
-                            <p class="hero__tagline mask-inner">Give people wonderful tools, and they'll do wonderful
+                            <p class="hero__tagline mask-inner">Give people wonderful tools,<br>and they'll do wonderful
                                 things.</p>
                         </div>
                     </div>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div class="hero__scroll-indicator">
+                    <div class="hero__scroll-line"></div>
+                    <span class="hero__scroll-label">Scroll</span>
                 </div>
 
             </section>
@@ -210,7 +226,7 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Refuse to settle for the default.</h2>
+                                <h2 class="heading-l mb-10 mask-inner">Refuse to settle for <span class="text-editorial gradient-text">the default.</span></h2>
                             </div>
                             <div class="mask-wrap">
                                 <p class="paragraph-l max-w-3xl mask-inner">I'm Michael, a high school student developer
@@ -222,9 +238,25 @@
 
                     <div class="parallax-wrap aspect-[21/9] mt-16 overflow-hidden">
                         <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/08.jpeg"
-                            alt="Michael Qiu" class="w-full h-full object-cover parallax-img"
+                            alt="Michael Qiu" class="w-full h-full object-cover parallax-img grayscale-img"
                             style="object-position: center bottom;" loading="lazy">
                     </div>
+                </div>
+            </section>
+
+            <!-- Demo Reel Section -->
+            <section id="demo" class="section-rk !border-t-0 !pt-0">
+                <div class="relative w-full aspect-video overflow-hidden bg-deep-navy">
+                    <!-- Placeholder: replace with your demo reel video -->
+                    <!-- <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="w-full h-full object-cover"></video> -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-white/20">
+                            <i data-lucide="play" class="w-20 h-20 mx-auto mb-4 opacity-30"></i>
+                            <p class="text-base opacity-30" style="font-family:'Inter',sans-serif;letter-spacing:0.08em;">Demo Reel — Coming Soon</p>
+                        </div>
+                    </div>
+                    <!-- Gradient overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-bg-dark to-transparent"></div>
                 </div>
             </section>
 
@@ -242,11 +274,11 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Crafted for productivity;<br>Crafted for you.
+                                <h2 class="heading-l mb-10 mask-inner">Crafted for <span class="text-editorial gradient-text">productivity;</span><br>Crafted for <span class="text-editorial gradient-text">you.</span>
                                 </h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Never be satisified with the status quo of
+                                <p class="paragraph-l max-w-3xl mask-inner">Never be satisfied with the status quo of
                                     your setup. I develop features that the native systems fail to offer.</p>
                             </div>
                         </div>
@@ -260,7 +292,7 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="project-3d-wrap aspect-[16/10] mb-8" :id="'project-3d-' + app.id"
+                            <div class="project-3d-wrap aspect-[16/9] mb-8" :id="'project-3d-' + app.id"
                                 :data-img="app.img">
                                 <!-- Three.js Canvas will be injected here -->
                             </div>
@@ -297,11 +329,10 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Moments captured in between.</h2>
+                                <h2 class="heading-l mb-10 mask-inner"><span class="text-editorial-roman">Moments</span> captured in between.</h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Code captures the logic;<br>Photos capture
-                                    the soul.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner"><span class="text-editorial">Code captures the logic;</span><br><span class="text-editorial">Photos capture the soul.</span></p>
                             </div>
                         </div>
                     </div>
@@ -313,7 +344,7 @@
                                  'md:mt-6': i % 3 === 1,
                                  'md:mt-12': i % 3 === 2
                              }">
-                            <img :src="photo.url" :alt="photo.title" class="w-full h-full object-cover parallax-img">
+                            <img :src="photo.url" :alt="photo.title" class="w-full h-full object-cover parallax-img grayscale-img">
                             <img :src="photo.url" :alt="photo.title + ' hover'" class="hover-subimg"
                                 style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
                             <div
@@ -351,22 +382,23 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-16 mask-inner">Let's build the future together.</h2>
+                                <h2 class="heading-l mb-16 mask-inner">Let's build <span class="text-editorial gradient-text">the future</span> together.</h2>
                             </div>
                             <div class="flex flex-col">
                                 <a v-for="link in [
-                                    { label: 'Blog', url: 'https://gitmichaelqiu.github.io/blog' },
-                                    { label: 'GitHub', url: 'https://github.com/gitmichaelqiu' },
-                                    { label: 'Kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
+                                    { label: 'Blog', desc: 'Thoughts on development, design, and learning.', url: 'https://gitmichaelqiu.github.io/blog' },
+                                    { label: 'GitHub', desc: 'Open-source projects and contributions.', url: 'https://github.com/gitmichaelqiu' },
+                                    { label: 'Kaggle', desc: 'Data science notebooks and competitions.', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank"
-                                    class="relative flex items-center py-10 border-b border-black/5 dark:border-white/10 hover:text-klein-blue transition-colors group overflow-hidden">
+                                    class="relative flex items-center gap-8 py-10 border-b border-black/5 dark:border-white/10 hover:text-klein-blue transition-colors group overflow-hidden">
                                     <i data-lucide="arrow-up-right"
-                                        class="absolute left-0 w-10 h-10 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
-                                    <span
-                                        class="heading-l text-4xl group-hover:translate-x-10 transition-transform duration-500">{{
-                                        link.label }}</span>
+                                        class="absolute left-0 w-12 h-12 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
+                                    <div class="group-hover:translate-x-12 transition-transform duration-500">
+                                        <span class="heading-l block">{{ link.label }}</span>
+                                        <span class="text-base opacity-50 mt-1 block" style="font-family:'Inter',sans-serif;font-weight:400;">{{ link.desc }}</span>
+                                    </div>
                                     <i data-lucide="arrow-up-right"
-                                        class="w-10 h-10 opacity-20 group-hover:opacity-0 group-hover:translate-x-4 transition-all duration-500 ml-auto"></i>
+                                        class="w-10 h-10 opacity-20 group-hover:opacity-0 group-hover:translate-x-4 transition-all duration-500 ml-auto flex-shrink-0"></i>
                                 </a>
                             </div>
                         </div>
@@ -376,11 +408,62 @@
             </section>
         </main>
 
-        <footer class="w-full bg-klein-blue text-white pt-8 pb-8"
+        <footer class="w-full bg-klein-blue text-white pt-16 pb-8"
             style="background-color: var(--klein-blue); color: var(--pure-white);">
             <div class="container">
-                <div class="text-[clamp(4rem,12vw,15rem)] font-black tracking-tighter leading-none mb-8 text-left">
-                    Michael Qiu.
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+                    <!-- Brand -->
+                    <div class="md:col-span-5">
+                        <a href="#" @click.prevent="scrollToTop" class="inline-block mb-6" aria-label="Back to top">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:3rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <!-- Navigation -->
+                    <div class="md:col-span-2">
+                        <p class="text-sm opacity-50 mb-4" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Menu</p>
+                        <div class="flex flex-col gap-2">
+                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Persona</a>
+                            <a @click.prevent="handleNavClick('works')" href="#works" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Projects</a>
+                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Story</a>
+                        </div>
+                    </div>
+                    <!-- Projects -->
+                    <div class="md:col-span-2">
+                        <p class="text-sm opacity-50 mb-4" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Projects</p>
+                        <div class="flex flex-col gap-2">
+                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">DesktopRenamer</a>
+                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">OptClicker</a>
+                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">SpaceSwitcher</a>
+                        </div>
+                    </div>
+                    <!-- Connect -->
+                    <div class="md:col-span-3">
+                        <p class="text-sm opacity-50 mb-4" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Connect</p>
+                        <div class="flex flex-col gap-2">
+                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Blog</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">GitHub</a>
+                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Kaggle</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="text-[clamp(2.5rem,8vw,10rem)] font-black tracking-tighter leading-none">
+                        Michael Qiu.
+                    </div>
+                    <div class="text-sm text-white/40" style="font-family:'Inter',sans-serif;">
+                        &copy; 2026 &mdash; Hangzhou, China
+                    </div>
                 </div>
             </div>
         </footer>
