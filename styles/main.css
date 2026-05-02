@@ -900,11 +900,6 @@ html.dark .work-card:hover::before {
     color: var(--text-primary);
 }
 
-/* Connect Section Link Hover */
-.group:hover .heading-l {
-    color: var(--klein-blue-text);
-}
-
 /* ============================================================
    11. Scroll Progress Dot
    ============================================================ */

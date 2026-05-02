@@ -328,9 +328,9 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="project-screenshot-wrap mb-8 overflow-hidden" style="aspect-ratio: 16/9;">
+                            <div class="parallax-wrap mb-8" style="aspect-ratio: 16/9;">
                                 <img :src="app.fullImg" :alt="app.name + ' screenshot'"
-                                    class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]">
+                                    class="w-full h-full object-cover parallax-img">
                             </div>
 
                             <p class="text-base opacity-100 mb-8 max-w-md"
@@ -426,7 +426,7 @@
                                     { label: 'GitHub', desc: 'Open-source projects and contributions.', url: 'https://github.com/gitmichaelqiu' },
                                     { label: 'Kaggle', desc: 'Data science notebooks and competitions.', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank"
-                                    class="relative flex items-center gap-8 py-10 border-b border-black/5 dark:border-white/10 hover:text-klein-blue transition-colors group overflow-hidden">
+                                    class="relative flex items-center gap-8 py-10 border-b border-black/5 dark:border-white/10 group overflow-hidden">
                                     <i data-lucide="arrow-up-right"
                                         class="absolute left-0 w-12 h-12 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
                                     <div class="group-hover:translate-x-12 transition-transform duration-500">
