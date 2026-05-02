@@ -257,6 +257,8 @@ html.dark .glass-strong {
 .screenshot-parallax {
     overflow: visible;
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 .screenshot-parallax-img {
