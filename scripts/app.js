@@ -21,6 +21,8 @@
             var showNavDock = ref(false);
             var navDockBottom = ref('2rem');
             var sectionLabels = { home: 'Home', profile: 'Persona', works: 'Projects', photos: 'Story', connect: 'Links' };
+            var showVideoModal = ref(false);
+            var modalVideo = ref(null);
 
             var lenis;
             var particles;
@@ -86,6 +88,19 @@
             function scrollToTop() {
                 if (isSidebarOpen.value) return;
                 if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+            }
+
+            function openVideoModal() {
+                showVideoModal.value = true;
+                nextTick(function () {
+                    lucide.createIcons();
+                    if (modalVideo.value) modalVideo.value.play();
+                });
+            }
+
+            function closeVideoModal() {
+                if (modalVideo.value) modalVideo.value.pause();
+                showVideoModal.value = false;
             }
 
             var apps = [
@@ -386,7 +401,11 @@
                 navDockBottom: navDockBottom,
                 sectionLabels: sectionLabels,
                 isDark: isDark,
-                toggleTheme: toggleTheme
+                toggleTheme: toggleTheme,
+                showVideoModal: showVideoModal,
+                openVideoModal: openVideoModal,
+                closeVideoModal: closeVideoModal,
+                modalVideo: modalVideo
             };
         }
     }).mount('#app');

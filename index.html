@@ -150,6 +150,8 @@
                             </div>
                             <a @click.prevent="handleNavClick('profile')" href="#profile"
                                 class="hero__quicknav-link">Persona</a>
+                            <a @click.prevent="handleNavClick('works')" href="#works"
+                                class="hero__quicknav-link">Projects</a>
                             <a @click.prevent="handleNavClick('photos')" href="#photos"
                                 class="hero__quicknav-link">Story</a>
                         </div>
@@ -237,9 +239,10 @@
                     </div>
 
                     <div class="logo-placeholder-wrap mt-16 overflow-hidden relative flex items-center justify-center"
-                        style="background: linear-gradient(135deg, var(--klein-blue) 0%, #001a5c 40%, #01071a 100%); min-height: 50vh;">
-                        <div class="absolute inset-0 opacity-30"
-                            style="background: radial-gradient(circle at 50% 50%, var(--gold) 0%, transparent 70%);">
+                        style="background: radial-gradient(ellipse at 50% 30%, #001a5c 0%, #01071a 100%); min-height: 50vh;">
+                        <!-- Subtle gold accent glow -->
+                        <div class="absolute inset-0 opacity-20"
+                            style="background: radial-gradient(circle at 50% 60%, var(--gold) 0%, transparent 60%);">
                         </div>
                         <!-- Animated grid pattern overlay -->
                         <div class="absolute inset-0 opacity-5"
@@ -268,20 +271,40 @@
             <section id="demo" class="relative w-full" style="border-top: none;">
                 <div class="relative w-full overflow-hidden bg-deep-navy" style="aspect-ratio: 16/9;">
                     <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
-                    <!-- Subtle bottom gradient -->
-                    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 15%; background: linear-gradient(to top, var(--bg-primary), transparent);"></div>
+                    <!-- Soft bottom gradient -->
+                    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 30%; background: linear-gradient(to top, var(--bg-primary) 0%, rgba(10,10,10,0.6) 30%, transparent 100%);"></div>
                     <!-- Play button -->
-                    <a href="resources/demo-reel.mp4" target="_blank"
+                    <button @click="openVideoModal"
                         class="absolute bottom-6 right-6 z-10 flex items-center gap-2 px-5 py-3 rounded-full text-white text-sm font-medium transition-all duration-300 hover:scale-105"
-                        style="background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif; letter-spacing: 0.02em;">
+                        style="background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif; letter-spacing: 0.02em; cursor: pointer;">
                         <i data-lucide="play" class="w-4 h-4 fill-white"></i>
                         Watch Full Video
-                    </a>
+                    </button>
                 </div>
             </section>
 
+            <!-- Video Modal Overlay -->
+            <transition name="video-modal">
+                <div v-if="showVideoModal" @click.self="closeVideoModal"
+                    class="fixed inset-0 z-[10003] flex items-center justify-center p-8"
+                    style="background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+                    <button @click="closeVideoModal"
+                        class="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full text-white transition-all duration-300 hover:scale-110"
+                        style="background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;"
+                        aria-label="Close video">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                    <div class="video-modal-content relative w-full max-w-[90vw] max-h-[85vh]" style="aspect-ratio: 16/9;">
+                        <video src="resources/demo-reel.mp4" autoplay controls playsinline
+                            class="w-full h-full object-contain rounded-lg"
+                            style="box-shadow: 0 25px 80px rgba(0,0,0,0.5);"
+                            ref="modalVideo"></video>
+                    </div>
+                </div>
+            </transition>
+
             <!-- Works Section  -->
-            <section id="works" class="section-rk">
+            <section id="works" class="section-rk" style="border-top: none;">
 
                 <div class="container">
 
@@ -349,10 +372,10 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner"><span class="text-editorial-roman">Moments</span> captured in between.</h2>
+                                <h2 class="heading-l mb-10 mask-inner"><span class="text-editorial gradient-text">Moments</span> captured in between.</h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner"><span class="text-editorial">Code captures the logic;</span><br><span class="text-editorial">Photos capture the soul.</span></p>
+                                <p class="paragraph-l max-w-3xl mask-inner">Code captures the logic;<br>Photos capture the soul.</p>
                             </div>
                         </div>
                     </div>
@@ -451,7 +474,7 @@
                     </div>
                     <!-- Navigation -->
                     <div class="md:col-span-2">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Menu</p>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Navigation</p>
                         <div class="flex flex-col gap-1">
                             <a @click.prevent="handleNavClick('profile')" href="#profile" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Persona</a>
                             <a @click.prevent="handleNavClick('works')" href="#works" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Projects</a>
@@ -469,7 +492,7 @@
                     </div>
                     <!-- Connect -->
                     <div class="md:col-span-3">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Connect</p>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Links</p>
                         <div class="flex flex-col gap-1">
                             <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Blog</a>
                             <a href="https://github.com/gitmichaelqiu" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">GitHub</a>

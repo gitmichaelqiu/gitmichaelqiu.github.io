@@ -583,6 +583,11 @@ html.dark .glass-strong {
     text-align: center;
 }
 
+/* Hide mask-inner before GSAP animation to prevent flash */
+.hero__text .mask-inner {
+    transform: translateY(100%);
+}
+
 .hero__name {
     font-family: 'Inter', sans-serif;
     font-size: clamp(3.5rem, 10vw, 9rem);
@@ -903,7 +908,38 @@ html.dark .work-card:hover::before {
 }
 
 /* ============================================================
-   12. Transitions
+   12. Video Modal
+   ============================================================ */
+.video-modal-enter-active,
+.video-modal-leave-active {
+    transition: opacity 0.4s ease;
+}
+
+.video-modal-enter-active .video-modal-content,
+.video-modal-leave-active .video-modal-content {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+.video-modal-enter-from {
+    opacity: 0;
+}
+
+.video-modal-enter-from .video-modal-content {
+    transform: scale(0.9);
+    opacity: 0;
+}
+
+.video-modal-leave-to {
+    opacity: 0;
+}
+
+.video-modal-leave-to .video-modal-content {
+    transform: scale(0.95);
+    opacity: 0;
+}
+
+/* ============================================================
+   13. Transitions
    ============================================================ */
 .fade-enter-active,
 .fade-leave-active {
