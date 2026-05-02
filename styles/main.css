@@ -261,7 +261,7 @@ html.dark .glass-strong {
 
 .screenshot-parallax-img {
     display: block;
-    height: clamp(14rem, 22vw, 22rem);
+    height: clamp(14rem, 22vw, 24rem);
     width: auto;
 }
 
