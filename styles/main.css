@@ -583,11 +583,6 @@ html.dark .glass-strong {
     text-align: center;
 }
 
-/* Hide mask-inner before GSAP animation to prevent flash */
-.hero__text .mask-inner {
-    transform: translateY(100%);
-}
-
 .hero__name {
     font-family: 'Inter', sans-serif;
     font-size: clamp(3.5rem, 10vw, 9rem);
@@ -870,6 +865,27 @@ html.dark .work-card:hover::before {
 /* ============================================================
    10. Footer
    ============================================================ */
+.footer-nav-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    text-decoration: none;
+}
+.footer-nav-link:hover {
+    color: #ffffff;
+}
+
+.footer-nav-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.35rem;
+}
 .footer-logo {
     font-size: clamp(4rem, 15vw, 15rem);
     font-family: 'Inter', sans-serif;

@@ -206,12 +206,6 @@
                     </div>
                 </div>
 
-                <!-- Scroll Indicator -->
-                <div class="hero__scroll-indicator">
-                    <div class="hero__scroll-line"></div>
-                    <span class="hero__scroll-label">Scroll</span>
-                </div>
-
             </section>
 
             <!-- Profile Section  -->
@@ -334,7 +328,7 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="project-screenshot-wrap mb-8 overflow-hidden border border-black/5 dark:border-white/5 bg-black/90 flex items-center justify-center" style="aspect-ratio: 16/9;">
+                            <div class="project-screenshot-wrap mb-8 overflow-hidden" style="aspect-ratio: 16/9;">
                                 <img :src="app.fullImg" :alt="app.name + ' screenshot'"
                                     class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]">
                             </div>
@@ -473,29 +467,29 @@
                     </div>
                     <!-- Navigation -->
                     <div class="md:col-span-2">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;">Navigation</p>
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Navigation</p>
                         <div class="flex flex-col gap-1">
-                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Persona</a>
-                            <a @click.prevent="handleNavClick('works')" href="#works" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Projects</a>
-                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Story</a>
+                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="footer-nav-link">Persona</a>
+                            <a @click.prevent="handleNavClick('works')" href="#works" class="footer-nav-link">Projects</a>
+                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="footer-nav-link">Story</a>
                         </div>
                     </div>
                     <!-- Projects -->
                     <div class="md:col-span-2">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;">Projects</p>
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Projects</p>
                         <div class="flex flex-col gap-1">
-                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">DesktopRenamer</a>
-                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">OptClicker</a>
-                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">SpaceSwitcher</a>
+                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="footer-nav-link">DesktopRenamer</a>
+                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="footer-nav-link">OptClicker</a>
+                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" class="footer-nav-link">SpaceSwitcher</a>
                         </div>
                     </div>
-                    <!-- Connect -->
+                    <!-- Links -->
                     <div class="md:col-span-3">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;">Links</p>
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Links</p>
                         <div class="flex flex-col gap-1">
-                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Blog</a>
-                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">GitHub</a>
-                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Kaggle</a>
+                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="footer-nav-link">Blog</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">GitHub</a>
+                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="footer-nav-link">Kaggle</a>
                         </div>
                     </div>
                 </div>

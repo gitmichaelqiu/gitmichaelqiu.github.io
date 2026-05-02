@@ -330,6 +330,7 @@
                     var tl = gsap.timeline();
 
                     tl.set('body', { opacity: 1 })
+                        .set('.hero__text .mask-inner', { y: '100%' })
                         .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
                             var el = document.getElementById('preloader');
                             if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
@@ -337,9 +338,8 @@
                         .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
                         .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
                         .from('.hero__logo', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out" }, "-=0.45")
-                        .from('.hero__text .mask-inner', { y: "100%", duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
-                        .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
-                        .from('.hero__scroll-indicator', { opacity: 0, y: 10, duration: 0.8, ease: "power2.out" }, "-=0.2");
+                        .to('.hero__text .mask-inner', { y: 0, duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
+                        .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
 
                     // Particles start spreading immediately
                     gsap.to(particles.state, { progress: 1, duration: 3.0, ease: "power2.out" });
