@@ -378,14 +378,14 @@
                         });
                     });
 
-                    // Screenshot Parallax — full image moves as a whole
+                    // Screenshot Parallax
                     gsap.utils.toArray('.screenshot-parallax').forEach(function (wrap) {
                         var img = wrap.querySelector('.screenshot-parallax-img');
                         if (!img) return;
                         gsap.fromTo(img, {
-                            y: "-5%"
+                            y: "-3%"
                         }, {
-                            y: "5%",
+                            y: "3%",
                             ease: "none",
                             scrollTrigger: {
                                 trigger: wrap,

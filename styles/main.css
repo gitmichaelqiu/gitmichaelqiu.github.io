@@ -261,8 +261,8 @@ html.dark .glass-strong {
 
 .screenshot-parallax-img {
     display: block;
-    width: 100%;
-    height: auto;
+    height: clamp(14rem, 22vw, 22rem);
+    width: auto;
 }
 
 /* Grayscale-to-color image transition */
