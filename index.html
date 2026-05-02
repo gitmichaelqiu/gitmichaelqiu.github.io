@@ -377,14 +377,20 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
                         <div v-for="(photo, i) in photos" :key="photo.title"
-                            class="parallax-wrap group border border-black/5 dark:border-white/10" :class="{
+                            data-hover-follow
+                            class="parallax-wrap group border border-black/5 dark:border-white/10"
+                            style="overflow: visible;"
+                            :class="{
                                  'col-span-1 md:col-span-4 aspect-[3/4]': true,
                                  'md:mt-6': i % 3 === 1,
                                  'md:mt-12': i % 3 === 2
                              }">
-                            <img :src="photo.url" :alt="photo.title" class="w-full h-full object-cover parallax-img grayscale-img">
-                            <img :src="photo.url" :alt="photo.title + ' hover'" class="hover-subimg"
-                                style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
+                            <div class="overflow-hidden relative w-full h-full">
+                                <img :src="photo.url" :alt="photo.title" class="w-full h-full object-cover parallax-img grayscale-img">
+                                <img :src="photo.url" :alt="photo.title + ' hover'" class="hover-subimg"
+                                    style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
+                            </div>
+                            <span data-hover-follower class="photo-flag">{{ photo.flag }}</span>
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
                                 <p class="text-sm text-white mb-2"

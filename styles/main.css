@@ -283,6 +283,19 @@ html.dark .glass-strong {
     box-shadow: 0 20px 50px rgba(0,0,0,0.25);
 }
 
+/* Cursor-following flag emoji on photo cards */
+.photo-flag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    pointer-events: none;
+    z-index: 50;
+    font-size: 3rem;
+    line-height: 1;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+}
+
 /* Grayscale-to-color image transition */
 .grayscale-img {
     filter: grayscale(30%);

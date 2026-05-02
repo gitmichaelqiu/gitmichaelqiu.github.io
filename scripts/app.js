@@ -123,13 +123,13 @@
             ];
 
             var photos = [
-                { url: 'resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023' },
-                { url: 'resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023' },
-                { url: 'resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024' },
-                { url: 'resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025' },
-                { url: 'resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025' },
-                { url: 'resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025' },
-                { url: 'resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025' }
+                { url: 'resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023', flag: '🇹🇭' },
+                { url: 'resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023', flag: '🇹🇭' },
+                { url: 'resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024', flag: '🇨🇳' },
+                { url: 'resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025', flag: '🇦🇪' },
+                { url: 'resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025', flag: '🇯🇵' },
+                { url: 'resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025', flag: '🇯🇵' },
+                { url: 'resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025', flag: '🇯🇵' }
             ];
 
             // ── Sidebar ──
