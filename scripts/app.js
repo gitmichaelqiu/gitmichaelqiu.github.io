@@ -92,16 +92,29 @@
 
             function openVideoModal() {
                 showVideoModal.value = true;
-                nextTick(function () {
-                    lucide.createIcons();
-                    if (modalVideo.value) modalVideo.value.play();
-                });
             }
 
             function closeVideoModal() {
-                if (modalVideo.value) modalVideo.value.pause();
                 showVideoModal.value = false;
             }
+
+            watch(showVideoModal, function (val) {
+                if (val) {
+                    // Wait for transition to start rendering before trying to play
+                    nextTick(function () {
+                        nextTick(function () {
+                            lucide.createIcons();
+                            if (modalVideo.value) {
+                                modalVideo.value.play().catch(function () {});
+                            }
+                        });
+                    });
+                } else {
+                    if (modalVideo.value) {
+                        modalVideo.value.pause();
+                    }
+                }
+            });
 
             var apps = [
                 { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },

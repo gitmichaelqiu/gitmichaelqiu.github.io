@@ -262,7 +262,6 @@
                                     d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                             </svg>
                         </div>
-                        <p class="absolute bottom-8 text-white/30 text-sm z-10" style="font-family:'Inter',sans-serif;letter-spacing:0.08em;">Portrait coming soon</p>
                     </div>
                 </div>
             </section>
@@ -272,9 +271,9 @@
                 <div class="relative w-full overflow-hidden bg-deep-navy" style="aspect-ratio: 16/9;">
                     <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
                     <!-- Soft bottom gradient -->
-                    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 30%; background: linear-gradient(to top, var(--bg-primary) 0%, rgba(10,10,10,0.6) 30%, transparent 100%);"></div>
+                    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 12%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.03) 55%, transparent 100%);"></div>
                     <!-- Play button -->
-                    <button @click="openVideoModal"
+                    <button type="button" @click.prevent="openVideoModal"
                         class="absolute bottom-6 right-6 z-10 flex items-center gap-2 px-5 py-3 rounded-full text-white text-sm font-medium transition-all duration-300 hover:scale-105"
                         style="background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif; letter-spacing: 0.02em; cursor: pointer;">
                         <i data-lucide="play" class="w-4 h-4 fill-white"></i>
@@ -335,9 +334,9 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="project-screenshot-wrap mb-8 overflow-hidden border border-black/5 dark:border-white/5" style="aspect-ratio: 16/9;">
+                            <div class="project-screenshot-wrap mb-8 overflow-hidden border border-black/5 dark:border-white/5 bg-black/90 flex items-center justify-center" style="aspect-ratio: 16/9;">
                                 <img :src="app.fullImg" :alt="app.name + ' screenshot'"
-                                    class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]">
+                                    class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]">
                             </div>
 
                             <p class="text-base opacity-100 mb-8 max-w-md"
@@ -474,7 +473,7 @@
                     </div>
                     <!-- Navigation -->
                     <div class="md:col-span-2">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Navigation</p>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;">Navigation</p>
                         <div class="flex flex-col gap-1">
                             <a @click.prevent="handleNavClick('profile')" href="#profile" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Persona</a>
                             <a @click.prevent="handleNavClick('works')" href="#works" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Projects</a>
@@ -483,7 +482,7 @@
                     </div>
                     <!-- Projects -->
                     <div class="md:col-span-2">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Projects</p>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;">Projects</p>
                         <div class="flex flex-col gap-1">
                             <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">DesktopRenamer</a>
                             <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">OptClicker</a>
@@ -492,7 +491,7 @@
                     </div>
                     <!-- Connect -->
                     <div class="md:col-span-3">
-                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Links</p>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;">Links</p>
                         <div class="flex flex-col gap-1">
                             <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Blog</a>
                             <a href="https://github.com/gitmichaelqiu" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">GitHub</a>
