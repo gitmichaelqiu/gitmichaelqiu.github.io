@@ -304,34 +304,26 @@ html.dark .glass-strong {
     grid-column: 5 / span 8;
 }
 
-/* Portrait */
-.portrait-wrap {
+/* Logo Placeholder */
+.logo-placeholder-wrap {
     width: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    min-height: 70vh;
     position: relative;
 }
 
-.portrait-img {
-    height: auto;
-    width: auto;
-    max-width: 90%;
-    max-height: 65vh;
-    object-fit: contain;
-    position: relative;
-    z-index: 1;
+.logo-interactive {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@media (max-width: 768px) {
-    .portrait-wrap {
-        min-height: 50vh;
-    }
-    .portrait-img {
-        max-width: 95%;
-        max-height: 45vh;
-    }
+.logo-interactive:hover {
+    transform: scale(1.08) rotate(-2deg);
+}
+
+.logo-interactive svg {
+    transition: filter 0.6s ease;
+}
+
+.logo-interactive:hover svg {
+    filter: drop-shadow(0 30px 80px rgba(212, 168, 83, 0.4)) !important;
 }
 
 /* RK Dividers */

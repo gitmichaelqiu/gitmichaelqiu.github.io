@@ -236,25 +236,47 @@
                         </div>
                     </div>
 
-                    <div class="portrait-wrap mt-16 overflow-hidden relative"
-                        style="background: linear-gradient(135deg, var(--klein-blue) 0%, #001a5c 40%, #01071a 100%);">
-                        <div class="absolute inset-0 opacity-20"
-                            style="background: radial-gradient(circle at 70% 50%, var(--gold) 0%, transparent 60%);">
+                    <div class="logo-placeholder-wrap mt-16 overflow-hidden relative flex items-center justify-center"
+                        style="background: linear-gradient(135deg, var(--klein-blue) 0%, #001a5c 40%, #01071a 100%); min-height: 50vh;">
+                        <div class="absolute inset-0 opacity-30"
+                            style="background: radial-gradient(circle at 50% 50%, var(--gold) 0%, transparent 70%);">
                         </div>
-                        <img src="resources/portrait.png"
-                            alt="Michael Qiu" class="portrait-img"
-                            style="object-position: center bottom; mix-blend-mode: normal;"
-                            loading="lazy">
+                        <!-- Animated grid pattern overlay -->
+                        <div class="absolute inset-0 opacity-5"
+                            style="background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 4px);">
+                        </div>
+                        <!-- Interactive Logo -->
+                        <div class="logo-interactive relative z-10 cursor-pointer"
+                            style="width: min(50%, 20rem);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white" class="w-full h-auto drop-shadow-2xl" style="filter: drop-shadow(0 20px 60px rgba(0,0,0,0.3));">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </div>
+                        <p class="absolute bottom-8 text-white/30 text-sm z-10" style="font-family:'Inter',sans-serif;letter-spacing:0.08em;">Portrait coming soon</p>
                     </div>
                 </div>
             </section>
 
             <!-- Demo Reel Section -->
-            <section id="demo" class="section-rk !border-t-0 !pt-0">
-                <div class="relative w-full aspect-video overflow-hidden bg-deep-navy">
+            <section id="demo" class="relative w-full" style="border-top: none;">
+                <div class="relative w-full overflow-hidden bg-deep-navy" style="aspect-ratio: 16/9;">
                     <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
-                    <!-- Gradient overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-bg-dark via-transparent to-transparent pointer-events-none"></div>
+                    <!-- Subtle bottom gradient -->
+                    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 15%; background: linear-gradient(to top, var(--bg-primary), transparent);"></div>
+                    <!-- Play button -->
+                    <a href="resources/demo-reel.mp4" target="_blank"
+                        class="absolute bottom-6 right-6 z-10 flex items-center gap-2 px-5 py-3 rounded-full text-white text-sm font-medium transition-all duration-300 hover:scale-105"
+                        style="background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif; letter-spacing: 0.02em;">
+                        <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+                        Watch Full Video
+                    </a>
                 </div>
             </section>
 
@@ -290,10 +312,9 @@
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="project-screenshot-wrap aspect-[16/9] mb-8 overflow-hidden border border-black/5 dark:border-white/5">
+                            <div class="project-screenshot-wrap mb-8 overflow-hidden border border-black/5 dark:border-white/5" style="aspect-ratio: 16/9;">
                                 <img :src="app.fullImg" :alt="app.name + ' screenshot'"
-                                    class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
-                                    loading="lazy">
+                                    class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]">
                             </div>
 
                             <p class="text-base opacity-100 mb-8 max-w-md"
@@ -413,9 +434,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
                     <!-- Brand -->
                     <div class="md:col-span-5">
-                        <a href="#" @click.prevent="scrollToTop" class="inline-block mb-6" aria-label="Back to top">
+                        <a href="#" @click.prevent="scrollToTop" class="inline-block mb-3" aria-label="Back to top">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
-                                style="width:3rem;height:auto">
+                                style="width:2.5rem;height:auto">
                                 <path fill-rule="evenodd"
                                     d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
                                 <path fill-rule="evenodd"
@@ -426,42 +447,40 @@
                                     d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                             </svg>
                         </a>
+                        <p class="text-xs text-white/30" style="font-family:'Inter',sans-serif;">&copy; 2026 &mdash; Hangzhou, China</p>
                     </div>
                     <!-- Navigation -->
                     <div class="md:col-span-2">
-                        <p class="text-sm opacity-50 mb-4" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Menu</p>
-                        <div class="flex flex-col gap-2">
-                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Persona</a>
-                            <a @click.prevent="handleNavClick('works')" href="#works" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Projects</a>
-                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Story</a>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Menu</p>
+                        <div class="flex flex-col gap-1">
+                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Persona</a>
+                            <a @click.prevent="handleNavClick('works')" href="#works" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Projects</a>
+                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Story</a>
                         </div>
                     </div>
                     <!-- Projects -->
                     <div class="md:col-span-2">
-                        <p class="text-sm opacity-50 mb-4" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Projects</p>
-                        <div class="flex flex-col gap-2">
-                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">DesktopRenamer</a>
-                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">OptClicker</a>
-                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">SpaceSwitcher</a>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Projects</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">DesktopRenamer</a>
+                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">OptClicker</a>
+                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">SpaceSwitcher</a>
                         </div>
                     </div>
                     <!-- Connect -->
                     <div class="md:col-span-3">
-                        <p class="text-sm opacity-50 mb-4" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Connect</p>
-                        <div class="flex flex-col gap-2">
-                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Blog</a>
-                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">GitHub</a>
-                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="text-base text-white/70 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Kaggle</a>
+                        <p class="text-xs opacity-40 mb-3" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Connect</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Blog</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">GitHub</a>
+                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="text-xs text-white/60 hover:text-white transition-colors" style="font-family:'Inter',sans-serif;">Kaggle</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="border-t border-white/10 pt-8 mt-8">
                     <div class="text-[clamp(2.5rem,8vw,10rem)] font-black tracking-tighter leading-none">
                         Michael Qiu.
-                    </div>
-                    <div class="text-sm text-white/40" style="font-family:'Inter',sans-serif;">
-                        &copy; 2026 &mdash; Hangzhou, China
                     </div>
                 </div>
             </div>
