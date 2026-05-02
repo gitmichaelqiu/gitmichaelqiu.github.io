@@ -23,6 +23,7 @@
             var sectionLabels = { home: 'Home', profile: 'Persona', works: 'Projects', photos: 'Story', connect: 'Links' };
             var showVideoModal = ref(false);
             var modalVideo = ref(null);
+            var cardHover = ref({ active: false, img: '', x: 0, y: 0 });
 
             var lenis;
             var particles;
@@ -96,6 +97,17 @@
 
             function closeVideoModal() {
                 showVideoModal.value = false;
+            }
+
+            function onCardEnter(img, e) {
+                cardHover.value = { active: true, img: img, x: e.clientX, y: e.clientY };
+            }
+            function onCardMove(e) {
+                cardHover.value.x = e.clientX;
+                cardHover.value.y = e.clientY;
+            }
+            function onCardLeave() {
+                cardHover.value.active = false;
             }
 
             watch(showVideoModal, function (val) {
@@ -436,7 +448,11 @@
                 showVideoModal: showVideoModal,
                 openVideoModal: openVideoModal,
                 closeVideoModal: closeVideoModal,
-                modalVideo: modalVideo
+                modalVideo: modalVideo,
+                cardHover: cardHover,
+                onCardEnter: onCardEnter,
+                onCardMove: onCardMove,
+                onCardLeave: onCardLeave
             };
         }
     }).mount('#app');
