@@ -6,7 +6,7 @@
     --klein-blue-text: var(--klein-blue);
     --pure-black: #000000;
     --pure-white: #ffffff;
-    --pale-silver: #F8F9FB;
+    --pale-silver: #FAFAF6;
 
     --vh: 1vh;
 
@@ -42,6 +42,7 @@ html.dark {
 html.dark .text-klein-blue {
     color: var(--klein-blue-text);
 }
+
 html.dark .hover\:text-klein-blue:hover {
     color: var(--klein-blue-text);
 }
@@ -306,9 +307,11 @@ body {
         background: var(--klein-blue);
         border-color: var(--klein-blue);
     }
+
     [data-btn]:is(:hover, :focus-visible) [data-btn-bg] {
         background: var(--klein-blue);
     }
+
     [data-btn]:is(:hover, :focus-visible) [data-btn-inner]::after {
         clip-path: inset(0% 0% 0% 0%);
         scale: 1;
@@ -316,6 +319,7 @@ body {
         transition-delay: .075s;
         color: var(--pure-white);
     }
+
     [data-btn]:is(:hover, :focus-visible) [data-btn-text] {
         clip-path: inset(100% 0% 0% 0%);
         translate: 0 .25em 0;
@@ -364,6 +368,7 @@ body {
     z-index: 2;
     pointer-events: none;
 }
+
 .hero__particles canvas {
     display: block;
     width: 100%;
@@ -570,6 +575,7 @@ html.dark .nav-dock {
     background: rgba(20, 20, 20, 0.8);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
+
 html.dark .grid-lines {
     opacity: 0.06;
 }
@@ -751,6 +757,7 @@ html.dark .grid-lines {
         display: none;
     }
 }
+
 /* ============================================================
    14. Project 3D Icons
    ============================================================ */

@@ -3,7 +3,7 @@
 
 <head>
     <script>
-        (function(){var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark');})();
+        (function () { var t = localStorage.getItem('theme'); if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark'); })();
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +21,7 @@
                     colors: {
                         'klein-blue': '#002FA7',
                         'bg-dark': '#050505',
-                        'bg-light': '#F2F2F7',
+                        'bg-light': '#FAFAF6',
                         'deep-navy': '#020412',
                     },
                     fontFamily: {
@@ -92,12 +92,15 @@
 
 
         <!-- Navigation Dock -->
-        <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }" :style="{ bottom: navDockBottom }">
+        <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }"
+            :style="{ bottom: navDockBottom }">
             <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
                 <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
-            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>
-            <button @click="toggleTheme" class="nav-dock__btn" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] ||
+                    activeSection }}</span></div>
+            <button @click="toggleTheme" class="nav-dock__btn"
+                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
                 <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
                 <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
             </button>
@@ -117,11 +120,16 @@
                 <nav class="hero__quicknav hide-mobile">
                     <div class="hero__quicknav-logo">
                         <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white" style="width:4.5rem;height:auto">
-                                <path fill-rule="evenodd" d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z"/>
-                                <path fill-rule="evenodd" d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z"/>
-                                <path d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z"/>
-                                <path d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:4.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                             </svg>
                         </a>
                     </div>
@@ -130,24 +138,32 @@
                             <div class="hero__quicknav-label">
                                 Navigation
                             </div>
-                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="hero__quicknav-link">Persona</a>
-                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="hero__quicknav-link">Story</a>
+                            <a @click.prevent="handleNavClick('profile')" href="#profile"
+                                class="hero__quicknav-link">Persona</a>
+                            <a @click.prevent="handleNavClick('photos')" href="#photos"
+                                class="hero__quicknav-link">Story</a>
                         </div>
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
                                 Projects
                             </div>
-                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="hero__quicknav-link">DesktopRenamer</a>
-                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="hero__quicknav-link">OptClicker</a>
-                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" class="hero__quicknav-link">SpaceSwitcher</a>
+                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank"
+                                class="hero__quicknav-link">DesktopRenamer</a>
+                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank"
+                                class="hero__quicknav-link">OptClicker</a>
+                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank"
+                                class="hero__quicknav-link">SpaceSwitcher</a>
                         </div>
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
                                 Links
                             </div>
-                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="hero__quicknav-link">Blog</a>
-                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="hero__quicknav-link">GitHub</a>
-                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="hero__quicknav-link">Kaggle</a>
+                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank"
+                                class="hero__quicknav-link">Blog</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank"
+                                class="hero__quicknav-link">GitHub</a>
+                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank"
+                                class="hero__quicknav-link">Kaggle</a>
                         </div>
                     </div>
                 </nav>
@@ -168,8 +184,13 @@
                             d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                     </svg>
                     <div class="hero__text">
-                        <div class="mask-wrap"><h1 class="hero__name mask-inner">Michael Qiu</h1></div>
-                        <div class="mask-wrap"><p class="hero__tagline mask-inner">Give people wonderful tools, and they'll do wonderful things.</p></div>
+                        <div class="mask-wrap">
+                            <h1 class="hero__name mask-inner">Michael Qiu</h1>
+                        </div>
+                        <div class="mask-wrap">
+                            <p class="hero__tagline mask-inner">Give people wonderful tools, and they'll do wonderful
+                                things.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -177,47 +198,56 @@
 
             <!-- Profile Section  -->
             <section id="profile" class="section-rk">
-                
+
                 <div class="container">
 
 
                     <div class="content-grid mb-24">
                         <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>Persona</div>
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Persona
+                        </div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-10 mask-inner">Refuse to settle for the default.</h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">I'm Michael, a high school student developer based in Hangzhou focused on building macOS utilities and exploring the boundaries of human-computer interaction.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">I'm Michael, a high school student developer
+                                    based in Hangzhou focused on building macOS utilities and exploring the boundaries
+                                    of human-computer interaction.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="parallax-wrap aspect-[21/9] mt-16 overflow-hidden">
                         <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/photos/08.jpeg"
-                            alt="Michael Qiu"
-                            class="w-full h-full object-cover parallax-img" style="object-position: center bottom;"
-                            loading="lazy">
+                            alt="Michael Qiu" class="w-full h-full object-cover parallax-img"
+                            style="object-position: center bottom;" loading="lazy">
                     </div>
                 </div>
             </section>
 
             <!-- Works Section  -->
             <section id="works" class="section-rk">
-                
+
                 <div class="container">
 
 
                     <div class="content-grid mb-16">
                         <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>Projects</div>
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Projects
+                        </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Crafted for productivity;<br>Crafted for you.</h2>
+                                <h2 class="heading-l mb-10 mask-inner">Crafted for productivity;<br>Crafted for you.
+                                </h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Never be satisified with the status quo of your setup. I develop features that the native systems fail to offer.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">Never be satisified with the status quo of
+                                    your setup. I develop features that the native systems fail to offer.</p>
                             </div>
                         </div>
                     </div>
@@ -225,18 +255,23 @@
                     <div class="works-grid">
                         <div v-for="(app, i) in apps" :key="app.id" class="work-card group">
                             <div class="flex justify-between items-start mb-8">
-                                <span class="text-klein-blue !text-2xl md:!text-4xl font-light" style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">0{{i+1}}</span>
+                                <span class="text-klein-blue !text-2xl md:!text-4xl font-light"
+                                    style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">0{{i+1}}</span>
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
-                            <div class="project-3d-wrap aspect-[16/10] mb-8" :id="'project-3d-' + app.id" :data-img="app.img">
+                            <div class="project-3d-wrap aspect-[16/10] mb-8" :id="'project-3d-' + app.id"
+                                :data-img="app.img">
                                 <!-- Three.js Canvas will be injected here -->
                             </div>
 
-                            <p class="text-base opacity-100 mb-8 max-w-md" style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;letter-spacing: -0.04em;">{{ app.desc }}</p>
+                            <p class="text-base opacity-100 mb-8 max-w-md"
+                                style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;letter-spacing: -0.04em;">
+                                {{ app.desc }}</p>
 
                             <div class="work-meta border-t-0 pt-0">
-                                <a :href="app.link" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
+                                <a :href="app.link" target="_blank" data-btn class="ml-auto"
+                                    style="font-size: 1.2rem; letter-spacing: 0em;">
                                     <div data-btn-bg></div>
                                     <div data-btn-inner data-text="View Project">
                                         <span data-btn-text>View Project</span>
@@ -250,19 +285,23 @@
 
             <!-- Photos Section -->
             <section id="photos" class="section-rk">
-                
+
                 <div class="container">
 
 
                     <div class="content-grid mb-24">
                         <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>Story</div>
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Story
+                        </div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-10 mask-inner">Moments captured in between.</h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Code captures the logic;<br>Photos capture the soul.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">Code captures the logic;<br>Photos capture
+                                    the soul.</p>
                             </div>
                         </div>
                     </div>
@@ -275,18 +314,23 @@
                                  'md:mt-12': i % 3 === 2
                              }">
                             <img :src="photo.url" :alt="photo.title" class="w-full h-full object-cover parallax-img">
-                            <img :src="photo.url" :alt="photo.title + ' hover'" class="hover-subimg" style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
+                            <img :src="photo.url" :alt="photo.title + ' hover'" class="hover-subimg"
+                                style="width: 32%; height: auto; aspect-ratio: 3/4; top: 10%; right: 10%;">
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                                <p class="text-sm text-white mb-2" style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">{{ photo.date }}</p>
-                                <h4 class="font-bold text-lg text-white" style="letter-spacing: -0.02em;">{{ photo.title }}</h4>
+                                <p class="text-sm text-white mb-2"
+                                    style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">{{ photo.date }}</p>
+                                <h4 class="font-bold text-lg text-white" style="letter-spacing: -0.02em;">{{ photo.title
+                                    }}</h4>
                             </div>
                         </div>
                         <a href="https://gitmichaelqiu.github.io/photos" target="_blank"
                             class="parallax-wrap group border border-black/5 dark:border-white/10 col-span-1 md:col-span-4 aspect-[3/4] md:mt-6 flex items-center justify-center bg-klein-blue hover:bg-[#0038c8] transition-colors">
                             <div class="text-center text-white">
-                                <span class="block font-bold text-lg mb-3" style="font-family:'Inter',sans-serif;">Explore All</span>
-                                <i data-lucide="arrow-up-right" class="w-8 h-8 mx-auto opacity-70 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"></i>
+                                <span class="block font-bold text-lg mb-3"
+                                    style="font-family:'Inter',sans-serif;">Explore All</span>
+                                <i data-lucide="arrow-up-right"
+                                    class="w-8 h-8 mx-auto opacity-70 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"></i>
                             </div>
                         </a>
                     </div>
@@ -295,13 +339,16 @@
 
             <!-- Liaison / Connect Section -->
             <section id="connect" class="section-rk">
-                
+
                 <div class="container">
 
 
                     <div class="content-grid mb-16">
                         <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>Links</div>
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Links
+                        </div>
                         <div class="content-body">
                             <div class="mask-wrap">
                                 <h2 class="heading-l mb-16 mask-inner">Let's build the future together.</h2>
@@ -313,9 +360,13 @@
                                     { label: 'Kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
                                 ]" :key="link.label" :href="link.url" target="_blank"
                                     class="relative flex items-center py-10 border-b border-black/5 dark:border-white/10 hover:text-klein-blue transition-colors group overflow-hidden">
-                                    <i data-lucide="arrow-up-right" class="absolute left-0 w-10 h-10 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
-                                    <span class="heading-l text-4xl group-hover:translate-x-10 transition-transform duration-500">{{ link.label }}</span>
-                                    <i data-lucide="arrow-up-right" class="w-10 h-10 opacity-20 group-hover:opacity-0 group-hover:translate-x-4 transition-all duration-500 ml-auto"></i>
+                                    <i data-lucide="arrow-up-right"
+                                        class="absolute left-0 w-10 h-10 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
+                                    <span
+                                        class="heading-l text-4xl group-hover:translate-x-10 transition-transform duration-500">{{
+                                        link.label }}</span>
+                                    <i data-lucide="arrow-up-right"
+                                        class="w-10 h-10 opacity-20 group-hover:opacity-0 group-hover:translate-x-4 transition-all duration-500 ml-auto"></i>
                                 </a>
                             </div>
                         </div>
@@ -351,12 +402,12 @@
                                 <span class="mask-inner">{{ link.label }}</span>
                             </div>
                         </a>
-                        <a href="https://gitmichaelqiu.github.io/blog" target="_blank"
-                            class="sidebar-link group">
+                        <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="sidebar-link group">
                             <div class="mask-wrap">
                                 <span class="mask-inner" style="display:flex; align-items:center;">
                                     Blog
-                                    <i data-lucide="arrow-up-right" style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
+                                    <i data-lucide="arrow-up-right"
+                                        style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
                                 </span>
                             </div>
                         </a>
