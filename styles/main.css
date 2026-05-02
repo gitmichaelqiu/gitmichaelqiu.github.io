@@ -253,6 +253,18 @@ html.dark .glass-strong {
     scale: 1.2;
 }
 
+/* Screenshot Parallax — full image visible, gentle movement */
+.screenshot-parallax {
+    overflow: visible;
+    position: relative;
+}
+
+.screenshot-parallax-img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 /* Grayscale-to-color image transition */
 .grayscale-img {
     filter: grayscale(30%);
@@ -765,7 +777,6 @@ html.dark .grid-lines {
     padding: 4rem;
     transition: background-color 0.6s var(--mi-smooth), transform 0.5s var(--mi-smooth);
     position: relative;
-    overflow: hidden;
 }
 
 .work-card::before {

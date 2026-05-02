@@ -378,6 +378,24 @@
                         });
                     });
 
+                    // Screenshot Parallax — full image moves as a whole
+                    gsap.utils.toArray('.screenshot-parallax').forEach(function (wrap) {
+                        var img = wrap.querySelector('.screenshot-parallax-img');
+                        if (!img) return;
+                        gsap.fromTo(img, {
+                            y: "-5%"
+                        }, {
+                            y: "5%",
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: wrap,
+                                start: "top bottom",
+                                end: "bottom top",
+                                scrub: true
+                            }
+                        });
+                    });
+
                     // Bolt Rotation
                     gsap.utils.toArray('.bolt-plus').forEach(function (bolt) {
                         gsap.to(bolt, {
