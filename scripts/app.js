@@ -117,9 +117,9 @@
             });
 
             var apps = [
-                { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
-                { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', link: 'https://gitmichaelqiu.github.io/OptClicker' },
-                { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
+                { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', fullImgDark: 'resources/works/desktop-renamer-full-dark.png', link: 'https://gitmichaelqiu.github.io/DesktopRenamer' },
+                { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', fullImgDark: 'resources/works/opt-clicker-full-dark.png', link: 'https://gitmichaelqiu.github.io/OptClicker' },
+                { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', fullImgDark: 'resources/works/space-switcher-full-dark.png', link: 'https://gitmichaelqiu.github.io/SpaceSwitcher' }
             ];
 
             var photos = [
