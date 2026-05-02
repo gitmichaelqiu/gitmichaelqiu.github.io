@@ -23,7 +23,6 @@
             var sectionLabels = { home: 'Home', profile: 'Persona', works: 'Projects', photos: 'Story', connect: 'Links' };
             var showVideoModal = ref(false);
             var modalVideo = ref(null);
-            var cardHover = ref({ active: false, img: '', x: 0, y: 0 });
 
             var lenis;
             var particles;
@@ -97,17 +96,6 @@
 
             function closeVideoModal() {
                 showVideoModal.value = false;
-            }
-
-            function onCardEnter(img, e) {
-                cardHover.value = { active: true, img: img, x: e.clientX, y: e.clientY };
-            }
-            function onCardMove(e) {
-                cardHover.value.x = e.clientX;
-                cardHover.value.y = e.clientY;
-            }
-            function onCardLeave() {
-                cardHover.value.active = false;
             }
 
             watch(showVideoModal, function (val) {
@@ -421,6 +409,82 @@
                             }
                         });
                     });
+
+                    // ── Hover Follower (RK-style) ──
+                    var cards = document.querySelectorAll('[data-hover-follow]');
+                    cards.forEach(function (item) {
+                        var follower = item.querySelector('[data-hover-follower]');
+                        if (!follower) return;
+
+                        var ticking = false;
+                        var x = 0, y = 0, tx = 0, ty = 0;
+                        var trailLerp = 0.08;
+                        var offset = 16;
+
+                        function setTargetFromEvent(e) {
+                            var rect = item.getBoundingClientRect();
+                            tx = e.clientX - rect.left + offset;
+                            ty = e.clientY - rect.top + offset;
+                        }
+
+                        function updatePosition() {
+                            follower.style.left = Math.round(x) + 'px';
+                            follower.style.top = Math.round(y) + 'px';
+                        }
+
+                        function tick() {
+                            x += (tx - x) * trailLerp;
+                            y += (ty - y) * trailLerp;
+                            updatePosition();
+                        }
+
+                        function startTicker() {
+                            if (ticking) return;
+                            ticking = true;
+                            gsap.ticker.add(tick);
+                        }
+
+                        function stopTicker() {
+                            if (!ticking) return;
+                            ticking = false;
+                            gsap.ticker.remove(tick);
+                        }
+
+                        function hideNow() {
+                            gsap.killTweensOf(follower);
+                            follower.style.display = 'none';
+                            stopTicker();
+                        }
+
+                        function showNow(e) {
+                            follower.style.display = 'block';
+                            setTargetFromEvent(e);
+                            x = tx;
+                            y = ty;
+                            updatePosition();
+
+                            gsap.killTweensOf(follower);
+                            gsap.fromTo(follower,
+                                { scale: 0.6 },
+                                { scale: 1, duration: 0.45, ease: "elastic.out(1,0.5)", overwrite: true }
+                            );
+
+                            startTicker();
+                        }
+
+                        item.addEventListener('mouseenter', function (e) {
+                            showNow(e);
+                        });
+
+                        item.addEventListener('mousemove', function (e) {
+                            if (follower.style.display !== 'block') return;
+                            setTargetFromEvent(e);
+                        });
+
+                        item.addEventListener('mouseleave', function () {
+                            hideNow();
+                        });
+                    });
                 });
             });
 
@@ -448,11 +512,7 @@
                 showVideoModal: showVideoModal,
                 openVideoModal: openVideoModal,
                 closeVideoModal: closeVideoModal,
-                modalVideo: modalVideo,
-                cardHover: cardHover,
-                onCardEnter: onCardEnter,
-                onCardMove: onCardMove,
-                onCardLeave: onCardLeave
+                modalVideo: modalVideo
             };
         }
     }).mount('#app');
