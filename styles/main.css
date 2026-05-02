@@ -583,6 +583,10 @@ html.dark .glass-strong {
     text-align: center;
 }
 
+.hero__text .mask-inner {
+    visibility: hidden;
+}
+
 .hero__name {
     font-family: 'Inter', sans-serif;
     font-size: clamp(3.5rem, 10vw, 9rem);
@@ -896,6 +900,11 @@ html.dark .work-card:hover::before {
     color: var(--text-primary);
 }
 
+/* Connect Section Link Hover */
+.group:hover .heading-l {
+    color: var(--klein-blue-text);
+}
+
 /* ============================================================
    11. Scroll Progress Dot
    ============================================================ */
@@ -1028,11 +1037,6 @@ html.dark .work-card:hover::before {
 .project-screenshot-wrap {
     position: relative;
     border-radius: 4px;
-    background: var(--bg-secondary);
-}
-
-html.dark .project-screenshot-wrap {
-    background: rgba(255, 255, 255, 0.03);
 }
 
 /* ============================================================
