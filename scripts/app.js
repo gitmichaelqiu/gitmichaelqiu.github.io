@@ -396,6 +396,20 @@
                         });
                     });
 
+                    // Gradient Parallax on editorial text
+                    gsap.utils.toArray('.gradient-text').forEach(function (el) {
+                        gsap.to(el, {
+                            backgroundPosition: '100% 50%',
+                            ease: 'none',
+                            scrollTrigger: {
+                                trigger: el,
+                                start: 'top bottom',
+                                end: 'bottom top',
+                                scrub: true
+                            }
+                        });
+                    });
+
                     // Bolt Rotation
                     gsap.utils.toArray('.bolt-plus').forEach(function (bolt) {
                         gsap.to(bolt, {
@@ -420,6 +434,7 @@
                         var x = 0, y = 0, tx = 0, ty = 0;
                         var trailLerp = 0.08;
                         var offset = 16;
+                        var lastEvent = null;
 
                         function setTargetFromEvent(e) {
                             var rect = item.getBoundingClientRect();
@@ -433,6 +448,11 @@
                         }
 
                         function tick() {
+                            // Recompute target each frame so the subimage tracks
+                            // the cursor even when scrolling without mouse movement
+                            if (lastEvent) {
+                                setTargetFromEvent(lastEvent);
+                            }
                             x += (tx - x) * trailLerp;
                             y += (ty - y) * trailLerp;
                             updatePosition();
@@ -473,10 +493,12 @@
                         }
 
                         item.addEventListener('mouseenter', function (e) {
+                            lastEvent = e;
                             showNow(e);
                         });
 
                         item.addEventListener('mousemove', function (e) {
+                            lastEvent = e;
                             if (follower.style.display !== 'block') return;
                             setTargetFromEvent(e);
                         });

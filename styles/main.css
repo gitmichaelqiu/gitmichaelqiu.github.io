@@ -149,6 +149,7 @@ body {
 /* Gradient text */
 .gradient-text {
     background: linear-gradient(135deg, var(--klein-blue), var(--gold));
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -156,6 +157,7 @@ body {
 
 html.dark .gradient-text {
     background: linear-gradient(135deg, var(--klein-blue-text), var(--gold));
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
