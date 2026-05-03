@@ -141,8 +141,8 @@
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">Page</div>
                             <a @click.prevent="handleNavClick('overview')" href="#overview" class="hero__quicknav-link">Overview</a>
-                            <a @click.prevent="handleNavClick('features')" href="#features" class="hero__quicknav-link">Features</a>
                             <a @click.prevent="handleNavClick('demo')" href="#demo" class="hero__quicknav-link">Demo</a>
+                            <a @click.prevent="handleNavClick('features')" href="#features" class="hero__quicknav-link">Features</a>
                             <a @click.prevent="handleNavClick('install')" href="#install" class="hero__quicknav-link">Install</a>
                         </div>
                         <div class="hero__quicknav-col">
@@ -183,142 +183,7 @@
                                 <h2 class="heading-l mb-10 mask-inner">Take back control of your <span class="text-editorial gradient-text">macOS spaces.</span></h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">DesktopRenamer is a macOS menubar app that lets you give custom names to your desktop spaces — those virtual desktops you create in Mission Control.</p>
-                            </div>
-                            <div class="mask-wrap mt-8">
-                                <p class="paragraph-m max-w-2xl mask-inner">Quickly rename from the menu bar. See large, aesthetic labels when you enter Mission Control. Switch spaces with zero-delay overrides. Automate everything via AppleScript or the built-in HTTP API.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Features Section -->
-            <section id="features" class="section-rk">
-                <div class="container">
-                    <div class="content-grid mb-24">
-                        <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
-                                <path d="M0 0L14 14H0V0Z" />
-                            </svg>Features
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Everything you need to <span class="text-editorial gradient-text">own</span> your workflow.</h2>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature: Rename at Menu Bar -->
-                    <div class="content-grid mb-20">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Rename at Menu Bar
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Quickly give your desktop spaces a custom name directly from the menu bar. Click the menubar icon, type a name, and it's set.</p>
-                            </div>
-                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                                <video src="../resources/demo/desktop-renamer/Rename.mp4" autoplay muted loop playsinline
-                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
-                                <img :src="isDark ? '../resources/works/desktop-renamer-full-dark.png' : '../resources/works/desktop-renamer-full.png'"
-                                    alt="DesktopRenamer screenshot" class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature: Crystal Clear Labels -->
-                    <div class="content-grid mb-20">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Crystal Clear Labels
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Large, aesthetic name labels when you enter Mission Control. A discreet active label confirms which space you landed on after switching. Both toggle independently.</p>
-                            </div>
-                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                                <video src="../resources/demo/desktop-renamer/MissionControl.mp4" autoplay muted loop playsinline
-                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
-                                <video src="../resources/demo/desktop-renamer/ActiveLabel.mp4" autoplay muted loop playsinline
-                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature: Switch & Move -->
-                    <div class="content-grid mb-20">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Switch &amp; Move
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Click any space to jump to it. Hold <strong>Option (⌥)</strong> while clicking to teleport the active window to that space.</p>
-                            </div>
-                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                                <video src="../resources/demo/desktop-renamer/SwitchSpace.mp4" autoplay muted loop playsinline
-                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
-                                <video src="../resources/demo/desktop-renamer/MoveWindow.mp4" autoplay muted loop playsinline
-                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature: Faster Switching Override -->
-                    <div class="content-grid mb-20">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Faster Switching
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Bypass native macOS animation lag with trackpad gesture overrides or keyboard hotkeys for instant, zero-delay switching.</p>
-                            </div>
-                            <div class="mt-8">
-                                <video src="../resources/demo/desktop-renamer/SwitchOverride.mp4" autoplay muted loop playsinline
-                                    class="w-full rounded-lg" style="max-width: 600px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature: Raycast Integration -->
-                    <div class="content-grid mb-20">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Raycast Integration
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Are you a power user? DesktopRenamer integrates directly with <strong>Raycast</strong>, letting you manage and switch spaces elegantly via your favorite launcher — without ever touching the menu bar.</p>
-                            </div>
-                            <div class="mt-6">
-                                <a href="https://www.raycast.com/michael_qiu/desktoprenamer" target="_blank" data-btn style="font-size: 1.2rem; letter-spacing: 0em;">
-                                    <div data-btn-bg></div>
-                                    <div data-btn-inner data-text="Install Raycast Extension">
-                                        <span data-btn-text>Install Raycast Extension</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature: API & AppleScript -->
-                    <div class="content-grid mb-20">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            API &amp; AppleScript
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">DesktopRenamer exposes a full <strong>AppleScript dictionary</strong> for automating space management — rename spaces, switch desktops, move windows, all from your scripts. The built-in <strong>SpaceAPI</strong> lets other apps acquire space IDs and names over HTTP. Toggle it on in Settings → Advanced.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature: Desktop Widget -->
-                    <div class="content-grid mb-20">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Desktop Widget
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Add the DesktopRenamer widget to your Notification Center or Desktop. See your current space name at a glance, browse all configured spaces, and <strong>tap to switch</strong> — directly from the widget. Available in small, medium, and large sizes with both standard and transparent backgrounds.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner" style="color: var(--text-primary);">DesktopRenamer is a macOS menubar app that lets you give custom names to your desktop spaces — those virtual desktops you create in Mission Control.</p>
                             </div>
                         </div>
                     </div>
@@ -359,6 +224,149 @@
                 </div>
             </transition>
 
+            <!-- Features Section — sticky slide gallery -->
+            <section id="features" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-16">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Features
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mask-inner">Everything you need to <span class="text-editorial gradient-text">own</span> your workflow.</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sticky slide stack: 4 features × 100vh each -->
+                <div class="feature-gallery" style="height: 400vh; position: relative;">
+                    <!-- Slide 1: Rename at Menu Bar -->
+                    <div class="feature-slide" style="position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden;">
+                        <div class="container" style="width: 100%;">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
+                                <div class="md:col-span-4" style="padding-right: 4rem;">
+                                    <p class="text-sm font-semibold mb-4" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text); text-transform: uppercase;">01 / Rename</p>
+                                    <h3 class="heading-l mb-6">Rename at <span class="text-editorial gradient-text">Menu Bar</span></h3>
+                                    <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.5; letter-spacing: -0.02em; color: var(--text-primary);">Quickly give your desktop spaces custom names directly from the menu bar. Click, type, and it's set — no configuration files, no complicated setup.</p>
+                                </div>
+                                <div class="md:col-span-8">
+                                    <video src="../resources/demo/desktop-renamer/Rename.mp4" autoplay muted loop playsinline
+                                        class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: Crystal Clear Labels -->
+                    <div class="feature-slide" style="position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden;">
+                        <div class="container" style="width: 100%;">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
+                                <div class="md:col-span-4" style="padding-right: 4rem;">
+                                    <p class="text-sm font-semibold mb-4" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text); text-transform: uppercase;">02 / Labels</p>
+                                    <h3 class="heading-l mb-6">Crystal Clear <span class="text-editorial gradient-text">Labels</span></h3>
+                                    <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.5; letter-spacing: -0.02em; color: var(--text-primary);">Large, aesthetic name labels appear when you enter Mission Control. A discreet active label confirms your current space after switching. Both toggle independently.</p>
+                                </div>
+                                <div class="md:col-span-8">
+                                    <div class="grid grid-cols-2 gap-6">
+                                        <video src="../resources/demo/desktop-renamer/MissionControl.mp4" autoplay muted loop playsinline
+                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                        <video src="../resources/demo/desktop-renamer/ActiveLabel.mp4" autoplay muted loop playsinline
+                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3: Switch & Move -->
+                    <div class="feature-slide" style="position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden;">
+                        <div class="container" style="width: 100%;">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
+                                <div class="md:col-span-4" style="padding-right: 4rem;">
+                                    <p class="text-sm font-semibold mb-4" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text); text-transform: uppercase;">03 / Navigate</p>
+                                    <h3 class="heading-l mb-6">Switch <span class="text-editorial gradient-text">&amp;</span> Move</h3>
+                                    <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.5; letter-spacing: -0.02em; color: var(--text-primary);">Click any space to jump directly to it. Hold <strong>Option (⌥)</strong> while clicking to instantly teleport the active window to that space. No more dragging windows across desktops.</p>
+                                </div>
+                                <div class="md:col-span-8">
+                                    <div class="grid grid-cols-2 gap-6">
+                                        <video src="../resources/demo/desktop-renamer/SwitchSpace.mp4" autoplay muted loop playsinline
+                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                        <video src="../resources/demo/desktop-renamer/MoveWindow.mp4" autoplay muted loop playsinline
+                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 4: Faster Switching -->
+                    <div class="feature-slide" style="position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden;">
+                        <div class="container" style="width: 100%;">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
+                                <div class="md:col-span-4" style="padding-right: 4rem;">
+                                    <p class="text-sm font-semibold mb-4" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text); text-transform: uppercase;">04 / Speed</p>
+                                    <h3 class="heading-l mb-6">Faster <span class="text-editorial gradient-text">Switching</span></h3>
+                                    <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.5; letter-spacing: -0.02em; color: var(--text-primary);">Bypass native macOS animation lag. Enable trackpad gesture overrides or configurable keyboard hotkeys for instant, zero-delay switching between spaces.</p>
+                                </div>
+                                <div class="md:col-span-8">
+                                    <video src="../resources/demo/desktop-renamer/SwitchOverride.mp4" autoplay muted loop playsinline
+                                        class="w-full rounded-lg" style="max-width: 640px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- More Features -->
+            <section id="more-features" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Raycast Integration
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">DesktopRenamer integrates directly with <strong>Raycast</strong>, letting you manage and switch spaces elegantly via your favorite launcher.</p>
+                            </div>
+                            <div class="mt-6">
+                                <a href="https://www.raycast.com/michael_qiu/desktoprenamer" target="_blank" data-btn style="font-size: 1.2rem; letter-spacing: 0em;">
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="Install Raycast Extension">
+                                        <span data-btn-text>Install Raycast Extension</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            API &amp; AppleScript
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">Full <strong>AppleScript dictionary</strong> for automating space management — rename spaces, switch desktops, move windows. The built-in <strong>SpaceAPI</strong> lets other apps acquire space IDs and names over HTTP. Toggle it on in Settings → Advanced.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Desktop Widget
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">Add the DesktopRenamer widget to your Notification Center or Desktop. See your current space name, browse all spaces, and <strong>tap to switch</strong> — directly from the widget. Available in small, medium, and large sizes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Installation Section -->
             <section id="install" class="section-rk">
                 <div class="container">
@@ -381,7 +389,7 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Requires macOS 13.0+. Download from GitHub Releases and drag to Applications — no SIP disabling needed. Or install via Homebrew:</p>
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">Requires macOS 13.0+. Download from GitHub Releases and drag to Applications — no SIP disabling needed. Or install via Homebrew:</p>
                             </div>
                             <div class="mt-6 flex flex-wrap items-center gap-4">
                                 <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" data-btn style="font-size: 1.2rem; letter-spacing: 0em;">
@@ -395,11 +403,9 @@
                                     brew install --cask gitmichaelqiu/tap/desktoprenamer
                                 </code>
                             </div>
-                            <div class="mask-wrap mt-8">
-                                <p class="text-sm opacity-60 max-w-2xl mask-inner" style="font-size: 0.9rem; letter-spacing: -0.02em;">
-                                    Not signed with a paid Apple Developer account — if macOS blocks the app, go to <strong>System Settings → Privacy & Security</strong> to allow it. DesktopRenamer needs Accessibility and Automation permissions for hotkeys and Mission Control integration; you'll be guided through this on first launch.
-                                </p>
-                            </div>
+                            <p class="mt-8 text-sm max-w-2xl" style="font-size: 0.9rem; letter-spacing: -0.02em; color: var(--text-primary); opacity: 0.6;">
+                                Not signed with a paid Apple Developer account — if macOS blocks the app, go to <strong>System Settings → Privacy & Security</strong> to allow it. DesktopRenamer needs Accessibility and Automation permissions; you'll be guided through this on first launch.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -423,9 +429,10 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-0" style="border-left: 1px solid var(--border-color);">
                         <!-- SpaceSwitcher -->
-                        <div class="work-card" style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+                        <div class="work-card" data-hover-follow
+                            style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
                             <h3 class="heading-l text-4xl">SpaceSwitcher</h3>
-                            <p class="paragraph-m max-w-sm">Control which app and set of dock items to display in each space. Pair with DesktopRenamer for complete workspace mastery.</p>
+                            <p class="paragraph-m max-w-sm" style="color: var(--text-primary);">Control which app and set of dock items to display in each space. Pair with DesktopRenamer for complete workspace mastery.</p>
                             <div class="work-meta">
                                 <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
                                     <div data-btn-bg></div>
@@ -434,12 +441,14 @@
                                     </div>
                                 </a>
                             </div>
+                            <img src="../resources/works/space-switcher.png" data-hover-follower class="card-subimg">
                         </div>
 
                         <!-- OptClicker -->
-                        <div class="work-card" style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+                        <div class="work-card" data-hover-follow
+                            style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
                             <h3 class="heading-l text-4xl">OptClicker</h3>
-                            <p class="paragraph-m max-w-sm">Right-click with the Option key. A simple utility that complements your DesktopRenamer workflow.</p>
+                            <p class="paragraph-m max-w-sm" style="color: var(--text-primary);">Right-click with the Option key. A simple utility that complements your DesktopRenamer workflow.</p>
                             <div class="work-meta">
                                 <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
                                     <div data-btn-bg></div>
@@ -448,6 +457,7 @@
                                     </div>
                                 </a>
                             </div>
+                            <img src="../resources/works/opt-clicker.png" data-hover-follower class="card-subimg">
                         </div>
                     </div>
                 </div>
@@ -479,6 +489,7 @@
                         <p class="footer-nav-label" style="margin-bottom:0.35rem;">Page</p>
                         <div class="flex flex-col gap-1">
                             <a @click.prevent="handleNavClick('overview')" href="#overview" class="footer-nav-link">Overview</a>
+                            <a @click.prevent="handleNavClick('demo')" href="#demo" class="footer-nav-link">Demo</a>
                             <a @click.prevent="handleNavClick('features')" href="#features" class="footer-nav-link">Features</a>
                             <a @click.prevent="handleNavClick('install')" href="#install" class="footer-nav-link">Install</a>
                         </div>
@@ -516,8 +527,8 @@
                         <a v-for="link in [
                             {id: 'home', label: 'Home'},
                             {id: 'overview', label: 'Overview'},
-                            {id: 'features', label: 'Features'},
                             {id: 'demo', label: 'Demo'},
+                            {id: 'features', label: 'Features'},
                             {id: 'install', label: 'Install'},
                             {id: 'companions', label: 'Companions'}
                         ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)"
@@ -561,7 +572,7 @@
                     var activeSection = ref('home');
                     var showNavDock = ref(false);
                     var navDockBottom = ref('2rem');
-                    var sectionLabels = { home: 'Home', overview: 'Overview', features: 'Features', demo: 'Demo', install: 'Install', companions: 'Companions' };
+                    var sectionLabels = { home: 'Home', overview: 'Overview', demo: 'Demo', features: 'Features', 'more-features': 'Features', install: 'Install', companions: 'Companions' };
                     var showVideoModal = ref(false);
                     var modalVideo = ref(null);
 
@@ -695,7 +706,7 @@
                     // ── Section Label Animation ──
                     var sectionLabelTween;
                     var sectionLabelClone;
-                    var sectionOrder = ['home', 'overview', 'features', 'demo', 'install', 'companions'];
+                    var sectionOrder = ['home', 'overview', 'demo', 'features', 'more-features', 'install', 'companions'];
 
                     watch(activeSection, function (newSection, oldSection) {
                         if (!oldSection || oldSection === newSection) return;
@@ -778,7 +789,7 @@
                         scrollRafPending = false;
                         var winHeight = window.innerHeight;
                         showNavDock.value = window.scrollY > winHeight * 0.2;
-                        var sections = ['home', 'overview', 'features', 'demo', 'install', 'companions'];
+                        var sections = ['home', 'overview', 'demo', 'features', 'more-features', 'install', 'companions'];
                         var current = 'home';
                         sections.forEach(function (id) {
                             var el = document.getElementById(id);
@@ -887,6 +898,90 @@
                                         end: 'bottom top',
                                         scrub: true
                                     }
+                                });
+                            });
+
+                            // ── Hover Follower (RK-style) ──
+                            var cards = document.querySelectorAll('[data-hover-follow]');
+                            cards.forEach(function (item) {
+                                var follower = item.querySelector('[data-hover-follower]');
+                                if (!follower) return;
+
+                                var ticking = false;
+                                var x = 0, y = 0, tx = 0, ty = 0;
+                                var trailLerp = 0.08;
+                                var offset = 16;
+                                var lastEvent = null;
+
+                                function setTargetFromEvent(e) {
+                                    var rect = item.getBoundingClientRect();
+                                    tx = e.clientX - rect.left + offset;
+                                    ty = e.clientY - rect.top + offset;
+                                }
+
+                                function updatePosition() {
+                                    follower.style.left = Math.round(x) + 'px';
+                                    follower.style.top = Math.round(y) + 'px';
+                                }
+
+                                function tick() {
+                                    if (lastEvent) {
+                                        setTargetFromEvent(lastEvent);
+                                    }
+                                    x += (tx - x) * trailLerp;
+                                    y += (ty - y) * trailLerp;
+                                    updatePosition();
+                                }
+
+                                function startTicker() {
+                                    if (ticking) return;
+                                    ticking = true;
+                                    gsap.ticker.add(tick);
+                                }
+
+                                function stopTicker() {
+                                    if (!ticking) return;
+                                    ticking = false;
+                                    gsap.ticker.remove(tick);
+                                }
+
+                                function hideNow() {
+                                    gsap.killTweensOf(follower);
+                                    follower.style.display = 'none';
+                                    stopTicker();
+                                }
+
+                                function showNow(e) {
+                                    follower.style.display = 'block';
+                                    setTargetFromEvent(e);
+                                    x = tx;
+                                    y = ty;
+                                    updatePosition();
+
+                                    gsap.killTweensOf(follower);
+                                    gsap.fromTo(follower,
+                                        { scale: 0.6 },
+                                        { scale: 1, duration: 0.45, ease: "elastic.out(1,0.5)", overwrite: true }
+                                    );
+
+                                    startTicker();
+                                }
+
+                                item.addEventListener('mouseenter', function (e) {
+                                    item.style.zIndex = '9999';
+                                    lastEvent = e;
+                                    showNow(e);
+                                });
+
+                                item.addEventListener('mousemove', function (e) {
+                                    lastEvent = e;
+                                    if (follower.style.display !== 'block') return;
+                                    setTargetFromEvent(e);
+                                });
+
+                                item.addEventListener('mouseleave', function () {
+                                    item.style.zIndex = '';
+                                    hideNow();
                                 });
                             });
                         });
