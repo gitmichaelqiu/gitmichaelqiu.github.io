@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <script>
         (function () { var t = localStorage.getItem('theme'); if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark'); })();
@@ -59,7 +59,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
 
-    <!-- Lenis (Smooth Scroll) -->
+    <!-- Lenis -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
     <!-- Lucide Icons -->
@@ -84,49 +84,141 @@
 </head>
 
 <body class="theme-base" style="opacity: 0;">
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
+
     <div id="app" class="relative min-h-screen">
         <!-- Architectural Grid Lines -->
         <div class="grid-lines">
             <div v-for="i in 12" :key="i" class="grid-line"></div>
         </div>
 
-        <!-- Navigation Bar -->
-        <nav class="fixed top-0 left-0 w-full z-[9990] py-4 px-6 md:px-10 flex justify-between items-center pointer-events-none">
-            <a href="index.html" class="glass-strong w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto transition-transform duration-300 hover:scale-105" style="text-decoration:none; color:var(--text-primary);">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        <!-- Navigation Dock -->
+        <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }" :style="{ bottom: navDockBottom }">
+            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn">
+                <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
-            <button @click="toggleTheme" class="glass-strong w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto transition-all duration-300 hover:rotate-180 hover:scale-105" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" style="color:var(--text-primary);">
-                <span v-if="isDark"><i data-lucide="sun" class="w-4 h-4"></i></span>
-                <span v-else><i data-lucide="moon" class="w-4 h-4"></i></span>
+            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>
+            <button @click="toggleTheme" class="nav-dock__btn" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+                <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
             </button>
-        </nav>
+            <a href="index.html" class="nav-dock__btn">
+                <i data-lucide="home" class="w-5 h-5"></i>
+            </a>
+        </div>
 
         <main>
             <!-- Hero Section -->
-            <section id="hero" class="hero" style="background: linear-gradient(180deg, #000000 0%, var(--klein-blue) 100%);">
-                <div class="hero__content" style="flex-direction: row; gap: 4rem; padding: 0 4rem;">
-                    <!-- Left: Text -->
-                    <div class="hero__text" style="text-align: left; flex: 1;">
-                        <div class="mask-wrap">
-                            <h1 class="hero__name mask-inner" style="font-size: clamp(3rem, 7vw, 8rem);">Desktop<br>Renamer</h1>
+            <section id="home" class="hero">
+                <div class="hero__bg"></div>
+                <div class="hero__particles" ref="canvasContainer"></div>
+                <!-- Top Quicknav -->
+                <nav class="hero__quicknav hide-mobile">
+                    <div class="hero__quicknav-logo">
+                        <a href="index.html" aria-label="Michael Qiu Home" style="cursor:pointer!important">
+                            <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png"
+                                style="width:2.5rem;height:2.5rem;border-radius:0.5rem;" alt="Icon">
+                        </a>
+                    </div>
+                    <div class="hero__quicknav-cols">
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">
+                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>
+                                Product
+                            </div>
+                            <a @click.prevent="scrollTo('#features')" href="#features" class="hero__quicknav-link">Features</a>
+                            <a @click.prevent="scrollTo('#demo-reel')" href="#demo-reel" class="hero__quicknav-link">Demo Reel</a>
+                            <a @click.prevent="scrollTo('#demo')" href="#demo" class="hero__quicknav-link">Demo</a>
                         </div>
-                        <div class="mask-wrap">
-                            <p class="hero__tagline mask-inner" style="margin-top: 1.5rem; max-width: 32rem;">Custom Names for Mission Control Spaces.</p>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">
+                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>
+                                More Apps
+                            </div>
+                            <a href="OptClicker.html" class="hero__quicknav-link">OptClicker</a>
+                            <a href="SpaceSwitcher.html" class="hero__quicknav-link">SpaceSwitcher</a>
                         </div>
-                        <div class="mask-wrap">
-                            <p class="mask-inner" style="margin-top: 1rem; font-family: 'Syncopate', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; opacity: 0.5; color: rgba(255,255,255,0.8);">A macOSer Series App</p>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">
+                                <svg class="hero__quicknav-label-icon" viewBox="0 0 14 14" fill="currentColor"><path d="M0 0L14 14H0V0Z"/></svg>
+                                Links
+                            </div>
+                            <a href="index.html" class="hero__quicknav-link">Home</a>
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="hero__quicknav-link">GitHub</a>
                         </div>
                     </div>
-                    <!-- Right: 3D Icon -->
-                    <div ref="canvasContainer" style="width: 40%; max-width: 500px; aspect-ratio: 1; flex-shrink: 0;"></div>
+                    <div class="hero__quicknav-scroll">
+                        <span class="hero__quicknav-scroll-label">SCROLL</span>
+                    </div>
+                </nav>
+
+                <!-- Hero Content -->
+                <div class="hero__content">
+                    <div class="hero__text">
+                        <div class="mask-wrap">
+                            <h1 class="hero__name mask-inner">DesktopRenamer</h1>
+                        </div>
+                        <div class="mask-wrap">
+                            <p class="hero__tagline mask-inner">Custom Names for Mission Control Spaces.</p>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Scroll Indicator -->
                 <div class="hero__scroll-indicator">
                     <div class="hero__scroll-line"></div>
                     <span class="hero__scroll-label">Scroll</span>
                 </div>
             </section>
 
-            <!-- Promo Video Section -->
+            <!-- Features Section -->
+            <section id="features" class="section-rk" style="border-top: none;">
+                <div class="container">
+                    <div class="content-grid mb-16">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Features
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner">Stop getting lost in <span class="text-editorial gradient-text">generic</span> desktop names.</h2>
+                            </div>
+                            <div class="mask-wrap">
+                                <p class="paragraph-l max-w-3xl mask-inner">Name your spaces based on context — Work, Gaming, Creative — and stay focused on what matters.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-16">
+                        <div class="glass p-8 flex flex-col gap-4">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-xl font-semibold" style="font-family:'Inter',sans-serif; letter-spacing:-0.02em;">Native Performance</h3>
+                                <i data-lucide="cpu" class="w-5 h-5 text-klein-blue flex-shrink-0"></i>
+                            </div>
+                            <p class="text-sm opacity-60 leading-relaxed" style="font-family:'Inter',sans-serif;">Built in Swift for macOS 13+. Lightweight, fast, and energy-efficient on both Apple Silicon and Intel.</p>
+                        </div>
+                        <div class="glass p-8 flex flex-col gap-4">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-xl font-semibold" style="font-family:'Inter',sans-serif; letter-spacing:-0.02em;">Menu Bar First</h3>
+                                <i data-lucide="layout-template" class="w-5 h-5 text-klein-blue flex-shrink-0"></i>
+                            </div>
+                            <p class="text-sm opacity-60 leading-relaxed" style="font-family:'Inter',sans-serif;">Always accessible from the menu bar. No dock icon, no window clutter — just a click away.</p>
+                        </div>
+                        <div class="glass p-8 flex flex-col gap-4">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-xl font-semibold" style="font-family:'Inter',sans-serif; letter-spacing:-0.02em;">Mission Control Ready</h3>
+                                <i data-lucide="monitor" class="w-5 h-5 text-klein-blue flex-shrink-0"></i>
+                            </div>
+                            <p class="text-sm opacity-60 leading-relaxed" style="font-family:'Inter',sans-serif;">Names update in real time across Mission Control. Your spaces stay clearly labeled, always.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Reel Section -->
             <section id="demo-reel" class="relative w-full" style="border-top: none;">
                 <div class="relative w-full overflow-hidden" style="background-color: #01071a; aspect-ratio: 16/9;">
                     <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
@@ -140,7 +232,7 @@
                 </div>
             </section>
 
-            <!-- Video Modal Overlay -->
+            <!-- Video Modal -->
             <transition name="video-modal">
                 <div v-if="showVideoModal" @click.self="closeVideoModal"
                     class="fixed inset-0 z-[10003] flex items-center justify-center p-8"
@@ -160,56 +252,15 @@
                 </div>
             </transition>
 
-            <!-- Features Section -->
-            <section id="features" class="section-rk">
-                <div class="container">
-                    <div class="content-grid mb-16">
-                        <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
-                                <path d="M0 0L14 14H0V0Z" />
-                            </svg>Features
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Stop getting lost in <span class="text-editorial gradient-text">generic</span> desktop names.</h2>
-                            </div>
-                            <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Name your spaces based on context — Work, Gaming, Creative — and stay focused on what matters.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature Cards Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-16">
-                        <div class="glass p-8 flex flex-col gap-4">
-                            <i data-lucide="cpu" class="w-6 h-6 text-klein-blue"></i>
-                            <h3 class="text-xl font-semibold" style="font-family:'Inter',sans-serif; letter-spacing:-0.02em;">Native Performance</h3>
-                            <p class="text-sm opacity-60" style="font-family:'Inter',sans-serif; line-height:1.5;">Built in Swift for macOS 13+. Lightweight, fast, and energy-efficient. Runs natively on Apple Silicon and Intel.</p>
-                        </div>
-                        <div class="glass p-8 flex flex-col gap-4">
-                            <i data-lucide="layout-template" class="w-6 h-6 text-klein-blue"></i>
-                            <h3 class="text-xl font-semibold" style="font-family:'Inter',sans-serif; letter-spacing:-0.02em;">Menu Bar First</h3>
-                            <p class="text-sm opacity-60" style="font-family:'Inter',sans-serif; line-height:1.5;">Always accessible from the menu bar. No dock icon, no window clutter. Just a click away when you need it.</p>
-                        </div>
-                        <div class="glass p-8 flex flex-col gap-4">
-                            <i data-lucide="zap" class="w-6 h-6 text-klein-blue"></i>
-                            <h3 class="text-xl font-semibold" style="font-family:'Inter',sans-serif; letter-spacing:-0.02em;">Instant Switching</h3>
-                            <p class="text-sm opacity-60" style="font-family:'Inter',sans-serif; line-height:1.5;">Names update in real time across Mission Control. Your spaces are always clearly labeled, no matter how many you have.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Demo Section (Sticky Scroll Animation) -->
-            <section id="demo" class="relative z-30" style="height: 500vh; background: #050505;">
+            <!-- Demo Section (Product Showcase) -->
+            <section id="demo" class="relative z-30" style="height: 500vh; border-top: none; background: #050505;">
                 <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
                     <div class="absolute inset-0 bg-[#050505]"></div>
 
-                    <!-- Flow Visualization Container -->
                     <div class="relative w-full max-w-5xl px-6 z-10">
                         <!-- Menu Bar -->
                         <div id="demo-menubar" class="w-full h-12 flex items-center justify-between px-6 mb-0 relative z-20 rounded-t-xl"
-                            style="background: rgba(17,17,17,0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1);">
+                            style="background: rgba(17,17,17,0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08);">
                             <div class="flex items-center gap-4 opacity-50">
                                 <i data-lucide="apple" class="w-4 h-4 text-white"></i>
                                 <span class="font-bold text-white text-xs" style="font-family:'Inter',sans-serif;">Finder</span>
@@ -219,7 +270,6 @@
                                     <i data-lucide="monitor" class="w-3 h-3 text-gray-400" id="demo-icon"></i>
                                     <span class="text-xs font-bold text-gray-300" id="demo-text" style="font-family:'JetBrains Mono', monospace;">Desktop 1</span>
                                     <span class="typewriter-cursor opacity-0"></span>
-                                    <div id="demo-identify-target" class="absolute inset-0 pointer-events-none"></div>
                                 </div>
                                 <i data-lucide="search" class="w-4 h-4 text-gray-500"></i>
                                 <span class="text-xs text-gray-500" style="font-family:'Inter',sans-serif;">Mon 9:41 AM</span>
@@ -228,8 +278,7 @@
 
                         <!-- Desktop Area -->
                         <div class="w-full aspect-[16/9] bg-[#0a0a0a] relative overflow-hidden flex items-center justify-center"
-                            style="border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 0 0 12px 12px;">
-                            <!-- Wallpaper -->
+                            style="border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); border-radius: 0 0 12px 12px;">
                             <div class="absolute inset-0 bg-gradient-to-br from-[#111] to-[#050505]">
                                 <img src="https://www.macplanete.com/wp-content/uploads/2025/06/macOS26_Clair-scaled.jpg"
                                     alt="Wallpaper" class="absolute inset-0 w-full h-full object-cover opacity-80"
@@ -237,14 +286,12 @@
                                 <div class="absolute inset-0 bg-black/20"></div>
                             </div>
 
-                            <!-- Identify Flying Label -->
                             <div id="demo-identify-fly" class="absolute top-1/2 left-1/2 px-8 py-4 rounded-xl text-white text-2xl font-bold opacity-0 z-30"
                                 style="transform: translate(-50%, -50%) scale(0.5); background: var(--klein-blue); box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
                                 Desktop 1
                             </div>
 
-                            <!-- Rename Input Window -->
-                            <div id="demo-input-window" class="absolute glass-strong p-6 flex flex-col gap-4 w-80 transform translate-y-10 opacity-0 rounded-xl">
+                            <div id="demo-input-window" class="absolute glass-strong p-6 flex flex-col gap-4 w-80 translate-y-10 opacity-0 rounded-xl">
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs text-gray-500 uppercase tracking-wider" style="font-family:'Inter',sans-serif;">Rename Space</span>
                                     <div class="flex gap-1.5">
@@ -260,30 +307,28 @@
                                 </div>
                             </div>
 
-                            <!-- Final Label -->
-                            <div id="demo-final-label" class="absolute glass-strong px-12 py-8 rounded-2xl transform scale-90 opacity-0 flex flex-col items-center gap-2">
+                            <div id="demo-final-label" class="absolute glass-strong px-12 py-8 rounded-2xl scale-90 opacity-0 flex flex-col items-center gap-2">
                                 <span class="text-xs font-bold tracking-[0.3em] uppercase" style="font-family:'Inter',sans-serif; color: var(--klein-blue-text);">ACTIVE SPACE</span>
                                 <h2 class="text-6xl font-black text-white tracking-tighter" style="font-family:'Inter',sans-serif;">GAMING</h2>
                             </div>
 
-                            <!-- Mission Control Preview -->
                             <div id="demo-mission-control" class="absolute inset-0 bg-black/60 opacity-0 flex flex-col items-center justify-center gap-8 pointer-events-none"
                                 style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transform: scale(1.1);">
-                                <div class="text-white font-bold text-2xl tracking-tight opacity-0 transform translate-y-4" id="mc-title" style="font-family:'Inter',sans-serif;">Mission Control</div>
+                                <div class="text-white font-bold text-2xl tracking-tight opacity-0 translate-y-4" id="mc-title" style="font-family:'Inter',sans-serif;">Mission Control</div>
                                 <div class="flex gap-6">
-                                    <div class="w-64 aspect-[16/10] bg-[#1a1a2e] rounded-lg border border-white/20 relative transform scale-90 opacity-0 translate-y-10" id="mc-space-1"
+                                    <div class="w-64 aspect-[16/10] bg-[#1a1a2e] rounded-lg border border-white/20 relative scale-90 opacity-0 translate-y-10" id="mc-space-1"
                                         style="box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
                                         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-400" style="font-family:'Inter',sans-serif;">Desktop 1</div>
                                     </div>
-                                    <div class="w-64 aspect-[16/10] bg-indigo-900/40 rounded-lg border-2 border-white relative flex items-center justify-center overflow-hidden transform scale-100 opacity-0 translate-y-10" id="mc-space-2"
+                                    <div class="w-64 aspect-[16/10] bg-indigo-900/40 rounded-lg border-2 border-white relative flex items-center justify-center overflow-hidden scale-100 opacity-0 translate-y-10" id="mc-space-2"
                                         style="box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
                                         <div class="absolute inset-0 bg-cover bg-center opacity-50" style="background-image: url('https://www.macplanete.com/wp-content/uploads/2025/06/macOS26_Clair-scaled.jpg');"></div>
                                         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold text-white tracking-widest uppercase" style="font-family:'Inter',sans-serif;">GAMING</div>
-                                        <div class="glass-strong px-6 py-4 rounded-xl transform scale-75">
+                                        <div class="glass-strong px-6 py-4 rounded-xl scale-75">
                                             <span class="text-2xl font-black text-white" style="font-family:'Inter',sans-serif;">GAMING</span>
                                         </div>
                                     </div>
-                                    <div class="w-64 aspect-[16/10] bg-[#0f172a] rounded-lg border border-white/20 relative transform scale-90 opacity-0 translate-y-10" id="mc-space-3"
+                                    <div class="w-64 aspect-[16/10] bg-[#0f172a] rounded-lg border border-white/20 relative scale-90 opacity-0 translate-y-10" id="mc-space-3"
                                         style="box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
                                         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-400" style="font-family:'Inter',sans-serif;">Desktop 3</div>
                                     </div>
@@ -318,7 +363,7 @@
             </section>
 
             <!-- Download Section -->
-            <section id="download" class="section-rk">
+            <section id="download" class="section-rk" style="border-top: none;">
                 <div class="container">
                     <div class="content-grid mb-16">
                         <div class="content-label">
@@ -339,7 +384,7 @@
                     <div class="glass-strong rounded-2xl p-10 md:p-16 mt-16 flex flex-col md:flex-row items-center justify-between gap-10">
                         <div class="flex items-center gap-5">
                             <div class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0" style="background: var(--bg-primary); border: 1px solid var(--border-color);">
-                                <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png" class="w-16 h-16 rounded-lg" alt="Icon">
+                                <img src="resources/works/desktop-renamer.png" class="w-16 h-16 rounded-lg" alt="Icon">
                             </div>
                             <div>
                                 <h3 class="text-2xl font-bold tracking-tight" style="font-family:'Syncopate',sans-serif;">DesktopRenamer</h3>
@@ -369,37 +414,43 @@
         <footer class="w-full pt-16 pb-8" style="background-color: var(--klein-blue); color: var(--pure-white);">
             <div class="container">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+                    <!-- Brand -->
                     <div class="md:col-span-4">
                         <a href="#" @click.prevent="scrollToTop" class="inline-block mb-3" aria-label="Back to top">
-                            <img src="https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png" class="w-10 h-10 rounded-lg" alt="Icon">
+                            <img src="resources/works/desktop-renamer.png" class="w-10 h-10 rounded-lg" alt="Icon">
                         </a>
                         <p class="text-xs text-white/70" style="font-family:'Inter',sans-serif;">&copy; {{ new Date().getFullYear() }} Michael Qiu. &mdash; Hangzhou, China</p>
                     </div>
+                    <!-- Product -->
                     <div class="md:col-span-2">
-                        <p class="footer-nav-label">Product</p>
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Product</p>
                         <div class="flex flex-col gap-1">
-                            <a href="#features" @click.prevent="scrollTo('#features')" class="footer-nav-link">Features</a>
-                            <a href="#demo" @click.prevent="scrollTo('#demo')" class="footer-nav-link">Demo</a>
-                            <a href="#download" @click.prevent="scrollTo('#download')" class="footer-nav-link">Download</a>
+                            <a @click.prevent="scrollTo('#features')" href="#features" class="footer-nav-link">Features</a>
+                            <a @click.prevent="scrollTo('#demo-reel')" href="#demo-reel" class="footer-nav-link">Demo Reel</a>
+                            <a @click.prevent="scrollTo('#demo')" href="#demo" class="footer-nav-link">Demo</a>
+                            <a @click.prevent="scrollTo('#download')" href="#download" class="footer-nav-link">Download</a>
                         </div>
                     </div>
-                    <div class="md:col-span-2">
-                        <p class="footer-nav-label">Links</p>
+                    <!-- More Apps -->
+                    <div class="md:col-span-3">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">More Apps</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="OptClicker.html" class="footer-nav-link">OptClicker &mdash; Simulate right-click via Option key</a>
+                            <a href="SpaceSwitcher.html" class="footer-nav-link">SpaceSwitcher &mdash; Control app visibility across spaces</a>
+                        </div>
+                    </div>
+                    <!-- Links -->
+                    <div class="md:col-span-3">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Links</p>
                         <div class="flex flex-col gap-1">
                             <a href="index.html" class="footer-nav-link">Home</a>
                             <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="footer-nav-link">GitHub</a>
                         </div>
                     </div>
-                    <div class="md:col-span-4">
-                        <p class="footer-nav-label">More Apps</p>
-                        <div class="flex flex-col gap-1">
-                            <a href="OptClicker.html" class="footer-nav-link">OptClicker</a>
-                            <a href="SpaceSwitcher.html" class="footer-nav-link">SpaceSwitcher</a>
-                        </div>
-                    </div>
                 </div>
+
                 <div class="border-t border-white/10 pt-8 mt-8">
-                    <div style="font-size: clamp(2.5rem, 8vw, 10rem); font-family:'Inter',sans-serif; font-weight:900; letter-spacing:-0.06em; line-height:0.8;">
+                    <div class="text-[clamp(2.5rem,8vw,10rem)] font-black tracking-tighter leading-none" style="font-family:'Inter',sans-serif;">
                         Desktop<br>Renamer.
                     </div>
                 </div>
@@ -420,11 +471,18 @@
 
             createApp({
                 setup: function () {
-                    var canvasContainer = ref(null);
+                    var activeSection = ref('home');
+                    var showNavDock = ref(false);
+                    var navDockBottom = ref('2rem');
+                    var sectionLabels = { home: 'Overview', features: 'Features', 'demo-reel': 'Demo Reel', demo: 'Demo', download: 'Download' };
                     var showVideoModal = ref(false);
                     var modalVideo = ref(null);
                     var latestVersion = ref('');
                     var downloadUrl = ref('#');
+                    var canvasContainer = ref(null);
+
+                    var lenis;
+                    var scrollRafPending = false;
 
                     // ── Theme ──
                     var STORAGE_KEY = 'theme';
@@ -475,6 +533,15 @@
 
                     applyTheme(resolveTheme() === 'dark');
 
+                    // ── Navigation ──
+                    function scrollTo(target) {
+                        if (lenis) lenis.scrollTo(target);
+                    }
+
+                    function scrollToTop() {
+                        if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+                    }
+
                     // ── Video Modal ──
                     function openVideoModal() {
                         showVideoModal.value = true;
@@ -500,16 +567,120 @@
                         }
                     });
 
-                    // ── Navigation ──
-                    var lenis;
+                    // ── Scroll Tracking ──
+                    function updateScrollProgress() {
+                        scrollRafPending = false;
+                        var winHeight = window.innerHeight;
+                        showNavDock.value = window.scrollY > winHeight * 0.2;
+                        var sections = ['home', 'features', 'demo-reel', 'demo', 'download'];
+                        var current = 'home';
+                        sections.forEach(function (id) {
+                            var el = document.getElementById(id);
+                            if (el) {
+                                var rect = el.getBoundingClientRect();
+                                if (rect.top <= winHeight * 0.4) current = id;
+                            }
+                        });
+                        activeSection.value = current;
 
-                    function scrollTo(target) {
-                        if (lenis) lenis.scrollTo(target);
+                        var footer = document.querySelector('footer');
+                        if (footer) {
+                            var footerRect = footer.getBoundingClientRect();
+                            if (footerRect.top < winHeight) {
+                                var offset = winHeight - footerRect.top + 16;
+                                navDockBottom.value = offset + 'px';
+                            } else {
+                                navDockBottom.value = '2rem';
+                            }
+                        }
                     }
 
-                    function scrollToTop() {
-                        if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+                    function onScroll() {
+                        if (!scrollRafPending) {
+                            scrollRafPending = true;
+                            requestAnimationFrame(updateScrollProgress);
+                        }
                     }
+
+                    // ── Section Label Animation ──
+                    var sectionLabelTween;
+                    var sectionLabelClone;
+                    var sectionOrder = ['home', 'features', 'demo-reel', 'demo', 'download'];
+
+                    watch(activeSection, function (newSection, oldSection) {
+                        if (!oldSection || oldSection === newSection) return;
+
+                        if (sectionLabelTween) {
+                            sectionLabelTween.kill();
+                            sectionLabelTween = null;
+                        }
+                        if (sectionLabelClone && sectionLabelClone.parentNode) {
+                            sectionLabelClone.remove();
+                            sectionLabelClone = null;
+                        }
+
+                        var dock = document.querySelector('.nav-dock');
+                        var label = document.querySelector('.nav-dock__label');
+                        var labelText = document.querySelector('.nav-dock__label-text');
+                        if (!dock || !label || !labelText) return;
+
+                        var oldIdx = sectionOrder.indexOf(oldSection);
+                        var newIdx = sectionOrder.indexOf(newSection);
+                        var isForward = newIdx > oldIdx;
+                        var outDir = isForward ? -110 : 110;
+                        var inDir = isForward ? 110 : -110;
+
+                        var currentWidth = dock.offsetWidth;
+                        dock.style.width = currentWidth + 'px';
+
+                        labelText.style.position = 'absolute';
+                        gsap.set(labelText, { opacity: 0 });
+
+                        sectionLabelClone = document.createElement('span');
+                        sectionLabelClone.textContent = sectionLabels[oldSection] || oldSection;
+                        sectionLabelClone.style.cssText = 'display:block;white-space:nowrap;';
+                        label.appendChild(sectionLabelClone);
+
+                        sectionLabelTween = gsap.to(sectionLabelClone, {
+                            yPercent: outDir,
+                            opacity: 0,
+                            duration: 0.2,
+                            ease: 'power2.in',
+                            onComplete: function () {
+                                if (sectionLabelClone && sectionLabelClone.parentNode) {
+                                    sectionLabelClone.remove();
+                                    sectionLabelClone = null;
+                                }
+                                sectionLabelTween = null;
+
+                                labelText.style.position = '';
+                                dock.style.width = '';
+                                var newWidth = dock.offsetWidth;
+
+                                dock.style.width = currentWidth + 'px';
+                                gsap.set(labelText, { yPercent: inDir, opacity: 0 });
+
+                                sectionLabelTween = gsap.timeline({
+                                    onComplete: function () {
+                                        dock.style.width = '';
+                                        sectionLabelTween = null;
+                                    }
+                                });
+                                sectionLabelTween
+                                    .to(dock, {
+                                        width: newWidth,
+                                        duration: 0.4,
+                                        ease: 'power2.inOut'
+                                    }, 0)
+                                    .to(labelText, {
+                                        yPercent: 0,
+                                        opacity: 1,
+                                        duration: 0.3,
+                                        ease: 'power2.out'
+                                    }, 0.07);
+                            }
+                        });
+                    });
 
                     // ── Three.js 3D Icon ──
                     var scene, camera, renderer, iconMesh;
@@ -545,6 +716,7 @@
                         renderer.toneMapping = THREE.ACESFilmicToneMapping;
                         renderer.toneMappingExposure = 1.2;
                         canvasContainer.value.appendChild(renderer.domElement);
+
                         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
                         var spotLight = new THREE.SpotLight(0xffffff, 2);
                         spotLight.position.set(10, 20, 20);
@@ -567,8 +739,9 @@
                         }
                         geometry.attributes.uv.needsUpdate = true;
                         geometry.center();
+
                         var textureLoader = new THREE.TextureLoader();
-                        var iconUrl = 'https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/refs/heads/main/resources/works/desktop-renamer.png';
+                        var iconUrl = 'resources/works/desktop-renamer.png';
                         var materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
                         var materialFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
                         textureLoader.load(iconUrl, function (tex) {
@@ -580,7 +753,6 @@
                         iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
                         iconMesh.rotation.x = 0.2;
                         iconMesh.rotation.y = -0.3;
-                        iconMesh.position.x = 0;
                         scene.add(iconMesh);
 
                         function animate() {
@@ -609,25 +781,8 @@
                         });
                     }
 
-                    // ── Demo Scroll Animation ──
-                    function initScrollAnimation() {
-                        // Hero text reveal
-                        gsap.fromTo('.hero__name', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 1.5, ease: 'power4.out', delay: 0.3 });
-                        gsap.fromTo('.hero__tagline', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 1.5, ease: 'power4.out', delay: 0.5 });
-                        if (iconMesh) gsap.fromTo(iconMesh.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1, duration: 2, ease: 'elastic.out(1, 0.5)', delay: 0.2 });
-
-                        // Mask reveals
-                        gsap.utils.toArray('.mask-inner').forEach(function (el) {
-                            if (el.closest('.hero__text')) return;
-                            gsap.fromTo(el, { y: '105%' }, {
-                                y: '0%',
-                                duration: 1.2,
-                                ease: 'expo.out',
-                                scrollTrigger: { trigger: el, start: 'top bottom-=10%', toggleActions: 'play none none none' }
-                            });
-                        });
-
-                        // Demo sticky scroll
+                    // ── Demo Sticky Scroll Animation ──
+                    function initDemoAnimation() {
                         var tl = gsap.timeline({
                             scrollTrigger: {
                                 trigger: '#demo',
@@ -656,8 +811,7 @@
                             onUpdate: function () {
                                 var progress = this.progress();
                                 var len = Math.round(progress * 6);
-                                var full = 'Gaming';
-                                document.getElementById('input-text').textContent = full.substring(0, len);
+                                document.getElementById('input-text').textContent = 'Gaming'.substring(0, len);
                                 gsap.set('#input-progress', { width: (progress * 100) + '%' });
                             }
                         });
@@ -668,7 +822,7 @@
                           .to('#demo-space-pill', { scale: 1.2, backgroundColor: '#ffffff', duration: 0.2, ease: 'power1.inOut' })
                           .to('#demo-text', { duration: 0.01, onUpdate: function () { document.getElementById('demo-text').textContent = 'Gaming'; } }, '>')
                           .to('#demo-icon', { duration: 0.01, onUpdate: function () { document.getElementById('demo-icon').style.color = '#000000'; } }, '<')
-                          .to('#demo-space-pill', { scale: 1.0, backgroundColor: 'rgba(0, 47, 167, 0.6)', borderColor: '#002FA7', duration: 0.4, ease: 'elastic.out(1, 0.5)' })
+                          .to('#demo-space-pill', { scale: 1.0, backgroundColor: 'rgba(0, 47, 167, 0.6)', duration: 0.4, ease: 'elastic.out(1, 0.5)' })
                           .to('#demo-icon', { duration: 0.4, onUpdate: function () { document.getElementById('demo-icon').style.color = '#ffffff'; } }, '<')
                           .to('#demo-final-label', { scale: 1, opacity: 1, duration: 1, ease: 'elastic.out(1, 0.7)' }, '-=0.2');
 
@@ -684,30 +838,71 @@
                         tl.to({}, { duration: 3 });
                     }
 
-                    // ── Mount ──
+                    // ── Lifecycle ──
                     onMounted(function () {
-                        // Fade in body
-                        gsap.to(document.body, { opacity: 1, duration: 0.6, ease: 'power2.out' });
-
-                        systemQuery.addEventListener('change', onSystemThemeChange);
-
-                        // Init Three.js
-                        initThree();
-
-                        // Init Lenis
-                        lenis = new Lenis({ duration: 1.2, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
-                        function raf(time) {
-                            lenis.raf(time);
-                            ScrollTrigger.update();
-                            requestAnimationFrame(raf);
-                        }
+                        // Lenis
+                        lenis = new Lenis({ duration: 1.5, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
+                        function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
                         requestAnimationFrame(raf);
 
-                        // Init scroll animations
-                        setTimeout(initScrollAnimation, 100);
+                        window.addEventListener('scroll', onScroll, { passive: true });
+                        systemQuery.addEventListener('change', onSystemThemeChange);
 
-                        // Lucide icons
-                        lucide.createIcons();
+                        nextTick(function () {
+                            lucide.createIcons();
+
+                            // Init Three.js (puts canvas into .hero__particles)
+                            initThree();
+
+                            // ── Animation Sequence ──
+                            var tl = gsap.timeline();
+
+                            tl.set('body', { opacity: 1 })
+                                .set('.hero__text .mask-inner', { y: '120%' })
+                                .to('#preloader', { opacity: 0, duration: 0.8, ease: 'power2.inOut', delay: 0.3, onComplete: function () {
+                                    var el = document.getElementById('preloader');
+                                    if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                } })
+                                .to('.hero__bg', { opacity: 1, duration: 1.5, ease: 'power2.inOut' }, '-=0.5')
+                                .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: 'expo.inOut' }, '-=0.7')
+                                .from('.hero__particles canvas', { opacity: 0, scale: 0.92, duration: 0.7, ease: 'power3.out' }, '-=0.45')
+                                .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: 'expo.out' }, '-=0.3')
+                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3');
+
+                            // Mask reveals for sections
+                            gsap.utils.toArray('.section-rk').forEach(function (sec) {
+                                var masks = sec.querySelectorAll('.mask-inner');
+                                if (masks.length > 0) {
+                                    gsap.from(masks, {
+                                        y: '100%',
+                                        duration: 1.8,
+                                        stagger: 0.15,
+                                        ease: 'power4.out',
+                                        scrollTrigger: {
+                                            trigger: sec,
+                                            start: 'top 85%',
+                                        }
+                                    });
+                                }
+                            });
+
+                            // Gradient parallax
+                            gsap.utils.toArray('.gradient-text').forEach(function (el) {
+                                gsap.to(el, {
+                                    backgroundPosition: '100% 50%',
+                                    ease: 'none',
+                                    scrollTrigger: {
+                                        trigger: el,
+                                        start: 'top bottom',
+                                        end: 'bottom top',
+                                        scrub: true
+                                    }
+                                });
+                            });
+
+                            // Demo animation
+                            initDemoAnimation();
+                        });
 
                         // Fetch GitHub version
                         fetch('https://api.github.com/repos/gitmichaelqiu/DesktopRenamer/releases/latest')
@@ -727,21 +922,27 @@
                     });
 
                     onUnmounted(function () {
+                        window.removeEventListener('scroll', onScroll);
                         systemQuery.removeEventListener('change', onSystemThemeChange);
+                        if (lenis) lenis.destroy();
                     });
 
                     return {
-                        canvasContainer: canvasContainer,
+                        activeSection: activeSection,
+                        showNavDock: showNavDock,
+                        navDockBottom: navDockBottom,
+                        sectionLabels: sectionLabels,
+                        isDark: isDark,
+                        toggleTheme: toggleTheme,
+                        scrollTo: scrollTo,
+                        scrollToTop: scrollToTop,
                         showVideoModal: showVideoModal,
+                        openVideoModal: openVideoModal,
+                        closeVideoModal: closeVideoModal,
                         modalVideo: modalVideo,
                         latestVersion: latestVersion,
                         downloadUrl: downloadUrl,
-                        isDark: isDark,
-                        toggleTheme: toggleTheme,
-                        openVideoModal: openVideoModal,
-                        closeVideoModal: closeVideoModal,
-                        scrollTo: scrollTo,
-                        scrollToTop: scrollToTop,
+                        canvasContainer: canvasContainer,
                     };
                 }
             }).mount('#app');
