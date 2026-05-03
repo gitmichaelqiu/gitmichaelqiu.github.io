@@ -102,7 +102,7 @@
             <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
                 <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
-            <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" class="nav-dock__btn" title="Download">
+            <a @click.prevent="handleNavClick('install')" href="#install" class="nav-dock__btn" title="Download">
                 <i data-lucide="download" class="w-5 h-5"></i>
             </a>
             <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>
@@ -254,7 +254,7 @@
                         <div class="container" style="width: 100%;">
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
                                 <div class="md:col-span-5 md:pr-16">
-                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text);">01 / Rename</p>
+                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.01em; color: var(--klein-blue-text);">01 / Rename</p>
                                     <h3 class="heading-l mb-4">Rename at <span class="text-editorial gradient-text">Menu Bar</span></h3>
                                     <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: -0.02em; color: var(--text-primary);">Give your desktop spaces custom names directly from the menu bar. Click, type, done.</p>
                                 </div>
@@ -279,7 +279,7 @@
                                     </div>
                                 </div>
                                 <div class="md:col-span-5 md:pl-16">
-                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text);">02 / Labels</p>
+                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.01em; color: var(--klein-blue-text);">02 / Labels</p>
                                     <h3 class="heading-l mb-4">Crystal Clear <span class="text-editorial gradient-text">Labels</span></h3>
                                     <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: -0.02em; color: var(--text-primary);">Aesthetic name labels in Mission Control. A discreet active label confirms your space after switching.</p>
                                 </div>
@@ -292,7 +292,7 @@
                         <div class="container" style="width: 100%;">
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
                                 <div class="md:col-span-5 md:pr-16">
-                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text);">03 / Navigate</p>
+                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.01em; color: var(--klein-blue-text);">03 / Navigate</p>
                                     <h3 class="heading-l mb-4">Switch <span class="text-editorial gradient-text">&amp;</span> Move</h3>
                                     <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: -0.02em; color: var(--text-primary);">Click a space to jump to it. Hold <strong>Option (⌥)</strong> to teleport the active window — no dragging.</p>
                                 </div>
@@ -317,7 +317,7 @@
                                         class="w-full rounded-lg" style="max-width: 640px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
                                 </div>
                                 <div class="md:col-span-5 md:pl-16">
-                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.04em; color: var(--klein-blue-text);">04 / Speed</p>
+                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.01em; color: var(--klein-blue-text);">04 / Speed</p>
                                     <h3 class="heading-l mb-4">Faster <span class="text-editorial gradient-text">Switching</span></h3>
                                     <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: -0.02em; color: var(--text-primary);">Bypass macOS animation lag with trackpad overrides or keyboard hotkeys for instant switching.</p>
                                 </div>
@@ -392,15 +392,25 @@
                                 <p class="paragraph-l max-w-2xl mask-inner" style="color: rgba(255,255,255,0.9);">macOS 13.0+. No SIP disable. Drag to Applications, done.</p>
                             </div>
                             <div class="flex flex-wrap items-center gap-4 mb-6">
-                                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank"
-                                    style="display: inline-flex; align-items: center; justify-content: center; padding: 1.2rem 2.8rem; font-size: 1.3rem; font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: 0.02em; background: var(--pure-white); color: var(--klein-blue); border-radius: 0; text-decoration: none; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;"
-                                    onmouseover="this.style.transform='scale(1.03)'; this.style.boxShadow='0 12px 40px rgba(0,0,0,0.25)';"
-                                    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
-                                    Download
-                                    <i data-lucide="arrow-down" style="width: 1.2em; height: 1.2em; margin-left: 0.5rem;"></i>
+                                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" data-btn
+                                    style="font-size: 1.3rem; letter-spacing: 0.02em; background: var(--pure-white); border-color: var(--pure-white); --install-btn-hover: #0038c8;"
+                                    onmouseenter="this.style.background='var(--install-btn-hover)'; this.style.borderColor='var(--install-btn-hover)'; this.querySelector('[data-btn-text]').style.color='var(--pure-white)'; this.querySelector('[data-btn-bg]').style.background='var(--install-btn-hover)';"
+                                    onmouseleave="this.style.background='var(--pure-white)'; this.style.borderColor='var(--pure-white)'; this.querySelector('[data-btn-text]').style.color='var(--klein-blue)'; this.querySelector('[data-btn-bg]').style.background='var(--pure-white)';">
+                                    <div data-btn-bg style="background: var(--pure-white);"></div>
+                                    <div data-btn-inner data-text="Download">
+                                        <span data-btn-text style="color: var(--klein-blue);">Download</span>
+                                    </div>
                                 </a>
-                                <code style="padding: 1.0rem 1.8rem; font-size: 0.9rem; letter-spacing: 0.02em; background: rgba(255,255,255,0.12); border-radius: 0; color: rgba(255,255,255,0.9); word-break: break-all;">
+                                <span style="font-size: 1.1rem; color: rgba(255,255,255,0.6); font-family: 'Inter', sans-serif; font-weight: 400;">or</span>
+                                <code class="brew-cmd" style="display: flex; align-items: center; gap: 0.8rem; padding: 1.0rem 1.2rem 1.0rem 1.8rem; font-size: 0.9rem; letter-spacing: 0.02em; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); word-break: break-all;">
                                     brew install --cask gitmichaelqiu/tap/desktoprenamer
+                                    <button @click="copyBrew" title="Copy"
+                                        style="flex-shrink: 0; width: 2.2rem; height: 2.2rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s ease;"
+                                        onmouseenter="this.style.background='rgba(255,255,255,0.15)'; this.style.color='rgba(255,255,255,1)';"
+                                        onmouseleave="this.style.background='transparent'; this.style.color='rgba(255,255,255,0.7)';">
+                                        <i data-lucide="check" class="w-4 h-4" v-if="brewCopied" style="color: var(--gold-light);"></i>
+                                        <i data-lucide="copy" class="w-4 h-4" v-else></i>
+                                    </button>
                                 </code>
                             </div>
                             <p style="font-size: 0.85rem; letter-spacing: -0.02em; color: rgba(255,255,255,0.6); max-width: 36rem;">
@@ -575,6 +585,7 @@
                     var sectionLabels = { home: 'Home', overview: 'Overview', demo: 'Demo', features: 'Features', 'more-features': 'Features', install: 'Install', companions: 'Companions' };
                     var showVideoModal = ref(false);
                     var modalVideo = ref(null);
+                    var brewCopied = ref(false);
 
                     var lenis;
                     var scrollRafPending = false;
@@ -627,6 +638,13 @@
                     }
 
                     applyTheme(resolveTheme() === 'dark');
+
+                    function copyBrew() {
+                        navigator.clipboard.writeText('brew install --cask gitmichaelqiu/tap/desktoprenamer').then(function () {
+                            brewCopied.value = true;
+                            setTimeout(function () { brewCopied.value = false; }, 1500);
+                        }).catch(function () {});
+                    }
 
                     function handleNavClick(targetId) {
                         closeSidebar(function () {
@@ -1007,7 +1025,9 @@
                         showVideoModal: showVideoModal,
                         openVideoModal: openVideoModal,
                         closeVideoModal: closeVideoModal,
-                        modalVideo: modalVideo
+                        modalVideo: modalVideo,
+                        copyBrew: copyBrew,
+                        brewCopied: brewCopied
                     };
                 }
             }).mount('#app');
