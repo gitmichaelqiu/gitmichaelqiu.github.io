@@ -493,6 +493,7 @@
                         }
 
                         item.addEventListener('mouseenter', function (e) {
+                            item.style.zIndex = '9999';
                             lastEvent = e;
                             showNow(e);
                         });
@@ -504,6 +505,7 @@
                         });
 
                         item.addEventListener('mouseleave', function () {
+                            item.style.zIndex = '';
                             hideNow();
                         });
                     });

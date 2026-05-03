@@ -276,10 +276,10 @@ html.dark .glass-strong {
     left: 0;
     display: none;
     pointer-events: none;
-    z-index: 10000;
+    z-index: 99999;
     width: 6rem;
     height: auto;
-    background: transparent;
+    filter: drop-shadow(0 20px 50px rgba(0,0,0,0.3));
 }
 
 /* Cursor-following flag emoji on photo cards */
