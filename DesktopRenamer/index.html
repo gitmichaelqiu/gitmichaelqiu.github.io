@@ -248,7 +248,7 @@
                 </div>
 
                 <!-- Sticky slide stack: 4 features -->
-                <div class="feature-gallery" style="height: 340vh; position: relative; overflow: hidden;">
+                <div class="feature-gallery" style="height: 280vh; position: relative; overflow: hidden;">
                     <!-- Slide 1: Rename at Menu Bar — text left, media right -->
                     <div class="feature-slide" style="position: sticky; top: 0; height: 70vh; display: flex; align-items: center; overflow: hidden;">
                         <div class="container" style="width: 100%;">
@@ -683,10 +683,10 @@
                         }
                     });
 
-                    watch(brewCopied, function (val) {
-                        if (val) {
+                    watch(brewCopied, function () {
+                        nextTick(function () {
                             nextTick(function () { lucide.createIcons(); });
-                        }
+                        });
                     });
 
                     // ── Sidebar ──
