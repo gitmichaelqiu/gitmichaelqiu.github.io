@@ -102,6 +102,9 @@
             <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
                 <i data-lucide="arrow-up" class="w-5 h-5"></i>
             </a>
+            <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" class="nav-dock__btn" title="Download">
+                <i data-lucide="download" class="w-5 h-5"></i>
+            </a>
             <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>
             <button @click="toggleTheme" class="nav-dock__btn"
                 :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
@@ -164,10 +167,6 @@
                     </div>
                 </div>
 
-                <div class="hero__scroll-indicator">
-                    <div class="hero__scroll-line"></div>
-                    <span class="hero__scroll-label">Scroll</span>
-                </div>
             </section>
 
             <!-- Overview Section -->
@@ -217,11 +216,13 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Quickly give your desktop spaces a custom name directly from the menu bar. Click the menubar icon, type a name, and it's set — no complicated setup, no configuration files.</p>
+                                <p class="paragraph-m max-w-2xl mask-inner">Quickly give your desktop spaces a custom name directly from the menu bar. Click the menubar icon, type a name, and it's set.</p>
                             </div>
-                            <div class="screenshot-parallax mt-10">
+                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                                <video src="../resources/demo/desktop-renamer/Rename.mp4" autoplay muted loop playsinline
+                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
                                 <img :src="isDark ? '../resources/works/desktop-renamer-full-dark.png' : '../resources/works/desktop-renamer-full.png'"
-                                    alt="DesktopRenamer screenshot" class="screenshot-parallax-img">
+                                    alt="DesktopRenamer screenshot" class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
                             </div>
                         </div>
                     </div>
@@ -233,7 +234,13 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">See <strong>large, aesthetic name labels</strong> when you enter Mission Control, so you instantly know which space is which. When you switch spaces, a <strong>discreet active label</strong> appears briefly to confirm where you landed. Both can be toggled independently to match your preference.</p>
+                                <p class="paragraph-m max-w-2xl mask-inner">Large, aesthetic name labels when you enter Mission Control. A discreet active label confirms which space you landed on after switching. Both toggle independently.</p>
+                            </div>
+                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                                <video src="../resources/demo/desktop-renamer/MissionControl.mp4" autoplay muted loop playsinline
+                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
+                                <video src="../resources/demo/desktop-renamer/ActiveLabel.mp4" autoplay muted loop playsinline
+                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
                             </div>
                         </div>
                     </div>
@@ -245,7 +252,13 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Click any space in the menu bar to jump directly to it. Hold the <strong>Option (⌥) key</strong> while clicking to instantly teleport the active window to that space. No more dragging windows across desktops.</p>
+                                <p class="paragraph-m max-w-2xl mask-inner">Click any space to jump to it. Hold <strong>Option (⌥)</strong> while clicking to teleport the active window to that space.</p>
+                            </div>
+                            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                                <video src="../resources/demo/desktop-renamer/SwitchSpace.mp4" autoplay muted loop playsinline
+                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
+                                <video src="../resources/demo/desktop-renamer/MoveWindow.mp4" autoplay muted loop playsinline
+                                    class="w-full rounded-lg" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
                             </div>
                         </div>
                     </div>
@@ -257,7 +270,11 @@
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Bypass native macOS animation lag. Enable <strong>trackpad gesture overrides</strong> or configurable <strong>keyboard hotkeys</strong> for instant, zero-delay switching between spaces. Your muscle memory, supercharged.</p>
+                                <p class="paragraph-m max-w-2xl mask-inner">Bypass native macOS animation lag with trackpad gesture overrides or keyboard hotkeys for instant, zero-delay switching.</p>
+                            </div>
+                            <div class="mt-8">
+                                <video src="../resources/demo/desktop-renamer/SwitchOverride.mp4" autoplay muted loop playsinline
+                                    class="w-full rounded-lg" style="max-width: 600px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);"></video>
                             </div>
                         </div>
                     </div>
@@ -358,66 +375,30 @@
                         </div>
                     </div>
 
-                    <!-- Direct Download -->
                     <div class="content-grid mb-12">
                         <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Direct Download
+                            Download
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Download the latest version from GitHub Releases, drag to Applications, and you're done. <strong>No SIP disabling required.</strong> Requires macOS 13.0 Ventura or later.</p>
+                                <p class="paragraph-m max-w-2xl mask-inner">Requires macOS 13.0+. Download from GitHub Releases and drag to Applications — no SIP disabling needed. Or install via Homebrew:</p>
                             </div>
-                            <div class="mt-6">
+                            <div class="mt-6 flex flex-wrap items-center gap-4">
                                 <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" data-btn style="font-size: 1.2rem; letter-spacing: 0em;">
                                     <div data-btn-bg></div>
-                                    <div data-btn-inner data-text="Download from GitHub">
-                                        <span data-btn-text>Download from GitHub</span>
+                                    <div data-btn-inner data-text="Download">
+                                        <span data-btn-text>Download</span>
                                     </div>
                                 </a>
+                                <code class="bg-black/5 dark:bg-white/5 rounded-lg px-5 py-4 text-sm"
+                                    style="font-size: 0.85rem; letter-spacing: 0.02em; word-break: break-all;">
+                                    brew install --cask gitmichaelqiu/tap/desktoprenamer
+                                </code>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Homebrew -->
-                    <div class="content-grid mb-12">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Homebrew
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Prefer the command line? Install via Homebrew with a single command.</p>
-                            </div>
-                            <div class="mt-6 bg-black/5 dark:bg-white/5 rounded-lg p-5 font-mono text-sm max-w-lg"
-                                style="font-size: 0.9rem; letter-spacing: 0.02em; word-break: break-all;">
-                                brew install --cask gitmichaelqiu/tap/desktoprenamer
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Note about signing -->
-                    <div class="content-grid mb-12">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            First Launch
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">Since DesktopRenamer isn't signed with a paid Apple Developer account, macOS may show a "Developer not verified" alert. Go to <strong>System Settings → Privacy & Security → Open DesktopRenamer</strong> to allow it. If issues persist, run:</p>
-                            </div>
-                            <div class="mt-6 bg-black/5 dark:bg-white/5 rounded-lg p-5 font-mono text-sm max-w-lg"
-                                style="font-size: 0.9rem; letter-spacing: 0.02em; word-break: break-all;">
-                                codesign --force -s - /Applications/DesktopRenamer.app
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Permissions -->
-                    <div class="content-grid mb-12">
-                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
-                            Permissions
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-m max-w-2xl mask-inner">DesktopRenamer needs <strong>Accessibility</strong> permission for hotkeys and trackpad overrides, and <strong>Automation</strong> permission to control System Events for Mission Control. You'll be guided through granting these on first launch.</p>
+                            <div class="mask-wrap mt-8">
+                                <p class="text-sm opacity-60 max-w-2xl mask-inner" style="font-size: 0.9rem; letter-spacing: -0.02em;">
+                                    Not signed with a paid Apple Developer account — if macOS blocks the app, go to <strong>System Settings → Privacy & Security</strong> to allow it. DesktopRenamer needs Accessibility and Automation permissions for hotkeys and Mission Control integration; you'll be guided through this on first launch.
+                                </p>
                             </div>
                         </div>
                     </div>
