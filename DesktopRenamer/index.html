@@ -391,7 +391,7 @@
                             <div class="mask-wrap mb-10">
                                 <p class="paragraph-l max-w-2xl mask-inner" style="color: rgba(255,255,255,0.9);">macOS 13.0+. No SIP disable. Drag to Applications, done.</p>
                             </div>
-                            <div class="flex flex-wrap items-center gap-4 mb-6">
+                            <div class="flex flex-wrap items-stretch gap-4 mb-6">
                                 <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" data-btn
                                     style="font-size: 1.3rem; letter-spacing: 0.02em; background: var(--pure-white); border-color: var(--pure-white); --install-btn-hover: #0038c8;"
                                     onmouseenter="this.style.background='var(--install-btn-hover)'; this.style.borderColor='var(--install-btn-hover)'; this.querySelector('[data-btn-text]').style.color='var(--pure-white)'; this.querySelector('[data-btn-bg]').style.background='var(--install-btn-hover)';"
@@ -401,7 +401,7 @@
                                         <span data-btn-text style="color: var(--klein-blue);">Download</span>
                                     </div>
                                 </a>
-                                <span style="font-size: 1.1rem; color: rgba(255,255,255,0.6); font-family: 'Inter', sans-serif; font-weight: 400;">or</span>
+                                <span class="self-center" style="font-size: 1.1rem; color: rgba(255,255,255,0.6); font-family: 'Inter', sans-serif; font-weight: 400;">or</span>
                                 <code class="brew-cmd" style="display: flex; align-items: center; gap: 0.8rem; padding: 1.0rem 1.2rem 1.0rem 1.8rem; font-size: 0.9rem; letter-spacing: 0.02em; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); word-break: break-all;">
                                     brew install --cask gitmichaelqiu/tap/desktoprenamer
                                     <button @click="copyBrew" title="Copy"
