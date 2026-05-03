@@ -365,6 +365,32 @@
                             <p style="font-size: 0.85rem; letter-spacing: -0.02em; color: rgba(255,255,255,0.6); max-width: 36rem;">
                                 Not signed with a paid Apple Developer account — go to <strong>System Settings → Privacy & Security</strong> if macOS blocks the app. Permissions are guided on first launch.
                             </p>
+
+                            <!-- DesktopRenamer prerequisite install -->
+                            <div class="mt-10 pt-8" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.55); font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 0.02em; margin-bottom: 0.8rem;">Prerequisite: Install DesktopRenamer first</p>
+                                <div class="flex flex-wrap items-stretch gap-3">
+                                    <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" data-btn
+                                        style="font-size: 1.0rem; letter-spacing: 0.02em; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); --install-btn-hover-dr: #0038c8;"
+                                        onmouseenter="this.style.background='var(--install-btn-hover-dr)'; this.style.borderColor='var(--install-btn-hover-dr)'; this.querySelector('[data-btn-text]').style.color='var(--pure-white)'; this.querySelector('[data-btn-bg]').style.background='var(--install-btn-hover-dr)';"
+                                        onmouseleave="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.25)'; this.querySelector('[data-btn-text]').style.color='rgba(255,255,255,0.9)'; this.querySelector('[data-btn-bg]').style.background='rgba(255,255,255,0.1)';">
+                                        <div data-btn-bg style="background: rgba(255,255,255,0.1);"></div>
+                                        <div data-btn-inner data-text="Download">
+                                            <span data-btn-text style="color: rgba(255,255,255,0.9);">Download DesktopRenamer</span>
+                                        </div>
+                                    </a>
+                                    <code style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.0rem 0.6rem 1.4rem; font-size: 0.75rem; letter-spacing: 0.02em; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); word-break: break-all;">
+                                        brew install --cask gitmichaelqiu/tap/desktoprenamer
+                                        <button @click="copyBrewDR" title="Copy"
+                                            style="flex-shrink: 0; width: 1.8rem; height: 1.8rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s ease;"
+                                            onmouseenter="this.style.background='rgba(255,255,255,0.12)'; this.style.color='rgba(255,255,255,0.9)';"
+                                            onmouseleave="this.style.background='transparent'; this.style.color='rgba(255,255,255,0.5)';">
+                                            <svg v-show="brewCopiedDR" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            <svg v-show="!brewCopiedDR" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        </button>
+                                    </code>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -580,6 +606,7 @@
                     var navDockBottom = ref('2rem');
                     var sectionLabels = { home: 'Home', overview: 'Overview', features: 'Features', 'more-features': 'Features', install: 'Install', companions: 'Companions' };
                     var brewCopied = ref(false);
+                    var brewCopiedDR = ref(false);
                     var icon3dContainer = ref(null);
                     var waveCanvas = ref(null);
                     var lenis;
@@ -638,6 +665,13 @@
                         navigator.clipboard.writeText('brew install --cask gitmichaelqiu/tap/spaceswitcher').then(function () {
                             brewCopied.value = true;
                             setTimeout(function () { brewCopied.value = false; }, 1500);
+                        }).catch(function () {});
+                    }
+
+                    function copyBrewDR() {
+                        navigator.clipboard.writeText('brew install --cask gitmichaelqiu/tap/desktoprenamer').then(function () {
+                            brewCopiedDR.value = true;
+                            setTimeout(function () { brewCopiedDR.value = false; }, 1500);
                         }).catch(function () {});
                     }
 
@@ -1080,6 +1114,8 @@
                         toggleTheme: toggleTheme,
                         copyBrew: copyBrew,
                         brewCopied: brewCopied,
+                        copyBrewDR: copyBrewDR,
+                        brewCopiedDR: brewCopiedDR,
                         icon3dContainer: icon3dContainer,
                         waveCanvas: waveCanvas
                     };
