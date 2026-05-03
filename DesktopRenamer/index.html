@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function () { var t = localStorage.getItem('theme'); if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark'); })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesktopRenamer — Rename Your Experiences</title>
+    <link rel="shortcut icon" type="image/png" href="../resources/favicon.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'klein-blue': '#002FA7',
+                        'klein-blue-bright': '#0038c8',
+                        'bg-dark': '#0a0a0a',
+                        'bg-light': '#FAFAF6',
+                        'deep-navy': '#020412',
+                        'gold': '#D4A853',
+                        'gold-light': '#E8C97A',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syncopate', 'sans-serif'],
+                        editorial: ['Playfair Display', 'serif'],
+                    },
+                    fontSize: {
+                        xs: '1.0rem',
+                        sm: '1.4rem',
+                        base: '1.7rem',
+                        lg: '1.8rem',
+                        xl: '2.2rem',
+                        '2xl': '1.625rem',
+                        '3xl': '2rem',
+                        '4xl': '2.5rem',
+                        '5xl': '3.5rem',
+                        '6xl': '5rem',
+                        '7xl': '8rem',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scroll-bounce': 'scrollBounce 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scrollBounce: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syncopate:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles/main.css">
+</head>
+
+<body class="theme-base" style="opacity: 0;">
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
+
+    <div id="app" class="relative min-h-screen">
+        <!-- Architectural Grid Lines -->
+        <div class="grid-lines">
+            <div v-for="i in 12" :key="i" class="grid-line"></div>
+        </div>
+
+        <!-- Navigation Dock -->
+        <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }"
+            :style="{ bottom: navDockBottom }">
+            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
+                <i data-lucide="arrow-up" class="w-5 h-5"></i>
+            </a>
+            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>
+            <button @click="toggleTheme" class="nav-dock__btn"
+                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+                <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
+            </button>
+            <button @click="toggleSidebar" class="nav-dock__btn" :class="{ 'active': isSidebarOpen }">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
+
+            <!-- Hero Section -->
+            <section id="home" class="hero">
+                <div class="hero__bg"></div>
+                <nav class="hero__quicknav hide-mobile">
+                    <div class="hero__quicknav-logo">
+                        <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:4.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="hero__quicknav-cols">
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">Page</div>
+                            <a @click.prevent="handleNavClick('overview')" href="#overview" class="hero__quicknav-link">Overview</a>
+                            <a @click.prevent="handleNavClick('features')" href="#features" class="hero__quicknav-link">Features</a>
+                            <a @click.prevent="handleNavClick('demo')" href="#demo" class="hero__quicknav-link">Demo</a>
+                            <a @click.prevent="handleNavClick('install')" href="#install" class="hero__quicknav-link">Install</a>
+                        </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">Links</div>
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="hero__quicknav-link">GitHub</a>
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" class="hero__quicknav-link">Releases</a>
+                            <a href="https://www.raycast.com/michael_qiu/desktoprenamer" target="_blank" class="hero__quicknav-link">Raycast</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="hero__content">
+                    <img src="../resources/works/desktop-renamer.png" alt="DesktopRenamer" class="hero__logo"
+                        style="width: min(35%, 14rem); height: auto; margin-bottom: 0.5rem;">
+                    <div class="hero__text">
+                        <div class="mask-wrap">
+                            <h1 class="hero__name mask-inner">DesktopRenamer</h1>
+                        </div>
+                        <div class="mask-wrap">
+                            <p class="hero__tagline mask-inner">Rename Your Experiences</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero__scroll-indicator">
+                    <div class="hero__scroll-line"></div>
+                    <span class="hero__scroll-label">Scroll</span>
+                </div>
+            </section>
+
+            <!-- Overview Section -->
+            <section id="overview" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-24">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Overview
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner">Take back control of your <span class="text-editorial gradient-text">macOS spaces.</span></h2>
+                            </div>
+                            <div class="mask-wrap">
+                                <p class="paragraph-l max-w-3xl mask-inner">DesktopRenamer is a macOS menubar app that lets you give custom names to your desktop spaces — those virtual desktops you create in Mission Control.</p>
+                            </div>
+                            <div class="mask-wrap mt-8">
+                                <p class="paragraph-m max-w-2xl mask-inner">Quickly rename from the menu bar. See large, aesthetic labels when you enter Mission Control. Switch spaces with zero-delay overrides. Automate everything via AppleScript or the built-in HTTP API.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-24">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Features
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner">Everything you need to <span class="text-editorial gradient-text">own</span> your workflow.</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature: Rename at Menu Bar -->
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Rename at Menu Bar
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Quickly give your desktop spaces a custom name directly from the menu bar. Click the menubar icon, type a name, and it's set — no complicated setup, no configuration files.</p>
+                            </div>
+                            <div class="screenshot-parallax mt-10">
+                                <img :src="isDark ? '../resources/works/desktop-renamer-full-dark.png' : '../resources/works/desktop-renamer-full.png'"
+                                    alt="DesktopRenamer screenshot" class="screenshot-parallax-img">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature: Crystal Clear Labels -->
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Crystal Clear Labels
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">See <strong>large, aesthetic name labels</strong> when you enter Mission Control, so you instantly know which space is which. When you switch spaces, a <strong>discreet active label</strong> appears briefly to confirm where you landed. Both can be toggled independently to match your preference.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature: Switch & Move -->
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Switch &amp; Move
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Click any space in the menu bar to jump directly to it. Hold the <strong>Option (⌥) key</strong> while clicking to instantly teleport the active window to that space. No more dragging windows across desktops.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature: Faster Switching Override -->
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Faster Switching
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Bypass native macOS animation lag. Enable <strong>trackpad gesture overrides</strong> or configurable <strong>keyboard hotkeys</strong> for instant, zero-delay switching between spaces. Your muscle memory, supercharged.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature: Raycast Integration -->
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Raycast Integration
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Are you a power user? DesktopRenamer integrates directly with <strong>Raycast</strong>, letting you manage and switch spaces elegantly via your favorite launcher — without ever touching the menu bar.</p>
+                            </div>
+                            <div class="mt-6">
+                                <a href="https://www.raycast.com/michael_qiu/desktoprenamer" target="_blank" data-btn style="font-size: 1.2rem; letter-spacing: 0em;">
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="Install Raycast Extension">
+                                        <span data-btn-text>Install Raycast Extension</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature: API & AppleScript -->
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            API &amp; AppleScript
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">DesktopRenamer exposes a full <strong>AppleScript dictionary</strong> for automating space management — rename spaces, switch desktops, move windows, all from your scripts. The built-in <strong>SpaceAPI</strong> lets other apps acquire space IDs and names over HTTP. Toggle it on in Settings → Advanced.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature: Desktop Widget -->
+                    <div class="content-grid mb-20">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Desktop Widget
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Add the DesktopRenamer widget to your Notification Center or Desktop. See your current space name at a glance, browse all configured spaces, and <strong>tap to switch</strong> — directly from the widget. Available in small, medium, and large sizes with both standard and transparent backgrounds.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Video Section -->
+            <section id="demo" class="relative w-full" style="border-top: none;">
+                <div class="relative w-full overflow-hidden bg-deep-navy" style="aspect-ratio: 16/9;">
+                    <video src="../resources/demo-reel.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+                    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 12%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.03) 55%, transparent 100%);"></div>
+                    <button type="button" @click.prevent="openVideoModal"
+                        class="absolute bottom-6 right-6 z-10 flex items-center gap-2 px-5 py-3 rounded-full text-white text-sm font-medium transition-all duration-300 hover:scale-105"
+                        style="background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif; letter-spacing: 0.02em; cursor: pointer;">
+                        <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+                        Watch Full Video
+                    </button>
+                </div>
+            </section>
+
+            <!-- Video Modal Overlay -->
+            <transition name="video-modal">
+                <div v-if="showVideoModal" @click.self="closeVideoModal"
+                    class="fixed inset-0 z-[10003] flex items-center justify-center p-8"
+                    style="background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+                    <button @click="closeVideoModal"
+                        class="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full text-white transition-all duration-300 hover:scale-110"
+                        style="background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;"
+                        aria-label="Close video">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                    <div class="video-modal-content relative w-full max-w-[90vw] max-h-[85vh]" style="aspect-ratio: 16/9;">
+                        <video src="../resources/demo-reel.mp4" autoplay controls playsinline
+                            class="w-full h-full object-contain rounded-lg"
+                            style="box-shadow: 0 25px 80px rgba(0,0,0,0.5);"
+                            ref="modalVideo"></video>
+                    </div>
+                </div>
+            </transition>
+
+            <!-- Installation Section -->
+            <section id="install" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-16">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Install
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner">Get started in <span class="text-editorial gradient-text">seconds.</span></h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Download -->
+                    <div class="content-grid mb-12">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Direct Download
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Download the latest version from GitHub Releases, drag to Applications, and you're done. <strong>No SIP disabling required.</strong> Requires macOS 13.0 Ventura or later.</p>
+                            </div>
+                            <div class="mt-6">
+                                <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" data-btn style="font-size: 1.2rem; letter-spacing: 0em;">
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="Download from GitHub">
+                                        <span data-btn-text>Download from GitHub</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Homebrew -->
+                    <div class="content-grid mb-12">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Homebrew
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Prefer the command line? Install via Homebrew with a single command.</p>
+                            </div>
+                            <div class="mt-6 bg-black/5 dark:bg-white/5 rounded-lg p-5 font-mono text-sm max-w-lg"
+                                style="font-size: 0.9rem; letter-spacing: 0.02em; word-break: break-all;">
+                                brew install --cask gitmichaelqiu/tap/desktoprenamer
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note about signing -->
+                    <div class="content-grid mb-12">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            First Launch
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">Since DesktopRenamer isn't signed with a paid Apple Developer account, macOS may show a "Developer not verified" alert. Go to <strong>System Settings → Privacy & Security → Open DesktopRenamer</strong> to allow it. If issues persist, run:</p>
+                            </div>
+                            <div class="mt-6 bg-black/5 dark:bg-white/5 rounded-lg p-5 font-mono text-sm max-w-lg"
+                                style="font-size: 0.9rem; letter-spacing: 0.02em; word-break: break-all;">
+                                codesign --force -s - /Applications/DesktopRenamer.app
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Permissions -->
+                    <div class="content-grid mb-12">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Permissions
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner">DesktopRenamer needs <strong>Accessibility</strong> permission for hotkeys and trackpad overrides, and <strong>Automation</strong> permission to control System Events for Mission Control. You'll be guided through granting these on first launch.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Companion Apps Section -->
+            <section id="companions" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-24">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Companions
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner">Works great with <span class="text-editorial gradient-text">your</span> toolkit.</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-0" style="border-left: 1px solid var(--border-color);">
+                        <!-- SpaceSwitcher -->
+                        <div class="work-card" style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+                            <h3 class="heading-l text-4xl">SpaceSwitcher</h3>
+                            <p class="paragraph-m max-w-sm">Control which app and set of dock items to display in each space. Pair with DesktopRenamer for complete workspace mastery.</p>
+                            <div class="work-meta">
+                                <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="Learn More">
+                                        <span data-btn-text>Learn More</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- OptClicker -->
+                        <div class="work-card" style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+                            <h3 class="heading-l text-4xl">OptClicker</h3>
+                            <p class="paragraph-m max-w-sm">Right-click with the Option key. A simple utility that complements your DesktopRenamer workflow.</p>
+                            <div class="work-meta">
+                                <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="Learn More">
+                                        <span data-btn-text>Learn More</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="w-full bg-klein-blue text-white pt-16 pb-8"
+            style="background-color: var(--klein-blue); color: var(--pure-white);">
+            <div class="container">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+                    <div class="md:col-span-5">
+                        <a href="#" @click.prevent="scrollToTop" class="inline-block mb-3" aria-label="Back to top">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:2.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                        <p class="text-xs text-white/70" style="font-family:'Inter',sans-serif;">&copy; 2026 - Michael Qiu</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Page</p>
+                        <div class="flex flex-col gap-1">
+                            <a @click.prevent="handleNavClick('overview')" href="#overview" class="footer-nav-link">Overview</a>
+                            <a @click.prevent="handleNavClick('features')" href="#features" class="footer-nav-link">Features</a>
+                            <a @click.prevent="handleNavClick('install')" href="#install" class="footer-nav-link">Install</a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Links</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="footer-nav-link">GitHub</a>
+                            <a href="https://github.com/gitmichaelqiu/DesktopRenamer/releases" target="_blank" class="footer-nav-link">Releases</a>
+                            <a href="https://www.raycast.com/michael_qiu/desktoprenamer" target="_blank" class="footer-nav-link">Raycast</a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-3">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">More Apps</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="footer-nav-link">OptClicker</a>
+                            <a href="https://gitmichaelqiu.github.io/SpaceSwitcher" target="_blank" class="footer-nav-link">SpaceSwitcher</a>
+                            <a href="/" class="footer-nav-link">Portfolio</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-white/10 pt-8 mt-8">
+                    <div class="text-[clamp(2.5rem,8vw,10rem)] font-black tracking-tighter leading-none">
+                        DesktopRenamer
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Sidebar -->
+        <transition name="fade">
+            <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
+                <div class="container flex-1 flex flex-col justify-center">
+                    <div class="flex flex-col" style="gap: 1rem;">
+                        <a v-for="link in [
+                            {id: 'home', label: 'Home'},
+                            {id: 'overview', label: 'Overview'},
+                            {id: 'features', label: 'Features'},
+                            {id: 'demo', label: 'Demo'},
+                            {id: 'install', label: 'Install'},
+                            {id: 'companions', label: 'Companions'}
+                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)"
+                            class="sidebar-link">
+                            <div class="mask-wrap">
+                                <span class="mask-inner">{{ link.label }}</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/gitmichaelqiu/DesktopRenamer" target="_blank" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner" style="display:flex; align-items:center;">
+                                    GitHub
+                                    <i data-lucide="arrow-up-right"
+                                        style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </transition>
+    </div>
+
+    <script>
+        /**
+         * DesktopRenamer landing page — Vue 3 app, GSAP animations, Lenis smooth scroll.
+         */
+        (function () {
+            var createApp = Vue.createApp;
+            var ref = Vue.ref;
+            var onMounted = Vue.onMounted;
+            var onUnmounted = Vue.onUnmounted;
+            var nextTick = Vue.nextTick;
+            var watch = Vue.watch;
+
+            gsap.registerPlugin(ScrollTrigger);
+
+            createApp({
+                setup: function () {
+                    var isSidebarOpen = ref(false);
+                    var activeSection = ref('home');
+                    var showNavDock = ref(false);
+                    var navDockBottom = ref('2rem');
+                    var sectionLabels = { home: 'Home', overview: 'Overview', features: 'Features', demo: 'Demo', install: 'Install', companions: 'Companions' };
+                    var showVideoModal = ref(false);
+                    var modalVideo = ref(null);
+
+                    var lenis;
+                    var scrollRafPending = false;
+
+                    // ── Theme ──
+                    var STORAGE_KEY = 'theme';
+                    var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                    function getStoredTheme() {
+                        try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+                    }
+                    function setStoredTheme(val) {
+                        try { localStorage.setItem(STORAGE_KEY, val); } catch (e) {}
+                    }
+
+                    function resolveTheme() {
+                        var stored = getStoredTheme();
+                        if (stored === 'dark' || stored === 'light') return stored;
+                        return systemQuery.matches ? 'dark' : 'light';
+                    }
+
+                    var isDark = ref(resolveTheme() === 'dark');
+
+                    function applyTheme(dark) {
+                        document.documentElement.classList.toggle('dark', dark);
+                    }
+
+                    function toggleTheme() {
+                        var next = !isDark.value;
+                        isDark.value = next;
+                        setStoredTheme(next ? 'dark' : 'light');
+                    }
+
+                    watch(isDark, function (val) {
+                        document.documentElement.classList.add('theme-transitioning');
+                        void document.documentElement.offsetHeight;
+                        applyTheme(val);
+                        setTimeout(function () {
+                            document.documentElement.classList.remove('theme-transitioning');
+                        }, 600);
+                        nextTick(function () {
+                            lucide.createIcons();
+                        });
+                    });
+
+                    function onSystemThemeChange(e) {
+                        if (getStoredTheme() === null) {
+                            isDark.value = e.matches;
+                        }
+                    }
+
+                    applyTheme(resolveTheme() === 'dark');
+
+                    function handleNavClick(targetId) {
+                        closeSidebar(function () {
+                            var el = document.getElementById(targetId);
+                            if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
+                        });
+                    }
+
+                    function scrollToTop() {
+                        if (isSidebarOpen.value) return;
+                        if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+                    }
+
+                    function openVideoModal() {
+                        showVideoModal.value = true;
+                    }
+
+                    function closeVideoModal() {
+                        showVideoModal.value = false;
+                    }
+
+                    watch(showVideoModal, function (val) {
+                        if (val) {
+                            nextTick(function () {
+                                nextTick(function () {
+                                    lucide.createIcons();
+                                    if (modalVideo.value) {
+                                        modalVideo.value.play().catch(function () {});
+                                    }
+                                });
+                            });
+                        } else {
+                            if (modalVideo.value) {
+                                modalVideo.value.pause();
+                            }
+                        }
+                    });
+
+                    // ── Sidebar ──
+
+                    function closeSidebar(callback) {
+                        gsap.to('.sidebar-rk .mask-inner', {
+                            y: "100%",
+                            duration: 0.5,
+                            stagger: 0.05,
+                            ease: "expo.in",
+                            onComplete: function () {
+                                isSidebarOpen.value = false;
+                                if (callback) callback();
+                            }
+                        });
+                    }
+
+                    function toggleSidebar() {
+                        if (isSidebarOpen.value) {
+                            closeSidebar();
+                        } else {
+                            isSidebarOpen.value = true;
+                        }
+                    }
+
+                    watch(isSidebarOpen, function (val) {
+                        if (val) {
+                            nextTick(function () {
+                                lucide.createIcons();
+                                gsap.from('.sidebar-rk .mask-inner', {
+                                    y: "100%",
+                                    duration: 1,
+                                    stagger: 0.1,
+                                    ease: "expo.out",
+                                    delay: 0.3
+                                });
+                            });
+                        }
+                    });
+
+                    // ── Section Label Animation ──
+                    var sectionLabelTween;
+                    var sectionLabelClone;
+                    var sectionOrder = ['home', 'overview', 'features', 'demo', 'install', 'companions'];
+
+                    watch(activeSection, function (newSection, oldSection) {
+                        if (!oldSection || oldSection === newSection) return;
+
+                        if (sectionLabelTween) {
+                            sectionLabelTween.kill();
+                            sectionLabelTween = null;
+                        }
+                        if (sectionLabelClone && sectionLabelClone.parentNode) {
+                            sectionLabelClone.remove();
+                            sectionLabelClone = null;
+                        }
+
+                        var dock = document.querySelector('.nav-dock');
+                        var label = document.querySelector('.nav-dock__label');
+                        var labelText = document.querySelector('.nav-dock__label-text');
+                        if (!dock || !label || !labelText) return;
+
+                        var oldIdx = sectionOrder.indexOf(oldSection);
+                        var newIdx = sectionOrder.indexOf(newSection);
+                        var isForward = newIdx > oldIdx;
+                        var outDir = isForward ? -110 : 110;
+                        var inDir = isForward ? 110 : -110;
+
+                        var currentWidth = dock.offsetWidth;
+                        dock.style.width = currentWidth + 'px';
+
+                        labelText.style.position = 'absolute';
+                        gsap.set(labelText, { opacity: 0 });
+
+                        sectionLabelClone = document.createElement('span');
+                        sectionLabelClone.textContent = sectionLabels[oldSection] || oldSection;
+                        sectionLabelClone.style.cssText = 'display:block;white-space:nowrap;';
+                        label.appendChild(sectionLabelClone);
+
+                        sectionLabelTween = gsap.to(sectionLabelClone, {
+                            yPercent: outDir,
+                            opacity: 0,
+                            duration: 0.2,
+                            ease: 'power2.in',
+                            onComplete: function () {
+                                if (sectionLabelClone && sectionLabelClone.parentNode) {
+                                    sectionLabelClone.remove();
+                                    sectionLabelClone = null;
+                                }
+                                sectionLabelTween = null;
+
+                                labelText.style.position = '';
+                                dock.style.width = '';
+                                var newWidth = dock.offsetWidth;
+
+                                dock.style.width = currentWidth + 'px';
+                                gsap.set(labelText, { yPercent: inDir, opacity: 0 });
+
+                                sectionLabelTween = gsap.timeline({
+                                    onComplete: function () {
+                                        dock.style.width = '';
+                                        sectionLabelTween = null;
+                                    }
+                                });
+                                sectionLabelTween
+                                    .to(dock, {
+                                        width: newWidth,
+                                        duration: 0.4,
+                                        ease: 'power2.inOut'
+                                    }, 0)
+                                    .to(labelText, {
+                                        yPercent: 0,
+                                        opacity: 1,
+                                        duration: 0.3,
+                                        ease: 'power2.out'
+                                    }, 0.07);
+                            }
+                        });
+                    });
+
+                    // ── Scroll Tracking ──
+
+                    function updateScrollProgress() {
+                        scrollRafPending = false;
+                        var winHeight = window.innerHeight;
+                        showNavDock.value = window.scrollY > winHeight * 0.2;
+                        var sections = ['home', 'overview', 'features', 'demo', 'install', 'companions'];
+                        var current = 'home';
+                        sections.forEach(function (id) {
+                            var el = document.getElementById(id);
+                            if (el) {
+                                var rect = el.getBoundingClientRect();
+                                if (rect.top <= winHeight * 0.4) current = id;
+                            }
+                        });
+                        activeSection.value = current;
+
+                        var footer = document.querySelector('footer');
+                        if (footer) {
+                            var footerRect = footer.getBoundingClientRect();
+                            if (footerRect.top < winHeight) {
+                                var offset = winHeight - footerRect.top + 16;
+                                navDockBottom.value = offset + 'px';
+                            } else {
+                                navDockBottom.value = '2rem';
+                            }
+                        }
+                    }
+
+                    function onScroll() {
+                        if (!scrollRafPending) {
+                            scrollRafPending = true;
+                            requestAnimationFrame(updateScrollProgress);
+                        }
+                    }
+
+                    // ── Lenis ──
+
+                    function initLenis() {
+                        lenis = new Lenis({ duration: 1.5, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }, smooth: true });
+                        function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
+                        requestAnimationFrame(raf);
+                    }
+
+                    // ── Lifecycle ──
+
+                    onMounted(function () {
+                        initLenis();
+                        window.addEventListener('scroll', onScroll, { passive: true });
+                        systemQuery.addEventListener('change', onSystemThemeChange);
+
+                        nextTick().then(function () {
+                            lucide.createIcons();
+
+                            // ── Animation Sequence ──
+                            var tl = gsap.timeline();
+
+                            tl.set('body', { opacity: 1 })
+                                .set('.hero__text .mask-inner', { y: '120%' })
+                                .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
+                                    var el = document.getElementById('preloader');
+                                    if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                } })
+                                .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
+                                .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
+                                .from('.hero__logo', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out" }, "-=0.45")
+                                .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
+                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
+
+                            // Mask Reveals for subsequent sections
+                            gsap.utils.toArray('.section-rk:not(#home)').forEach(function (sec) {
+                                var masks = sec.querySelectorAll('.mask-inner');
+                                if (masks.length > 0) {
+                                    gsap.from(masks, {
+                                        y: "100%",
+                                        duration: 1.8,
+                                        stagger: 0.15,
+                                        ease: "power4.out",
+                                        scrollTrigger: {
+                                            trigger: sec,
+                                            start: "top 85%",
+                                        }
+                                    });
+                                }
+                            });
+
+                            // Screenshot Parallax
+                            gsap.utils.toArray('.screenshot-parallax').forEach(function (wrap) {
+                                var img = wrap.querySelector('.screenshot-parallax-img');
+                                if (!img) return;
+                                gsap.fromTo(img, {
+                                    y: "-3%"
+                                }, {
+                                    y: "3%",
+                                    ease: "none",
+                                    scrollTrigger: {
+                                        trigger: wrap,
+                                        start: "top bottom",
+                                        end: "bottom top",
+                                        scrub: true
+                                    }
+                                });
+                            });
+
+                            // Gradient Parallax on editorial text
+                            gsap.utils.toArray('.gradient-text').forEach(function (el) {
+                                gsap.to(el, {
+                                    backgroundPosition: '100% 50%',
+                                    ease: 'none',
+                                    scrollTrigger: {
+                                        trigger: el,
+                                        start: 'top bottom',
+                                        end: 'bottom top',
+                                        scrub: true
+                                    }
+                                });
+                            });
+                        });
+                    });
+
+                    onUnmounted(function () {
+                        window.removeEventListener('scroll', onScroll);
+                        systemQuery.removeEventListener('change', onSystemThemeChange);
+                        if (lenis) lenis.destroy();
+                    });
+
+                    return {
+                        isSidebarOpen: isSidebarOpen,
+                        activeSection: activeSection,
+                        toggleSidebar: toggleSidebar,
+                        handleNavClick: handleNavClick,
+                        scrollToTop: scrollToTop,
+                        showNavDock: showNavDock,
+                        navDockBottom: navDockBottom,
+                        sectionLabels: sectionLabels,
+                        isDark: isDark,
+                        toggleTheme: toggleTheme,
+                        showVideoModal: showVideoModal,
+                        openVideoModal: openVideoModal,
+                        closeVideoModal: closeVideoModal,
+                        modalVideo: modalVideo
+                    };
+                }
+            }).mount('#app');
+        })();
+    </script>
+</body>
+
+</html>
