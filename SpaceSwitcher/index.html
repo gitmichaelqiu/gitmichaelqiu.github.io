@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function () { var t = localStorage.getItem('theme'); if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark'); })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceSwitcher — Control Every Space</title>
+    <link rel="shortcut icon" type="image/png" href="../resources/favicon.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'klein-blue': '#002FA7',
+                        'klein-blue-bright': '#0038c8',
+                        'bg-dark': '#0a0a0a',
+                        'bg-light': '#FAFAF6',
+                        'deep-navy': '#020412',
+                        'gold': '#D4A853',
+                        'gold-light': '#E8C97A',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syncopate', 'sans-serif'],
+                        editorial: ['Playfair Display', 'serif'],
+                    },
+                    fontSize: {
+                        xs: '1.0rem',
+                        sm: '1.4rem',
+                        base: '1.7rem',
+                        lg: '1.8rem',
+                        xl: '2.2rem',
+                        '2xl': '1.625rem',
+                        '3xl': '2rem',
+                        '4xl': '2.5rem',
+                        '5xl': '3.5rem',
+                        '6xl': '5rem',
+                        '7xl': '8rem',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scroll-bounce': 'scrollBounce 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scrollBounce: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syncopate:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        /* Aurora blobs */
+        .aurora-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; overflow: hidden;
+        }
+        .aurora-blob {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.5; mix-blend-mode: screen;
+        }
+        html:not(.dark) .aurora-blob { opacity: 0.35; filter: blur(100px); }
+        .blob-1 { top: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0,47,167,0.8), transparent 70%); animation: float 20s infinite ease-in-out; }
+        .blob-2 { bottom: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(32,190,255,0.5), transparent 70%); animation: float 18s infinite ease-in-out; animation-delay: -5s; }
+        .blob-3 { top: 40%; right: 20%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(100,0,255,0.35), transparent 70%); animation: float 24s infinite ease-in-out; animation-delay: -10s; }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 20px); }
+        }
+
+        /* 3D Icon */
+        .hero__icon-3d {
+            width: min(80%, 32rem);
+            aspect-ratio: 1;
+            position: relative;
+            margin-bottom: 0;
+            z-index: 10;
+            pointer-events: auto;
+        }
+        #home .hero__content {
+            gap: 0.3rem;
+            margin-top: -5rem;
+        }
+        .hero__icon-3d canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+
+<body class="theme-base" style="opacity: 0;">
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
+
+    <div id="app" class="relative min-h-screen">
+        <!-- Architectural Grid Lines -->
+        <div class="grid-lines">
+            <div v-for="i in 12" :key="i" class="grid-line"></div>
+        </div>
+
+        <!-- Navigation Dock -->
+        <div class="nav-dock hide-mobile" :class="{ 'nav-dock--visible': showNavDock }"
+            :style="{ bottom: navDockBottom }">
+            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
+                <i data-lucide="arrow-up" class="w-5 h-5"></i>
+            </a>
+            <a @click.prevent="handleNavClick('install')" href="#install" class="nav-dock__btn" title="Download">
+                <i data-lucide="download" class="w-5 h-5"></i>
+            </a>
+            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] || activeSection }}</span></div>
+            <button @click="toggleTheme" class="nav-dock__btn"
+                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+                <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
+            </button>
+            <button @click="toggleSidebar" class="nav-dock__btn" :class="{ 'active': isSidebarOpen }">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
+
+            <!-- Hero Section -->
+            <section id="home" class="hero">
+                <div class="hero__bg"></div>
+                <div class="aurora-container">
+                    <div class="aurora-blob blob-1"></div>
+                    <div class="aurora-blob blob-2"></div>
+                    <div class="aurora-blob blob-3"></div>
+                </div>
+                <canvas ref="waveCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
+                <nav class="hero__quicknav hide-mobile">
+                    <div class="hero__quicknav-logo">
+                        <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:4.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="hero__quicknav-cols">
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">Page</div>
+                            <a @click.prevent="handleNavClick('overview')" href="#overview" class="hero__quicknav-link">Overview</a>
+                            <a @click.prevent="handleNavClick('features')" href="#features" class="hero__quicknav-link">Features</a>
+                            <a @click.prevent="handleNavClick('install')" href="#install" class="hero__quicknav-link">Install</a>
+                        </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">Links</div>
+                            <a href="https://github.com/gitmichaelqiu/SpaceSwitcher" target="_blank" class="hero__quicknav-link">GitHub</a>
+                            <a href="https://github.com/gitmichaelqiu/SpaceSwitcher/releases" target="_blank" class="hero__quicknav-link">Releases</a>
+                        </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">More</div>
+                            <a href="/" class="hero__quicknav-link">Portfolio</a>
+                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="hero__quicknav-link">DesktopRenamer</a>
+                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="hero__quicknav-link">OptClicker</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="hero__content">
+                    <div class="hero__icon-3d" ref="icon3dContainer"></div>
+                    <div class="hero__text">
+                        <div class="mask-wrap">
+                            <h1 class="hero__name mask-inner">SpaceSwitcher</h1>
+                        </div>
+                        <div class="mask-wrap">
+                            <p class="hero__tagline mask-inner">Control Every Space.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Overview Section -->
+            <section id="overview" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-24">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Overview
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner">Per-space control over your <span class="text-editorial gradient-text">applications and Dock.</span></h2>
+                            </div>
+                            <div class="mask-wrap">
+                                <p class="paragraph-l max-w-3xl mask-inner" style="color: var(--text-primary);">SpaceSwitcher is a macOS workspace enhancer that lets you define per-space app rules and custom Dock configurations. Built on top of DesktopRenamer's SpaceAPI, it reacts to space changes instantly — showing, hiding, and arranging apps exactly how you want in each workspace.</p>
+                            </div>
+                            <div class="mask-wrap mt-6">
+                                <p class="text-sm max-w-3xl mask-inner" style="color: var(--text-secondary); font-family: 'Inter', sans-serif;">Requires <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="link-slide" style="color: var(--klein-blue-text);">DesktopRenamer</a> with SpaceAPI enabled. Part of the macOSers productivity bundle.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section — sticky slide gallery (2 slides) -->
+            <section id="features" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-16">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Features
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mask-inner">Automate every <span class="text-editorial gradient-text">workspace</span> transition.</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sticky slide stack: 2 features -->
+                <div class="feature-gallery" style="height: 140vh; position: relative; overflow: hidden;">
+                    <!-- Slide 1: App Rules — text left, media right -->
+                    <div class="feature-slide" style="position: sticky; top: 0; height: 70vh; display: flex; align-items: center; overflow: hidden;">
+                        <div class="container" style="width: 100%;">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
+                                <div class="md:col-span-5 md:pr-16">
+                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.01em; color: var(--klein-blue-text);">01 / Rules</p>
+                                    <h3 class="heading-l mb-4">App Rules <span class="text-editorial gradient-text">Per Space</span></h3>
+                                    <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: -0.02em; color: var(--text-primary);">Define which apps show, hide, or come to front when you switch spaces. Six action types — from simple show/hide to hotkey simulation.</p>
+                                </div>
+                                <div class="md:col-span-7">
+                                    <img v-if="isDark" src="../resources/demo/space-switcher/Rules-Dark.png" alt="SpaceSwitcher Rules" class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+                                    <img v-else src="../resources/demo/space-switcher/Rules.png" alt="SpaceSwitcher Rules" class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: Dock Switching — media left, text right -->
+                    <div class="feature-slide" style="position: sticky; top: 0; height: 70vh; display: flex; align-items: center; overflow: hidden;">
+                        <div class="container" style="width: 100%;">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
+                                <div class="md:col-span-7">
+                                    <img v-if="isDark" src="../resources/demo/space-switcher/Docks-Dark.png" alt="SpaceSwitcher Docks" class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+                                    <img v-else src="../resources/demo/space-switcher/Docks.png" alt="SpaceSwitcher Docks" class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
+                                </div>
+                                <div class="md:col-span-5 md:pl-16">
+                                    <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.01em; color: var(--klein-blue-text);">02 / Docks</p>
+                                    <h3 class="heading-l mb-4">Custom Docks <span class="text-editorial gradient-text">Per Space</span></h3>
+                                    <p class="text-lg" style="font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.4; letter-spacing: -0.02em; color: var(--text-primary);">Assign different Dock configurations to different spaces. Add apps, spacers, and reorder items freely — your Dock transforms as you move between workspaces.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- More Features -->
+            <section id="more-features" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-16">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            6 Action Types
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">Show, Hide, Minimize, Bring to Front, App Shortcut (hotkey), and Global Shortcut — chain them into workflows for each space group.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid mb-16">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Menu Bar App
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">Runs quietly in the menu bar with no Dock icon. Connection status at a glance, settings one click away.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid mb-16">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Hotkey Simulation
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">Trigger app-specific or global keyboard shortcuts when switching spaces — sync in-app workspaces with your macOS spaces automatically.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid mb-16">
+                        <div class="content-label" style="font-size: 1.1rem; font-weight: 500; letter-spacing: -0.02em;">
+                            Auto-Updater
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-m max-w-2xl mask-inner" style="color: var(--text-primary);">Checks GitHub Releases on launch and notifies you when a new version is available. One click to update.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installation Section -->
+            <section id="install" class="relative overflow-hidden" style="background: var(--klein-blue); color: var(--pure-white); padding: 8rem 0;">
+                <!-- Subtle noise overlay -->
+                <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E&quot;); background-repeat: repeat; background-size: 256px 256px;"></div>
+                <div class="container relative z-10">
+                    <div class="content-grid">
+                        <div class="content-label" style="color: rgba(255,255,255,0.7);">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor" style="color: rgba(255,255,255,0.7);">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Install
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner" style="color: var(--pure-white);">Get started in <span class="text-editorial" style="color: var(--gold-light); font-style: italic;">seconds.</span></h2>
+                            </div>
+                            <div class="mask-wrap mb-10">
+                                <p class="paragraph-l max-w-2xl mask-inner" style="color: rgba(255,255,255,0.9);">macOS 13.0+. Requires DesktopRenamer with SpaceAPI enabled. Drag to Applications, done.</p>
+                            </div>
+                            <div class="flex flex-wrap items-stretch gap-4 mb-6">
+                                <a href="https://github.com/gitmichaelqiu/SpaceSwitcher/releases" target="_blank" data-btn
+                                    style="font-size: 1.3rem; letter-spacing: 0.02em; background: var(--pure-white); border-color: var(--pure-white); --install-btn-hover: #0038c8;"
+                                    onmouseenter="this.style.background='var(--install-btn-hover)'; this.style.borderColor='var(--install-btn-hover)'; this.querySelector('[data-btn-text]').style.color='var(--pure-white)'; this.querySelector('[data-btn-bg]').style.background='var(--install-btn-hover)';"
+                                    onmouseleave="this.style.background='var(--pure-white)'; this.style.borderColor='var(--pure-white)'; this.querySelector('[data-btn-text]').style.color='var(--klein-blue)'; this.querySelector('[data-btn-bg]').style.background='var(--pure-white)';">
+                                    <div data-btn-bg style="background: var(--pure-white);"></div>
+                                    <div data-btn-inner data-text="Download">
+                                        <span data-btn-text style="color: var(--klein-blue);">Download</span>
+                                    </div>
+                                </a>
+                                <span class="self-center" style="font-size: 1.1rem; color: rgba(255,255,255,0.6); font-family: 'Inter', sans-serif; font-weight: 400;">or</span>
+                                <code class="brew-cmd" style="display: flex; align-items: center; gap: 0.8rem; padding: 1.0rem 1.2rem 1.0rem 1.8rem; font-size: 0.9rem; letter-spacing: 0.02em; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); word-break: break-all;">
+                                    brew install --cask gitmichaelqiu/tap/spaceswitcher
+                                    <button @click="copyBrew" title="Copy"
+                                        style="flex-shrink: 0; width: 2.2rem; height: 2.2rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s ease;"
+                                        onmouseenter="this.style.background='rgba(255,255,255,0.15)'; this.style.color='rgba(255,255,255,1)';"
+                                        onmouseleave="this.style.background='transparent'; this.style.color='rgba(255,255,255,0.7)';">
+                                        <svg v-show="brewCopied" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <svg v-show="!brewCopied" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    </button>
+                                </code>
+                            </div>
+                            <p style="font-size: 0.85rem; letter-spacing: -0.02em; color: rgba(255,255,255,0.6); max-width: 36rem;">
+                                Not signed with a paid Apple Developer account — go to <strong>System Settings → Privacy & Security</strong> if macOS blocks the app. Permissions are guided on first launch.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Companion Apps Section -->
+            <section id="companions" class="section-rk">
+                <div class="container">
+                    <div class="content-grid mb-24">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Companions
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <h2 class="heading-l mb-10 mask-inner">Works great with <span class="text-editorial gradient-text">your</span> toolkit.</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-0" style="border-left: 1px solid var(--border-color);">
+                        <!-- DesktopRenamer -->
+                        <div class="work-card" data-hover-follow
+                            style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+                            <h3 class="heading-l text-4xl">DesktopRenamer</h3>
+                            <p class="paragraph-m max-w-sm" style="color: var(--text-primary);">Rename your macOS spaces and enable the SpaceAPI that SpaceSwitcher depends on. The essential companion.</p>
+                            <div class="work-meta">
+                                <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="Learn More">
+                                        <span data-btn-text>Learn More</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <img src="../resources/works/desktop-renamer.png" data-hover-follower class="card-subimg">
+                        </div>
+
+                        <!-- OptClicker -->
+                        <div class="work-card" data-hover-follow
+                            style="border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+                            <h3 class="heading-l text-4xl">OptClicker</h3>
+                            <p class="paragraph-m max-w-sm" style="color: var(--text-primary);">Right-click with the Option key. A simple utility that complements your macOS workspace workflow.</p>
+                            <div class="work-meta">
+                                <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" data-btn class="ml-auto" style="font-size: 1.2rem; letter-spacing: 0em;">
+                                    <div data-btn-bg></div>
+                                    <div data-btn-inner data-text="Learn More">
+                                        <span data-btn-text>Learn More</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <img src="../resources/works/opt-clicker.png" data-hover-follower class="card-subimg">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="w-full bg-klein-blue text-white pt-16 pb-8"
+            style="background-color: var(--klein-blue); color: var(--pure-white);">
+            <div class="container">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+                    <div class="md:col-span-5">
+                        <a href="#" @click.prevent="scrollToTop" class="inline-block mb-3" aria-label="Back to top">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:2.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                        <p class="text-xs text-white/70" style="font-family:'Inter',sans-serif;">&copy; 2026 - Michael Qiu</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Page</p>
+                        <div class="flex flex-col gap-1">
+                            <a @click.prevent="handleNavClick('overview')" href="#overview" class="footer-nav-link">Overview</a>
+                            <a @click.prevent="handleNavClick('features')" href="#features" class="footer-nav-link">Features</a>
+                            <a @click.prevent="handleNavClick('install')" href="#install" class="footer-nav-link">Install</a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Links</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="https://github.com/gitmichaelqiu/SpaceSwitcher" target="_blank" class="footer-nav-link">GitHub</a>
+                            <a href="https://github.com/gitmichaelqiu/SpaceSwitcher/releases" target="_blank" class="footer-nav-link">Releases</a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-3">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">More</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="/" class="footer-nav-link">Portfolio</a>
+                            <a href="https://gitmichaelqiu.github.io/DesktopRenamer" target="_blank" class="footer-nav-link">DesktopRenamer</a>
+                            <a href="https://gitmichaelqiu.github.io/OptClicker" target="_blank" class="footer-nav-link">OptClicker</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-white/10 pt-8 mt-8">
+                    <div class="text-[clamp(2.5rem,8vw,10rem)] font-black tracking-tighter leading-none">
+                        SpaceSwitcher.
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Sidebar -->
+        <transition name="fade">
+            <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
+                <div class="container flex-1 flex flex-col justify-center">
+                    <div class="flex flex-col" style="gap: 1rem;">
+                        <a v-for="link in [
+                            {id: 'home', label: 'Home'},
+                            {id: 'overview', label: 'Overview'},
+                            {id: 'features', label: 'Features'},
+                            {id: 'install', label: 'Install'},
+                            {id: 'companions', label: 'Companions'}
+                        ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)"
+                            class="sidebar-link">
+                            <div class="mask-wrap">
+                                <span class="mask-inner">{{ link.label }}</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/gitmichaelqiu/SpaceSwitcher" target="_blank" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner" style="display:flex; align-items:center;">
+                                    GitHub
+                                    <i data-lucide="arrow-up-right"
+                                        style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </transition>
+    </div>
+
+    <script>
+        // ── Canvas Wave Lines ──
+        function initWaves(canvas) {
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var width, height;
+            var lines = [];
+            var lineCount = 14;
+
+            function resize() {
+                var rect = canvas.parentElement.getBoundingClientRect();
+                width = canvas.width = rect.width;
+                height = canvas.height = rect.height;
+                lines = [];
+                for (var i = 0; i < lineCount; i++) {
+                    lines.push({
+                        y: (i / (lineCount - 1)) * height,
+                        amp: 15 + Math.random() * 40,
+                        freq: 0.003 + Math.random() * 0.005,
+                        speed: 0.3 + Math.random() * 0.7,
+                        phase: Math.random() * Math.PI * 2,
+                        offset: (Math.random() - 0.5) * 60
+                    });
+                }
+            }
+
+            function draw(time) {
+                ctx.clearRect(0, 0, width, height);
+                var isDark = document.documentElement.classList.contains('dark');
+                var baseAlpha = isDark ? 0.12 : 0.08;
+                var baseColor = '255,255,255';
+
+                for (var i = 0; i < lines.length; i++) {
+                    var l = lines[i];
+                    var alpha = baseAlpha * (1 - Math.abs(i - lineCount / 2) / (lineCount / 2) * 0.5);
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(' + baseColor + ',' + alpha.toFixed(3) + ')';
+                    ctx.lineWidth = isDark ? 1.2 : 1;
+                    var first = true;
+                    for (var x = -20; x <= width + 20; x += 2) {
+                        var y = l.y + Math.sin(x * l.freq + time * 0.001 * l.speed + l.phase) * l.amp + l.offset;
+                        if (first) { ctx.moveTo(x, y); first = false; }
+                        else { ctx.lineTo(x, y); }
+                    }
+                    ctx.stroke();
+                }
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            requestAnimationFrame(draw);
+            window.addEventListener('resize', resize);
+        }
+
+        (function () {
+            var createApp = Vue.createApp;
+            var ref = Vue.ref;
+            var onMounted = Vue.onMounted;
+            var onUnmounted = Vue.onUnmounted;
+            var nextTick = Vue.nextTick;
+            var watch = Vue.watch;
+
+            gsap.registerPlugin(ScrollTrigger);
+
+            createApp({
+                setup: function () {
+                    var isSidebarOpen = ref(false);
+                    var activeSection = ref('home');
+                    var showNavDock = ref(false);
+                    var navDockBottom = ref('2rem');
+                    var sectionLabels = { home: 'Home', overview: 'Overview', features: 'Features', 'more-features': 'Features', install: 'Install', companions: 'Companions' };
+                    var brewCopied = ref(false);
+                    var icon3dContainer = ref(null);
+                    var waveCanvas = ref(null);
+                    var lenis;
+                    var scrollRafPending = false;
+
+                    // ── Theme ──
+                    var STORAGE_KEY = 'theme';
+                    var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                    function getStoredTheme() {
+                        try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+                    }
+                    function setStoredTheme(val) {
+                        try { localStorage.setItem(STORAGE_KEY, val); } catch (e) {}
+                    }
+
+                    function resolveTheme() {
+                        var stored = getStoredTheme();
+                        if (stored === 'dark' || stored === 'light') return stored;
+                        return systemQuery.matches ? 'dark' : 'light';
+                    }
+
+                    var isDark = ref(resolveTheme() === 'dark');
+
+                    function applyTheme(dark) {
+                        document.documentElement.classList.toggle('dark', dark);
+                    }
+
+                    function toggleTheme() {
+                        var next = !isDark.value;
+                        isDark.value = next;
+                        setStoredTheme(next ? 'dark' : 'light');
+                    }
+
+                    watch(isDark, function (val) {
+                        document.documentElement.classList.add('theme-transitioning');
+                        void document.documentElement.offsetHeight;
+                        applyTheme(val);
+                        setTimeout(function () {
+                            document.documentElement.classList.remove('theme-transitioning');
+                        }, 600);
+                        nextTick(function () {
+                            lucide.createIcons();
+                        });
+                    });
+
+                    function onSystemThemeChange(e) {
+                        if (getStoredTheme() === null) {
+                            isDark.value = e.matches;
+                        }
+                    }
+
+                    applyTheme(resolveTheme() === 'dark');
+
+                    function copyBrew() {
+                        navigator.clipboard.writeText('brew install --cask gitmichaelqiu/tap/spaceswitcher').then(function () {
+                            brewCopied.value = true;
+                            setTimeout(function () { brewCopied.value = false; }, 1500);
+                        }).catch(function () {});
+                    }
+
+                    // ── 3D Icon ──
+                    var iconScene, iconCamera, iconRenderer, iconMesh;
+                    var iconMouseX = 0, iconMouseY = 0;
+
+                    function createSquircleShape(size) {
+                        var shape = new THREE.Shape();
+                        var w = size, h = size;
+                        var x = -w / 2, y = -h / 2;
+                        var r = 1.5;
+                        shape.moveTo(x, y + r);
+                        shape.lineTo(x, y + h - r);
+                        shape.quadraticCurveTo(x, y + h, x + r, y + h);
+                        shape.lineTo(x + w - r, y + h);
+                        shape.quadraticCurveTo(x + w, y + h, x + w, y + h - r);
+                        shape.lineTo(x + w, y + r);
+                        shape.quadraticCurveTo(x + w, y, x + w - r, y);
+                        shape.lineTo(x + r, y);
+                        shape.quadraticCurveTo(x, y, x, y + r);
+                        return shape;
+                    }
+
+                    function initIcon3D() {
+                        var container = icon3dContainer.value;
+                        if (!container || typeof THREE === 'undefined') return;
+                        var size = container.clientWidth || container.clientHeight || 280;
+                        if (size < 10) { size = 280; }
+                        container.innerHTML = '';
+
+                        iconScene = new THREE.Scene();
+                        iconCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+                        iconCamera.position.z = 14;
+                        iconRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                        iconRenderer.setSize(size, size);
+                        iconRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        iconRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+                        iconRenderer.toneMappingExposure = 1.2;
+                        iconRenderer.domElement.style.width = '100%';
+                        iconRenderer.domElement.style.height = '100%';
+                        container.appendChild(iconRenderer.domElement);
+
+                        iconScene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                        var spotLight = new THREE.SpotLight(0xffffff, 2);
+                        spotLight.position.set(10, 20, 20);
+                        iconScene.add(spotLight);
+                        var blueLight = new THREE.PointLight(0x002FA7, 3, 50);
+                        blueLight.position.set(-10, -10, 5);
+                        iconScene.add(blueLight);
+
+                        var iconSize = 7;
+                        var extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
+                        var shape = createSquircleShape(iconSize);
+                        var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                        geometry.computeBoundingBox();
+                        var max = geometry.boundingBox.max, min = geometry.boundingBox.min;
+                        var range = new THREE.Vector2(max.x - min.x, max.y - min.y);
+                        var uvAttribute = geometry.attributes.uv;
+                        var posAttribute = geometry.attributes.position;
+                        for (var i = 0; i < posAttribute.count; i++) {
+                            var px = posAttribute.getX(i), py = posAttribute.getY(i);
+                            uvAttribute.setXY(i, (px - min.x) / range.x, (py - min.y) / range.y);
+                        }
+                        geometry.attributes.uv.needsUpdate = true;
+                        geometry.center();
+
+                        var materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+                        var materialFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+                        var textureLoader = new THREE.TextureLoader();
+                        textureLoader.load('../resources/works/space-switcher.png', function (tex) {
+                            tex.center.set(0.5, 0.5);
+                            tex.encoding = THREE.sRGBEncoding;
+                            materialFront.map = tex;
+                            materialFront.needsUpdate = true;
+                        });
+                        iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
+                        iconMesh.rotation.x = 0.2;
+                        iconMesh.rotation.y = -0.3;
+                        iconScene.add(iconMesh);
+
+                        function animate() {
+                            requestAnimationFrame(animate);
+                            var t = Date.now() * 0.001;
+                            if (iconMesh) {
+                                iconMesh.position.y = Math.sin(t) * 0.2;
+                                iconMesh.rotation.x += (iconMouseY * 0.5 - iconMesh.rotation.x) * 0.05;
+                                iconMesh.rotation.y += (iconMouseX * 0.5 - iconMesh.rotation.y) * 0.05;
+                            }
+                            iconRenderer.render(iconScene, iconCamera);
+                        }
+                        animate();
+
+                        window.addEventListener('mousemove', function (e) {
+                            iconMouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+                            iconMouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+                        });
+                        window.addEventListener('resize', function () {
+                            var newSize = container.clientWidth || container.clientHeight || 280;
+                            if (newSize < 10) return;
+                            iconRenderer.setSize(newSize, newSize);
+                            iconRenderer.domElement.style.width = '100%';
+                            iconRenderer.domElement.style.height = '100%';
+                        });
+                    }
+
+                    function handleNavClick(targetId) {
+                        closeSidebar(function () {
+                            var el = document.getElementById(targetId);
+                            if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
+                        });
+                    }
+
+                    function scrollToTop() {
+                        if (isSidebarOpen.value) return;
+                        if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+                    }
+
+                    // ── Sidebar ──
+
+                    function closeSidebar(callback) {
+                        gsap.to('.sidebar-rk .mask-inner', {
+                            y: "100%",
+                            duration: 0.5,
+                            stagger: 0.05,
+                            ease: "expo.in",
+                            onComplete: function () {
+                                isSidebarOpen.value = false;
+                                if (callback) callback();
+                            }
+                        });
+                    }
+
+                    function toggleSidebar() {
+                        if (isSidebarOpen.value) {
+                            closeSidebar();
+                        } else {
+                            isSidebarOpen.value = true;
+                        }
+                    }
+
+                    watch(isSidebarOpen, function (val) {
+                        if (val) {
+                            nextTick(function () {
+                                lucide.createIcons();
+                                gsap.from('.sidebar-rk .mask-inner', {
+                                    y: "100%",
+                                    duration: 1,
+                                    stagger: 0.1,
+                                    ease: "expo.out",
+                                    delay: 0.3
+                                });
+                            });
+                        }
+                    });
+
+                    // ── Section Label Animation ──
+                    var sectionLabelTween;
+                    var sectionLabelClone;
+                    var sectionOrder = ['home', 'overview', 'features', 'more-features', 'install', 'companions'];
+
+                    watch(activeSection, function (newSection, oldSection) {
+                        if (!oldSection || oldSection === newSection) return;
+
+                        if (sectionLabelTween) {
+                            sectionLabelTween.kill();
+                            sectionLabelTween = null;
+                        }
+                        if (sectionLabelClone && sectionLabelClone.parentNode) {
+                            sectionLabelClone.remove();
+                            sectionLabelClone = null;
+                        }
+
+                        var dock = document.querySelector('.nav-dock');
+                        var label = document.querySelector('.nav-dock__label');
+                        var labelText = document.querySelector('.nav-dock__label-text');
+                        if (!dock || !label || !labelText) return;
+
+                        var oldIdx = sectionOrder.indexOf(oldSection);
+                        var newIdx = sectionOrder.indexOf(newSection);
+                        var isForward = newIdx > oldIdx;
+                        var outDir = isForward ? -110 : 110;
+                        var inDir = isForward ? 110 : -110;
+
+                        var currentWidth = dock.offsetWidth;
+                        dock.style.width = currentWidth + 'px';
+
+                        labelText.style.position = 'absolute';
+                        gsap.set(labelText, { opacity: 0 });
+
+                        sectionLabelClone = document.createElement('span');
+                        sectionLabelClone.textContent = sectionLabels[oldSection] || oldSection;
+                        sectionLabelClone.style.cssText = 'display:block;white-space:nowrap;';
+                        label.appendChild(sectionLabelClone);
+
+                        sectionLabelTween = gsap.to(sectionLabelClone, {
+                            yPercent: outDir,
+                            opacity: 0,
+                            duration: 0.2,
+                            ease: 'power2.in',
+                            onComplete: function () {
+                                if (sectionLabelClone && sectionLabelClone.parentNode) {
+                                    sectionLabelClone.remove();
+                                    sectionLabelClone = null;
+                                }
+                                sectionLabelTween = null;
+
+                                labelText.style.position = '';
+                                dock.style.width = '';
+                                var newWidth = dock.offsetWidth;
+
+                                dock.style.width = currentWidth + 'px';
+                                gsap.set(labelText, { yPercent: inDir, opacity: 0 });
+
+                                sectionLabelTween = gsap.timeline({
+                                    onComplete: function () {
+                                        dock.style.width = '';
+                                        sectionLabelTween = null;
+                                    }
+                                });
+                                sectionLabelTween
+                                    .to(dock, {
+                                        width: newWidth,
+                                        duration: 0.4,
+                                        ease: 'power2.inOut'
+                                    }, 0)
+                                    .to(labelText, {
+                                        yPercent: 0,
+                                        opacity: 1,
+                                        duration: 0.3,
+                                        ease: 'power2.out'
+                                    }, 0.07);
+                            }
+                        });
+                    });
+
+                    // ── Scroll Tracking ──
+
+                    function updateScrollProgress() {
+                        scrollRafPending = false;
+                        var winHeight = window.innerHeight;
+                        showNavDock.value = window.scrollY > winHeight * 0.2;
+                        var sections = ['home', 'overview', 'features', 'more-features', 'install', 'companions'];
+                        var current = 'home';
+                        sections.forEach(function (id) {
+                            var el = document.getElementById(id);
+                            if (el) {
+                                var rect = el.getBoundingClientRect();
+                                if (rect.top <= winHeight * 0.4) current = id;
+                            }
+                        });
+                        activeSection.value = current;
+
+                        var footer = document.querySelector('footer');
+                        if (footer) {
+                            var footerRect = footer.getBoundingClientRect();
+                            if (footerRect.top < winHeight) {
+                                var offset = winHeight - footerRect.top + 16;
+                                navDockBottom.value = offset + 'px';
+                            } else {
+                                navDockBottom.value = '2rem';
+                            }
+                        }
+                    }
+
+                    function onScroll() {
+                        if (!scrollRafPending) {
+                            scrollRafPending = true;
+                            requestAnimationFrame(updateScrollProgress);
+                        }
+                    }
+
+                    // ── Lenis ──
+
+                    function initLenis() {
+                        lenis = new Lenis({ duration: 1.5, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }, smooth: true });
+                        function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
+                        requestAnimationFrame(raf);
+                    }
+
+                    // ── Lifecycle ──
+
+                    onMounted(function () {
+                        initLenis();
+                        initIcon3D();
+                        initWaves(waveCanvas.value);
+                        window.addEventListener('scroll', onScroll, { passive: true });
+                        systemQuery.addEventListener('change', onSystemThemeChange);
+
+                        nextTick().then(function () {
+                            lucide.createIcons();
+
+                            // ── Animation Sequence ──
+                            var tl = gsap.timeline();
+
+                            tl.set('body', { opacity: 1 })
+                                .set('.hero__text .mask-inner', { y: '120%' })
+                                .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
+                                    var el = document.getElementById('preloader');
+                                    if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                } })
+                                .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
+                                .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
+                                .from('.hero__icon-3d', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out" }, "-=0.45")
+                                .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
+                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
+
+                            // Mask Reveals for subsequent sections
+                            gsap.utils.toArray('.section-rk:not(#home)').forEach(function (sec) {
+                                var masks = sec.querySelectorAll('.mask-inner');
+                                if (masks.length > 0) {
+                                    gsap.from(masks, {
+                                        y: "100%",
+                                        duration: 1.8,
+                                        stagger: 0.15,
+                                        ease: "power4.out",
+                                        scrollTrigger: {
+                                            trigger: sec,
+                                            start: "top 85%",
+                                        }
+                                    });
+                                }
+                            });
+
+                            // Gradient Parallax on editorial text
+                            gsap.utils.toArray('.gradient-text').forEach(function (el) {
+                                gsap.to(el, {
+                                    backgroundPosition: '100% 50%',
+                                    ease: 'none',
+                                    scrollTrigger: {
+                                        trigger: el,
+                                        start: 'top bottom',
+                                        end: 'bottom top',
+                                        scrub: true
+                                    }
+                                });
+                            });
+
+                            // ── Hover Follower ──
+                            var cards = document.querySelectorAll('[data-hover-follow]');
+                            cards.forEach(function (item) {
+                                var follower = item.querySelector('[data-hover-follower]');
+                                if (!follower) return;
+
+                                var ticking = false;
+                                var x = 0, y = 0, tx = 0, ty = 0;
+                                var trailLerp = 0.08;
+                                var offset = 16;
+                                var lastEvent = null;
+
+                                function setTargetFromEvent(e) {
+                                    var rect = item.getBoundingClientRect();
+                                    tx = e.clientX - rect.left + offset;
+                                    ty = e.clientY - rect.top + offset;
+                                }
+
+                                function updatePosition() {
+                                    follower.style.left = Math.round(x) + 'px';
+                                    follower.style.top = Math.round(y) + 'px';
+                                }
+
+                                function tick() {
+                                    if (lastEvent) {
+                                        setTargetFromEvent(lastEvent);
+                                    }
+                                    x += (tx - x) * trailLerp;
+                                    y += (ty - y) * trailLerp;
+                                    updatePosition();
+                                }
+
+                                function startTicker() {
+                                    if (ticking) return;
+                                    ticking = true;
+                                    gsap.ticker.add(tick);
+                                }
+
+                                function stopTicker() {
+                                    if (!ticking) return;
+                                    ticking = false;
+                                    gsap.ticker.remove(tick);
+                                }
+
+                                function hideNow() {
+                                    gsap.killTweensOf(follower);
+                                    follower.style.display = 'none';
+                                    stopTicker();
+                                }
+
+                                function showNow(e) {
+                                    follower.style.display = 'block';
+                                    setTargetFromEvent(e);
+                                    x = tx;
+                                    y = ty;
+                                    updatePosition();
+
+                                    gsap.killTweensOf(follower);
+                                    gsap.fromTo(follower,
+                                        { scale: 0.6 },
+                                        { scale: 1, duration: 0.45, ease: "elastic.out(1,0.5)", overwrite: true }
+                                    );
+                                    startTicker();
+                                }
+
+                                item.addEventListener('mouseenter', function (e) {
+                                    item.style.zIndex = '9999';
+                                    lastEvent = e;
+                                    showNow(e);
+                                });
+
+                                item.addEventListener('mousemove', function (e) {
+                                    lastEvent = e;
+                                    if (follower.style.display !== 'block') return;
+                                    setTargetFromEvent(e);
+                                });
+
+                                item.addEventListener('mouseleave', function () {
+                                    item.style.zIndex = '';
+                                    hideNow();
+                                });
+                            });
+                        });
+                    });
+
+                    onUnmounted(function () {
+                        window.removeEventListener('scroll', onScroll);
+                        systemQuery.removeEventListener('change', onSystemThemeChange);
+                        if (lenis) lenis.destroy();
+                    });
+
+                    return {
+                        isSidebarOpen: isSidebarOpen,
+                        activeSection: activeSection,
+                        toggleSidebar: toggleSidebar,
+                        handleNavClick: handleNavClick,
+                        scrollToTop: scrollToTop,
+                        showNavDock: showNavDock,
+                        navDockBottom: navDockBottom,
+                        sectionLabels: sectionLabels,
+                        isDark: isDark,
+                        toggleTheme: toggleTheme,
+                        copyBrew: copyBrew,
+                        brewCopied: brewCopied,
+                        icon3dContainer: icon3dContainer,
+                        waveCanvas: waveCanvas
+                    };
+                }
+            }).mount('#app');
+        })();
+    </script>
+</body>
+
+</html>
