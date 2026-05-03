@@ -67,6 +67,9 @@
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -84,6 +87,48 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        @keyframes video-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(0,47,167,0.15), 0 20px 60px rgba(0,0,0,0.15); }
+            50% { box-shadow: 0 0 50px rgba(0,47,167,0.25), 0 20px 60px rgba(0,0,0,0.2); }
+        }
+        .feature-video {
+            animation: video-glow 4s ease-in-out infinite;
+        }
+
+        /* Aurora blobs */
+        .aurora-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; overflow: hidden;
+        }
+        .aurora-blob {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.5; mix-blend-mode: screen;
+        }
+        html:not(.dark) .aurora-blob { mix-blend-mode: multiply; opacity: 0.2; filter: blur(100px); }
+        .blob-1 { top: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0,47,167,0.8), transparent 70%); animation: float 20s infinite ease-in-out; }
+        .blob-2 { bottom: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(32,190,255,0.5), transparent 70%); animation: float 18s infinite ease-in-out; animation-delay: -5s; }
+        .blob-3 { top: 40%; right: 20%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(100,0,255,0.35), transparent 70%); animation: float 24s infinite ease-in-out; animation-delay: -10s; }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 20px); }
+        }
+
+        /* 3D Icon — square, respects viewport */
+        .hero__icon-3d {
+            width: min(70vw, 28rem, 38vh);
+            aspect-ratio: 1;
+            position: relative;
+            margin-bottom: 1rem;
+            z-index: 10;
+            pointer-events: auto;
+        }
+        .hero__icon-3d canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
 </head>
 
 <body class="theme-base" style="opacity: 0;">
@@ -121,6 +166,12 @@
             <!-- Hero Section -->
             <section id="home" class="hero">
                 <div class="hero__bg"></div>
+                <div class="aurora-container">
+                    <div class="aurora-blob blob-1"></div>
+                    <div class="aurora-blob blob-2"></div>
+                    <div class="aurora-blob blob-3"></div>
+                </div>
+                <canvas ref="waveCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
                 <nav class="hero__quicknav hide-mobile">
                     <div class="hero__quicknav-logo">
                         <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
@@ -161,8 +212,7 @@
                 </nav>
 
                 <div class="hero__content">
-                    <img src="../resources/works/desktop-renamer.png" alt="DesktopRenamer" class="hero__logo"
-                        style="width: min(35%, 14rem); height: auto; margin-bottom: 0.5rem;">
+                    <div class="hero__icon-3d" ref="icon3dContainer"></div>
                     <div class="hero__text">
                         <div class="mask-wrap">
                             <h1 class="hero__name mask-inner">DesktopRenamer</h1>
@@ -260,7 +310,7 @@
                                 </div>
                                 <div class="md:col-span-7">
                                     <video src="../resources/demo/desktop-renamer/Rename.mp4" autoplay muted loop playsinline
-                                        class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                        class="w-full rounded-lg feature-video" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
                                 </div>
                             </div>
                         </div>
@@ -273,9 +323,9 @@
                                 <div class="md:col-span-7">
                                     <div class="grid grid-cols-2 gap-4">
                                         <video src="../resources/demo/desktop-renamer/MissionControl.mp4" autoplay muted loop playsinline
-                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                            class="w-full rounded-lg feature-video" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
                                         <video src="../resources/demo/desktop-renamer/ActiveLabel.mp4" autoplay muted loop playsinline
-                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                            class="w-full rounded-lg feature-video" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
                                     </div>
                                 </div>
                                 <div class="md:col-span-5 md:pl-16">
@@ -299,9 +349,9 @@
                                 <div class="md:col-span-7">
                                     <div class="grid grid-cols-2 gap-4">
                                         <video src="../resources/demo/desktop-renamer/SwitchSpace.mp4" autoplay muted loop playsinline
-                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                            class="w-full rounded-lg feature-video" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
                                         <video src="../resources/demo/desktop-renamer/MoveWindow.mp4" autoplay muted loop playsinline
-                                            class="w-full rounded-lg" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                            class="w-full rounded-lg feature-video" style="box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +364,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-0 items-center">
                                 <div class="md:col-span-7">
                                     <video src="../resources/demo/desktop-renamer/SwitchOverride.mp4" autoplay muted loop playsinline
-                                        class="w-full rounded-lg" style="max-width: 640px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
+                                        class="w-full rounded-lg feature-video" style="max-width: 640px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);"></video>
                                 </div>
                                 <div class="md:col-span-5 md:pl-16">
                                     <p class="text-sm font-semibold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.01em; color: var(--klein-blue-text);">04 / Speed</p>
@@ -566,6 +616,60 @@
         /**
          * DesktopRenamer landing page — Vue 3 app, GSAP animations, Lenis smooth scroll.
          */
+
+        // ── Canvas Wave Lines ──
+        function initWaves(canvas) {
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var width, height;
+            var lines = [];
+            var lineCount = 14;
+
+            function resize() {
+                var rect = canvas.parentElement.getBoundingClientRect();
+                width = canvas.width = rect.width;
+                height = canvas.height = rect.height;
+                lines = [];
+                for (var i = 0; i < lineCount; i++) {
+                    lines.push({
+                        y: (i / (lineCount - 1)) * height,
+                        amp: 15 + Math.random() * 40,
+                        freq: 0.003 + Math.random() * 0.005,
+                        speed: 0.3 + Math.random() * 0.7,
+                        phase: Math.random() * Math.PI * 2,
+                        offset: (Math.random() - 0.5) * 60
+                    });
+                }
+            }
+
+            function draw(time) {
+                ctx.clearRect(0, 0, width, height);
+                var isDark = document.documentElement.classList.contains('dark');
+                var baseAlpha = isDark ? 0.12 : 0.1;
+                var baseColor = isDark ? '255,255,255' : '0,0,0';
+
+                for (var i = 0; i < lines.length; i++) {
+                    var l = lines[i];
+                    var alpha = baseAlpha * (1 - Math.abs(i - lineCount / 2) / (lineCount / 2) * 0.5);
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(' + baseColor + ',' + alpha.toFixed(3) + ')';
+                    ctx.lineWidth = isDark ? 1.2 : 1;
+                    var first = true;
+                    for (var x = -20; x <= width + 20; x += 2) {
+                        var y = l.y + Math.sin(x * l.freq + time * 0.001 * l.speed + l.phase) * l.amp + l.offset;
+                        if (first) { ctx.moveTo(x, y); first = false; }
+                        else { ctx.lineTo(x, y); }
+                    }
+                    ctx.stroke();
+                }
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            requestAnimationFrame(draw);
+            window.addEventListener('resize', resize);
+        }
+
         (function () {
             var createApp = Vue.createApp;
             var ref = Vue.ref;
@@ -586,6 +690,8 @@
                     var showVideoModal = ref(false);
                     var modalVideo = ref(null);
                     var brewCopied = ref(false);
+                    var icon3dContainer = ref(null);
+                    var waveCanvas = ref(null);
 
                     var lenis;
                     var scrollRafPending = false;
@@ -644,6 +750,109 @@
                             brewCopied.value = true;
                             setTimeout(function () { brewCopied.value = false; }, 1500);
                         }).catch(function () {});
+                    }
+
+                    // ── 3D Icon ──
+                    var iconScene, iconCamera, iconRenderer, iconMesh;
+                    var iconMouseX = 0, iconMouseY = 0;
+
+                    function createSquircleShape(size) {
+                        var shape = new THREE.Shape();
+                        var w = size, h = size;
+                        var x = -w / 2, y = -h / 2;
+                        var r = 1.5;
+                        shape.moveTo(x, y + r);
+                        shape.lineTo(x, y + h - r);
+                        shape.quadraticCurveTo(x, y + h, x + r, y + h);
+                        shape.lineTo(x + w - r, y + h);
+                        shape.quadraticCurveTo(x + w, y + h, x + w, y + h - r);
+                        shape.lineTo(x + w, y + r);
+                        shape.quadraticCurveTo(x + w, y, x + w - r, y);
+                        shape.lineTo(x + r, y);
+                        shape.quadraticCurveTo(x, y, x, y + r);
+                        return shape;
+                    }
+
+                    function initIcon3D() {
+                        var container = icon3dContainer.value;
+                        if (!container || typeof THREE === 'undefined') return;
+                        var size = container.clientWidth || container.clientHeight || 280;
+                        if (size < 10) { size = 280; }
+                        container.innerHTML = '';
+
+                        iconScene = new THREE.Scene();
+                        iconCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+                        iconCamera.position.z = 18;
+                        iconRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                        iconRenderer.setSize(size, size);
+                        iconRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        iconRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+                        iconRenderer.toneMappingExposure = 1.2;
+                        iconRenderer.domElement.style.width = '100%';
+                        iconRenderer.domElement.style.height = '100%';
+                        container.appendChild(iconRenderer.domElement);
+
+                        iconScene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                        var spotLight = new THREE.SpotLight(0xffffff, 2);
+                        spotLight.position.set(10, 20, 20);
+                        iconScene.add(spotLight);
+                        var blueLight = new THREE.PointLight(0x002FA7, 3, 50);
+                        blueLight.position.set(-10, -10, 5);
+                        iconScene.add(blueLight);
+
+                        var iconSize = 6;
+                        var extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 8, steps: 2, bevelSize: 0.2, bevelThickness: 0.2 };
+                        var shape = createSquircleShape(iconSize);
+                        var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                        geometry.computeBoundingBox();
+                        var max = geometry.boundingBox.max, min = geometry.boundingBox.min;
+                        var range = new THREE.Vector2(max.x - min.x, max.y - min.y);
+                        var uvAttribute = geometry.attributes.uv;
+                        var posAttribute = geometry.attributes.position;
+                        for (var i = 0; i < posAttribute.count; i++) {
+                            var px = posAttribute.getX(i), py = posAttribute.getY(i);
+                            uvAttribute.setXY(i, (px - min.x) / range.x, (py - min.y) / range.y);
+                        }
+                        geometry.attributes.uv.needsUpdate = true;
+                        geometry.center();
+
+                        var materialSide = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+                        var materialFront = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+                        var textureLoader = new THREE.TextureLoader();
+                        textureLoader.load('../resources/works/desktop-renamer.png', function (tex) {
+                            tex.center.set(0.5, 0.5);
+                            tex.encoding = THREE.sRGBEncoding;
+                            materialFront.map = tex;
+                            materialFront.needsUpdate = true;
+                        });
+                        iconMesh = new THREE.Mesh(geometry, [materialFront, materialSide]);
+                        iconMesh.rotation.x = 0.2;
+                        iconMesh.rotation.y = -0.3;
+                        iconScene.add(iconMesh);
+
+                        function animate() {
+                            requestAnimationFrame(animate);
+                            var t = Date.now() * 0.001;
+                            if (iconMesh) {
+                                iconMesh.position.y = Math.sin(t) * 0.2;
+                                iconMesh.rotation.x += (iconMouseY * 0.5 - iconMesh.rotation.x) * 0.05;
+                                iconMesh.rotation.y += (iconMouseX * 0.5 - iconMesh.rotation.y) * 0.05;
+                            }
+                            iconRenderer.render(iconScene, iconCamera);
+                        }
+                        animate();
+
+                        window.addEventListener('mousemove', function (e) {
+                            iconMouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+                            iconMouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+                        });
+                        window.addEventListener('resize', function () {
+                            var newSize = container.clientWidth || container.clientHeight || 280;
+                            if (newSize < 10) return;
+                            iconRenderer.setSize(newSize, newSize);
+                            iconRenderer.domElement.style.width = '100%';
+                            iconRenderer.domElement.style.height = '100%';
+                        });
                     }
 
                     function handleNavClick(targetId) {
@@ -849,6 +1058,8 @@
 
                     onMounted(function () {
                         initLenis();
+                        initIcon3D();
+                        initWaves(waveCanvas.value);
                         window.addEventListener('scroll', onScroll, { passive: true });
                         systemQuery.addEventListener('change', onSystemThemeChange);
 
@@ -866,7 +1077,9 @@
                                 } })
                                 .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
                                 .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
-                                .from('.hero__logo', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out" }, "-=0.45")
+                                .from('.hero__icon-3d', { scale: 0.92, opacity: 0, y: 24, duration: 0.7, ease: "power3.out", onComplete: function () {
+                                    if (iconMesh) gsap.fromTo(iconMesh.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1, duration: 1.5, ease: "elastic.out(1, 0.5)" });
+                                } }, "-=0.45")
                                 .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
                                 .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
 
@@ -1027,7 +1240,9 @@
                         closeVideoModal: closeVideoModal,
                         modalVideo: modalVideo,
                         copyBrew: copyBrew,
-                        brewCopied: brewCopied
+                        brewCopied: brewCopied,
+                        icon3dContainer: icon3dContainer,
+                        waveCanvas: waveCanvas
                     };
                 }
             }).mount('#app');
