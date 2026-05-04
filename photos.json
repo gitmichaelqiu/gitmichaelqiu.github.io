@@ -11,7 +11,9 @@
       "shutter": "1/2000s",
       "diary": "The first sunset I witnessed after arriving in Thailand. The way the light danced on the water reminded me of why I travel—to find these transient moments of perfect beauty.",
       "tags": ["sunset", "beach", "thailand"],
-      "color": "#FF6B35"
+      "color": "#FF6B35",
+      "lat": 12.0486,
+      "lng": 102.3238
     },
     {
       "id": 2,
@@ -24,7 +26,9 @@
       "shutter": "1/1000s",
       "diary": "Walking along the beach during golden hour. The warmth of the light seemed to slow down time itself, making everything feel eternal.",
       "tags": ["goldenhour", "beach", "warm"],
-      "color": "#FFD166"
+      "color": "#FFD166",
+      "lat": 12.0636,
+      "lng": 102.3138
     },
     {
       "id": 3,
@@ -37,7 +41,9 @@
       "shutter": "1/500s",
       "diary": "A moment of serendipity in my backyard. The moon appearing perfectly balanced on a tree branch as if nature itself had placed it there.",
       "tags": ["moon", "nature", "serendipity"],
-      "color": "#6A0572"
+      "color": "#6A0572",
+      "lat": 30.2741,
+      "lng": 120.1551
     },
     {
       "id": 4,
@@ -50,7 +56,9 @@
       "shutter": "1/60s",
       "diary": "The Sheikh Zayed Grand Mosque at night. The architecture seemed to capture and reflect both earthly ambition and spiritual aspiration.",
       "tags": ["architecture", "night", "uae"],
-      "color": "#118AB2"
+      "color": "#118AB2",
+      "lat": 24.4539,
+      "lng": 54.3773
     },
     {
       "id": 5,
@@ -63,7 +71,9 @@
       "shutter": "1/800s",
       "diary": "A quiet ferry crossing in Hokkaido. The mountains stood as silent witnesses to journeys both physical and metaphorical.",
       "tags": ["mountains", "winter", "japan"],
-      "color": "#06D6A0"
+      "color": "#06D6A0",
+      "lat": 42.7367,
+      "lng": 141.3961
     },
     {
       "id": 6,
@@ -76,7 +86,9 @@
       "shutter": "1/250s",
       "diary": "A lonely lighthouse in the snow. It made me think about guidance and what it means to find your way in unfamiliar territory.",
       "tags": ["lighthouse", "snow", "isolation"],
-      "color": "#EF476F"
+      "color": "#EF476F",
+      "lat": 43.0642,
+      "lng": 141.3469
     },
     {
       "id": 7,
@@ -89,7 +101,9 @@
       "shutter": "1/400s",
       "diary": "A path through the snow-covered trees. Sometimes the journey matters more than the destination, especially when every step reveals new beauty.",
       "tags": ["path", "winter", "journey"],
-      "color": "#073B4C"
+      "color": "#073B4C",
+      "lat": 42.8641,
+      "lng": 140.7261
     }
   ]
 }
