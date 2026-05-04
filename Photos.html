@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function () { var t = localStorage.getItem('theme'); if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark'); })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moments — Michael Qiu</title>
+    <link rel="shortcut icon" type="image/png" href="resources/favicon.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'klein-blue': '#002FA7',
+                        'klein-blue-bright': '#0038c8',
+                        'bg-dark': '#0a0a0a',
+                        'bg-light': '#FAFAF6',
+                        'deep-navy': '#020412',
+                        'gold': '#D4A853',
+                        'gold-light': '#E8C97A',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syncopate', 'sans-serif'],
+                        editorial: ['Playfair Display', 'serif'],
+                    },
+                    fontSize: {
+                        xs: '1.0rem',
+                        sm: '1.4rem',
+                        base: '1.7rem',
+                        lg: '1.8rem',
+                        xl: '2.2rem',
+                        '2xl': '1.625rem',
+                        '3xl': '2rem',
+                        '4xl': '2.5rem',
+                        '5xl': '3.5rem',
+                        '6xl': '5rem',
+                        '7xl': '8rem',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syncopate:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        /* ============================================================
+           Photos Page — Specific Styles
+           ============================================================ */
+
+        /* Hero reduced gap */
+        #home .hero__content {
+            gap: 0.3rem;
+            margin-top: -4rem;
+        }
+
+        /* ── Mode Toggle Bar ── */
+        .mode-toggle-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            padding: 1.2rem 0;
+            transition: background 0.4s var(--mi-smooth), box-shadow 0.4s var(--mi-smooth);
+        }
+        .mode-toggle-bar--scrolled {
+            background: var(--bg-primary);
+            box-shadow: 0 1px 0 var(--border-color);
+        }
+        .mode-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+            padding: 2px;
+        }
+        .mode-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            color: var(--text-secondary);
+            background: transparent;
+            transition: all 0.25s var(--mi-smooth);
+            white-space: nowrap;
+        }
+        .mode-toggle-btn.active {
+            background: var(--klein-blue);
+            color: #fff;
+        }
+        .mode-toggle-btn:not(.active):hover {
+            color: var(--text-primary);
+            background: rgba(0,0,0,0.04);
+        }
+        html.dark .mode-toggle-btn:not(.active):hover {
+            background: rgba(255,255,255,0.06);
+        }
+        .mode-toggle-btn i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ── Flow Mode (Horizontal Strip) ── */
+        .flow-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .flow-container:active {
+            cursor: grabbing;
+        }
+        .flow-container.dragging .flow-card {
+            pointer-events: none;
+        }
+        .flow-track {
+            display: flex;
+            gap: 16px;
+            width: max-content;
+            padding: 0 2rem;
+            will-change: transform;
+        }
+        .flow-card {
+            flex-shrink: 0;
+            width: calc(25vw - 12px);
+            min-width: 240px;
+            aspect-ratio: 3/4;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.4s var(--mi-smooth);
+        }
+        .flow-card:hover {
+            transform: scale(1.03);
+        }
+        .flow-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.5s var(--mi-smooth), transform 0.5s var(--mi-smooth);
+        }
+        .flow-card:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+        .flow-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .flow-card-location {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: -0.02em;
+        }
+        .flow-card-date {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.02em;
+        }
+        .flow-load-bar-track {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 2px;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .flow-card.loaded .flow-load-bar-track {
+            opacity: 0;
+        }
+        .flow-load-bar {
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+        .flow-card.loaded .flow-load-bar {
+            animation: loadBar 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* ── Grid Mode ── */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 2rem 4rem;
+        }
+        @media (min-width: 768px) {
+            .photos-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+        }
+        @media (min-width: 1280px) {
+            .photos-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+        }
+        .grid-photo-card {
+            aspect-ratio: 3/4;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .grid-photo-card.visible {
+            animation: gridFadeUp 0.8s var(--ease-out-expo) forwards;
+        }
+        .grid-photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(30%);
+            transition: filter 0.5s var(--mi-smooth), transform 0.5s var(--mi-smooth);
+        }
+        .grid-photo-card:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+        .grid-photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: opacity 0.35s var(--mi-smooth);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+        }
+        .grid-photo-card:hover .grid-photo-overlay {
+            opacity: 1;
+        }
+        .grid-photo-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #fff;
+            letter-spacing: -0.03em;
+            margin-bottom: 2px;
+        }
+        .grid-photo-meta {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.01em;
+        }
+        .grid-load-bar-track {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 2px;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .grid-photo-card.loaded .grid-load-bar-track {
+            opacity: 0;
+        }
+        .grid-load-bar {
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+        .grid-photo-card.loaded .grid-load-bar {
+            animation: loadBar 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* Stagger offsets */
+        .grid-photo-card:nth-child(4n+2),
+        .grid-photo-card:nth-child(4n+4) {
+            margin-top: 2rem;
+        }
+        @media (max-width: 767px) {
+            .grid-photo-card:nth-child(4n+2),
+            .grid-photo-card:nth-child(4n+4) {
+                margin-top: 0;
+            }
+            .grid-photo-card:nth-child(2n) {
+                margin-top: 1.5rem;
+            }
+        }
+
+        @keyframes gridFadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes loadBar {
+            0% { transform: scaleX(0); }
+            100% { transform: scaleX(1); }
+        }
+
+        /* ── Map Mode ── */
+        .map-container {
+            width: 100%;
+            height: calc(100vh - 180px);
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+        }
+        .map-container .leaflet-container {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+        }
+        .photo-marker {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s var(--mi-smooth);
+        }
+        .photo-marker:hover {
+            transform: scale(1.3);
+            z-index: 999 !important;
+        }
+        .map-preview-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 10px;
+            min-width: 220px;
+            cursor: pointer;
+        }
+        .map-preview-card img {
+            width: 50px;
+            height: 66px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .map-preview-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
+        }
+        .map-preview-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        .map-preview-loc {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.01em;
+        }
+        /* Dark tile overrides */
+        html.dark .leaflet-tile {
+            filter: invert(0.92) hue-rotate(180deg) brightness(0.85) saturate(0.3);
+        }
+        html.dark .leaflet-control-zoom a {
+            background: #1a1a1a;
+            color: #ccc;
+            border-color: #333;
+        }
+
+        /* Leaflet popup override */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px !important;
+            padding: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+        .leaflet-popup-content {
+            margin: 0 !important;
+        }
+        .leaflet-popup-close-button {
+            display: none !important;
+        }
+
+        /* ── Photo Detail Modal ── */
+        .photo-modal-enter-active,
+        .photo-modal-leave-active {
+            transition: opacity 0.4s var(--mi-smooth);
+        }
+        .photo-modal-enter-from,
+        .photo-modal-leave-to {
+            opacity: 0;
+        }
+        .photo-modal-enter-active .photo-modal-content,
+        .photo-modal-leave-active .photo-modal-content {
+            transition: transform 0.5s var(--ease-out-expo), opacity 0.4s var(--mi-smooth);
+        }
+        .photo-modal-enter-from .photo-modal-content,
+        .photo-modal-leave-to .photo-modal-content {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        .photo-detail-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10004;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 24px;
+            min-width: 260px;
+            max-width: 340px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .photo-detail-panel {
+                bottom: 80px;
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
+                min-width: auto;
+                width: calc(100vw - 48px);
+                max-width: calc(100vw - 48px);
+                max-height: 30vh;
+            }
+            .photo-modal-nav {
+                display: flex;
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10004;
+                gap: 12px;
+            }
+        }
+        .photo-detail-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .photo-detail-icon {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            opacity: 0.3;
+            color: #fff;
+        }
+        .photo-detail-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .photo-detail-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .photo-detail-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+        }
+        .photo-detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .photo-detail-tag {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 100px;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.02em;
+        }
+        .photo-detail-diary {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            font-style: italic;
+            letter-spacing: 0.01em;
+            margin-top: 4px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .photo-modal-nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10004;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s var(--mi-smooth);
+        }
+        .photo-modal-nav-btn:hover {
+            background: rgba(0,0,0,0.7);
+            transform: translateY(-50%) scale(1.08);
+        }
+        .photo-modal-nav-btn--prev { left: 20px; }
+        .photo-modal-nav-btn--next { right: 20px; }
+
+        /* ── Scroll-driven section reveals ── */
+        @media (max-width: 767px) {
+            .flow-card {
+                width: calc(60vw - 12px);
+                min-width: 180px;
+            }
+            .hide-mobile {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="theme-base" style="opacity: 0;">
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
+
+    <div id="app" class="relative min-h-screen">
+        <!-- Architectural Grid Lines -->
+        <div class="grid-lines">
+            <div v-for="i in 12" :key="i" class="grid-line"></div>
+        </div>
+
+        <!-- Navigation Dock -->
+        <div class="nav-dock" :class="{ 'nav-dock--visible': showNavDock }"
+            :style="{ bottom: navDockBottom }">
+            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
+                <i data-lucide="arrow-up" class="w-5 h-5"></i>
+            </a>
+            <a href="/" class="nav-dock__btn" title="Back to Portfolio">
+                <i data-lucide="home" class="w-5 h-5"></i>
+            </a>
+            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ activeSection }}</span></div>
+            <button @click="toggleTheme" class="nav-dock__btn"
+                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+                <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
+            </button>
+            <button @click="toggleSidebar" class="nav-dock__btn" :class="{ 'active': isSidebarOpen }">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
+
+            <!-- Hero Section -->
+            <section id="home" class="hero">
+                <div class="hero__bg"></div>
+                <canvas ref="heroCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
+                <nav class="hero__quicknav hide-mobile">
+                    <div class="hero__quicknav-logo">
+                        <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:4.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="hero__quicknav-cols">
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">View</div>
+                            <a @click.prevent="setMode('flow')" href="#" class="hero__quicknav-link">Flow</a>
+                            <a @click.prevent="setMode('grid')" href="#" class="hero__quicknav-link">Grid</a>
+                            <a @click.prevent="setMode('map')" href="#" class="hero__quicknav-link">Map</a>
+                        </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">Links</div>
+                            <a href="/" class="hero__quicknav-link">Portfolio</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="hero__quicknav-link">GitHub</a>
+                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="hero__quicknav-link">Blog</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="hero__content">
+                    <div class="hero__text">
+                        <div class="mask-wrap">
+                            <h1 class="hero__name mask-inner">Moments</h1>
+                        </div>
+                        <div class="mask-wrap">
+                            <p class="hero__tagline mask-inner">Photos captured in between.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mode Toggle Bar -->
+            <div class="mode-toggle-bar" :class="{ 'mode-toggle-bar--scrolled': modeBarScrolled }" ref="modeBar">
+                <div class="mode-toggle-wrapper">
+                    <button class="mode-toggle-btn" :class="{ active: mode === 'flow' }" @click="setMode('flow')">
+                        <i data-lucide="columns-2"></i> Flow
+                    </button>
+                    <button class="mode-toggle-btn" :class="{ active: mode === 'grid' }" @click="setMode('grid')">
+                        <i data-lucide="layout-grid"></i> Grid
+                    </button>
+                    <button class="mode-toggle-btn" :class="{ active: mode === 'map' }" @click="setMode('map')">
+                        <i data-lucide="map"></i> Map
+                    </button>
+                </div>
+            </div>
+
+            <!-- Flow Mode -->
+            <section v-show="mode === 'flow'" id="flow-view" class="section-rk" style="padding-top: 2rem; border-top: none;">
+                <div class="container" style="padding: 0;">
+                    <div class="content-grid mb-8" style="padding: 0 2rem;">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Flow
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-l max-w-2xl mask-inner" style="color: var(--text-secondary);">Drag to explore. Click to reveal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-container" ref="flowContainer"
+                        @mousedown="flowDragStart" @mousemove="flowDragMove" @mouseup="flowDragEnd" @mouseleave="flowDragEnd"
+                        @touchstart="flowDragStart" @touchmove="flowDragMove" @touchend="flowDragEnd">
+                        <div class="flow-track" ref="flowTrack">
+                            <div v-for="(photo, i) in photos" :key="'flow-'+photo.id"
+                                class="flow-card" :class="{ loaded: flowLoaded[i] }"
+                                @click="openPhotoDetail(photo)">
+                                <div class="flow-load-bar-track"><div class="flow-load-bar"></div></div>
+                                <img :src="photo.url" :alt="photo.title" @load="onFlowImgLoad(i)">
+                                <div class="flow-card-overlay">
+                                    <div class="flow-card-location">{{ photo.location }}</div>
+                                    <div class="flow-card-date">{{ photo.date }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Grid Mode -->
+            <section v-show="mode === 'grid'" id="grid-view" class="section-rk" style="padding-top: 2rem; border-top: none;">
+                <div class="container" style="padding: 0;">
+                    <div class="content-grid mb-8" style="padding: 0 2rem;">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Grid
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-l max-w-2xl mask-inner" style="color: var(--text-secondary);">Browse the collection.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="photos-grid" ref="photosGrid">
+                        <div v-for="(photo, i) in photos" :key="'grid-'+photo.id"
+                            class="grid-photo-card" :class="{ loaded: gridLoaded[i], visible: gridVisible[i] }"
+                            :style="{ transitionDelay: (i % 4) * 0.1 + 's' }"
+                            @click="openPhotoDetail(photo)">
+                            <div class="grid-load-bar-track"><div class="grid-load-bar"></div></div>
+                            <img :src="photo.url" :alt="photo.title" @load="onGridImgLoad(i)">
+                            <div class="grid-photo-overlay">
+                                <div>
+                                    <div class="grid-photo-title">{{ photo.title }}</div>
+                                    <div class="grid-photo-meta">{{ photo.location }} &middot; {{ photo.date }}</div>
+                                    <div class="grid-photo-meta" style="margin-top: 2px;">{{ photo.camera }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Map Mode -->
+            <section v-show="mode === 'map'" id="map-view" class="section-rk" style="padding-top: 2rem; border-top: none;">
+                <div class="container" style="padding: 0;">
+                    <div class="content-grid mb-8" style="padding: 0 2rem;">
+                        <div class="content-label">
+                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M0 0L14 14H0V0Z" />
+                            </svg>Map
+                        </div>
+                        <div class="content-body">
+                            <div class="mask-wrap">
+                                <p class="paragraph-l max-w-2xl mask-inner" style="color: var(--text-secondary);">See where each moment happened.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="map-container" ref="mapContainer"></div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Photo Detail Modal -->
+        <transition name="photo-modal">
+            <div v-if="showPhotoModal" @click.self="closePhotoDetail"
+                class="fixed inset-0 z-[10003] flex items-center justify-center"
+                style="background: rgba(0,0,0,0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+                <!-- Close button -->
+                <button @click="closePhotoDetail"
+                    class="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full text-white transition-all duration-300 hover:scale-110"
+                    style="background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;"
+                    aria-label="Close">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <!-- Image -->
+                <div class="photo-modal-content relative w-full max-w-[90vw] max-h-[85vh] flex items-center justify-center">
+                    <img :src="activePhoto.url" :alt="activePhoto.title"
+                        class="max-w-full max-h-[85vh] object-contain rounded-lg"
+                        style="box-shadow: 0 25px 80px rgba(0,0,0,0.5);">
+                </div>
+
+                <!-- Nav arrows -->
+                <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" @click.stop="prevPhoto">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+                <button class="photo-modal-nav-btn photo-modal-nav-btn--next" @click.stop="nextPhoto">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
+
+                <!-- Detail panel -->
+                <div class="photo-detail-panel" v-if="activePhoto">
+                    <div class="photo-detail-row">
+                        <div class="photo-detail-text">
+                            <span class="photo-detail-value" style="font-size: 1rem; font-weight: 600;">{{ activePhoto.title }}</span>
+                        </div>
+                    </div>
+                    <div class="photo-detail-row">
+                        <i data-lucide="map-pin" class="photo-detail-icon w-4 h-4"></i>
+                        <div class="photo-detail-text">
+                            <span class="photo-detail-label">Location</span>
+                            <span class="photo-detail-value">{{ activePhoto.location }}</span>
+                        </div>
+                    </div>
+                    <div class="photo-detail-row">
+                        <i data-lucide="calendar" class="photo-detail-icon w-4 h-4"></i>
+                        <div class="photo-detail-text">
+                            <span class="photo-detail-label">Date</span>
+                            <span class="photo-detail-value">{{ activePhoto.date }}</span>
+                        </div>
+                    </div>
+                    <div class="photo-detail-row">
+                        <i data-lucide="camera" class="photo-detail-icon w-4 h-4"></i>
+                        <div class="photo-detail-text">
+                            <span class="photo-detail-label">Camera &amp; Settings</span>
+                            <span class="photo-detail-value">{{ activePhoto.camera }} &middot; {{ activePhoto.aperture }} &middot; {{ activePhoto.shutter }}</span>
+                        </div>
+                    </div>
+                    <div class="photo-detail-tags">
+                        <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
+                    </div>
+                    <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Footer -->
+        <footer class="w-full bg-klein-blue text-white pt-16 pb-8"
+            style="background-color: var(--klein-blue); color: var(--pure-white);">
+            <div class="container">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+                    <div class="md:col-span-5">
+                        <a href="#" @click.prevent="scrollToTop" class="inline-block mb-3" aria-label="Back to top">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:2.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                        <p class="text-xs text-white/70" style="font-family:'Inter',sans-serif;">&copy; 2026 - Michael Qiu</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">View</p>
+                        <div class="flex flex-col gap-1">
+                            <a @click.prevent="setMode('flow')" href="#" class="footer-nav-link">Flow</a>
+                            <a @click.prevent="setMode('grid')" href="#" class="footer-nav-link">Grid</a>
+                            <a @click.prevent="setMode('map')" href="#" class="footer-nav-link">Map</a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Links</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="/" class="footer-nav-link">Portfolio</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">GitHub</a>
+                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="footer-nav-link">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-white/10 pt-8 mt-8">
+                    <div class="text-[clamp(2.5rem,8vw,10rem)] font-black tracking-tighter leading-none">
+                        Moments.
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Sidebar -->
+        <transition name="fade">
+            <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
+                <div class="container flex-1 flex flex-col justify-center">
+                    <div class="flex flex-col" style="gap: 1rem;">
+                        <a v-for="link in [
+                            {id: 'home', label: 'Home', action: 'scrollToTop'},
+                            {id: 'flow', label: 'Flow', action: 'setMode', arg: 'flow'},
+                            {id: 'grid', label: 'Grid', action: 'setMode', arg: 'grid'},
+                            {id: 'map', label: 'Map', action: 'setMode', arg: 'map'}
+                        ]" :key="link.id" href="#" @click.prevent="sidebarAction(link)"
+                            class="sidebar-link">
+                            <div class="mask-wrap">
+                                <span class="mask-inner">{{ link.label }}</span>
+                            </div>
+                        </a>
+                        <a href="/" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner" style="display:flex; align-items:center;">
+                                    Portfolio
+                                    <i data-lucide="arrow-up-right"
+                                        style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </transition>
+    </div>
+
+    <script>
+        // ── Hero Canvas: Floating Photo Frames ──
+        function initHeroCanvas(canvas) {
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var width, height;
+            var frames = [];
+            var frameCount = 18;
+
+            function resize() {
+                var rect = canvas.parentElement.getBoundingClientRect();
+                width = canvas.width = rect.width;
+                height = canvas.height = rect.height;
+                frames = [];
+                for (var i = 0; i < frameCount; i++) {
+                    var w = 40 + Math.random() * 80;
+                    var h = w * (4/3);
+                    frames.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        w: w,
+                        h: h,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        rot: (Math.random() - 0.5) * 0.3,
+                        opacity: 0.03 + Math.random() * 0.06,
+                        rotSpeed: (Math.random() - 0.5) * 0.003
+                    });
+                }
+            }
+
+            function draw(time) {
+                ctx.clearRect(0, 0, width, height);
+                var isDark = document.documentElement.classList.contains('dark');
+                var strokeColor = isDark ? '255,255,255' : '255,255,255';
+                var fillColor = isDark ? '255,255,255' : '255,255,255';
+
+                for (var i = 0; i < frames.length; i++) {
+                    var f = frames[i];
+                    f.x += f.vx;
+                    f.y += f.vy;
+                    f.rot += f.rotSpeed;
+                    if (f.x < -f.w) f.x = width + f.w;
+                    if (f.x > width + f.w) f.x = -f.w;
+                    if (f.y < -f.h) f.y = height + f.h;
+                    if (f.y > height + f.h) f.y = -f.h;
+
+                    ctx.save();
+                    ctx.translate(f.x + f.w/2, f.y + f.h/2);
+                    ctx.rotate(f.rot);
+                    ctx.strokeStyle = 'rgba(' + strokeColor + ',' + f.opacity.toFixed(3) + ')';
+                    ctx.fillStyle = 'rgba(' + fillColor + ',' + (f.opacity * 0.5).toFixed(3) + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(-f.w/2, -f.h/2, f.w, f.h);
+                    ctx.restore();
+                }
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            requestAnimationFrame(draw);
+            window.addEventListener('resize', resize);
+        }
+
+        (function () {
+            var createApp = Vue.createApp;
+            var ref = Vue.ref;
+            var reactive = Vue.reactive;
+            var computed = Vue.computed;
+            var onMounted = Vue.onMounted;
+            var onUnmounted = Vue.onUnmounted;
+            var nextTick = Vue.nextTick;
+            var watch = Vue.watch;
+
+            gsap.registerPlugin(ScrollTrigger);
+
+            createApp({
+                setup: function () {
+                    var isSidebarOpen = ref(false);
+                    var activeSection = ref('home');
+                    var showNavDock = ref(false);
+                    var navDockBottom = ref('2rem');
+                    var mode = ref('flow');
+                    var modeBarScrolled = ref(false);
+                    var photos = ref([]);
+                    var showPhotoModal = ref(false);
+                    var activePhoto = ref(null);
+                    var activePhotoIndex = ref(0);
+                    var flowLoaded = reactive({});
+                    var gridLoaded = reactive({});
+                    var gridVisible = reactive({});
+                    var heroCanvas = ref(null);
+                    var flowContainer = ref(null);
+                    var flowTrack = ref(null);
+                    var mapContainer = ref(null);
+                    var lenis;
+                    var scrollRafPending = false;
+
+                    // ── Theme ──
+                    var STORAGE_KEY = 'theme';
+                    var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                    function getStoredTheme() {
+                        try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+                    }
+                    function setStoredTheme(val) {
+                        try { localStorage.setItem(STORAGE_KEY, val); } catch (e) {}
+                    }
+
+                    function resolveTheme() {
+                        var stored = getStoredTheme();
+                        if (stored === 'dark' || stored === 'light') return stored;
+                        return systemQuery.matches ? 'dark' : 'light';
+                    }
+
+                    var isDark = ref(resolveTheme() === 'dark');
+
+                    function applyTheme(dark) {
+                        document.documentElement.classList.toggle('dark', dark);
+                    }
+
+                    function toggleTheme() {
+                        var next = !isDark.value;
+                        isDark.value = next;
+                        setStoredTheme(next ? 'dark' : 'light');
+                    }
+
+                    watch(isDark, function (val) {
+                        document.documentElement.classList.add('theme-transitioning');
+                        void document.documentElement.offsetHeight;
+                        applyTheme(val);
+                        setTimeout(function () {
+                            document.documentElement.classList.remove('theme-transitioning');
+                        }, 600);
+                        nextTick(function () {
+                            lucide.createIcons();
+                            if (mapInstance) {
+                                updateMapTiles();
+                            }
+                        });
+                    });
+
+                    function onSystemThemeChange(e) {
+                        if (getStoredTheme() === null) {
+                            isDark.value = e.matches;
+                        }
+                    }
+
+                    applyTheme(resolveTheme() === 'dark');
+
+                    // ── Navigation ──
+                    function scrollToTop() {
+                        if (isSidebarOpen.value) return;
+                        if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+                    }
+
+                    function handleNavClick(targetId) {
+                        closeSidebar(function () {
+                            var el = document.getElementById(targetId);
+                            if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
+                        });
+                    }
+
+                    // ── Sidebar ──
+                    function closeSidebar(callback) {
+                        gsap.to('.sidebar-rk .mask-inner', {
+                            y: "100%",
+                            duration: 0.5,
+                            stagger: 0.05,
+                            ease: "expo.in",
+                            onComplete: function () {
+                                isSidebarOpen.value = false;
+                                if (callback) callback();
+                            }
+                        });
+                    }
+
+                    function toggleSidebar() {
+                        if (isSidebarOpen.value) {
+                            closeSidebar();
+                        } else {
+                            isSidebarOpen.value = true;
+                        }
+                    }
+
+                    function sidebarAction(link) {
+                        closeSidebar(function () {
+                            if (link.action === 'scrollToTop') {
+                                scrollToTop();
+                            } else if (link.action === 'setMode') {
+                                setMode(link.arg);
+                            }
+                        });
+                    }
+
+                    watch(isSidebarOpen, function (val) {
+                        if (val) {
+                            nextTick(function () {
+                                lucide.createIcons();
+                                gsap.from('.sidebar-rk .mask-inner', {
+                                    y: "100%",
+                                    duration: 1,
+                                    stagger: 0.1,
+                                    ease: "expo.out",
+                                    delay: 0.3
+                                });
+                            });
+                        }
+                    });
+
+                    // ── Scroll Tracking ──
+                    function updateScrollProgress() {
+                        scrollRafPending = false;
+                        var winHeight = window.innerHeight;
+                        showNavDock.value = window.scrollY > winHeight * 0.2;
+                        modeBarScrolled.value = window.scrollY > winHeight * 0.6;
+                        activeSection.value = mode.value.charAt(0).toUpperCase() + mode.value.slice(1);
+
+                        var footer = document.querySelector('footer');
+                        if (footer) {
+                            var footerRect = footer.getBoundingClientRect();
+                            if (footerRect.top < winHeight) {
+                                var offset = winHeight - footerRect.top + 16;
+                                navDockBottom.value = offset + 'px';
+                            } else {
+                                navDockBottom.value = '2rem';
+                            }
+                        }
+                    }
+
+                    function onScroll() {
+                        if (!scrollRafPending) {
+                            scrollRafPending = true;
+                            requestAnimationFrame(updateScrollProgress);
+                        }
+                    }
+
+                    // ── Lenis ──
+                    function initLenis() {
+                        lenis = new Lenis({ duration: 1.5, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }, smooth: true });
+                        function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
+                        requestAnimationFrame(raf);
+                    }
+
+                    // ── Mode Switching ──
+                    function setMode(newMode) {
+                        if (mode.value === newMode) return;
+                        mode.value = newMode;
+                        activeSection.value = newMode.charAt(0).toUpperCase() + newMode.slice(1);
+
+                        nextTick(function () {
+                            lucide.createIcons();
+
+                            if (newMode === 'grid') {
+                                // Trigger grid visibility
+                                revealGridItems();
+                            }
+                            if (newMode === 'map') {
+                                initMap();
+                            }
+                            if (newMode === 'flow') {
+                                // Reset flow position
+                                if (flowTrack.value) {
+                                    flowTrack.value.style.transform = 'translateX(0)';
+                                    flowTargetX = 0;
+                                    flowCurrentX = 0;
+                                }
+                            }
+                        });
+                    }
+
+                    // ── Photo Detail Modal ──
+                    function openPhotoDetail(photo) {
+                        activePhoto.value = photo;
+                        activePhotoIndex.value = photos.value.findIndex(function(p) { return p.id === photo.id; });
+                        showPhotoModal.value = true;
+                        nextTick(function () {
+                            lucide.createIcons();
+                        });
+                    }
+
+                    function closePhotoDetail() {
+                        showPhotoModal.value = false;
+                    }
+
+                    function prevPhoto() {
+                        var idx = activePhotoIndex.value - 1;
+                        if (idx < 0) idx = photos.value.length - 1;
+                        activePhotoIndex.value = idx;
+                        activePhoto.value = photos.value[idx];
+                        nextTick(function () { lucide.createIcons(); });
+                    }
+
+                    function nextPhoto() {
+                        var idx = activePhotoIndex.value + 1;
+                        if (idx >= photos.value.length) idx = 0;
+                        activePhotoIndex.value = idx;
+                        activePhoto.value = photos.value[idx];
+                        nextTick(function () { lucide.createIcons(); });
+                    }
+
+                    // Keyboard nav
+                    function onKeyDown(e) {
+                        if (!showPhotoModal.value) return;
+                        if (e.key === 'Escape') closePhotoDetail();
+                        if (e.key === 'ArrowLeft') prevPhoto();
+                        if (e.key === 'ArrowRight') nextPhoto();
+                    }
+
+                    // ── Flow Mode Drag ──
+                    var flowDragging = false;
+                    var flowStartX = 0;
+                    var flowCurrentX = 0;
+                    var flowTargetX = 0;
+                    var flowLastX = 0;
+                    var flowLastTime = 0;
+                    var flowVelocity = 0;
+                    var flowRafId = null;
+                    var flowDecay = 0.92;
+
+                    function flowDragStart(e) {
+                        if (!flowTrack.value) return;
+                        flowDragging = true;
+                        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                        flowStartX = clientX - flowCurrentX;
+                        flowLastX = clientX;
+                        flowLastTime = Date.now();
+                        flowVelocity = 0;
+                        if (flowRafId) cancelAnimationFrame(flowRafId);
+                        if (flowContainer.value) flowContainer.value.classList.add('dragging');
+                    }
+
+                    function flowDragMove(e) {
+                        if (!flowDragging || !flowTrack.value) return;
+                        e.preventDefault();
+                        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                        var now = Date.now();
+                        var dt = now - flowLastTime;
+                        if (dt > 0) {
+                            flowVelocity = (clientX - flowLastX) / dt;
+                        }
+                        flowLastX = clientX;
+                        flowLastTime = now;
+                        flowCurrentX = clientX - flowStartX;
+                        flowTargetX = flowCurrentX;
+                        applyFlowTransform();
+                    }
+
+                    function flowDragEnd() {
+                        if (!flowDragging) return;
+                        flowDragging = false;
+                        if (flowContainer.value) flowContainer.value.classList.remove('dragging');
+                        // Apply inertia
+                        if (Math.abs(flowVelocity) > 0.05) {
+                            flowTargetX += flowVelocity * 120;
+                            clampFlowTarget();
+                            flowInertiaLoop();
+                        }
+                    }
+
+                    function clampFlowTarget() {
+                        if (!flowTrack.value) return;
+                        var trackWidth = flowTrack.value.scrollWidth;
+                        var containerWidth = flowContainer.value ? flowContainer.value.clientWidth : window.innerWidth;
+                        var minX = Math.min(0, -(trackWidth - containerWidth - 64));
+                        var maxX = 0;
+                        if (trackWidth < containerWidth) {
+                            flowTargetX = 0;
+                        } else {
+                            flowTargetX = Math.max(minX, Math.min(maxX, flowTargetX));
+                        }
+                    }
+
+                    function flowInertiaLoop() {
+                        if (flowDragging) return;
+                        flowTargetX += (flowTargetX - flowCurrentX) * 0.1;
+                        flowVelocity *= flowDecay;
+                        flowTargetX += flowVelocity * 16;
+                        clampFlowTarget();
+                        flowCurrentX += (flowTargetX - flowCurrentX) * 0.2;
+                        applyFlowTransform();
+
+                        if (Math.abs(flowVelocity) > 0.01 || Math.abs(flowTargetX - flowCurrentX) > 0.1) {
+                            flowRafId = requestAnimationFrame(flowInertiaLoop);
+                        }
+                    }
+
+                    function applyFlowTransform() {
+                        if (flowTrack.value) {
+                            flowTrack.value.style.transform = 'translateX(' + flowCurrentX + 'px)';
+                        }
+                    }
+
+                    // ── Flow Image Load ──
+                    function onFlowImgLoad(i) {
+                        flowLoaded[i] = true;
+                    }
+
+                    // ── Grid Image Load ──
+                    function onGridImgLoad(i) {
+                        gridLoaded[i] = true;
+                    }
+
+                    function revealGridItems() {
+                        var cards = document.querySelectorAll('.grid-photo-card');
+                        cards.forEach(function(card, i) {
+                            setTimeout(function() {
+                                gridVisible[i] = true;
+                            }, i * 80);
+                        });
+                    }
+
+                    // ── Map Mode ──
+                    var mapInstance = null;
+                    var mapMarkers = [];
+                    var mapInitialized = false;
+
+                    function updateMapTiles() {
+                        if (!mapInstance) return;
+                        var isDarkMode = document.documentElement.classList.contains('dark');
+                        mapInstance.eachLayer(function(layer) {
+                            if (layer instanceof L.TileLayer) {
+                                mapInstance.removeLayer(layer);
+                            }
+                        });
+                        var tileUrl = isDarkMode
+                            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+                        L.tileLayer(tileUrl, {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+                            subdomains: 'abcd',
+                            maxZoom: 19
+                        }).addTo(mapInstance);
+                    }
+
+                    function initMap() {
+                        if (mapInitialized) {
+                            setTimeout(function() { mapInstance.invalidateSize(); }, 100);
+                            return;
+                        }
+                        if (!mapContainer.value) return;
+                        var hasCoords = photos.value.filter(function(p) { return p.lat && p.lng; });
+                        if (hasCoords.length === 0) return;
+
+                        mapInitialized = true;
+                        mapInstance = L.map(mapContainer.value, {
+                            center: [30, 80],
+                            zoom: 4,
+                            scrollWheelZoom: true,
+                            zoomControl: true
+                        });
+
+                        updateMapTiles();
+
+                        // Fit bounds to markers
+                        var bounds = L.latLngBounds([]);
+                        photos.value.forEach(function(photo) {
+                            if (!photo.lat || !photo.lng) return;
+                            var color = photo.color || '#002FA7';
+                            var markerHtml = '<div class="photo-marker" style="background:' + color + ';"></div>';
+                            var icon = L.divIcon({
+                                html: markerHtml,
+                                className: '',
+                                iconSize: [28, 28],
+                                iconAnchor: [14, 14]
+                            });
+                            var marker = L.marker([photo.lat, photo.lng], { icon: icon }).addTo(mapInstance);
+                            bounds.extend([photo.lat, photo.lng]);
+
+                            // Preview popup
+                            var previewHtml = '<div class="map-preview-card">' +
+                                '<img src="' + photo.url + '" alt="' + photo.title + '" />' +
+                                '<div class="map-preview-info">' +
+                                '<span class="map-preview-title">' + photo.title + '</span>' +
+                                '<span class="map-preview-loc">' + photo.location + '</span>' +
+                                '</div></div>';
+                            marker.bindPopup(previewHtml, { closeButton: false, className: '' });
+
+                            marker.on('click', function() {
+                                openPhotoDetail(photo);
+                            });
+
+                            mapMarkers.push(marker);
+                        });
+
+                        if (bounds.isValid()) {
+                            mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+                        }
+
+                        // Handle popup click to open detail
+                        mapContainer.value.addEventListener('click', function(e) {
+                            var card = e.target.closest('.map-preview-card');
+                            if (card && mapInstance) {
+                                // Already handled by marker click
+                            }
+                        });
+
+                        setTimeout(function() { mapInstance.invalidateSize(); }, 200);
+                    }
+
+                    // ── Fetch Photos ──
+                    function loadPhotos() {
+                        fetch('Photos/photos.json')
+                            .then(function(res) { return res.json(); })
+                            .then(function(data) {
+                                photos.value = data.photos;
+                                // Init load states
+                                data.photos.forEach(function(p, i) {
+                                    flowLoaded[i] = false;
+                                    gridLoaded[i] = false;
+                                    gridVisible[i] = false;
+                                });
+                                nextTick(function () {
+                                    revealGridItems();
+                                });
+                            })
+                            .catch(function(err) {
+                                console.warn('Failed to load photos.json, using fallback:', err);
+                                photos.value = [];
+                            });
+                    }
+
+                    // ── Lifecycle ──
+                    onMounted(function () {
+                        loadPhotos();
+                        initLenis();
+                        initHeroCanvas(heroCanvas.value);
+                        window.addEventListener('scroll', onScroll, { passive: true });
+                        window.addEventListener('keydown', onKeyDown);
+                        systemQuery.addEventListener('change', onSystemThemeChange);
+
+                        nextTick().then(function () {
+                            lucide.createIcons();
+
+                            // ── Animation Sequence ──
+                            var tl = gsap.timeline();
+                            tl.set('body', { opacity: 1 })
+                                .set('.hero__text .mask-inner', { y: '120%' })
+                                .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
+                                    var el = document.getElementById('preloader');
+                                    if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                } })
+                                .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
+                                .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
+                                .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
+                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
+                                .from('.mode-toggle-bar', { opacity: 0, y: -10, duration: 0.4, ease: "power2.out" }, "-=0.2");
+
+                            // Mask reveals for mode content
+                            gsap.utils.toArray('.section-rk').forEach(function (sec) {
+                                var masks = sec.querySelectorAll('.mask-inner');
+                                if (masks.length > 0) {
+                                    gsap.from(masks, {
+                                        y: "100%",
+                                        duration: 1.8,
+                                        stagger: 0.15,
+                                        ease: "power4.out",
+                                        scrollTrigger: {
+                                            trigger: sec,
+                                            start: "top 85%",
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+
+                    onUnmounted(function () {
+                        window.removeEventListener('scroll', onScroll);
+                        window.removeEventListener('keydown', onKeyDown);
+                        systemQuery.removeEventListener('change', onSystemThemeChange);
+                        if (lenis) lenis.destroy();
+                        if (mapInstance) {
+                            mapInstance.remove();
+                            mapInstance = null;
+                            mapInitialized = false;
+                        }
+                        if (flowRafId) cancelAnimationFrame(flowRafId);
+                    });
+
+                    return {
+                        isSidebarOpen: isSidebarOpen,
+                        activeSection: activeSection,
+                        toggleSidebar: toggleSidebar,
+                        sidebarAction: sidebarAction,
+                        handleNavClick: handleNavClick,
+                        scrollToTop: scrollToTop,
+                        showNavDock: showNavDock,
+                        navDockBottom: navDockBottom,
+                        mode: mode,
+                        modeBarScrolled: modeBarScrolled,
+                        setMode: setMode,
+                        isDark: isDark,
+                        toggleTheme: toggleTheme,
+                        photos: photos,
+                        showPhotoModal: showPhotoModal,
+                        activePhoto: activePhoto,
+                        activePhotoIndex: activePhotoIndex,
+                        openPhotoDetail: openPhotoDetail,
+                        closePhotoDetail: closePhotoDetail,
+                        prevPhoto: prevPhoto,
+                        nextPhoto: nextPhoto,
+                        flowContainer: flowContainer,
+                        flowTrack: flowTrack,
+                        flowDragStart: flowDragStart,
+                        flowDragMove: flowDragMove,
+                        flowDragEnd: flowDragEnd,
+                        flowLoaded: flowLoaded,
+                        onFlowImgLoad: onFlowImgLoad,
+                        gridLoaded: gridLoaded,
+                        gridVisible: gridVisible,
+                        onGridImgLoad: onGridImgLoad,
+                        revealGridItems: revealGridItems,
+                        mapContainer: mapContainer,
+                        heroCanvas: heroCanvas
+                    };
+                }
+            }).mount('#app');
+        })();
+    </script>
+</body>
+
+</html>
