@@ -76,9 +76,9 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- MapLibre GL JS -->
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
     <!-- Google Fonts -->
     <link
@@ -154,6 +154,16 @@
         }
 
         /* ── Flow Mode (Horizontal Strip) ── */
+        .flow-section {
+            min-height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+        .flow-section .flow-container-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
         .flow-container {
             position: relative;
             width: 100%;
@@ -177,8 +187,9 @@
         }
         .flow-card {
             flex-shrink: 0;
-            width: calc(25vw - 12px);
-            min-width: 240px;
+            width: calc(22vw - 12px);
+            min-width: 200px;
+            max-height: 70vh;
             aspect-ratio: 3/4;
             border-radius: 4px;
             overflow: hidden;
@@ -249,6 +260,23 @@
         }
 
         /* ── Grid Mode ── */
+        .grid-section {
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .grid-section::-webkit-scrollbar {
+            width: 4px;
+        }
+        .grid-section::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .grid-section::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
         .photos-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -368,18 +396,25 @@
         }
 
         /* ── Map Mode ── */
+        .map-section {
+            height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+        .map-section .map-container {
+            flex: 1;
+        }
         .map-container {
             width: 100%;
-            height: calc(100vh - 180px);
-            min-height: 500px;
+            height: 100%;
+            min-height: 400px;
             position: relative;
             overflow: hidden;
             border-radius: 0;
         }
-        .map-container .leaflet-container {
+        .map-container .maplibregl-map {
             width: 100%;
             height: 100%;
-            background: var(--bg-primary);
         }
         .photo-marker {
             width: 28px;
@@ -392,7 +427,6 @@
         }
         .photo-marker:hover {
             transform: scale(1.3);
-            z-index: 999 !important;
         }
         .map-preview-card {
             background: var(--bg-secondary);
@@ -430,28 +464,51 @@
             color: var(--text-secondary);
             letter-spacing: 0.01em;
         }
-        /* Dark tile overrides */
-        html.dark .leaflet-tile {
-            filter: invert(0.92) hue-rotate(180deg) brightness(0.85) saturate(0.3);
-        }
-        html.dark .leaflet-control-zoom a {
-            background: #1a1a1a;
-            color: #ccc;
-            border-color: #333;
-        }
 
-        /* Leaflet popup override */
-        .leaflet-popup-content-wrapper {
+        /* MapLibre popup overrides */
+        .maplibregl-popup-content {
             border-radius: 8px !important;
             padding: 0 !important;
             background: transparent !important;
             box-shadow: none !important;
         }
-        .leaflet-popup-content {
-            margin: 0 !important;
-        }
-        .leaflet-popup-close-button {
+        .maplibregl-popup-close-button {
             display: none !important;
+        }
+        .maplibregl-popup-tip {
+            display: none !important;
+        }
+
+        /* Dark theme zoom controls */
+        html.dark .maplibregl-ctrl-zoom-in,
+        html.dark .maplibregl-ctrl-zoom-out {
+            background: #1a1a1a !important;
+            color: #ccc !important;
+            border-color: #333 !important;
+        }
+
+        /* ── Mini Globe (Photo Detail) ── */
+        .mini-globe-wrapper {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .mini-globe-wrapper .maplibregl-map {
+            width: 100%;
+            height: 100%;
+        }
+        .mini-globe-wrapper .maplibregl-ctrl-attrib {
+            display: none !important;
+        }
+        .mini-globe-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 6px rgba(255,255,255,0.6);
         }
 
         /* ── Photo Detail Modal ── */
@@ -599,8 +656,9 @@
         /* ── Scroll-driven section reveals ── */
         @media (max-width: 767px) {
             .flow-card {
-                width: calc(60vw - 12px);
-                min-width: 180px;
+                width: calc(65vw - 12px);
+                min-width: 160px;
+                max-height: 55vh;
             }
             .hide-mobile {
                 display: none !important;
@@ -705,25 +763,13 @@
             </div>
 
             <!-- Flow Mode -->
-            <section v-show="mode === 'flow'" id="flow-view" class="section-rk" style="padding-top: 2rem; border-top: none;">
-                <div class="container" style="padding: 0;">
-                    <div class="content-grid mb-8" style="padding: 0 2rem;">
-                        <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
-                                <path d="M0 0L14 14H0V0Z" />
-                            </svg>Flow
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-l max-w-2xl mask-inner" style="color: var(--text-secondary);">Drag to explore. Click to reveal.</p>
-                            </div>
-                        </div>
-                    </div>
+            <section v-show="mode === 'flow'" id="flow-view" class="section-rk flow-section" style="padding-top: 0; border-top: none;">
+                <div class="flow-container-wrap">
                     <div class="flow-container" ref="flowContainer"
                         @mousedown="flowDragStart" @mousemove="flowDragMove" @mouseup="flowDragEnd" @mouseleave="flowDragEnd"
                         @touchstart="flowDragStart" @touchmove="flowDragMove" @touchend="flowDragEnd">
                         <div class="flow-track" ref="flowTrack">
-                            <div v-for="(photo, i) in photos" :key="'flow-'+photo.id"
+                            <div v-for="(photo, i) in flowPhotos" :key="'flow-'+i"
                                 class="flow-card" :class="{ loaded: flowLoaded[i] }"
                                 @click="openPhotoDetail(photo)">
                                 <div class="flow-load-bar-track"><div class="flow-load-bar"></div></div>
@@ -739,22 +785,9 @@
             </section>
 
             <!-- Grid Mode -->
-            <section v-show="mode === 'grid'" id="grid-view" class="section-rk" style="padding-top: 2rem; border-top: none;">
-                <div class="container" style="padding: 0;">
-                    <div class="content-grid mb-8" style="padding: 0 2rem;">
-                        <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
-                                <path d="M0 0L14 14H0V0Z" />
-                            </svg>Grid
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-l max-w-2xl mask-inner" style="color: var(--text-secondary);">Browse the collection.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="photos-grid" ref="photosGrid">
-                        <div v-for="(photo, i) in photos" :key="'grid-'+photo.id"
+            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" style="padding-top: 2rem; border-top: none;">
+                <div class="photos-grid" ref="photosGrid" style="padding-bottom: 4rem;">
+                        <div v-for="(photo, i) in gridPhotos" :key="'grid-'+i"
                             class="grid-photo-card" :class="{ loaded: gridLoaded[i], visible: gridVisible[i] }"
                             :style="{ transitionDelay: (i % 4) * 0.1 + 's' }"
                             @click="openPhotoDetail(photo)">
@@ -769,26 +802,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
 
             <!-- Map Mode -->
-            <section v-show="mode === 'map'" id="map-view" class="section-rk" style="padding-top: 2rem; border-top: none;">
-                <div class="container" style="padding: 0;">
-                    <div class="content-grid mb-8" style="padding: 0 2rem;">
-                        <div class="content-label">
-                            <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
-                                <path d="M0 0L14 14H0V0Z" />
-                            </svg>Map
-                        </div>
-                        <div class="content-body">
-                            <div class="mask-wrap">
-                                <p class="paragraph-l max-w-2xl mask-inner" style="color: var(--text-secondary);">See where each moment happened.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="map-container" ref="mapContainer"></div>
-                </div>
+            <section v-show="mode === 'map'" id="map-view" class="section-rk map-section" style="padding-top: 0; border-top: none;">
+                <div class="map-container" ref="mapContainer"></div>
             </section>
 
         </main>
@@ -853,55 +871,10 @@
                         <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
                     </div>
                     <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
+                    <div class="mini-globe-wrapper" v-if="activePhoto.lat && activePhoto.lng" ref="miniGlobeEl"></div>
                 </div>
             </div>
         </transition>
-
-        <!-- Footer -->
-        <footer class="w-full bg-klein-blue text-white pt-16 pb-8"
-            style="background-color: var(--klein-blue); color: var(--pure-white);">
-            <div class="container">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
-                    <div class="md:col-span-5">
-                        <a href="#" @click.prevent="scrollToTop" class="inline-block mb-3" aria-label="Back to top">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
-                                style="width:2.5rem;height:auto">
-                                <path fill-rule="evenodd"
-                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
-                                <path fill-rule="evenodd"
-                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
-                                <path
-                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
-                                <path
-                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
-                            </svg>
-                        </a>
-                        <p class="text-xs text-white/70" style="font-family:'Inter',sans-serif;">&copy; 2026 - Michael Qiu</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">View</p>
-                        <div class="flex flex-col gap-1">
-                            <a @click.prevent="setMode('flow')" href="#" class="footer-nav-link">Flow</a>
-                            <a @click.prevent="setMode('grid')" href="#" class="footer-nav-link">Grid</a>
-                            <a @click.prevent="setMode('map')" href="#" class="footer-nav-link">Map</a>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Links</p>
-                        <div class="flex flex-col gap-1">
-                            <a href="/" class="footer-nav-link">Portfolio</a>
-                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">GitHub</a>
-                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="footer-nav-link">Blog</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-t border-white/10 pt-8 mt-8">
-                    <div class="text-[clamp(2.5rem,8vw,10rem)] font-black tracking-tighter leading-none">
-                        Moments.
-                    </div>
-                </div>
-            </div>
-        </footer>
 
         <!-- Sidebar -->
         <transition name="fade">
@@ -923,6 +896,24 @@
                             <div class="mask-wrap">
                                 <span class="mask-inner" style="display:flex; align-items:center;">
                                     Portfolio
+                                    <i data-lucide="arrow-up-right"
+                                        style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
+                                </span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/gitmichaelqiu" target="_blank" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner" style="display:flex; align-items:center;">
+                                    GitHub
+                                    <i data-lucide="arrow-up-right"
+                                        style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
+                                </span>
+                            </div>
+                        </a>
+                        <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner" style="display:flex; align-items:center;">
+                                    Blog
                                     <i data-lucide="arrow-up-right"
                                         style="width:1.3em;height:1.3em; flex-shrink:0; margin-right:0.15em; stroke-width: 1.5;"></i>
                                 </span>
@@ -1019,6 +1010,24 @@
                     var mode = ref('flow');
                     var modeBarScrolled = ref(false);
                     var photos = ref([]);
+                    var flowPhotos = computed(function () {
+                        // Repeat 5x for "infinite" horizontal scroll
+                        var src = photos.value;
+                        var out = [];
+                        for (var r = 0; r < 5; r++) {
+                            for (var i = 0; i < src.length; i++) { out.push(src[i]); }
+                        }
+                        return out;
+                    });
+                    var gridPhotos = computed(function () {
+                        // Repeat 4x for long grid browsing
+                        var src = photos.value;
+                        var out = [];
+                        for (var r = 0; r < 4; r++) {
+                            for (var i = 0; i < src.length; i++) { out.push(src[i]); }
+                        }
+                        return out;
+                    });
                     var showPhotoModal = ref(false);
                     var activePhoto = ref(null);
                     var activePhotoIndex = ref(0);
@@ -1070,9 +1079,6 @@
                         }, 600);
                         nextTick(function () {
                             lucide.createIcons();
-                            if (mapInstance) {
-                                updateMapTiles();
-                            }
                         });
                     });
 
@@ -1151,17 +1157,6 @@
                         showNavDock.value = window.scrollY > winHeight * 0.2;
                         modeBarScrolled.value = window.scrollY > winHeight * 0.6;
                         activeSection.value = mode.value.charAt(0).toUpperCase() + mode.value.slice(1);
-
-                        var footer = document.querySelector('footer');
-                        if (footer) {
-                            var footerRect = footer.getBoundingClientRect();
-                            if (footerRect.top < winHeight) {
-                                var offset = winHeight - footerRect.top + 16;
-                                navDockBottom.value = offset + 'px';
-                            } else {
-                                navDockBottom.value = '2rem';
-                            }
-                        }
                     }
 
                     function onScroll() {
@@ -1206,17 +1201,62 @@
                     }
 
                     // ── Photo Detail Modal ──
+                    var miniGlobeEl = ref(null);
+                    var miniGlobeInstance = null;
+
+                    function createMiniGlobe(container, lat, lng) {
+                        if (!container || !lat || !lng) return;
+                        var mg = new maplibregl.Map({
+                            container: container,
+                            style: getGlobeStyle(),
+                            center: [lng, lat],
+                            zoom: 2.5,
+                            interactive: false,
+                            attributionControl: false
+                        });
+                        mg.on('load', function() {
+                            mg.setFog(null);
+                            var dot = document.createElement('div');
+                            dot.className = 'mini-globe-dot';
+                            new maplibregl.Marker({ element: dot })
+                                .setLngLat([lng, lat])
+                                .addTo(mg);
+                        });
+                        return mg;
+                    }
+
                     function openPhotoDetail(photo) {
                         activePhoto.value = photo;
                         activePhotoIndex.value = photos.value.findIndex(function(p) { return p.id === photo.id; });
                         showPhotoModal.value = true;
                         nextTick(function () {
                             lucide.createIcons();
+                            if (miniGlobeEl.value && photo.lat && photo.lng) {
+                                nextTick(function () {
+                                    miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, photo.lat, photo.lng);
+                                });
+                            }
                         });
                     }
 
                     function closePhotoDetail() {
+                        if (miniGlobeInstance) {
+                            miniGlobeInstance.remove();
+                            miniGlobeInstance = null;
+                        }
                         showPhotoModal.value = false;
+                    }
+
+                    function updateMiniGlobe() {
+                        if (miniGlobeInstance) {
+                            miniGlobeInstance.remove();
+                            miniGlobeInstance = null;
+                        }
+                        nextTick(function () {
+                            if (miniGlobeEl.value && activePhoto.value && activePhoto.value.lat && activePhoto.value.lng) {
+                                miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, activePhoto.value.lat, activePhoto.value.lng);
+                            }
+                        });
                     }
 
                     function prevPhoto() {
@@ -1224,6 +1264,7 @@
                         if (idx < 0) idx = photos.value.length - 1;
                         activePhotoIndex.value = idx;
                         activePhoto.value = photos.value[idx];
+                        updateMiniGlobe();
                         nextTick(function () { lucide.createIcons(); });
                     }
 
@@ -1232,6 +1273,7 @@
                         if (idx >= photos.value.length) idx = 0;
                         activePhotoIndex.value = idx;
                         activePhoto.value = photos.value[idx];
+                        updateMiniGlobe();
                         nextTick(function () { lucide.createIcons(); });
                     }
 
@@ -1346,92 +1388,124 @@
                         });
                     }
 
-                    // ── Map Mode ──
+                    // ── Map Mode (MapLibre GL JS + Globe) ──
                     var mapInstance = null;
                     var mapMarkers = [];
                     var mapInitialized = false;
 
-                    function updateMapTiles() {
-                        if (!mapInstance) return;
-                        var isDarkMode = document.documentElement.classList.contains('dark');
-                        mapInstance.eachLayer(function(layer) {
-                            if (layer instanceof L.TileLayer) {
-                                mapInstance.removeLayer(layer);
-                            }
-                        });
-                        var tileUrl = isDarkMode
-                            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-                            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-                        L.tileLayer(tileUrl, {
-                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-                            subdomains: 'abcd',
-                            maxZoom: 19
-                        }).addTo(mapInstance);
+                    function getGlobeStyle() {
+                        return {
+                            "version": 8,
+                            "projection": {"type": "globe"},
+                            "sources": {
+                                "carto-dark": {
+                                    "type": "raster",
+                                    "tiles": [
+                                        "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+                                        "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+                                        "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png"
+                                    ],
+                                    "tileSize": 256,
+                                    "attribution": "© <a href='https://carto.com/'>CARTO</a> © <a href='https://www.openstreetmap.org/'>OSM</a>"
+                                }
+                            },
+                            "layers": [
+                                {"id": "carto-tiles", "type": "raster", "source": "carto-dark"}
+                            ]
+                        };
                     }
 
                     function initMap() {
-                        if (mapInitialized) {
-                            setTimeout(function() { mapInstance.invalidateSize(); }, 100);
-                            return;
-                        }
                         if (!mapContainer.value) return;
                         var hasCoords = photos.value.filter(function(p) { return p.lat && p.lng; });
                         if (hasCoords.length === 0) return;
 
-                        mapInitialized = true;
-                        mapInstance = L.map(mapContainer.value, {
-                            center: [30, 80],
-                            zoom: 4,
-                            scrollWheelZoom: true,
-                            zoomControl: true
-                        });
-
-                        updateMapTiles();
-
-                        // Fit bounds to markers
-                        var bounds = L.latLngBounds([]);
-                        photos.value.forEach(function(photo) {
-                            if (!photo.lat || !photo.lng) return;
-                            var color = photo.color || '#002FA7';
-                            var markerHtml = '<div class="photo-marker" style="background:' + color + ';"></div>';
-                            var icon = L.divIcon({
-                                html: markerHtml,
-                                className: '',
-                                iconSize: [28, 28],
-                                iconAnchor: [14, 14]
-                            });
-                            var marker = L.marker([photo.lat, photo.lng], { icon: icon }).addTo(mapInstance);
-                            bounds.extend([photo.lat, photo.lng]);
-
-                            // Preview popup
-                            var previewHtml = '<div class="map-preview-card">' +
-                                '<img src="' + photo.url + '" alt="' + photo.title + '" />' +
-                                '<div class="map-preview-info">' +
-                                '<span class="map-preview-title">' + photo.title + '</span>' +
-                                '<span class="map-preview-loc">' + photo.location + '</span>' +
-                                '</div></div>';
-                            marker.bindPopup(previewHtml, { closeButton: false, className: '' });
-
-                            marker.on('click', function() {
-                                openPhotoDetail(photo);
-                            });
-
-                            mapMarkers.push(marker);
-                        });
-
-                        if (bounds.isValid()) {
-                            mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+                        if (mapInitialized && mapInstance) {
+                            setTimeout(function() { mapInstance.resize(); }, 100);
+                            return;
                         }
 
-                        // Handle popup click to open detail
-                        mapContainer.value.addEventListener('click', function(e) {
-                            var card = e.target.closest('.map-preview-card');
-                            if (card && mapInstance) {
-                                // Already handled by marker click
+                        mapInitialized = true;
+
+                        // Compute center from photos with coords
+                        var sumLat = 0, sumLng = 0, count = 0;
+                        photos.value.forEach(function(p) {
+                            if (p.lat && p.lng) { sumLat += p.lat; sumLng += p.lng; count++; }
+                        });
+                        var centerLat = count > 0 ? sumLat / count : 30;
+                        var centerLng = count > 0 ? sumLng / count : 80;
+
+                        mapInstance = new maplibregl.Map({
+                            container: mapContainer.value,
+                            style: getGlobeStyle(),
+                            center: [centerLng, centerLat],
+                            zoom: 3,
+                            minZoom: 1.8,
+                            attributionControl: false
+                        });
+
+                        mapInstance.on('load', function() {
+                            mapInstance.setFog(null);
+
+                            // Add markers
+                            photos.value.forEach(function(photo) {
+                                if (!photo.lat || !photo.lng) return;
+                                var color = photo.color || '#002FA7';
+                                var el = document.createElement('div');
+                                el.className = 'photo-marker';
+                                el.style.background = color;
+                                el.title = photo.title;
+
+                                var popup = new maplibregl.Popup({ offset: 16, closeButton: false })
+                                    .setHTML('<div class="map-preview-card">' +
+                                        '<img src="' + photo.url + '" alt="' + photo.title + '" />' +
+                                        '<div class="map-preview-info">' +
+                                        '<span class="map-preview-title">' + photo.title + '</span>' +
+                                        '<span class="map-preview-loc">' + photo.location + '</span>' +
+                                        '</div></div>');
+
+                                var marker = new maplibregl.Marker({ element: el })
+                                    .setLngLat([photo.lng, photo.lat])
+                                    .setPopup(popup)
+                                    .addTo(mapInstance);
+
+                                el.addEventListener('click', function() {
+                                    openPhotoDetail(photo);
+                                });
+
+                                mapMarkers.push(marker);
+                            });
+
+                            // Fit bounds
+                            if (count > 0) {
+                                var bounds = new maplibregl.LngLatBounds();
+                                photos.value.forEach(function(p) {
+                                    if (p.lat && p.lng) bounds.extend([p.lng, p.lat]);
+                                });
+                                mapInstance.fitBounds(bounds, { padding: 80, maxZoom: 10, duration: 0 });
                             }
                         });
 
-                        setTimeout(function() { mapInstance.invalidateSize(); }, 200);
+                        // Handle popup card clicks
+                        mapContainer.value.addEventListener('click', function(e) {
+                            var card = e.target.closest('.map-preview-card');
+                            if (card) {
+                                var title = card.querySelector('.map-preview-title');
+                                if (title) {
+                                    var photo = photos.value.find(function(p) { return p.title === title.textContent; });
+                                    if (photo) openPhotoDetail(photo);
+                                }
+                            }
+                        });
+                    }
+
+                    function destroyMap() {
+                        if (mapInstance) {
+                            mapInstance.remove();
+                            mapInstance = null;
+                            mapMarkers = [];
+                            mapInitialized = false;
+                        }
                     }
 
                     // ── Fetch Photos ──
@@ -1440,12 +1514,14 @@
                             .then(function(res) { return res.json(); })
                             .then(function(data) {
                                 photos.value = data.photos;
-                                // Init load states
-                                data.photos.forEach(function(p, i) {
+                                // Init load states for duplicated arrays
+                                for (var i = 0; i < data.photos.length * 5; i++) {
                                     flowLoaded[i] = false;
-                                    gridLoaded[i] = false;
-                                    gridVisible[i] = false;
-                                });
+                                }
+                                for (var j = 0; j < data.photos.length * 4; j++) {
+                                    gridLoaded[j] = false;
+                                    gridVisible[j] = false;
+                                }
                                 nextTick(function () {
                                     revealGridItems();
                                 });
@@ -1506,11 +1582,8 @@
                         window.removeEventListener('keydown', onKeyDown);
                         systemQuery.removeEventListener('change', onSystemThemeChange);
                         if (lenis) lenis.destroy();
-                        if (mapInstance) {
-                            mapInstance.remove();
-                            mapInstance = null;
-                            mapInitialized = false;
-                        }
+                        if (mapInstance) { destroyMap(); }
+                        if (miniGlobeInstance) { miniGlobeInstance.remove(); miniGlobeInstance = null; }
                         if (flowRafId) cancelAnimationFrame(flowRafId);
                     });
 
@@ -1529,6 +1602,8 @@
                         isDark: isDark,
                         toggleTheme: toggleTheme,
                         photos: photos,
+                        flowPhotos: flowPhotos,
+                        gridPhotos: gridPhotos,
                         showPhotoModal: showPhotoModal,
                         activePhoto: activePhoto,
                         activePhotoIndex: activePhotoIndex,
@@ -1548,7 +1623,8 @@
                         onGridImgLoad: onGridImgLoad,
                         revealGridItems: revealGridItems,
                         mapContainer: mapContainer,
-                        heroCanvas: heroCanvas
+                        heroCanvas: heroCanvas,
+                        miniGlobeEl: miniGlobeEl
                     };
                 }
             }).mount('#app');
