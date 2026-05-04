@@ -88,24 +88,6 @@
 
     <link rel="stylesheet" href="../styles/main.css">
     <style>
-        /* Aurora blobs */
-        .aurora-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; overflow: hidden;
-        }
-        .aurora-blob {
-            position: absolute; border-radius: 50%; filter: blur(80px);
-            opacity: 0.5; mix-blend-mode: screen;
-        }
-        html:not(.dark) .aurora-blob { opacity: 0.35; filter: blur(100px); }
-        .blob-1 { top: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0,47,167,0.8), transparent 70%); animation: float 20s infinite ease-in-out; }
-        .blob-2 { bottom: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(32,190,255,0.5), transparent 70%); animation: float 18s infinite ease-in-out; animation-delay: -5s; }
-        .blob-3 { top: 40%; right: 20%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(100,0,255,0.35), transparent 70%); animation: float 24s infinite ease-in-out; animation-delay: -10s; }
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, 20px); }
-        }
-
         /* 3D Icon */
         .hero__icon-3d {
             width: min(80%, 32rem);
@@ -162,12 +144,7 @@
             <!-- Hero Section -->
             <section id="home" class="hero">
                 <div class="hero__bg"></div>
-                <div class="aurora-container">
-                    <div class="aurora-blob blob-1"></div>
-                    <div class="aurora-blob blob-2"></div>
-                    <div class="aurora-blob blob-3"></div>
-                </div>
-                <canvas ref="waveCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
+                <canvas ref="particleCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
                 <nav class="hero__quicknav hide-mobile">
                     <div class="hero__quicknav-logo">
                         <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
@@ -536,57 +513,107 @@
     </div>
 
     <script>
-        // ── Canvas Wave Lines ──
-        function initWaves(canvas) {
+        // ── Particle Constellation Network ──
+        function initParticleNetwork(canvas) {
             if (!canvas) return;
             var ctx = canvas.getContext('2d');
             var width, height;
-            var lines = [];
-            var lineCount = 14;
+            var particles = [];
+            var particleCount = 55;
+            var connectDist = 180;
+            var mouseX = -1000, mouseY = -1000;
+
+            function createParticles() {
+                particles = [];
+                for (var i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.25,
+                        vy: (Math.random() - 0.5) * 0.25,
+                        r: 0.8 + Math.random() * 2.2,
+                        baseX: 0, baseY: 0
+                    });
+                    particles[i].baseX = particles[i].x;
+                    particles[i].baseY = particles[i].y;
+                }
+            }
 
             function resize() {
                 var rect = canvas.parentElement.getBoundingClientRect();
                 width = canvas.width = rect.width;
                 height = canvas.height = rect.height;
-                lines = [];
-                for (var i = 0; i < lineCount; i++) {
-                    lines.push({
-                        y: (i / (lineCount - 1)) * height,
-                        amp: 15 + Math.random() * 40,
-                        freq: 0.003 + Math.random() * 0.005,
-                        speed: 0.3 + Math.random() * 0.7,
-                        phase: Math.random() * Math.PI * 2,
-                        offset: (Math.random() - 0.5) * 60
-                    });
-                }
+                createParticles();
             }
 
             function draw(time) {
                 ctx.clearRect(0, 0, width, height);
                 var isDark = document.documentElement.classList.contains('dark');
-                var baseAlpha = isDark ? 0.12 : 0.08;
-                var baseColor = '255,255,255';
+                var dotColor = isDark ? '255,255,255' : '255,255,255';
+                var lineColor = isDark ? '255,255,255' : '255,255,255';
+                var dotAlpha = 0.4;
+                var lineBaseAlpha = 0.3;
 
-                for (var i = 0; i < lines.length; i++) {
-                    var l = lines[i];
-                    var alpha = baseAlpha * (1 - Math.abs(i - lineCount / 2) / (lineCount / 2) * 0.5);
-                    ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(' + baseColor + ',' + alpha.toFixed(3) + ')';
-                    ctx.lineWidth = isDark ? 1.2 : 1;
-                    var first = true;
-                    for (var x = -20; x <= width + 20; x += 2) {
-                        var y = l.y + Math.sin(x * l.freq + time * 0.001 * l.speed + l.phase) * l.amp + l.offset;
-                        if (first) { ctx.moveTo(x, y); first = false; }
-                        else { ctx.lineTo(x, y); }
+                // Update and draw
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+
+                    // Subtle drift around base position + mouse influence
+                    var dxMouse = p.x - mouseX;
+                    var dyMouse = p.y - mouseY;
+                    var distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                    if (distMouse < 200) {
+                        var force = (200 - distMouse) / 200;
+                        p.vx += (dxMouse / distMouse) * force * 0.03;
+                        p.vy += (dyMouse / distMouse) * force * 0.03;
                     }
-                    ctx.stroke();
+
+                    // Gentle pull back to base position
+                    p.vx += (p.baseX - p.x) * 0.0003;
+                    p.vy += (p.baseY - p.y) * 0.0003;
+
+                    // Damping
+                    p.vx *= 0.98;
+                    p.vy *= 0.98;
+
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Draw dot
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(' + dotColor + ',' + dotAlpha.toFixed(3) + ')';
+                    ctx.fill();
                 }
+
+                // Draw connections
+                for (var i = 0; i < particles.length; i++) {
+                    for (var j = i + 1; j < particles.length; j++) {
+                        var dx = particles[i].x - particles[j].x;
+                        var dy = particles[i].y - particles[j].y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < connectDist) {
+                            var alpha = lineBaseAlpha * (1 - dist / connectDist);
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = 'rgba(' + lineColor + ',' + alpha.toFixed(4) + ')';
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
                 requestAnimationFrame(draw);
             }
 
             resize();
             requestAnimationFrame(draw);
             window.addEventListener('resize', resize);
+            window.addEventListener('mousemove', function (e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
         }
 
         (function () {
@@ -609,7 +636,7 @@
                     var brewCopied = ref(false);
                     var brewCopiedDR = ref(false);
                     var icon3dContainer = ref(null);
-                    var waveCanvas = ref(null);
+                    var particleCanvas = ref(null);
                     var lenis;
                     var scrollRafPending = false;
 
@@ -958,7 +985,7 @@
                     onMounted(function () {
                         initLenis();
                         initIcon3D();
-                        initWaves(waveCanvas.value);
+                        initParticleNetwork(particleCanvas.value);
                         window.addEventListener('scroll', onScroll, { passive: true });
                         systemQuery.addEventListener('change', onSystemThemeChange);
 
@@ -1118,7 +1145,7 @@
                         copyBrewDR: copyBrewDR,
                         brewCopiedDR: brewCopiedDR,
                         icon3dContainer: icon3dContainer,
-                        waveCanvas: waveCanvas
+                        particleCanvas: particleCanvas
                     };
                 }
             }).mount('#app');
