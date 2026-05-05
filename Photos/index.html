@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        (function () { var t = localStorage.getItem('theme'); if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark'); })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moments — Michael Qiu</title>
+    <link rel="shortcut icon" type="image/png" href="../resources/favicon.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'klein-blue': '#002FA7',
+                        'klein-blue-bright': '#0038c8',
+                        'bg-dark': '#0a0a0a',
+                        'bg-light': '#FAFAF6',
+                        'deep-navy': '#020412',
+                        'gold': '#D4A853',
+                        'gold-light': '#E8C97A',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syncopate', 'sans-serif'],
+                        editorial: ['Playfair Display', 'serif'],
+                    },
+                    fontSize: {
+                        xs: '1.0rem',
+                        sm: '1.4rem',
+                        base: '1.7rem',
+                        lg: '1.8rem',
+                        xl: '2.2rem',
+                        '2xl': '1.625rem',
+                        '3xl': '2rem',
+                        '4xl': '2.5rem',
+                        '5xl': '3.5rem',
+                        '6xl': '5rem',
+                        '7xl': '8rem',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../scripts/page-transition.js"></script>
+
+    <!-- Three.js Globe (uses existing Three.js CDN above) -->
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syncopate:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        /* ============================================================
+           Photos Page — Specific Styles
+           ============================================================ */
+
+        /* Hero reduced gap */
+        #home .hero__content {
+            gap: 0.3rem;
+            margin-top: -4rem;
+        }
+
+        /* ── Film Grain & Light Leak ── */
+        .hero-lightleak {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(ellipse at 20% 30%,
+                    rgba(232, 201, 122, 0.06) 0%,
+                    transparent 60%);
+            animation: lightLeak 14s ease-in-out infinite;
+        }
+        @keyframes lightLeak {
+            0%, 90%, 100% { opacity: 0; }
+            2% { opacity: 0.55; }
+            6% { opacity: 0.12; }
+            10% { opacity: 0; }
+            45% { opacity: 0; }
+            48% { opacity: 0.3; }
+            52% { opacity: 0.08; }
+            55% { opacity: 0; }
+        }
+
+        /* ── Mode Toggle Bar ── */
+        .mode-toggle-bar {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateX(-50%) translateZ(0);
+            transition: opacity 0.4s var(--mi-smooth);
+        }
+        .mode-toggle-bar--scrolled {
+            opacity: 1;
+        }
+        .mode-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 100px;
+            padding: 3px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
+            pointer-events: auto;
+        }
+        html.dark .mode-toggle-wrapper {
+            background: rgba(18, 18, 18, 0.85);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+        .mode-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 18px;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            color: var(--text-secondary);
+            background: transparent;
+            transition: all 0.3s var(--mi-smooth);
+            white-space: nowrap;
+        }
+        .mode-toggle-btn.active {
+            background: var(--klein-blue);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 47, 167, 0.22);
+        }
+        .mode-toggle-btn:not(.active):hover {
+            color: var(--klein-blue-text);
+            background: rgba(0, 47, 167, 0.05);
+        }
+        html.dark .mode-toggle-btn:not(.active):hover {
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .mode-toggle-btn i {
+            width: 15px;
+            height: 15px;
+        }
+
+        /* ── Flow Mode (Horizontal Strip) ── */
+        .flow-section {
+            min-height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+        .flow-section .flow-container-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        .flow-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .flow-container:active {
+            cursor: grabbing;
+        }
+        .flow-container.dragging .flow-card {
+            pointer-events: none;
+        }
+        .flow-track {
+            display: flex;
+            gap: 16px;
+            width: max-content;
+            padding: 0 2rem;
+            will-change: transform;
+        }
+        .flow-card {
+            flex-shrink: 0;
+            width: calc(22vw - 12px);
+            min-width: 200px;
+            max-height: 70vh;
+            aspect-ratio: 3/4;
+            border-radius: 4px;
+            overflow: visible;
+            position: relative;
+            cursor: pointer;
+        }
+        .flow-card-img-wrap {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .flow-card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s var(--mi-smooth);
+        }
+        .flow-card:hover .flow-card-img-wrap img {
+            transform: scale(1.05);
+        }
+        .flow-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .flow-card-location {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: -0.02em;
+        }
+        .flow-card-date {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.02em;
+        }
+        .flow-load-bar-track {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 2px;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .flow-card.loaded .flow-load-bar-track {
+            opacity: 0;
+        }
+        .flow-load-bar {
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+        .flow-card.loaded .flow-load-bar {
+            animation: loadBar 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* ── Grid Mode ── */
+        .grid-section {
+            min-height: calc(100vh - 60px);
+            padding-bottom: 4rem;
+            overflow-x: hidden;
+        }
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 0 4rem;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .photos-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+        }
+        @media (min-width: 1280px) {
+            .photos-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+        }
+        .grid-photo-card {
+            aspect-ratio: 3/4;
+            border-radius: 4px;
+            overflow: visible;
+            position: relative;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .grid-photo-card.visible {
+            animation: gridFadeUp 0.8s var(--ease-out-expo) forwards;
+        }
+        .grid-photo-img-wrap {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .grid-photo-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s var(--mi-smooth);
+        }
+        .grid-photo-card:hover .grid-photo-img-wrap img {
+            transform: scale(1.05);
+        }
+        .grid-photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: opacity 0.35s var(--mi-smooth);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+        }
+        .grid-photo-card:hover .grid-photo-overlay {
+            opacity: 1;
+        }
+        .grid-photo-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: #fff;
+            letter-spacing: -0.03em;
+            margin-bottom: 2px;
+        }
+        .grid-photo-meta {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.01em;
+        }
+        .grid-load-bar-track {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 2px;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .grid-photo-card.loaded .grid-load-bar-track {
+            opacity: 0;
+        }
+        .grid-load-bar {
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+        .grid-photo-card.loaded .grid-load-bar {
+            animation: loadBar 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* Stagger offsets */
+        .grid-photo-card:nth-child(4n+2),
+        .grid-photo-card:nth-child(4n+4) {
+            margin-top: 2rem;
+        }
+        @media (max-width: 767px) {
+            .grid-photo-card:nth-child(4n+2),
+            .grid-photo-card:nth-child(4n+4) {
+                margin-top: 0;
+            }
+            .grid-photo-card:nth-child(2n) {
+                margin-top: 1.5rem;
+            }
+        }
+
+        @keyframes gridFadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes loadBar {
+            0% { transform: scaleX(0); }
+            100% { transform: scaleX(1); }
+        }
+
+        /* ── Map Mode ── */
+        .map-section {
+            height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+        .map-section .map-container {
+            flex: 1;
+        }
+        .map-container {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+            background: #08080f;
+            cursor: grab;
+        }
+        .map-container:active {
+            cursor: grabbing;
+        }
+        .map-container canvas {
+            display: block;
+        }
+        .globe-tooltip {
+            position: absolute;
+            pointer-events: none;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: none;
+            gap: 10px;
+            align-items: center;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        .globe-tooltip.visible { display: flex; }
+        .globe-tooltip img {
+            width: 40px;
+            height: 53px;
+            object-fit: cover;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .globe-tooltip-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+        .globe-tooltip-loc {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .globe-legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            z-index: 5;
+        }
+        .globe-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .globe-legend-item:hover { color: #fff; }
+        .globe-legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── Mini Globe ── */
+        .mini-globe-wrapper {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 4px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #08080f;
+            position: relative;
+        }
+        .mini-globe-wrapper canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* ── Photo Detail Modal ── */
+        .photo-modal-enter-active,
+        .photo-modal-leave-active {
+            transition: opacity 0.4s var(--mi-smooth);
+        }
+        .photo-modal-enter-from,
+        .photo-modal-leave-to {
+            opacity: 0;
+        }
+        .photo-modal-enter-active .photo-modal-wrapper,
+        .photo-modal-leave-active .photo-modal-wrapper {
+            transition: transform 0.5s var(--ease-out-expo), opacity 0.4s var(--mi-smooth);
+        }
+        .photo-modal-enter-from .photo-modal-wrapper,
+        .photo-modal-leave-to .photo-modal-wrapper {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        .photo-modal-wrapper {
+            position: relative;
+        }
+
+        .photo-modal-container {
+            display: flex;
+            width: calc(100vw - 6rem);
+            max-width: 1100px;
+            max-height: 82vh;
+            background: rgba(20,20,20,0.96);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+        }
+        .photo-modal-container.transitioning {
+            pointer-events: none;
+        }
+
+        .photo-modal-image {
+            flex: 0 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            overflow: hidden;
+            min-height: 0;
+            min-width: 0;
+        }
+        .photo-modal-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .photo-modal-detail {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+        .photo-modal-detail::-webkit-scrollbar {
+            width: 4px;
+        }
+        .photo-modal-detail::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+        }
+
+        /* ── Detail Rows ── */
+        .photo-detail-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .photo-detail-icon {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            opacity: 0.3;
+            color: #fff;
+            margin-top: 2px;
+        }
+        .photo-detail-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .photo-detail-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .photo-detail-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+        }
+        .photo-detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .photo-detail-tag {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 100px;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.02em;
+        }
+        .photo-detail-diary {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+            letter-spacing: 0.01em;
+            margin-top: 4px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ── Light theme overrides ── */
+        html:not(.dark) .photo-modal-container {
+            background: rgba(250,250,246,0.96);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.15);
+        }
+        html:not(.dark) .photo-modal-detail::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.15);
+        }
+        html:not(.dark) .photo-detail-icon {
+            color: #333;
+        }
+        html:not(.dark) .photo-detail-label {
+            color: rgba(0,0,0,0.45);
+        }
+        html:not(.dark) .photo-detail-value {
+            color: rgba(0,0,0,0.85);
+        }
+        html:not(.dark) .photo-detail-tag {
+            background: rgba(0,0,0,0.06);
+            color: rgba(0,0,0,0.65);
+        }
+        html:not(.dark) .photo-detail-diary {
+            color: rgba(0,0,0,0.75);
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        /* ── Nav Arrows (at edges of entire card) ── */
+        .photo-modal-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s var(--mi-smooth);
+        }
+        .photo-modal-nav-btn:hover {
+            background: rgba(0,0,0,0.75);
+            transform: translateY(-50%) scale(1.08);
+        }
+        .photo-modal-nav-btn.disabled {
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        .photo-modal-nav-btn--prev { left: -52px; }
+        .photo-modal-nav-btn--next { right: -52px; }
+
+        /* ── Mobile: stack vertically ── */
+        @media (max-width: 768px) {
+            .photo-modal-container {
+                flex-direction: column;
+                width: calc(100vw - 2rem);
+                max-height: 92vh;
+            }
+            .photo-modal-image {
+                flex: 0 0 40%;
+                min-height: 200px;
+            }
+            .photo-modal-detail {
+                flex: 1;
+                padding: 18px 20px;
+                gap: 12px;
+            }
+            .photo-modal-nav-btn {
+                width: 36px;
+                height: 36px;
+            }
+            .photo-modal-nav-btn--prev { left: -42px; }
+            .photo-modal-nav-btn--next { right: -42px; }
+        }
+
+        /* ── Scroll-driven section reveals ── */
+        @media (max-width: 767px) {
+            .flow-card {
+                width: calc(65vw - 12px);
+                min-width: 160px;
+                max-height: 55vh;
+            }
+            .hide-mobile {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="theme-base" style="opacity: 0;">
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
+
+    <div id="app" class="relative min-h-screen">
+        <!-- Architectural Grid Lines -->
+        <div class="grid-lines">
+            <div v-for="i in 12" :key="i" class="grid-line"></div>
+        </div>
+
+        <!-- Navigation Dock -->
+        <div class="nav-dock" :class="{ 'nav-dock--visible': showNavDock }"
+            :style="{ bottom: navDockBottom }">
+            <a @click.prevent="scrollToTop" href="#" class="nav-dock__btn" :class="{ 'disabled': isSidebarOpen }">
+                <i data-lucide="arrow-up" class="w-5 h-5"></i>
+            </a>
+            <a href="/" class="nav-dock__btn" title="Back to Portfolio">
+                <i data-lucide="home" class="w-5 h-5"></i>
+            </a>
+            <div class="nav-dock__label"><span class="nav-dock__label-text">{{ activeSection }}</span></div>
+            <button @click="toggleTheme" class="nav-dock__btn"
+                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+                <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
+            </button>
+            <button @click="toggleSidebar" class="nav-dock__btn" :class="{ 'active': isSidebarOpen }">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <main class="transition-opacity duration-700" :class="{ 'opacity-10': isSidebarOpen }">
+
+            <!-- Hero Section -->
+            <section id="home" class="hero">
+                <div class="hero__bg"></div>
+                <div class="hero-lightleak"></div>
+                <canvas ref="heroCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
+                <nav class="hero__quicknav hide-mobile">
+                    <div class="hero__quicknav-logo">
+                        <a href="/" aria-label="Michael Qiu Home" style="cursor:pointer!important">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
+                                style="width:4.5rem;height:auto">
+                                <path fill-rule="evenodd"
+                                    d="M634.68,10c0-5.5-2.48-6.24-5.51-1.65l-244.88,370.96c-3.03,4.59-5.51,12.85-5.51,18.35v173.83c0,5.5,4.5,10,10,10h235.9c5.5,0,10-4.5,10-10V10Z" />
+                                <path fill-rule="evenodd"
+                                    d="M379.26,10c0-5.5-2.48-6.24-5.5-1.65L1.41,573.13c-3.03,4.59-1,8.35,4.5,8.35H241.47c5.5,0,12.48-3.76,15.5-8.35l116.77-177.13c3.03-4.59,5.5-12.85,5.5-18.35V10Z" />
+                                <path
+                                    d="M1033.98,581.48c5.5,0,7.45-3.71,4.34-8.25l-237.54-346.18c-3.11-4.54-10.16-8.25-15.66-8.25h-109.7c-5.5,0-10,4.5-10,10v342.67c0,5.5,4.5,10,10,10h358.56Z" />
+                                <path
+                                    d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="hero__quicknav-cols">
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">View</div>
+                            <a @click.prevent="setMode('flow')" href="#" class="hero__quicknav-link">Flow</a>
+                            <a @click.prevent="setMode('grid')" href="#" class="hero__quicknav-link">Grid</a>
+                            <a @click.prevent="setMode('map')" href="#" class="hero__quicknav-link">Map</a>
+                        </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">Links</div>
+                            <a href="/" class="hero__quicknav-link">Portfolio</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="hero__quicknav-link">GitHub</a>
+                            <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="hero__quicknav-link">Blog</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="hero__content">
+                    <div class="hero__text">
+                        <div class="mask-wrap">
+                            <h1 class="hero__name mask-inner">Moments</h1>
+                        </div>
+                        <div class="mask-wrap">
+                            <p class="hero__tagline mask-inner">Photos captured in between.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <div style="height:calc(2rem + 2.5rem);"></div>
+
+            <!-- Mode Toggle Bar -->
+            <div class="mode-toggle-bar" :class="{ 'mode-toggle-bar--scrolled': modeBarScrolled }" ref="modeBar">
+                <div class="mode-toggle-wrapper">
+                    <button class="mode-toggle-btn" :class="{ active: mode === 'flow' }" @click="setMode('flow')">
+                        <i data-lucide="columns-2"></i> Flow
+                    </button>
+                    <button class="mode-toggle-btn" :class="{ active: mode === 'grid' }" @click="setMode('grid')">
+                        <i data-lucide="layout-grid"></i> Grid
+                    </button>
+                    <button class="mode-toggle-btn" :class="{ active: mode === 'map' }" @click="setMode('map')">
+                        <i data-lucide="map"></i> Map
+                    </button>
+                </div>
+            </div>
+
+            <!-- Flow Mode -->
+            <section v-show="mode === 'flow'" id="flow-view" class="section-rk flow-section" style="padding-top: 0; border-top: none;">
+                <div class="flow-container-wrap">
+                    <div class="flow-container" ref="flowContainer"
+                        @mousedown="flowDragStart" @mousemove="flowDragMove" @mouseup="flowDragEnd" @mouseleave="flowDragEnd"
+                        @touchstart="flowDragStart" @touchmove="flowDragMove" @touchend="flowDragEnd">
+                        <div class="flow-track" ref="flowTrack">
+                            <div v-for="(photo, i) in flowPhotos" :key="'flow-'+i"
+                                class="flow-card" :class="{ loaded: flowLoaded[i] }"
+                                data-hover-follow
+                                @click="openPhotoDetail(photo)">
+                                <div class="flow-card-img-wrap">
+                                    <div class="flow-load-bar-track"><div class="flow-load-bar"></div></div>
+                                    <img :src="photo.url" :alt="photo.title" @load="onFlowImgLoad(i)">
+                                </div>
+                                <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
+                                <div class="flow-card-overlay">
+                                    <div class="flow-card-location">{{ photo.location }}</div>
+                                    <div class="flow-card-date">{{ photo.date }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Grid Mode -->
+            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" style="padding-top: 2rem; border-top: none; padding-left: 2rem; padding-right: 2rem;">
+                <div class="photos-grid" ref="photosGrid" style="padding-bottom: 4rem;">
+                        <div v-for="(photo, i) in gridPhotos" :key="'grid-'+i"
+                            class="grid-photo-card" :class="{ loaded: gridLoaded[i], visible: gridVisible[i] }"
+                            :style="{ transitionDelay: (i % 4) * 0.1 + 's' }"
+                            data-hover-follow
+                            @click="openPhotoDetail(photo)">
+                            <div class="grid-photo-img-wrap">
+                                <div class="grid-load-bar-track"><div class="grid-load-bar"></div></div>
+                                <img :src="photo.url" :alt="photo.title" @load="onGridImgLoad(i)">
+                            </div>
+                            <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
+                            <div class="grid-photo-overlay">
+                                <div>
+                                    <div class="grid-photo-title">{{ photo.title }}</div>
+                                    <div class="grid-photo-meta">{{ photo.location }} &middot; {{ photo.date }}</div>
+                                    <div class="grid-photo-meta" style="margin-top: 2px;">{{ photo.camera }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </section>
+
+            <!-- Map Mode -->
+            <section v-show="mode === 'map'" id="map-view" class="section-rk map-section" style="padding-top: 0; border-top: none;" data-lenis-prevent>
+                <div class="map-container" ref="mapContainer"></div>
+            </section>
+
+        </main>
+
+        <!-- Photo Detail Modal -->
+        <transition name="photo-modal">
+            <div v-if="showPhotoModal" @click.self="closePhotoDetail"
+                class="fixed inset-0 z-[10003] flex items-center justify-center"
+                style="background: rgba(0,0,0,0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+                <!-- Close button -->
+                <button @click="closePhotoDetail"
+                    class="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-full text-white transition-all duration-300 hover:scale-110"
+                    style="background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;"
+                    aria-label="Close">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <!-- Split layout: image left, detail right -->
+                <div class="photo-modal-wrapper">
+                    <div class="photo-modal-container" :class="{ transitioning: photoTransitioning }" @click.stop ref="modalContainer">
+                        <!-- Image area -->
+                        <div class="photo-modal-image" ref="modalImageEl">
+                            <img :src="activePhoto.url" :alt="activePhoto.title" @load="onModalImgLoad" ref="modalImg">
+                        </div>
+
+                        <!-- Detail panel -->
+                        <div class="photo-modal-detail" v-if="activePhoto">
+                            <div class="photo-detail-row">
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-value" style="font-size: 1.15rem; font-weight: 700;">{{ activePhoto.title }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-row">
+                                <i data-lucide="map-pin" class="photo-detail-icon w-4 h-4"></i>
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-label">Location</span>
+                                    <span class="photo-detail-value">{{ activePhoto.location }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-row">
+                                <i data-lucide="calendar" class="photo-detail-icon w-4 h-4"></i>
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-label">Date</span>
+                                    <span class="photo-detail-value">{{ activePhoto.date }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-row">
+                                <i data-lucide="camera" class="photo-detail-icon w-4 h-4"></i>
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-label">Camera &amp; Settings</span>
+                                    <span class="photo-detail-value">{{ activePhoto.camera }} &middot; {{ activePhoto.aperture }} &middot; {{ activePhoto.shutter }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-tags">
+                                <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
+                            </div>
+                            <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
+                            <div class="mini-globe-wrapper" v-if="activePhoto.lat && activePhoto.lng" ref="miniGlobeEl"></div>
+                        </div>
+                    </div>
+
+                    <!-- Nav arrows (outside card, at wrapper edges) -->
+                    <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" :class="{ disabled: photoTransitioning }" @click.stop="prevPhoto">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button class="photo-modal-nav-btn photo-modal-nav-btn--next" :class="{ disabled: photoTransitioning }" @click.stop="nextPhoto">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Sidebar -->
+        <transition name="fade">
+            <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
+                <div class="container flex-1 flex flex-col justify-center">
+                    <div class="flex flex-col" style="gap: 1rem;">
+                        <a v-for="link in [
+                            {id: 'home', label: 'Home', action: 'scrollToTop'},
+                            {id: 'flow', label: 'Flow', action: 'setMode', arg: 'flow'},
+                            {id: 'grid', label: 'Grid', action: 'setMode', arg: 'grid'},
+                            {id: 'map', label: 'Map', action: 'setMode', arg: 'map'}
+                        ]" :key="link.id" href="#" @click.prevent="sidebarAction(link)"
+                            class="sidebar-link">
+                            <div class="mask-wrap">
+                                <span class="mask-inner">{{ link.label }}</span>
+                            </div>
+                        </a>
+                        <a href="/" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner">Portfolio<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/gitmichaelqiu" target="_blank" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner">GitHub<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
+                            </div>
+                        </a>
+                        <a href="https://gitmichaelqiu.github.io/blog" target="_blank" class="sidebar-link group">
+                            <div class="mask-wrap">
+                                <span class="mask-inner">Blog<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </transition>
+    </div>
+
+    <script>
+        // ── Hero Canvas: Floating EXIF Metadata Particles ──
+        function initHeroCanvas(canvas) {
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var width, height;
+            var particles = [];
+            var count = 22;
+            var terms = [
+                'f/1.4', 'f/2.8', 'f/5.6', 'f/8', 'f/11', 'f/16',
+                '1/125s', '1/250s', '1/500s', '1/1000s', '1/2000s',
+                'ISO 100', 'ISO 200', 'ISO 400', 'ISO 800',
+                '28mm', '35mm', '50mm', '85mm', '135mm',
+                '+1EV', '-1EV', 'AWB', 'A', 'M'
+            ];
+
+            function resize() {
+                var rect = canvas.parentElement.getBoundingClientRect();
+                width = canvas.width = rect.width;
+                height = canvas.height = rect.height;
+                particles = [];
+                for (var i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.25,
+                        vy: (Math.random() - 0.5) * 0.25,
+                        text: terms[Math.floor(Math.random() * terms.length)],
+                        size: 10 + Math.random() * 14,
+                        opacity: 0.04 + Math.random() * 0.06
+                    });
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < -60) p.x = width + 60;
+                    if (p.x > width + 60) p.x = -60;
+                    if (p.y < -20) p.y = height + 20;
+                    if (p.y > height + 20) p.y = -20;
+
+                    ctx.font = (p.size | 0) + 'px "Inter", sans-serif';
+                    ctx.fillStyle = 'rgba(255,255,255,' + p.opacity.toFixed(3) + ')';
+                    ctx.fillText(p.text, p.x, p.y);
+                }
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            requestAnimationFrame(draw);
+            window.addEventListener('resize', resize);
+        }
+
+        (function () {
+            var createApp = Vue.createApp;
+            var ref = Vue.ref;
+            var reactive = Vue.reactive;
+            var computed = Vue.computed;
+            var onMounted = Vue.onMounted;
+            var onUnmounted = Vue.onUnmounted;
+            var nextTick = Vue.nextTick;
+            var watch = Vue.watch;
+
+            gsap.registerPlugin(ScrollTrigger);
+
+            createApp({
+                setup: function () {
+                    var isSidebarOpen = ref(false);
+                    var activeSection = ref('home');
+                    var showNavDock = ref(false);
+                    var navDockBottom = ref('2rem');
+                    var mode = ref('flow');
+                    var modeBarScrolled = ref(false);
+                    var photos = ref([]);
+                    var flowPhotos = computed(function () {
+                        // Repeat 5x for "infinite" horizontal scroll
+                        var src = photos.value;
+                        var out = [];
+                        for (var r = 0; r < 5; r++) {
+                            for (var i = 0; i < src.length; i++) { out.push(src[i]); }
+                        }
+                        return out;
+                    });
+                    var gridPhotos = computed(function () {
+                        // Repeat 20x for long grid browsing
+                        var src = photos.value;
+                        var out = [];
+                        for (var r = 0; r < 20; r++) {
+                            for (var i = 0; i < src.length; i++) { out.push(src[i]); }
+                        }
+                        return out;
+                    });
+                    var showPhotoModal = ref(false);
+                    var activePhoto = ref(null);
+                    var activePhotoIndex = ref(0);
+                    var currentCluster = ref(null);
+                    var photoTransitioning = ref(false);
+                    var photoTransitionDir = ref(null);
+                    var modalContainer = ref(null);
+                    var flowLoaded = reactive({});
+                    var gridLoaded = reactive({});
+                    var gridVisible = reactive({});
+                    var heroCanvas = ref(null);
+                    var flowContainer = ref(null);
+                    var flowTrack = ref(null);
+                    var mapContainer = ref(null);
+                    var lenis;
+                    var scrollRafPending = false;
+
+                    // ── Theme ──
+                    var STORAGE_KEY = 'theme';
+                    var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                    function getStoredTheme() {
+                        try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+                    }
+                    function setStoredTheme(val) {
+                        try { localStorage.setItem(STORAGE_KEY, val); } catch (e) {}
+                    }
+
+                    function resolveTheme() {
+                        var stored = getStoredTheme();
+                        if (stored === 'dark' || stored === 'light') return stored;
+                        return systemQuery.matches ? 'dark' : 'light';
+                    }
+
+                    var isDark = ref(resolveTheme() === 'dark');
+
+                    function applyTheme(dark) {
+                        document.documentElement.classList.toggle('dark', dark);
+                    }
+
+                    function toggleTheme() {
+                        var next = !isDark.value;
+                        isDark.value = next;
+                        setStoredTheme(next ? 'dark' : 'light');
+                    }
+
+                    watch(isDark, function (val) {
+                        document.documentElement.classList.add('theme-transitioning');
+                        void document.documentElement.offsetHeight;
+                        applyTheme(val);
+                        setTimeout(function () {
+                            document.documentElement.classList.remove('theme-transitioning');
+                        }, 600);
+                        nextTick(function () {
+                            lucide.createIcons();
+                        });
+                    });
+
+                    function onSystemThemeChange(e) {
+                        if (getStoredTheme() === null) {
+                            isDark.value = e.matches;
+                        }
+                    }
+
+                    applyTheme(resolveTheme() === 'dark');
+
+                    // ── Navigation ──
+                    function scrollToTop() {
+                        if (isSidebarOpen.value) return;
+                        if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+                    }
+
+                    function handleNavClick(targetId) {
+                        closeSidebar(function () {
+                            var el = document.getElementById(targetId);
+                            if (el && lenis) lenis.scrollTo(el, { duration: 1.2 });
+                        });
+                    }
+
+                    // ── Sidebar ──
+                    function closeSidebar(callback) {
+                        gsap.to('.sidebar-rk .mask-inner', {
+                            y: "100%",
+                            duration: 0.5,
+                            stagger: 0.05,
+                            ease: "expo.in",
+                            onComplete: function () {
+                                isSidebarOpen.value = false;
+                                if (callback) callback();
+                            }
+                        });
+                    }
+
+                    function toggleSidebar() {
+                        if (isSidebarOpen.value) {
+                            closeSidebar();
+                        } else {
+                            isSidebarOpen.value = true;
+                        }
+                    }
+
+                    function sidebarAction(link) {
+                        closeSidebar(function () {
+                            if (link.action === 'scrollToTop') {
+                                scrollToTop();
+                            } else if (link.action === 'setMode') {
+                                setMode(link.arg);
+                            }
+                        });
+                    }
+
+                    watch(isSidebarOpen, function (val) {
+                        if (val) {
+                            nextTick(function () {
+                                lucide.createIcons();
+                                gsap.from('.sidebar-rk .mask-inner', {
+                                    y: "100%",
+                                    duration: 1,
+                                    stagger: 0.1,
+                                    ease: "expo.out",
+                                    delay: 0.3
+                                });
+                            });
+                        }
+                    });
+
+                    // ── Scroll Tracking ──
+                    function updateScrollProgress() {
+                        scrollRafPending = false;
+                        var winHeight = window.innerHeight;
+                        showNavDock.value = window.scrollY > winHeight * 0.2;
+                        modeBarScrolled.value = window.scrollY > winHeight * 0.85;
+                        activeSection.value = mode.value.charAt(0).toUpperCase() + mode.value.slice(1);
+                    }
+
+                    function onScroll() {
+                        if (!scrollRafPending) {
+                            scrollRafPending = true;
+                            requestAnimationFrame(updateScrollProgress);
+                        }
+                    }
+
+                    // ── Lenis ──
+                    function initLenis() {
+                        lenis = new Lenis({ duration: 1.5, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }, smooth: true });
+                        function raf(time) { lenis.raf(time); ScrollTrigger.update(); requestAnimationFrame(raf); }
+                        requestAnimationFrame(raf);
+                    }
+
+                    // ── Mode Switching ──
+                    function setMode(newMode) {
+                        if (mode.value === newMode) return;
+                        mode.value = newMode;
+                        activeSection.value = newMode.charAt(0).toUpperCase() + newMode.slice(1);
+
+                        nextTick(function () {
+                            lucide.createIcons();
+
+                            if (newMode === 'grid') {
+                                revealGridItems();
+                            }
+                            if (newMode === 'map') {
+                                initMap();
+                            }
+                            if (newMode === 'flow') {
+                                if (flowTrack.value) {
+                                    flowTrack.value.style.transform = 'translateX(0)';
+                                    flowCurrentX = 0;
+                                    flowVelocity = 0;
+                                }
+                                setupHoverFollowers();
+                            }
+                        });
+                    }
+
+                    // ── Photo Detail Modal ──
+                    var miniGlobeEl = ref(null);
+                    var miniGlobeInstance = null;
+                    var modalImg = ref(null);
+                    var modalImageEl = ref(null);
+
+                    function createMiniGlobe(container, lat, lng) {
+                        if (!container || !lat || !lng) return;
+                        var rect = container.getBoundingClientRect();
+                        var size = rect.width || container.clientWidth || 0;
+                        // Guard against zero/negative sizes during layout transitions.
+                        if (size < 50) size = Math.max(window.innerWidth * 0.25, 200);
+                        var dpr = Math.min(window.devicePixelRatio, 2);
+                        var renderSize = Math.round(size * dpr);
+
+                        var scene = new THREE.Scene();
+                        var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10);
+                        camera.position.z = 3.0;
+
+                        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                        renderer.setSize(renderSize, renderSize);
+                        renderer.setPixelRatio(1);
+                        renderer.domElement.style.width = size + 'px';
+                        renderer.domElement.style.height = size + 'px';
+                        container.appendChild(renderer.domElement);
+
+                        scene.add(new THREE.AmbientLight(0x334466, 1.2));
+                        var dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                        dirLight.position.set(5, 3, 5);
+                        scene.add(dirLight);
+
+                        var geom = new THREE.SphereGeometry(1, 48, 36);
+                        var texLoader = new THREE.TextureLoader();
+                        var earthTex = texLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+                        var mat = new THREE.MeshPhongMaterial({ map: earthTex, specular: 0x111111, shininess: 5 });
+                        var mesh = new THREE.Mesh(geom, mat);
+                        scene.add(mesh);
+
+                        var pos = latLngToVec3(lat, lng, 1.03);
+                        var dotGeom = new THREE.SphereGeometry(0.04, 8, 8);
+                        var dotMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+                        var dot = new THREE.Mesh(dotGeom, dotMat);
+                        dot.position.copy(pos);
+                        mesh.add(dot);
+
+                        // Align marker to camera via shortest-arc quaternion, then
+                        // cancel pole lean with a world-Z roll so the pole stays vertical.
+                        var p = pos.clone().normalize();
+                        var q = new THREE.Quaternion().setFromUnitVectors(p, new THREE.Vector3(0, 0, 1));
+                        var north = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
+                        var roll = (north.x === 0 && north.y === 0) ? 0 : Math.atan2(north.x, north.y);
+                        var rollQ = new THREE.Quaternion().setFromAxisAngle(
+                            new THREE.Vector3(0, 0, 1), roll
+                        );
+                        mesh.setRotationFromQuaternion(rollQ.multiply(q));
+
+                        var animId;
+                        function animate() {
+                            animId = requestAnimationFrame(animate);
+                            renderer.render(scene, camera);
+                        }
+                        animate();
+
+                        return {
+                            destroy: function() {
+                                cancelAnimationFrame(animId);
+                                renderer.dispose();
+                                if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
+                            }
+                        };
+                    }
+
+                    function openPhotoDetail(photo, cluster) {
+                        if (modalContainer.value) {
+                            gsap.killTweensOf(modalContainer.value);
+                            gsap.set(modalContainer.value, { opacity: 1, x: 0 });
+                        }
+                        photoTransitioning.value = false;
+                        var list = cluster || photos.value;
+                        currentCluster.value = cluster || null;
+                        activePhoto.value = photo;
+                        activePhotoIndex.value = list.findIndex(function(p) { return p.id === photo.id; });
+                        if (activePhotoIndex.value < 0) activePhotoIndex.value = 0;
+                        showPhotoModal.value = true;
+                        nextTick(function () {
+                            lucide.createIcons();
+                            if (miniGlobeEl.value && photo.lat && photo.lng) {
+                                // Wait for modal layout to settle before measuring container
+                                requestAnimationFrame(function () {
+                                    requestAnimationFrame(function () {
+                                        if (miniGlobeInstance) { miniGlobeInstance.destroy(); miniGlobeInstance = null; }
+                                        miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, photo.lat, photo.lng);
+                                    });
+                                });
+                            }
+                        });
+                    }
+
+                    function closePhotoDetail() {
+                        if (miniGlobeInstance) {
+                            miniGlobeInstance.destroy();
+                            miniGlobeInstance = null;
+                        }
+                        if (modalContainer.value) {
+                            gsap.killTweensOf(modalContainer.value);
+                        }
+                        photoTransitioning.value = false;
+                        showPhotoModal.value = false;
+                    }
+
+                    function onModalImgLoad() {
+                        nextTick(function () {
+                            var img = modalImg.value;
+                            var container = modalImageEl.value;
+                            if (!img || !container) return;
+                            var natW = img.naturalWidth;
+                            var natH = img.naturalHeight;
+                            if (!natW || !natH) return;
+                            var ratio = natW / natH;
+                            // Reset flex so clientHeight reflects the natural container height
+                            container.style.flex = '';
+                            var availH = container.clientHeight;
+                            if (availH < 50) availH = window.innerHeight * 0.8;
+                            var imgW = availH * ratio;
+                            var parentW = container.parentElement ? container.parentElement.clientWidth : 1100;
+                            // Image takes at most 65% of card width (leaves min ~35% for detail)
+                            var maxImgW = parentW * 0.65;
+                            if (imgW > maxImgW) imgW = maxImgW;
+                            if (imgW < 120) imgW = 120;
+                            container.style.flex = '0 0 ' + Math.round(imgW) + 'px';
+                        });
+                    }
+
+                    function updateMiniGlobe() {
+                        if (miniGlobeInstance) {
+                            miniGlobeInstance.destroy();
+                            miniGlobeInstance = null;
+                        }
+                        requestAnimationFrame(function () {
+                            requestAnimationFrame(function () {
+                                if (miniGlobeEl.value && activePhoto.value && activePhoto.value.lat && activePhoto.value.lng) {
+                                    miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, activePhoto.value.lat, activePhoto.value.lng);
+                                }
+                            });
+                        });
+                    }
+
+                    function prevPhoto() {
+                        doTransition('prev');
+                    }
+                    function nextPhoto() {
+                        doTransition('next');
+                    }
+                    function doTransition(dir) {
+                        if (photoTransitioning.value) return;
+                        var list = currentCluster.value || photos.value;
+                        var idx = activePhotoIndex.value + (dir === 'next' ? 1 : -1);
+                        if (idx < 0) idx = list.length - 1;
+                        if (idx >= list.length) idx = 0;
+                        var container = modalContainer.value;
+                        if (!container) {
+                            // fallback: instant swap
+                            activePhotoIndex.value = idx;
+                            activePhoto.value = list[idx];
+                            updateMiniGlobe();
+                            nextTick(function () { lucide.createIcons(); });
+                            return;
+                        }
+                        photoTransitioning.value = true;
+                        photoTransitionDir.value = dir;
+                        var exitX = dir === 'next' ? -24 : 24;
+                        var enterX = dir === 'next' ? 24 : -24;
+                        gsap.to(container, {
+                            opacity: 0, x: exitX, duration: 0.18, ease: "power2.in",
+                            onComplete: function () {
+                                activePhotoIndex.value = idx;
+                                activePhoto.value = list[idx];
+                                updateMiniGlobe();
+                                nextTick(function () {
+                                    lucide.createIcons();
+                                    gsap.set(container, { x: enterX });
+                                    gsap.to(container, {
+                                        opacity: 1, x: 0, duration: 0.32, ease: "power2.out",
+                                        onComplete: function () {
+                                            photoTransitioning.value = false;
+                                            photoTransitionDir.value = null;
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                    }
+
+                    // Keyboard nav
+                    function onKeyDown(e) {
+                        if (!showPhotoModal.value) return;
+                        if (e.key === 'Escape') closePhotoDetail();
+                        if (e.key === 'ArrowLeft') prevPhoto();
+                        if (e.key === 'ArrowRight') nextPhoto();
+                    }
+
+                    // ── Flow Mode Drag ──
+                    var flowDragging = false;
+                    var flowDidDrag = false;
+                    var flowStartX = 0;
+                    var flowCurrentX = 0;
+                    var flowLastX = 0;
+                    var flowLastTime = 0;
+                    var flowVelocity = 0;
+                    var flowRafId = null;
+
+                    function flowDragStart(e) {
+                        if (!flowTrack.value) return;
+                        flowDragging = true;
+                        flowDidDrag = false;
+                        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                        flowStartX = clientX - flowCurrentX;
+                        flowLastX = clientX;
+                        flowLastTime = Date.now();
+                        flowVelocity = 0;
+                        if (flowRafId) cancelAnimationFrame(flowRafId);
+                    }
+
+                    function flowDragMove(e) {
+                        if (!flowDragging || !flowTrack.value) return;
+                        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                        var moved = Math.abs(clientX - (flowStartX + flowCurrentX - (flowCurrentX || 0)));
+                        // 5px threshold before registering as drag (preserves click)
+                        if (!flowDidDrag && Math.abs(clientX - flowLastX) < 5) return;
+                        if (!flowDidDrag) {
+                            flowDidDrag = true;
+                            if (flowContainer.value) flowContainer.value.classList.add('dragging');
+                        }
+                        e.preventDefault();
+                        var now = Date.now();
+                        var dt = now - flowLastTime;
+                        if (dt > 0) {
+                            flowVelocity = (clientX - flowLastX) / dt;
+                        }
+                        flowLastX = clientX;
+                        flowLastTime = now;
+                        flowCurrentX = clientX - flowStartX;
+                        applyFlowTransform();
+                    }
+
+                    function flowDragEnd() {
+                        if (!flowDragging) return;
+                        flowDragging = false;
+                        if (flowContainer.value) flowContainer.value.classList.remove('dragging');
+                        if (!flowDidDrag) return;
+                        // SOI-style: boost velocity by 1.35x and clamp
+                        flowVelocity = Math.max(-2000, Math.min(2000, flowVelocity * 1.35));
+                        if (Math.abs(flowVelocity) > 0.5) {
+                            flowLastInertiaTime = 0;
+                            if (flowRafId) cancelAnimationFrame(flowRafId);
+                            flowRafId = requestAnimationFrame(flowInertiaLoop);
+                        }
+                    }
+
+                    // Velocity-based scale zoom (SOI-style) — only scale cards, not container
+                    function applyFlowScale() {
+                        if (!flowTrack.value) return;
+                        var absV = Math.abs(flowVelocity);
+                        var cards = flowTrack.value.querySelectorAll('.flow-card');
+                        var cardScale = 1 - 0.15 * Math.min(1, absV / 1000);
+                        cards.forEach(function(card) {
+                            card.style.transform = 'scale(' + cardScale + ')';
+                        });
+                    }
+
+                    function resetFlowScale() {
+                        if (flowTrack.value) {
+                            var cards = flowTrack.value.querySelectorAll('.flow-card');
+                            cards.forEach(function(card) {
+                                card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                                card.style.transform = 'scale(1)';
+                            });
+                        }
+                    }
+
+                    function clampFlowPosition() {
+                        if (!flowTrack.value) return;
+                        var minX = getFlowMinX();
+                        if (flowCurrentX > 0) flowCurrentX = 0;
+                        if (minX < 0 && flowCurrentX < minX) flowCurrentX = minX;
+                    }
+
+                    var flowLastInertiaTime = 0;
+
+                    function flowInertiaLoop(ts) {
+                        if (flowDragging) return;
+                        if (!flowLastInertiaTime) flowLastInertiaTime = ts;
+                        var dt = ts - flowLastInertiaTime;
+                        flowLastInertiaTime = ts;
+                        if (dt < 1) dt = 1;
+
+                        // SOI-style exponential decay: 0.88 per frame at 60fps
+                        var decay = Math.pow(0.88, dt / 16.667);
+                        flowVelocity *= decay;
+                        flowCurrentX += (dt / 1000) * flowVelocity;
+                        clampFlowPosition();
+                        if (flowCurrentX === 0 || flowCurrentX === getFlowMinX()) flowVelocity = 0;
+                        applyFlowTransform();
+                        applyFlowScale();
+
+                        if (Math.abs(flowVelocity) > 0.5) {
+                            flowRafId = requestAnimationFrame(flowInertiaLoop);
+                        } else {
+                            flowRafId = null;
+                            flowLastInertiaTime = 0;
+                            flowVelocity = 0;
+                            resetFlowScale();
+                        }
+                    }
+
+                    function applyFlowTransform() {
+                        if (flowTrack.value) {
+                            flowTrack.value.style.transform = 'translateX(' + flowCurrentX + 'px)';
+                        }
+                    }
+
+                    function getFlowMinX() {
+                        if (!flowTrack.value) return 0;
+                        var trackWidth = flowTrack.value.scrollWidth;
+                        var containerWidth = flowContainer.value ? flowContainer.value.clientWidth : window.innerWidth;
+                        return Math.min(0, -(trackWidth - containerWidth - 64));
+                    }
+
+                    // Wheel → horizontal conversion (SOI-style: attached to container, high multiplier)
+                    function onFlowWheel(e) {
+                        if (mode.value !== 'flow' || showPhotoModal.value) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // SOI uses 12,000x multiplier for strong response
+                        var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                        flowVelocity = Math.max(-2000, Math.min(2000, flowVelocity - delta * 12));
+                        if (flowRafId) cancelAnimationFrame(flowRafId);
+                        flowRafId = requestAnimationFrame(flowInertiaLoop);
+                    }
+
+                    // ── Flow Image Load ──
+                    function onFlowImgLoad(i) {
+                        flowLoaded[i] = true;
+                    }
+
+                    // ── Grid Image Load ──
+                    function onGridImgLoad(i) {
+                        gridLoaded[i] = true;
+                    }
+
+                    function revealGridItems() {
+                        var cards = document.querySelectorAll('.grid-photo-card');
+                        cards.forEach(function(card, i) {
+                            setTimeout(function() {
+                                gridVisible[i] = true;
+                            }, i * 80);
+                        });
+                    }
+
+                    // ── Country Flag ──
+                    function getFlag(location) {
+                        if (!location) return '';
+                        if (location.indexOf('Thailand') !== -1) return '🇹🇭';
+                        if (location.indexOf('China') !== -1) return '🇨🇳';
+                        if (location.indexOf('UAE') !== -1) return '🇦🇪';
+                        if (location.indexOf('Japan') !== -1) return '🇯🇵';
+                        return '';
+                    }
+
+                    // ── Hover Followers (country flag, matches index.html pattern) ──
+                    function setupHoverFollowers() {
+                        nextTick(function() {
+                            var cards = document.querySelectorAll('#grid-view [data-hover-follow], #flow-view [data-hover-follow]');
+                            cards.forEach(function(item) {
+                                var follower = item.querySelector('[data-hover-follower]');
+                                if (!follower) return;
+
+                                var ticking = false;
+                                var x = 0, y = 0, tx = 0, ty = 0;
+                                var trailLerp = 0.08;
+                                var offset = 16;
+                                var lastEvent = null;
+
+                                function setTargetFromEvent(e) {
+                                    var rect = item.getBoundingClientRect();
+                                    tx = e.clientX - rect.left + offset;
+                                    ty = e.clientY - rect.top + offset;
+                                }
+
+                                function updatePosition() {
+                                    follower.style.left = Math.round(x) + 'px';
+                                    follower.style.top = Math.round(y) + 'px';
+                                }
+
+                                function tick() {
+                                    if (lastEvent) setTargetFromEvent(lastEvent);
+                                    x += (tx - x) * trailLerp;
+                                    y += (ty - y) * trailLerp;
+                                    updatePosition();
+                                }
+
+                                function startTicker() {
+                                    if (ticking) return;
+                                    ticking = true;
+                                    gsap.ticker.add(tick);
+                                }
+
+                                function stopTicker() {
+                                    if (!ticking) return;
+                                    ticking = false;
+                                    gsap.ticker.remove(tick);
+                                }
+
+                                function hideNow() {
+                                    gsap.killTweensOf(follower);
+                                    follower.style.display = 'none';
+                                    stopTicker();
+                                }
+
+                                function showNow(e) {
+                                    follower.style.display = 'block';
+                                    setTargetFromEvent(e);
+                                    x = tx;
+                                    y = ty;
+                                    updatePosition();
+
+                                    gsap.killTweensOf(follower);
+                                    gsap.fromTo(follower,
+                                        { scale: 0.6 },
+                                        { scale: 1, duration: 0.45, ease: "elastic.out(1,0.5)", overwrite: true }
+                                    );
+
+                                    startTicker();
+                                }
+
+                                item.addEventListener('mouseenter', function(e) {
+                                    item.style.zIndex = '9999';
+                                    lastEvent = e;
+                                    showNow(e);
+                                });
+
+                                item.addEventListener('mousemove', function(e) {
+                                    lastEvent = e;
+                                    if (follower.style.display !== 'block') return;
+                                    setTargetFromEvent(e);
+                                });
+
+                                item.addEventListener('mouseleave', function() {
+                                    item.style.zIndex = '';
+                                    hideNow();
+                                });
+                            });
+                        });
+                    }
+
+                    // ── Map Mode (Three.js 3D Globe) ──
+                    var globeScene = null;
+                    var globeCamera = null;
+                    var globeRenderer = null;
+                    var globeMesh = null;
+                    var globeMarkers = [];
+                    var globeInitialized = false;
+                    var globeAnimId = null;
+                    var globeTooltip = null;
+                    var globeHovered = null;
+                    var globeHoveredCluster = null;
+                    var globeMouse = new THREE.Vector2();
+                    var globeRaycaster = new THREE.Raycaster();
+                    var globeDragging = false;
+                    var globePrevMouse = { x: 0, y: 0 };
+                    var globeAutoRotate = false;
+                    var globeRotY = 0;
+                    var globeRotX = 0.3;
+
+                    function latLngToVec3(lat, lng, radius) {
+                        var phi = (90 - lat) * Math.PI / 180;
+                        var theta = (lng + 180) * Math.PI / 180;
+                        return new THREE.Vector3(
+                            -radius * Math.sin(phi) * Math.cos(theta),
+                            radius * Math.cos(phi),
+                            radius * Math.sin(phi) * Math.sin(theta)
+                        );
+                    }
+
+                    function initGlobe() {
+                        if (globeInitialized) return;
+                        if (!mapContainer.value) return;
+                        var hasCoords = photos.value.filter(function(p) { return p.lat && p.lng; });
+                        if (hasCoords.length === 0) return;
+
+                        globeInitialized = true;
+                        var rect = mapContainer.value.getBoundingClientRect();
+                        var w = rect.width || mapContainer.value.clientWidth || 800;
+                        var h = rect.height || mapContainer.value.clientHeight || 600;
+
+                        // Scene
+                        globeScene = new THREE.Scene();
+
+                        // Camera
+                        globeCamera = new THREE.PerspectiveCamera(45, w / Math.max(h, 1), 0.1, 10);
+                        globeCamera.position.set(0, 0, 2.8);
+
+                        // Renderer
+                        globeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                        globeRenderer.setSize(w, h);
+                        globeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        mapContainer.value.appendChild(globeRenderer.domElement);
+
+                        // Tooltip
+                        globeTooltip = document.createElement('div');
+                        globeTooltip.className = 'globe-tooltip';
+                        mapContainer.value.appendChild(globeTooltip);
+
+                        // Build location groups
+                        var locationGroups = {};
+                        photos.value.forEach(function(photo) {
+                            if (!photo.lat || !photo.lng) return;
+                            var key = photo.location;
+                            if (!locationGroups[key]) locationGroups[key] = [];
+                            locationGroups[key].push(photo);
+                        });
+
+                        // Legend — one item per unique location
+                        var legend = document.createElement('div');
+                        legend.className = 'globe-legend';
+                        Object.keys(locationGroups).forEach(function(loc) {
+                            var group = locationGroups[loc];
+                            var first = group[0];
+                            var item = document.createElement('span');
+                            item.className = 'globe-legend-item';
+                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (first.color || '#fff') + ';"></span>' + first.location;
+                            item.addEventListener('click', function() { openPhotoDetail(first, group); });
+                            legend.appendChild(item);
+                        });
+                        mapContainer.value.appendChild(legend);
+
+                        // Lighting
+                        globeScene.add(new THREE.AmbientLight(0x334466, 1.2));
+                        var dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                        dirLight.position.set(5, 3, 5);
+                        globeScene.add(dirLight);
+
+                        // Earth
+                        var geom = new THREE.SphereGeometry(1, 72, 54);
+                        var texLoader = new THREE.TextureLoader();
+                        var earthTex = texLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+                        var mat = new THREE.MeshPhongMaterial({ map: earthTex, specular: 0x111111, shininess: 5 });
+                        globeMesh = new THREE.Mesh(geom, mat);
+                        globeScene.add(globeMesh);
+
+                        // Starfield
+                        var starsGeom = new THREE.BufferGeometry();
+                        var starsVerts = [];
+                        for (var i = 0; i < 600; i++) {
+                            var s = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize().multiplyScalar(4 + Math.random() * 2);
+                            starsVerts.push(s.x, s.y, s.z);
+                        }
+                        starsGeom.setAttribute('position', new THREE.Float32BufferAttribute(starsVerts, 3));
+                        var starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.008, transparent: true, opacity: 0.7 });
+                        globeScene.add(new THREE.Points(starsGeom, starsMat));
+
+                        // Photo markers — reuse locationGroups built above
+                        globeMarkers = [];
+                        Object.keys(locationGroups).forEach(function(loc) {
+                            var group = locationGroups[loc];
+                            var first = group[0];
+                            var pos = latLngToVec3(first.lat, first.lng, 1.02);
+                            // Marker dot — slightly larger for groups
+                            var size = group.length > 1 ? 0.035 : 0.028;
+                            var dotGeom = new THREE.SphereGeometry(size, 16, 16);
+                            var dotMat = new THREE.MeshBasicMaterial({ color: first.color || '#ffffff' });
+                            var dot = new THREE.Mesh(dotGeom, dotMat);
+                            dot.position.copy(pos);
+                            dot.userData = { photos: group, primary: first };
+                            globeMesh.add(dot);
+                            globeMarkers.push(dot);
+
+                            // Ring around marker
+                            var ringGeom = new THREE.TorusGeometry(0.04, 0.006, 8, 16);
+                            var ringMat = new THREE.MeshBasicMaterial({ color: first.color || '#ffffff', transparent: true, opacity: 0.6 });
+                            var ring = new THREE.Mesh(ringGeom, ringMat);
+                            ring.position.copy(pos);
+                            ring.lookAt(new THREE.Vector3(0, 0, 0));
+                            globeMesh.add(ring);
+                        });
+
+                        // Mouse events
+                        mapContainer.value.addEventListener('mousedown', onGlobeMouseDown);
+                        mapContainer.value.addEventListener('mousemove', onGlobeMouseMove);
+                        mapContainer.value.addEventListener('mouseup', onGlobeMouseUp);
+                        mapContainer.value.addEventListener('mouseleave', onGlobeMouseUp);
+                        mapContainer.value.addEventListener('touchstart', onGlobeTouchStart, { passive: false });
+                        mapContainer.value.addEventListener('touchmove', onGlobeTouchMove, { passive: false });
+                        mapContainer.value.addEventListener('touchend', onGlobeMouseUp);
+                        mapContainer.value.addEventListener('wheel', onGlobeWheel, { passive: false });
+
+                        window.addEventListener('resize', onGlobeResize);
+
+                        globeAnimate();
+                    }
+
+                    function destroyGlobe() {
+                        if (globeAnimId) cancelAnimationFrame(globeAnimId);
+                        if (globeRenderer) {
+                            globeRenderer.dispose();
+                            if (globeRenderer.domElement.parentNode) {
+                                globeRenderer.domElement.parentNode.removeChild(globeRenderer.domElement);
+                            }
+                        }
+                        if (globeTooltip && globeTooltip.parentNode) globeTooltip.parentNode.removeChild(globeTooltip);
+                        var legend = mapContainer.value ? mapContainer.value.querySelector('.globe-legend') : null;
+                        if (legend) legend.remove();
+                        if (mapContainer.value) {
+                            mapContainer.value.removeEventListener('mousedown', onGlobeMouseDown);
+                            mapContainer.value.removeEventListener('mousemove', onGlobeMouseMove);
+                            mapContainer.value.removeEventListener('mouseup', onGlobeMouseUp);
+                            mapContainer.value.removeEventListener('mouseleave', onGlobeMouseUp);
+                            mapContainer.value.removeEventListener('touchstart', onGlobeTouchStart);
+                            mapContainer.value.removeEventListener('touchmove', onGlobeTouchMove);
+                            mapContainer.value.removeEventListener('touchend', onGlobeMouseUp);
+                            mapContainer.value.removeEventListener('wheel', onGlobeWheel);
+                        }
+                        window.removeEventListener('resize', onGlobeResize);
+                        globeScene = null;
+                        globeCamera = null;
+                        globeRenderer = null;
+                        globeMesh = null;
+                        globeMarkers = [];
+                        globeInitialized = false;
+                        globeTooltip = null;
+                        globeHovered = null;
+                    }
+
+                    function globeAnimate() {
+                        globeAnimId = requestAnimationFrame(globeAnimate);
+                        if (!globeScene || !globeRenderer || !globeCamera) return;
+
+                        globeMesh.rotation.y = globeRotY;
+                        globeMesh.rotation.x = globeRotX;
+
+                        // Pulse markers
+                        var t = Date.now() * 0.002;
+                        globeMarkers.forEach(function(m, i) {
+                            m.scale.setScalar(1 + 0.15 * Math.sin(t + i));
+                        });
+
+                        globeRenderer.render(globeScene, globeCamera);
+                    }
+
+                    function onGlobeMouseDown(e) {
+                        globeDragging = true;
+                        globePrevMouse.x = e.clientX;
+                        globePrevMouse.y = e.clientY;
+                    }
+
+                    function onGlobeMouseMove(e) {
+                        if (globeDragging) {
+                            var dx = e.clientX - globePrevMouse.x;
+                            var dy = e.clientY - globePrevMouse.y;
+                            globeRotY += dx * 0.005;
+                            globeRotX += dy * 0.005;
+                            globeRotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, globeRotX));
+                            globePrevMouse.x = e.clientX;
+                            globePrevMouse.y = e.clientY;
+                            if (globeTooltip) globeTooltip.classList.remove('visible');
+                            return;
+                        }
+
+                        // Raycaster hover
+                        if (!mapContainer.value || !globeRenderer) return;
+                        var rect = mapContainer.value.getBoundingClientRect();
+                        globeMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                        globeMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                        globeRaycaster.setFromCamera(globeMouse, globeCamera);
+                        var intersects = globeRaycaster.intersectObjects(globeMarkers);
+                        if (intersects.length > 0) {
+                            var data = intersects[0].object.userData;
+                            var primary = data.primary;
+                            if (primary && globeHovered !== primary) {
+                                globeHovered = primary;
+                                globeHoveredCluster = data.photos;
+                                var count = data.photos ? data.photos.length : 1;
+                                var html = '<img src="' + primary.url + '" alt="" /><div><div class="globe-tooltip-title">' + primary.location + '</div><div class="globe-tooltip-loc">' + count + ' photo' + (count > 1 ? 's' : '') + '</div></div>';
+                                globeTooltip.innerHTML = html;
+                                globeTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                                globeTooltip.style.top = (e.clientY - rect.top - 15) + 'px';
+                                globeTooltip.classList.add('visible');
+                                mapContainer.value.style.cursor = 'pointer';
+                            }
+                        } else {
+                            globeHovered = null;
+                            globeHoveredCluster = null;
+                            if (globeTooltip) globeTooltip.classList.remove('visible');
+                            mapContainer.value.style.cursor = globeDragging ? 'grabbing' : 'grab';
+                        }
+                    }
+
+                    function onGlobeMouseUp(e) {
+                        if (globeDragging && globeHovered) {
+                            openPhotoDetail(globeHovered, globeHoveredCluster);
+                        }
+                        globeDragging = false;
+                    }
+
+                    function onGlobeTouchStart(e) {
+                        if (e.touches.length === 1) {
+                            e.preventDefault();
+                            globeDragging = true;
+                            globePrevMouse.x = e.touches[0].clientX;
+                            globePrevMouse.y = e.touches[0].clientY;
+                        }
+                    }
+
+                    function onGlobeTouchMove(e) {
+                        if (globeDragging && e.touches.length === 1) {
+                            e.preventDefault();
+                            var dx = e.touches[0].clientX - globePrevMouse.x;
+                            var dy = e.touches[0].clientY - globePrevMouse.y;
+                            globeRotY += dx * 0.005;
+                            globeRotX += dy * 0.005;
+                            globeRotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, globeRotX));
+                            globePrevMouse.x = e.touches[0].clientX;
+                            globePrevMouse.y = e.touches[0].clientY;
+                        }
+                    }
+
+                    function onGlobeWheel(e) {
+                        if (!mapContainer.value) return;
+                        e.preventDefault();
+                        globeCamera.position.z = Math.max(1.5, Math.min(5, globeCamera.position.z + e.deltaY * 0.005));
+                    }
+
+                    function onGlobeResize() {
+                        if (!globeRenderer || !globeCamera || !mapContainer.value) return;
+                        var rect = mapContainer.value.getBoundingClientRect();
+                        var w = rect.width || mapContainer.value.clientWidth;
+                        var h = rect.height || mapContainer.value.clientHeight;
+                        if (w > 0 && h > 0) {
+                            globeRenderer.setSize(w, h);
+                            globeCamera.aspect = w / Math.max(h, 1);
+                            globeCamera.updateProjectionMatrix();
+                        }
+                    }
+
+                    function initMap() {
+                        nextTick(function () {
+                            setTimeout(function () { initGlobe(); }, 200);
+                        });
+                    }
+
+                    // ── Fetch Photos ──
+                    function loadPhotos() {
+                        fetch('photos.json')
+                            .then(function(res) { return res.json(); })
+                            .then(function(data) {
+                                photos.value = data.photos;
+                                // Init load states for duplicated arrays
+                                for (var i = 0; i < data.photos.length * 5; i++) {
+                                    flowLoaded[i] = false;
+                                }
+                                for (var j = 0; j < data.photos.length * 20; j++) {
+                                    gridLoaded[j] = false;
+                                    gridVisible[j] = false;
+                                }
+                                nextTick(function () {
+                                    revealGridItems();
+                                    setupHoverFollowers();
+                                });
+                            })
+                            .catch(function(err) {
+                                console.warn('Failed to load photos.json, using fallback:', err);
+                                photos.value = [];
+                            });
+                    }
+
+                    // ── Lifecycle ──
+                    onMounted(function () {
+                        loadPhotos();
+                        initLenis();
+                        initHeroCanvas(heroCanvas.value);
+                        window.addEventListener('scroll', onScroll, { passive: true });
+                        window.addEventListener('keydown', onKeyDown);
+                        if (flowContainer.value) {
+                            flowContainer.value.addEventListener('wheel', onFlowWheel, { passive: false });
+                        }
+                        systemQuery.addEventListener('change', onSystemThemeChange);
+
+                        nextTick().then(function () {
+                            lucide.createIcons();
+
+                            // ── Animation Sequence ──
+                            var tl = gsap.timeline();
+                            tl.set('body', { opacity: 1 })
+                                .set('.hero__text .mask-inner', { y: '120%' })
+                                .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
+                                    var el = document.getElementById('preloader');
+                                    if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                } })
+                                .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
+                                .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
+                                .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
+                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
+
+                            // Mask reveals for mode content
+                            gsap.utils.toArray('.section-rk').forEach(function (sec) {
+                                var masks = sec.querySelectorAll('.mask-inner');
+                                if (masks.length > 0) {
+                                    gsap.from(masks, {
+                                        y: "100%",
+                                        duration: 1.8,
+                                        stagger: 0.15,
+                                        ease: "power4.out",
+                                        scrollTrigger: {
+                                            trigger: sec,
+                                            start: "top 85%",
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+
+                    onUnmounted(function () {
+                        window.removeEventListener('scroll', onScroll);
+                        window.removeEventListener('keydown', onKeyDown);
+                        if (flowContainer.value) {
+                            flowContainer.value.removeEventListener('wheel', onFlowWheel);
+                        }
+                        systemQuery.removeEventListener('change', onSystemThemeChange);
+                        if (lenis) lenis.destroy();
+                        destroyGlobe();
+                        if (miniGlobeInstance) { miniGlobeInstance.destroy(); miniGlobeInstance = null; }
+                        if (flowRafId) cancelAnimationFrame(flowRafId);
+                    });
+
+                    return {
+                        isSidebarOpen: isSidebarOpen,
+                        activeSection: activeSection,
+                        toggleSidebar: toggleSidebar,
+                        sidebarAction: sidebarAction,
+                        handleNavClick: handleNavClick,
+                        scrollToTop: scrollToTop,
+                        showNavDock: showNavDock,
+                        navDockBottom: navDockBottom,
+                        mode: mode,
+                        modeBarScrolled: modeBarScrolled,
+                        setMode: setMode,
+                        isDark: isDark,
+                        toggleTheme: toggleTheme,
+                        photos: photos,
+                        flowPhotos: flowPhotos,
+                        gridPhotos: gridPhotos,
+                        showPhotoModal: showPhotoModal,
+                        activePhoto: activePhoto,
+                        activePhotoIndex: activePhotoIndex,
+                        openPhotoDetail: openPhotoDetail,
+                        closePhotoDetail: closePhotoDetail,
+                        prevPhoto: prevPhoto,
+                        nextPhoto: nextPhoto,
+                        flowContainer: flowContainer,
+                        flowTrack: flowTrack,
+                        flowDragStart: flowDragStart,
+                        flowDragMove: flowDragMove,
+                        flowDragEnd: flowDragEnd,
+                        flowLoaded: flowLoaded,
+                        onFlowImgLoad: onFlowImgLoad,
+                        gridLoaded: gridLoaded,
+                        gridVisible: gridVisible,
+                        onGridImgLoad: onGridImgLoad,
+                        revealGridItems: revealGridItems,
+                        getFlag: getFlag,
+                        mapContainer: mapContainer,
+                        heroCanvas: heroCanvas,
+                        miniGlobeEl: miniGlobeEl,
+                        modalImg: modalImg,
+                        modalImageEl: modalImageEl,
+                        onModalImgLoad: onModalImgLoad,
+                        photoTransitioning: photoTransitioning,
+                        photoTransitionDir: photoTransitionDir,
+                        modalContainer: modalContainer
+                    };
+                }
+            }).mount('#app');
+        })();
+    </script>
+</body>
+
+</html>
