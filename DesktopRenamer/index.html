@@ -627,7 +627,7 @@
             var ctx = canvas.getContext('2d');
             var width, height;
             var lines = [];
-            var lineCount = 14;
+            var lineCount = 7;
 
             function resize() {
                 var rect = canvas.parentElement.getBoundingClientRect();
@@ -649,7 +649,7 @@
             function draw(time) {
                 ctx.clearRect(0, 0, width, height);
                 var isDark = document.documentElement.classList.contains('dark');
-                var baseAlpha = isDark ? 0.12 : 0.08;
+                var baseAlpha = 0.12;
                 var baseColor = '255,255,255';
 
                 for (var i = 0; i < lines.length; i++) {
