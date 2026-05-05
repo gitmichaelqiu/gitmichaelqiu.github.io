@@ -95,6 +95,29 @@
             margin-top: -4rem;
         }
 
+        /* ── Film Grain & Light Leak ── */
+        .hero-lightleak {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(ellipse at 20% 30%,
+                    rgba(232, 201, 122, 0.06) 0%,
+                    transparent 60%);
+            animation: lightLeak 14s ease-in-out infinite;
+        }
+        @keyframes lightLeak {
+            0%, 90%, 100% { opacity: 0; }
+            2% { opacity: 0.55; }
+            6% { opacity: 0.12; }
+            10% { opacity: 0; }
+            45% { opacity: 0; }
+            48% { opacity: 0.3; }
+            52% { opacity: 0.08; }
+            55% { opacity: 0; }
+        }
+
         /* ── Mode Toggle Bar ── */
         .mode-toggle-bar {
             position: sticky;
@@ -766,6 +789,7 @@
             <!-- Hero Section -->
             <section id="home" class="hero">
                 <div class="hero__bg"></div>
+                <div class="hero-lightleak"></div>
                 <canvas ref="heroCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
                 <nav class="hero__quicknav hide-mobile">
                     <div class="hero__quicknav-logo">
@@ -809,6 +833,7 @@
                         </div>
                     </div>
                 </div>
+
             </section>
 
             <!-- Mode Toggle Bar -->
@@ -1001,60 +1026,56 @@
     </div>
 
     <script>
-        // ── Hero Canvas: Floating Photo Frames ──
+        // ── Hero Canvas: Floating EXIF Metadata Particles ──
         function initHeroCanvas(canvas) {
             if (!canvas) return;
             var ctx = canvas.getContext('2d');
             var width, height;
-            var frames = [];
-            var frameCount = 18;
+            var particles = [];
+            var count = 22;
+            var terms = [
+                'f/1.4', 'f/2.8', 'f/5.6', 'f/8', 'f/11', 'f/16',
+                '1/125s', '1/250s', '1/500s', '1/1000s', '1/2000s',
+                'ISO 100', 'ISO 200', 'ISO 400', 'ISO 800',
+                '28mm', '35mm', '50mm', '85mm', '135mm',
+                '+1EV', '-1EV', 'AWB', 'A', 'M'
+            ];
 
             function resize() {
                 var rect = canvas.parentElement.getBoundingClientRect();
                 width = canvas.width = rect.width;
                 height = canvas.height = rect.height;
-                frames = [];
-                for (var i = 0; i < frameCount; i++) {
-                    var w = 40 + Math.random() * 80;
-                    var h = w * (4/3);
-                    frames.push({
+                particles = [];
+                for (var i = 0; i < count; i++) {
+                    particles.push({
                         x: Math.random() * width,
                         y: Math.random() * height,
-                        w: w,
-                        h: h,
-                        vx: (Math.random() - 0.5) * 0.3,
-                        vy: (Math.random() - 0.5) * 0.3,
-                        rot: (Math.random() - 0.5) * 0.3,
-                        opacity: 0.03 + Math.random() * 0.06,
-                        rotSpeed: (Math.random() - 0.5) * 0.003
+                        vx: (Math.random() - 0.5) * 0.25,
+                        vy: (Math.random() - 0.5) * 0.25,
+                        text: terms[Math.floor(Math.random() * terms.length)],
+                        size: 10 + Math.random() * 14,
+                        opacity: 0.04 + Math.random() * 0.06
                     });
                 }
             }
 
-            function draw(time) {
+            function draw() {
                 ctx.clearRect(0, 0, width, height);
-                var isDark = document.documentElement.classList.contains('dark');
-                var strokeColor = isDark ? '255,255,255' : '255,255,255';
-                var fillColor = isDark ? '255,255,255' : '255,255,255';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
 
-                for (var i = 0; i < frames.length; i++) {
-                    var f = frames[i];
-                    f.x += f.vx;
-                    f.y += f.vy;
-                    f.rot += f.rotSpeed;
-                    if (f.x < -f.w) f.x = width + f.w;
-                    if (f.x > width + f.w) f.x = -f.w;
-                    if (f.y < -f.h) f.y = height + f.h;
-                    if (f.y > height + f.h) f.y = -f.h;
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < -60) p.x = width + 60;
+                    if (p.x > width + 60) p.x = -60;
+                    if (p.y < -20) p.y = height + 20;
+                    if (p.y > height + 20) p.y = -20;
 
-                    ctx.save();
-                    ctx.translate(f.x + f.w/2, f.y + f.h/2);
-                    ctx.rotate(f.rot);
-                    ctx.strokeStyle = 'rgba(' + strokeColor + ',' + f.opacity.toFixed(3) + ')';
-                    ctx.fillStyle = 'rgba(' + fillColor + ',' + (f.opacity * 0.5).toFixed(3) + ')';
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(-f.w/2, -f.h/2, f.w, f.h);
-                    ctx.restore();
+                    ctx.font = (p.size | 0) + 'px "Inter", sans-serif';
+                    ctx.fillStyle = 'rgba(255,255,255,' + p.opacity.toFixed(3) + ')';
+                    ctx.fillText(p.text, p.x, p.y);
                 }
                 requestAnimationFrame(draw);
             }
