@@ -796,11 +796,13 @@ html.dark .grid-lines {
 }
 
 .sidebar-link .mask-inner {
+    display: inline-block;
     position: relative;
 }
 
 .sidebar-ext-icon {
     position: absolute;
+    left: 100%;
     top: 50%;
     transform: translateY(-50%);
     width: 1.3em;
