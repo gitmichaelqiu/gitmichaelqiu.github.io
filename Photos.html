@@ -76,9 +76,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- MapLibre GL JS -->
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <!-- Three.js Globe (uses existing Three.js CDN above) -->
 
     <!-- Google Fonts -->
     <link
@@ -195,10 +193,6 @@
             overflow: hidden;
             position: relative;
             cursor: pointer;
-            transition: transform 0.4s var(--mi-smooth);
-        }
-        .flow-card:hover {
-            transform: scale(1.03);
         }
         .flow-card img {
             width: 100%;
@@ -264,8 +258,8 @@
             height: calc(100vh - 60px);
             overflow-y: auto;
             overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
         .grid-section::-webkit-scrollbar {
             width: 4px;
@@ -410,81 +404,77 @@
             min-height: 400px;
             position: relative;
             overflow: hidden;
-            border-radius: 0;
+            background: #08080f;
+            cursor: grab;
         }
-        .map-container .maplibregl-map {
-            width: 100%;
-            height: 100%;
+        .map-container:active {
+            cursor: grabbing;
         }
-        .photo-marker {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: transform 0.2s var(--mi-smooth);
+        .map-container canvas {
+            display: block;
         }
-        .photo-marker:hover {
-            transform: scale(1.3);
-        }
-        .map-preview-card {
-            background: var(--bg-secondary);
+        .globe-tooltip {
+            position: absolute;
+            pointer-events: none;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            padding: 10px 14px;
             display: flex;
             gap: 10px;
-            min-width: 220px;
-            cursor: pointer;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+            white-space: nowrap;
         }
-        .map-preview-card img {
-            width: 50px;
-            height: 66px;
+        .globe-tooltip.visible { opacity: 1; }
+        .globe-tooltip img {
+            width: 40px;
+            height: 53px;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: 3px;
             flex-shrink: 0;
         }
-        .map-preview-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 2px;
-        }
-        .map-preview-title {
+        .globe-tooltip-title {
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #fff;
             letter-spacing: -0.02em;
         }
-        .map-preview-loc {
+        .globe-tooltip-loc {
             font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            letter-spacing: 0.01em;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.5);
         }
-
-        /* MapLibre popup overrides */
-        .maplibregl-popup-content {
-            border-radius: 8px !important;
-            padding: 0 !important;
-            background: transparent !important;
-            box-shadow: none !important;
+        .globe-legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            z-index: 5;
         }
-        .maplibregl-popup-close-button {
-            display: none !important;
+        .globe-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: color 0.2s;
         }
-        .maplibregl-popup-tip {
-            display: none !important;
-        }
-
-        /* Dark theme zoom controls */
-        html.dark .maplibregl-ctrl-zoom-in,
-        html.dark .maplibregl-ctrl-zoom-out {
-            background: #1a1a1a !important;
-            color: #ccc !important;
-            border-color: #333 !important;
+        .globe-legend-item:hover { color: #fff; }
+        .globe-legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
         /* ── Mini Globe (Photo Detail) ── */
@@ -495,20 +485,13 @@
             overflow: hidden;
             margin-top: 8px;
             border: 1px solid rgba(255,255,255,0.08);
+            background: #08080f;
+            position: relative;
         }
-        .mini-globe-wrapper .maplibregl-map {
+        .mini-globe-wrapper canvas {
             width: 100%;
             height: 100%;
-        }
-        .mini-globe-wrapper .maplibregl-ctrl-attrib {
-            display: none !important;
-        }
-        .mini-globe-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 0 6px rgba(255,255,255,0.6);
+            display: block;
         }
 
         /* ── Photo Detail Modal ── */
@@ -785,7 +768,7 @@
             </section>
 
             <!-- Grid Mode -->
-            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" style="padding-top: 2rem; border-top: none;">
+            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" data-lenis-prevent style="padding-top: 2rem; border-top: none;">
                 <div class="photos-grid" ref="photosGrid" style="padding-bottom: 4rem;">
                         <div v-for="(photo, i) in gridPhotos" :key="'grid-'+i"
                             class="grid-photo-card" :class="{ loaded: gridLoaded[i], visible: gridVisible[i] }"
@@ -1206,24 +1189,56 @@
 
                     function createMiniGlobe(container, lat, lng) {
                         if (!container || !lat || !lng) return;
-                        var mg = new maplibregl.Map({
-                            container: container,
-                            style: getGlobeStyle(),
-                            center: [lng, lat],
-                            zoom: 2.5,
-                            projection: 'globe',
-                            interactive: false,
-                            attributionControl: false
-                        });
-                        mg.on('load', function() {
-                            try { mg.setFog(null); } catch(e) {}
-                            var dot = document.createElement('div');
-                            dot.className = 'mini-globe-dot';
-                            new maplibregl.Marker({ element: dot })
-                                .setLngLat([lng, lat])
-                                .addTo(mg);
-                        });
-                        return mg;
+                        var size = container.clientWidth || 200;
+                        if (size < 50) size = 200;
+
+                        var scene = new THREE.Scene();
+                        var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10);
+                        camera.position.z = 2.5;
+
+                        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                        renderer.setSize(size, size);
+                        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        container.appendChild(renderer.domElement);
+
+                        scene.add(new THREE.AmbientLight(0x334466, 1.2));
+                        var dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                        dirLight.position.set(5, 3, 5);
+                        scene.add(dirLight);
+
+                        var geom = new THREE.SphereGeometry(1, 48, 36);
+                        var texLoader = new THREE.TextureLoader();
+                        var earthTex = texLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+                        var mat = new THREE.MeshPhongMaterial({ map: earthTex, specular: 0x111111, shininess: 5 });
+                        var mesh = new THREE.Mesh(geom, mat);
+                        scene.add(mesh);
+
+                        var pos = latLngToVec3(lat, lng, 1.03);
+                        var dotGeom = new THREE.SphereGeometry(0.03, 8, 8);
+                        var dotMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+                        var dot = new THREE.Mesh(dotGeom, dotMat);
+                        dot.position.copy(pos);
+                        scene.add(dot);
+
+                        var rotY = 0;
+                        var animId;
+                        function animate() {
+                            animId = requestAnimationFrame(animate);
+                            rotY += 0.003;
+                            mesh.rotation.y = rotY;
+                            dot.position.copy(latLngToVec3(lat, lng, 1.03));
+                            dot.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
+                            renderer.render(scene, camera);
+                        }
+                        animate();
+
+                        return {
+                            destroy: function() {
+                                cancelAnimationFrame(animId);
+                                renderer.dispose();
+                                if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
+                            }
+                        };
                     }
 
                     function openPhotoDetail(photo) {
@@ -1234,6 +1249,7 @@
                             lucide.createIcons();
                             if (miniGlobeEl.value && photo.lat && photo.lng) {
                                 nextTick(function () {
+                                    if (miniGlobeInstance) { miniGlobeInstance.destroy(); miniGlobeInstance = null; }
                                     miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, photo.lat, photo.lng);
                                 });
                             }
@@ -1242,7 +1258,7 @@
 
                     function closePhotoDetail() {
                         if (miniGlobeInstance) {
-                            miniGlobeInstance.remove();
+                            miniGlobeInstance.destroy();
                             miniGlobeInstance = null;
                         }
                         showPhotoModal.value = false;
@@ -1250,7 +1266,7 @@
 
                     function updateMiniGlobe() {
                         if (miniGlobeInstance) {
-                            miniGlobeInstance.remove();
+                            miniGlobeInstance.destroy();
                             miniGlobeInstance = null;
                         }
                         nextTick(function () {
@@ -1288,6 +1304,7 @@
 
                     // ── Flow Mode Drag ──
                     var flowDragging = false;
+                    var flowDidDrag = false;
                     var flowStartX = 0;
                     var flowCurrentX = 0;
                     var flowLastX = 0;
@@ -1298,19 +1315,26 @@
                     function flowDragStart(e) {
                         if (!flowTrack.value) return;
                         flowDragging = true;
+                        flowDidDrag = false;
                         var clientX = e.touches ? e.touches[0].clientX : e.clientX;
                         flowStartX = clientX - flowCurrentX;
                         flowLastX = clientX;
                         flowLastTime = Date.now();
                         flowVelocity = 0;
                         if (flowRafId) cancelAnimationFrame(flowRafId);
-                        if (flowContainer.value) flowContainer.value.classList.add('dragging');
                     }
 
                     function flowDragMove(e) {
                         if (!flowDragging || !flowTrack.value) return;
-                        e.preventDefault();
                         var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                        var moved = Math.abs(clientX - (flowStartX + flowCurrentX - (flowCurrentX || 0)));
+                        // 5px threshold before registering as drag (preserves click)
+                        if (!flowDidDrag && Math.abs(clientX - flowLastX) < 5) return;
+                        if (!flowDidDrag) {
+                            flowDidDrag = true;
+                            if (flowContainer.value) flowContainer.value.classList.add('dragging');
+                        }
+                        e.preventDefault();
                         var now = Date.now();
                         var dt = now - flowLastTime;
                         if (dt > 0) {
@@ -1326,12 +1350,42 @@
                         if (!flowDragging) return;
                         flowDragging = false;
                         if (flowContainer.value) flowContainer.value.classList.remove('dragging');
+                        if (!flowDidDrag) return;
                         // SOI-style: boost velocity by 1.35x and clamp
                         flowVelocity = Math.max(-2000, Math.min(2000, flowVelocity * 1.35));
                         if (Math.abs(flowVelocity) > 0.5) {
                             flowLastInertiaTime = 0;
                             if (flowRafId) cancelAnimationFrame(flowRafId);
                             flowRafId = requestAnimationFrame(flowInertiaLoop);
+                        }
+                    }
+
+                    // Velocity-based scale zoom (SOI-style)
+                    function applyFlowScale() {
+                        if (!flowTrack.value) return;
+                        var absV = Math.abs(flowVelocity);
+                        var cards = flowTrack.value.querySelectorAll('.flow-card');
+                        var stripScale = 1 - 0.15 * Math.min(1, absV / 1000);
+                        var cardScale = 1 - 0.12 * Math.min(1, absV / 1000);
+                        cards.forEach(function(card) {
+                            card.style.transform = 'scale(' + cardScale + ')';
+                        });
+                        if (flowContainer.value) {
+                            flowContainer.value.style.transform = 'scale(' + stripScale + ')';
+                        }
+                    }
+
+                    function resetFlowScale() {
+                        if (flowContainer.value) {
+                            flowContainer.value.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                            flowContainer.value.style.transform = 'scale(1)';
+                        }
+                        if (flowTrack.value) {
+                            var cards = flowTrack.value.querySelectorAll('.flow-card');
+                            cards.forEach(function(card) {
+                                card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                                card.style.transform = 'scale(1)';
+                            });
                         }
                     }
 
@@ -1358,6 +1412,7 @@
                         clampFlowPosition();
                         if (flowCurrentX === 0 || flowCurrentX === getFlowMinX()) flowVelocity = 0;
                         applyFlowTransform();
+                        applyFlowScale();
 
                         if (Math.abs(flowVelocity) > 0.5) {
                             flowRafId = requestAnimationFrame(flowInertiaLoop);
@@ -1365,6 +1420,7 @@
                             flowRafId = null;
                             flowLastInertiaTime = 0;
                             flowVelocity = 0;
+                            resetFlowScale();
                         }
                     }
 
@@ -1412,133 +1468,288 @@
                         });
                     }
 
-                    // ── Map Mode (MapLibre GL JS + Globe) ──
-                    var mapInstance = null;
-                    var mapMarkers = [];
-                    var mapInitialized = false;
+                    // ── Map Mode (Three.js 3D Globe) ──
+                    var globeScene = null;
+                    var globeCamera = null;
+                    var globeRenderer = null;
+                    var globeMesh = null;
+                    var globeMarkers = [];
+                    var globeInitialized = false;
+                    var globeAnimId = null;
+                    var globeTooltip = null;
+                    var globeHovered = null;
+                    var globeMouse = new THREE.Vector2();
+                    var globeRaycaster = new THREE.Raycaster();
+                    var globeDragging = false;
+                    var globePrevMouse = { x: 0, y: 0 };
+                    var globeAutoRotate = true;
+                    var globeRotY = 0;
+                    var globeRotX = 0.3;
 
-                    function getGlobeStyle() {
-                        // Use OpenFreeMap Liberty style (free vector tiles, globe-compatible)
-                        return {
-                            "version": 8,
-                            "name": "Dark Globe",
-                            "projection": {"type": "globe"},
-                            "sources": {
-                                "openfreemap": {
-                                    "type": "vector",
-                                    "url": "https://tiles.openfreemap.org/planet.json",
-                                    "attribution": "© OpenStreetMap contributors"
-                                }
-                            },
-                            "sprite": "https://styles.openfreemap.org/liberty/sprite",
-                            "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
-                            "layers": [
-                                {"id": "background", "type": "background", "paint": {"background-color": "#0a0a14"}},
-                                {"id": "water", "type": "fill", "source": "openfreemap", "source-layer": "water", "paint": {"fill-color": "#0d0d28"}},
-                                {"id": "landcover", "type": "fill", "source": "openfreemap", "source-layer": "landcover", "paint": {"fill-color": "#12122a", "fill-opacity": 0.6}},
-                                {"id": "landuse", "type": "fill", "source": "openfreemap", "source-layer": "landuse", "paint": {"fill-color": "#151530", "fill-opacity": 0.4}},
-                                {"id": "park", "type": "fill", "source": "openfreemap", "source-layer": "park", "paint": {"fill-color": "#0f0f24", "fill-opacity": 0.5}},
-                                {"id": "boundary", "type": "line", "source": "openfreemap", "source-layer": "boundary", "filter": ["==", "admin_level", 2], "paint": {"line-color": "#1e1e44", "line-width": 0.5, "line-opacity": 0.7}},
-                                {"id": "waterway", "type": "line", "source": "openfreemap", "source-layer": "waterway", "paint": {"line-color": "#0d0d28", "line-width": 0.5}},
-                                {"id": "aeroway", "type": "line", "source": "openfreemap", "source-layer": "aeroway", "paint": {"line-color": "#1a1a3a", "line-width": 0.3}},
-                                {"id": "place-city", "type": "symbol", "source": "openfreemap", "source-layer": "place", "filter": ["==", "class", "city"], "paint": {"text-color": "#3a3a6a", "text-halo-color": "#0a0a14", "text-halo-width": 1}, "layout": {"text-field": ["get", "name"], "text-font": ["Open Sans Regular"], "text-size": 10, "text-allow-overlap": false}}
-                            ]
-                        };
+                    function latLngToVec3(lat, lng, radius) {
+                        var phi = (90 - lat) * Math.PI / 180;
+                        var theta = (lng + 180) * Math.PI / 180;
+                        return new THREE.Vector3(
+                            -radius * Math.sin(phi) * Math.cos(theta),
+                            radius * Math.cos(phi),
+                            radius * Math.sin(phi) * Math.sin(theta)
+                        );
                     }
 
-                    function initMap() {
+                    function initGlobe() {
+                        if (globeInitialized) return;
                         if (!mapContainer.value) return;
                         var hasCoords = photos.value.filter(function(p) { return p.lat && p.lng; });
                         if (hasCoords.length === 0) return;
 
-                        if (mapInitialized && mapInstance) {
-                            setTimeout(function() { mapInstance.resize(); }, 100);
+                        globeInitialized = true;
+                        var rect = mapContainer.value.getBoundingClientRect();
+                        var w = rect.width || mapContainer.value.clientWidth || 800;
+                        var h = rect.height || mapContainer.value.clientHeight || 600;
+
+                        // Scene
+                        globeScene = new THREE.Scene();
+
+                        // Camera
+                        globeCamera = new THREE.PerspectiveCamera(45, w / Math.max(h, 1), 0.1, 10);
+                        globeCamera.position.set(0, 0, 2.8);
+
+                        // Renderer
+                        globeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                        globeRenderer.setSize(w, h);
+                        globeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        mapContainer.value.appendChild(globeRenderer.domElement);
+
+                        // Tooltip
+                        globeTooltip = document.createElement('div');
+                        globeTooltip.className = 'globe-tooltip';
+                        mapContainer.value.appendChild(globeTooltip);
+
+                        // Legend
+                        var legend = document.createElement('div');
+                        legend.className = 'globe-legend';
+                        photos.value.forEach(function(p) {
+                            if (!p.lat || !p.lng) return;
+                            var item = document.createElement('span');
+                            item.className = 'globe-legend-item';
+                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (p.color || '#fff') + ';"></span>' + p.location;
+                            item.addEventListener('click', function() { openPhotoDetail(p); });
+                            legend.appendChild(item);
+                        });
+                        mapContainer.value.appendChild(legend);
+
+                        // Lighting
+                        globeScene.add(new THREE.AmbientLight(0x334466, 1.2));
+                        var dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                        dirLight.position.set(5, 3, 5);
+                        globeScene.add(dirLight);
+
+                        // Earth
+                        var geom = new THREE.SphereGeometry(1, 72, 54);
+                        var texLoader = new THREE.TextureLoader();
+                        var earthTex = texLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+                        var mat = new THREE.MeshPhongMaterial({ map: earthTex, specular: 0x111111, shininess: 5 });
+                        globeMesh = new THREE.Mesh(geom, mat);
+                        globeScene.add(globeMesh);
+
+                        // Starfield
+                        var starsGeom = new THREE.BufferGeometry();
+                        var starsVerts = [];
+                        for (var i = 0; i < 600; i++) {
+                            var s = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize().multiplyScalar(4 + Math.random() * 2);
+                            starsVerts.push(s.x, s.y, s.z);
+                        }
+                        starsGeom.setAttribute('position', new THREE.Float32BufferAttribute(starsVerts, 3));
+                        var starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.008, transparent: true, opacity: 0.7 });
+                        globeScene.add(new THREE.Points(starsGeom, starsMat));
+
+                        // Photo markers
+                        globeMarkers = [];
+                        photos.value.forEach(function(photo) {
+                            if (!photo.lat || !photo.lng) return;
+                            var pos = latLngToVec3(photo.lat, photo.lng, 1.02);
+                            var dotGeom = new THREE.SphereGeometry(0.018, 16, 16);
+                            var dotMat = new THREE.MeshBasicMaterial({ color: photo.color || '#ffffff' });
+                            var dot = new THREE.Mesh(dotGeom, dotMat);
+                            dot.position.copy(pos);
+                            dot.userData = { photo: photo };
+                            globeScene.add(dot);
+                            globeMarkers.push(dot);
+
+                            // Ring
+                            var ringGeom = new THREE.TorusGeometry(0.025, 0.004, 8, 16);
+                            var ringMat = new THREE.MeshBasicMaterial({ color: photo.color || '#ffffff', transparent: true, opacity: 0.5 });
+                            var ring = new THREE.Mesh(ringGeom, ringMat);
+                            ring.position.copy(pos);
+                            ring.lookAt(new THREE.Vector3(0, 0, 0));
+                            globeScene.add(ring);
+                        });
+
+                        // Mouse events
+                        mapContainer.value.addEventListener('mousedown', onGlobeMouseDown);
+                        mapContainer.value.addEventListener('mousemove', onGlobeMouseMove);
+                        mapContainer.value.addEventListener('mouseup', onGlobeMouseUp);
+                        mapContainer.value.addEventListener('mouseleave', onGlobeMouseUp);
+                        mapContainer.value.addEventListener('touchstart', onGlobeTouchStart, { passive: false });
+                        mapContainer.value.addEventListener('touchmove', onGlobeTouchMove, { passive: false });
+                        mapContainer.value.addEventListener('touchend', onGlobeMouseUp);
+                        mapContainer.value.addEventListener('wheel', onGlobeWheel, { passive: false });
+
+                        window.addEventListener('resize', onGlobeResize);
+
+                        globeAnimate();
+                    }
+
+                    function destroyGlobe() {
+                        if (globeAnimId) cancelAnimationFrame(globeAnimId);
+                        if (globeRenderer) {
+                            globeRenderer.dispose();
+                            if (globeRenderer.domElement.parentNode) {
+                                globeRenderer.domElement.parentNode.removeChild(globeRenderer.domElement);
+                            }
+                        }
+                        if (globeTooltip && globeTooltip.parentNode) globeTooltip.parentNode.removeChild(globeTooltip);
+                        var legend = mapContainer.value ? mapContainer.value.querySelector('.globe-legend') : null;
+                        if (legend) legend.remove();
+                        if (mapContainer.value) {
+                            mapContainer.value.removeEventListener('mousedown', onGlobeMouseDown);
+                            mapContainer.value.removeEventListener('mousemove', onGlobeMouseMove);
+                            mapContainer.value.removeEventListener('mouseup', onGlobeMouseUp);
+                            mapContainer.value.removeEventListener('mouseleave', onGlobeMouseUp);
+                            mapContainer.value.removeEventListener('touchstart', onGlobeTouchStart);
+                            mapContainer.value.removeEventListener('touchmove', onGlobeTouchMove);
+                            mapContainer.value.removeEventListener('touchend', onGlobeMouseUp);
+                            mapContainer.value.removeEventListener('wheel', onGlobeWheel);
+                        }
+                        window.removeEventListener('resize', onGlobeResize);
+                        globeScene = null;
+                        globeCamera = null;
+                        globeRenderer = null;
+                        globeMesh = null;
+                        globeMarkers = [];
+                        globeInitialized = false;
+                        globeTooltip = null;
+                        globeHovered = null;
+                    }
+
+                    function globeAnimate() {
+                        globeAnimId = requestAnimationFrame(globeAnimate);
+                        if (!globeScene || !globeRenderer || !globeCamera) return;
+
+                        if (globeAutoRotate && !globeDragging) {
+                            globeRotY += 0.0015;
+                        }
+                        globeMesh.rotation.y = globeRotY;
+                        globeMesh.rotation.x = globeRotX;
+
+                        // Pulse markers
+                        var t = Date.now() * 0.002;
+                        globeMarkers.forEach(function(m, i) {
+                            m.scale.setScalar(1 + 0.15 * Math.sin(t + i));
+                        });
+
+                        globeRenderer.render(globeScene, globeCamera);
+                    }
+
+                    function onGlobeMouseDown(e) {
+                        globeDragging = true;
+                        globeAutoRotate = false;
+                        globePrevMouse.x = e.clientX;
+                        globePrevMouse.y = e.clientY;
+                    }
+
+                    function onGlobeMouseMove(e) {
+                        if (globeDragging) {
+                            var dx = e.clientX - globePrevMouse.x;
+                            var dy = e.clientY - globePrevMouse.y;
+                            globeRotY += dx * 0.005;
+                            globeRotX += dy * 0.005;
+                            globeRotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, globeRotX));
+                            globePrevMouse.x = e.clientX;
+                            globePrevMouse.y = e.clientY;
+                            if (globeTooltip) globeTooltip.classList.remove('visible');
                             return;
                         }
 
-                        mapInitialized = true;
+                        // Raycaster hover
+                        if (!mapContainer.value || !globeRenderer) return;
+                        var rect = mapContainer.value.getBoundingClientRect();
+                        globeMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                        globeMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-                        // Compute center from photos with coords
-                        var sumLat = 0, sumLng = 0, count = 0;
-                        photos.value.forEach(function(p) {
-                            if (p.lat && p.lng) { sumLat += p.lat; sumLng += p.lng; count++; }
-                        });
-                        var centerLat = count > 0 ? sumLat / count : 30;
-                        var centerLng = count > 0 ? sumLng / count : 80;
-
-                        mapInstance = new maplibregl.Map({
-                            container: mapContainer.value,
-                            style: getGlobeStyle(),
-                            center: [centerLng, centerLat],
-                            zoom: 2.5,
-                            minZoom: 1.8,
-                            bearing: 30,
-                            projection: 'globe',
-                            attributionControl: false
-                        });
-
-                        mapInstance.on('load', function() {
-                            try { mapInstance.setFog(null); } catch(e) {}
-
-                            // Add markers
-                            photos.value.forEach(function(photo) {
-                                if (!photo.lat || !photo.lng) return;
-                                var color = photo.color || '#002FA7';
-                                var el = document.createElement('div');
-                                el.className = 'photo-marker';
-                                el.style.background = color;
-                                el.title = photo.title;
-
-                                var popup = new maplibregl.Popup({ offset: 16, closeButton: false })
-                                    .setHTML('<div class="map-preview-card">' +
-                                        '<img src="' + photo.url + '" alt="' + photo.title + '" />' +
-                                        '<div class="map-preview-info">' +
-                                        '<span class="map-preview-title">' + photo.title + '</span>' +
-                                        '<span class="map-preview-loc">' + photo.location + '</span>' +
-                                        '</div></div>');
-
-                                var marker = new maplibregl.Marker({ element: el })
-                                    .setLngLat([photo.lng, photo.lat])
-                                    .setPopup(popup)
-                                    .addTo(mapInstance);
-
-                                el.addEventListener('click', function() {
-                                    openPhotoDetail(photo);
-                                });
-
-                                mapMarkers.push(marker);
-                            });
-
-                            // Fit bounds
-                            if (count > 0) {
-                                var bounds = new maplibregl.LngLatBounds();
-                                photos.value.forEach(function(p) {
-                                    if (p.lat && p.lng) bounds.extend([p.lng, p.lat]);
-                                });
-                                mapInstance.fitBounds(bounds, { padding: 80, maxZoom: 10, duration: 0 });
+                        globeRaycaster.setFromCamera(globeMouse, globeCamera);
+                        var intersects = globeRaycaster.intersectObjects(globeMarkers);
+                        if (intersects.length > 0) {
+                            var photo = intersects[0].object.userData.photo;
+                            if (photo && globeHovered !== photo) {
+                                globeHovered = photo;
+                                globeTooltip.innerHTML = '<img src="' + photo.url + '" alt="" /><div><div class="globe-tooltip-title">' + photo.title + '</div><div class="globe-tooltip-loc">' + photo.location + '</div></div>';
+                                globeTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                                globeTooltip.style.top = (e.clientY - rect.top - 15) + 'px';
+                                globeTooltip.classList.add('visible');
+                                mapContainer.value.style.cursor = 'pointer';
                             }
-                        });
-
-                        // Handle popup card clicks
-                        mapContainer.value.addEventListener('click', function(e) {
-                            var card = e.target.closest('.map-preview-card');
-                            if (card) {
-                                var title = card.querySelector('.map-preview-title');
-                                if (title) {
-                                    var photo = photos.value.find(function(p) { return p.title === title.textContent; });
-                                    if (photo) openPhotoDetail(photo);
-                                }
-                            }
-                        });
+                        } else {
+                            globeHovered = null;
+                            if (globeTooltip) globeTooltip.classList.remove('visible');
+                            mapContainer.value.style.cursor = globeDragging ? 'grabbing' : 'grab';
+                        }
                     }
 
-                    function destroyMap() {
-                        if (mapInstance) {
-                            mapInstance.remove();
-                            mapInstance = null;
-                            mapMarkers = [];
-                            mapInitialized = false;
+                    function onGlobeMouseUp(e) {
+                        if (globeDragging && globeHovered) {
+                            // Clicked on a marker
+                            openPhotoDetail(globeHovered);
                         }
+                        globeDragging = false;
+                        setTimeout(function() { globeAutoRotate = true; }, 2000);
+                    }
+
+                    function onGlobeTouchStart(e) {
+                        if (e.touches.length === 1) {
+                            e.preventDefault();
+                            globeDragging = true;
+                            globeAutoRotate = false;
+                            globePrevMouse.x = e.touches[0].clientX;
+                            globePrevMouse.y = e.touches[0].clientY;
+                        }
+                    }
+
+                    function onGlobeTouchMove(e) {
+                        if (globeDragging && e.touches.length === 1) {
+                            e.preventDefault();
+                            var dx = e.touches[0].clientX - globePrevMouse.x;
+                            var dy = e.touches[0].clientY - globePrevMouse.y;
+                            globeRotY += dx * 0.005;
+                            globeRotX += dy * 0.005;
+                            globeRotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, globeRotX));
+                            globePrevMouse.x = e.touches[0].clientX;
+                            globePrevMouse.y = e.touches[0].clientY;
+                        }
+                    }
+
+                    function onGlobeWheel(e) {
+                        if (!mapContainer.value) return;
+                        e.preventDefault();
+                        globeCamera.position.z = Math.max(1.5, Math.min(5, globeCamera.position.z + e.deltaY * 0.005));
+                    }
+
+                    function onGlobeResize() {
+                        if (!globeRenderer || !globeCamera || !mapContainer.value) return;
+                        var rect = mapContainer.value.getBoundingClientRect();
+                        var w = rect.width || mapContainer.value.clientWidth;
+                        var h = rect.height || mapContainer.value.clientHeight;
+                        if (w > 0 && h > 0) {
+                            globeRenderer.setSize(w, h);
+                            globeCamera.aspect = w / Math.max(h, 1);
+                            globeCamera.updateProjectionMatrix();
+                        }
+                    }
+
+                    function initMap() {
+                        nextTick(function () {
+                            setTimeout(function () { initGlobe(); }, 200);
+                        });
                     }
 
                     // ── Fetch Photos ──
@@ -1621,8 +1832,8 @@
                         }
                         systemQuery.removeEventListener('change', onSystemThemeChange);
                         if (lenis) lenis.destroy();
-                        if (mapInstance) { destroyMap(); }
-                        if (miniGlobeInstance) { miniGlobeInstance.remove(); miniGlobeInstance = null; }
+                        destroyGlobe();
+                        if (miniGlobeInstance) { miniGlobeInstance.destroy(); miniGlobeInstance = null; }
                         if (flowRafId) cancelAnimationFrame(flowRafId);
                     });
 
