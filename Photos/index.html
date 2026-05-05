@@ -121,16 +121,20 @@
 
         /* ── Mode Toggle Bar ── */
         .mode-toggle-bar {
-            position: sticky;
-            top: 1.2rem;
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 100;
             display: flex;
             justify-content: center;
-            padding: 2.5rem 0 1rem 0;
+            padding: 0;
             pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s var(--mi-smooth);
         }
         .mode-toggle-bar--scrolled {
-            /* wrapper handles the surface; bar stays transparent */
+            opacity: 1;
         }
         .mode-toggle-wrapper {
             display: flex;
@@ -142,13 +146,13 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 100px;
             padding: 3px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
             pointer-events: auto;
         }
         html.dark .mode-toggle-wrapper {
-            background: rgba(22, 22, 24, 0.70);
+            background: rgba(18, 18, 18, 0.85);
             border-color: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
         }
         .mode-toggle-btn {
             display: flex;
@@ -837,6 +841,8 @@
 
             </section>
 
+            <div style="height:calc(2rem + 2.5rem);"></div>
+
             <!-- Mode Toggle Bar -->
             <div class="mode-toggle-bar" :class="{ 'mode-toggle-bar--scrolled': modeBarScrolled }" ref="modeBar">
                 <div class="mode-toggle-wrapper">
@@ -1244,7 +1250,7 @@
                         scrollRafPending = false;
                         var winHeight = window.innerHeight;
                         showNavDock.value = window.scrollY > winHeight * 0.2;
-                        modeBarScrolled.value = window.scrollY > winHeight * 0.6;
+                        modeBarScrolled.value = window.scrollY > winHeight * 0.85;
                         activeSection.value = mode.value.charAt(0).toUpperCase() + mode.value.slice(1);
                     }
 
@@ -2090,8 +2096,7 @@
                                 .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
                                 .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
                                 .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
-                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3")
-                                .from('.mode-toggle-bar', { opacity: 0, y: -10, duration: 0.4, ease: "power2.out" }, "-=0.2");
+                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
 
                             // Mask reveals for mode content
                             gsap.utils.toArray('.section-rk').forEach(function (sec) {
