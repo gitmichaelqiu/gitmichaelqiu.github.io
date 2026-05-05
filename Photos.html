@@ -537,6 +537,9 @@
             overflow: hidden;
             box-shadow: 0 30px 90px rgba(0,0,0,0.6);
         }
+        .photo-modal-container.transitioning {
+            pointer-events: none;
+        }
 
         .photo-modal-image {
             flex: 0 0 auto;
@@ -682,6 +685,10 @@
         .photo-modal-nav-btn:hover {
             background: rgba(0,0,0,0.75);
             transform: translateY(-50%) scale(1.08);
+        }
+        .photo-modal-nav-btn.disabled {
+            opacity: 0.25;
+            pointer-events: none;
         }
         .photo-modal-nav-btn--prev { left: -52px; }
         .photo-modal-nav-btn--next { right: -52px; }
@@ -891,7 +898,7 @@
 
                 <!-- Split layout: image left, detail right -->
                 <div class="photo-modal-wrapper">
-                    <div class="photo-modal-container" @click.stop>
+                    <div class="photo-modal-container" :class="{ transitioning: photoTransitioning }" @click.stop ref="modalContainer">
                         <!-- Image area -->
                         <div class="photo-modal-image" ref="modalImageEl">
                             <img :src="activePhoto.url" :alt="activePhoto.title" @load="onModalImgLoad" ref="modalImg">
@@ -934,10 +941,10 @@
                     </div>
 
                     <!-- Nav arrows (outside card, at wrapper edges) -->
-                    <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" @click.stop="prevPhoto">
+                    <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" :class="{ disabled: photoTransitioning }" @click.stop="prevPhoto">
                         <i data-lucide="chevron-left" class="w-5 h-5"></i>
                     </button>
-                    <button class="photo-modal-nav-btn photo-modal-nav-btn--next" @click.stop="nextPhoto">
+                    <button class="photo-modal-nav-btn photo-modal-nav-btn--next" :class="{ disabled: photoTransitioning }" @click.stop="nextPhoto">
                         <i data-lucide="chevron-right" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -1100,6 +1107,9 @@
                     var activePhoto = ref(null);
                     var activePhotoIndex = ref(0);
                     var currentCluster = ref(null);
+                    var photoTransitioning = ref(false);
+                    var photoTransitionDir = ref(null);
+                    var modalContainer = ref(null);
                     var flowLoaded = reactive({});
                     var gridLoaded = reactive({});
                     var gridVisible = reactive({});
@@ -1341,6 +1351,11 @@
                     }
 
                     function openPhotoDetail(photo, cluster) {
+                        if (modalContainer.value) {
+                            gsap.killTweensOf(modalContainer.value);
+                            gsap.set(modalContainer.value, { opacity: 1, x: 0 });
+                        }
+                        photoTransitioning.value = false;
                         var list = cluster || photos.value;
                         currentCluster.value = cluster || null;
                         activePhoto.value = photo;
@@ -1366,6 +1381,10 @@
                             miniGlobeInstance.destroy();
                             miniGlobeInstance = null;
                         }
+                        if (modalContainer.value) {
+                            gsap.killTweensOf(modalContainer.value);
+                        }
+                        photoTransitioning.value = false;
                         showPhotoModal.value = false;
                     }
 
@@ -1407,23 +1426,49 @@
                     }
 
                     function prevPhoto() {
-                        var list = currentCluster.value || photos.value;
-                        var idx = activePhotoIndex.value - 1;
-                        if (idx < 0) idx = list.length - 1;
-                        activePhotoIndex.value = idx;
-                        activePhoto.value = list[idx];
-                        updateMiniGlobe();
-                        nextTick(function () { lucide.createIcons(); });
+                        doTransition('prev');
                     }
-
                     function nextPhoto() {
+                        doTransition('next');
+                    }
+                    function doTransition(dir) {
+                        if (photoTransitioning.value) return;
                         var list = currentCluster.value || photos.value;
-                        var idx = activePhotoIndex.value + 1;
+                        var idx = activePhotoIndex.value + (dir === 'next' ? 1 : -1);
+                        if (idx < 0) idx = list.length - 1;
                         if (idx >= list.length) idx = 0;
-                        activePhotoIndex.value = idx;
-                        activePhoto.value = list[idx];
-                        updateMiniGlobe();
-                        nextTick(function () { lucide.createIcons(); });
+                        var container = modalContainer.value;
+                        if (!container) {
+                            // fallback: instant swap
+                            activePhotoIndex.value = idx;
+                            activePhoto.value = list[idx];
+                            updateMiniGlobe();
+                            nextTick(function () { lucide.createIcons(); });
+                            return;
+                        }
+                        photoTransitioning.value = true;
+                        photoTransitionDir.value = dir;
+                        var exitX = dir === 'next' ? -24 : 24;
+                        var enterX = dir === 'next' ? 24 : -24;
+                        gsap.to(container, {
+                            opacity: 0, x: exitX, duration: 0.18, ease: "power2.in",
+                            onComplete: function () {
+                                activePhotoIndex.value = idx;
+                                activePhoto.value = list[idx];
+                                updateMiniGlobe();
+                                nextTick(function () {
+                                    lucide.createIcons();
+                                    gsap.set(container, { x: enterX });
+                                    gsap.to(container, {
+                                        opacity: 1, x: 0, duration: 0.32, ease: "power2.out",
+                                        onComplete: function () {
+                                            photoTransitioning.value = false;
+                                            photoTransitionDir.value = null;
+                                        }
+                                    });
+                                });
+                            }
+                        });
                     }
 
                     // Keyboard nav
@@ -2111,7 +2156,10 @@
                         miniGlobeEl: miniGlobeEl,
                         modalImg: modalImg,
                         modalImageEl: modalImageEl,
-                        onModalImgLoad: onModalImgLoad
+                        onModalImgLoad: onModalImgLoad,
+                        photoTransitioning: photoTransitioning,
+                        photoTransitionDir: photoTransitionDir,
+                        modalContainer: modalContainer
                     };
                 }
             }).mount('#app');
