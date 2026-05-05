@@ -290,11 +290,9 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(30%);
-            transition: filter 0.5s var(--mi-smooth), transform 0.5s var(--mi-smooth);
+            transition: transform 0.5s var(--mi-smooth);
         }
         .grid-photo-card:hover img {
-            filter: grayscale(0%);
             transform: scale(1.05);
         }
         .grid-photo-overlay {
@@ -407,15 +405,13 @@
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
             padding: 10px 14px;
-            display: flex;
+            display: none;
             gap: 10px;
             align-items: center;
-            opacity: 0;
-            transition: opacity 0.2s;
             z-index: 10;
             white-space: nowrap;
         }
-        .globe-tooltip.visible { opacity: 1; }
+        .globe-tooltip.visible { display: flex; }
         .globe-tooltip img {
             width: 40px;
             height: 53px;
@@ -758,9 +754,11 @@
                         <div v-for="(photo, i) in gridPhotos" :key="'grid-'+i"
                             class="grid-photo-card" :class="{ loaded: gridLoaded[i], visible: gridVisible[i] }"
                             :style="{ transitionDelay: (i % 4) * 0.1 + 's' }"
+                            data-hover-follow
                             @click="openPhotoDetail(photo)">
                             <div class="grid-load-bar-track"><div class="grid-load-bar"></div></div>
                             <img :src="photo.url" :alt="photo.title" @load="onGridImgLoad(i)">
+                            <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
                             <div class="grid-photo-overlay">
                                 <div>
                                     <div class="grid-photo-title">{{ photo.title }}</div>
@@ -773,7 +771,7 @@
             </section>
 
             <!-- Map Mode -->
-            <section v-show="mode === 'map'" id="map-view" class="section-rk map-section" style="padding-top: 0; border-top: none;">
+            <section v-show="mode === 'map'" id="map-view" class="section-rk map-section" style="padding-top: 0; border-top: none;" data-lenis-prevent>
                 <div class="map-container" ref="mapContainer"></div>
             </section>
 
@@ -988,10 +986,10 @@
                         return out;
                     });
                     var gridPhotos = computed(function () {
-                        // Repeat 10x for long grid browsing
+                        // Repeat 20x for long grid browsing
                         var src = photos.value;
                         var out = [];
-                        for (var r = 0; r < 10; r++) {
+                        for (var r = 0; r < 20; r++) {
                             for (var i = 0; i < src.length; i++) { out.push(src[i]); }
                         }
                         return out;
@@ -1147,9 +1145,6 @@
                         mode.value = newMode;
                         activeSection.value = newMode.charAt(0).toUpperCase() + newMode.slice(1);
 
-                        // Scroll to top when switching modes
-                        if (lenis) lenis.scrollTo(0, { immediate: true });
-
                         nextTick(function () {
                             lucide.createIcons();
 
@@ -1206,12 +1201,13 @@
                         dot.position.copy(pos);
                         mesh.add(dot);
 
-                        var rotY = 0;
+                        // Set rotation so marker faces the camera: rotY = lng + PI/2
+                        var targetRotY = lng * Math.PI / 180 + Math.PI / 2;
+                        mesh.rotation.y = targetRotY;
+
                         var animId;
                         function animate() {
                             animId = requestAnimationFrame(animate);
-                            rotY += 0.003;
-                            mesh.rotation.y = rotY;
                             renderer.render(scene, camera);
                         }
                         animate();
@@ -1444,6 +1440,102 @@
                         });
                     }
 
+                    // ── Country Flag ──
+                    function getFlag(location) {
+                        if (!location) return '';
+                        if (location.indexOf('Thailand') !== -1) return '🇹🇭';
+                        if (location.indexOf('China') !== -1) return '🇨🇳';
+                        if (location.indexOf('UAE') !== -1) return '🇦🇪';
+                        if (location.indexOf('Japan') !== -1) return '🇯🇵';
+                        return '';
+                    }
+
+                    // ── Hover Followers (country flag, matches index.html pattern) ──
+                    function setupHoverFollowers() {
+                        nextTick(function() {
+                            var cards = document.querySelectorAll('#grid-view [data-hover-follow]');
+                            cards.forEach(function(item) {
+                                var follower = item.querySelector('[data-hover-follower]');
+                                if (!follower) return;
+
+                                var ticking = false;
+                                var x = 0, y = 0, tx = 0, ty = 0;
+                                var trailLerp = 0.08;
+                                var offset = 16;
+                                var lastEvent = null;
+
+                                function setTargetFromEvent(e) {
+                                    var rect = item.getBoundingClientRect();
+                                    tx = e.clientX - rect.left + offset;
+                                    ty = e.clientY - rect.top + offset;
+                                }
+
+                                function updatePosition() {
+                                    follower.style.left = Math.round(x) + 'px';
+                                    follower.style.top = Math.round(y) + 'px';
+                                }
+
+                                function tick() {
+                                    if (lastEvent) setTargetFromEvent(lastEvent);
+                                    x += (tx - x) * trailLerp;
+                                    y += (ty - y) * trailLerp;
+                                    updatePosition();
+                                }
+
+                                function startTicker() {
+                                    if (ticking) return;
+                                    ticking = true;
+                                    gsap.ticker.add(tick);
+                                }
+
+                                function stopTicker() {
+                                    if (!ticking) return;
+                                    ticking = false;
+                                    gsap.ticker.remove(tick);
+                                }
+
+                                function hideNow() {
+                                    gsap.killTweensOf(follower);
+                                    follower.style.display = 'none';
+                                    stopTicker();
+                                }
+
+                                function showNow(e) {
+                                    follower.style.display = 'block';
+                                    setTargetFromEvent(e);
+                                    x = tx;
+                                    y = ty;
+                                    updatePosition();
+
+                                    gsap.killTweensOf(follower);
+                                    gsap.fromTo(follower,
+                                        { scale: 0.6 },
+                                        { scale: 1, duration: 0.45, ease: "elastic.out(1,0.5)", overwrite: true }
+                                    );
+
+                                    startTicker();
+                                }
+
+                                item.addEventListener('mouseenter', function(e) {
+                                    item.style.zIndex = '9999';
+                                    lastEvent = e;
+                                    showNow(e);
+                                });
+
+                                item.addEventListener('mousemove', function(e) {
+                                    lastEvent = e;
+                                    if (follower.style.display !== 'block') return;
+                                    setTargetFromEvent(e);
+                                });
+
+                                item.addEventListener('mouseleave', function() {
+                                    item.style.zIndex = '';
+                                    hideNow();
+                                });
+                            });
+                        });
+                    }
+
                     // ── Map Mode (Three.js 3D Globe) ──
                     var globeScene = null;
                     var globeCamera = null;
@@ -1458,7 +1550,7 @@
                     var globeRaycaster = new THREE.Raycaster();
                     var globeDragging = false;
                     var globePrevMouse = { x: 0, y: 0 };
-                    var globeAutoRotate = true;
+                    var globeAutoRotate = false;
                     var globeRotY = 0;
                     var globeRotX = 0.3;
 
@@ -1501,11 +1593,14 @@
                         globeTooltip.className = 'globe-tooltip';
                         mapContainer.value.appendChild(globeTooltip);
 
-                        // Legend
+                        // Legend — one item per unique location
                         var legend = document.createElement('div');
                         legend.className = 'globe-legend';
+                        var seenLocations = {};
                         photos.value.forEach(function(p) {
                             if (!p.lat || !p.lng) return;
+                            if (seenLocations[p.location]) return;
+                            seenLocations[p.location] = true;
                             var item = document.createElement('span');
                             item.className = 'globe-legend-item';
                             item.innerHTML = '<span class="globe-legend-dot" style="background:' + (p.color || '#fff') + ';"></span>' + p.location;
@@ -1539,23 +1634,32 @@
                         var starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.008, transparent: true, opacity: 0.7 });
                         globeScene.add(new THREE.Points(starsGeom, starsMat));
 
-                        // Photo markers
+                        // Photo markers — group by location so same-city photos share one marker
                         globeMarkers = [];
+                        var locationGroups = {};
                         photos.value.forEach(function(photo) {
                             if (!photo.lat || !photo.lng) return;
-                            var pos = latLngToVec3(photo.lat, photo.lng, 1.02);
-                            // Larger marker dot
-                            var dotGeom = new THREE.SphereGeometry(0.028, 16, 16);
-                            var dotMat = new THREE.MeshBasicMaterial({ color: photo.color || '#ffffff' });
+                            var key = photo.location;
+                            if (!locationGroups[key]) locationGroups[key] = [];
+                            locationGroups[key].push(photo);
+                        });
+                        Object.keys(locationGroups).forEach(function(loc) {
+                            var group = locationGroups[loc];
+                            var first = group[0];
+                            var pos = latLngToVec3(first.lat, first.lng, 1.02);
+                            // Marker dot — slightly larger for groups
+                            var size = group.length > 1 ? 0.035 : 0.028;
+                            var dotGeom = new THREE.SphereGeometry(size, 16, 16);
+                            var dotMat = new THREE.MeshBasicMaterial({ color: first.color || '#ffffff' });
                             var dot = new THREE.Mesh(dotGeom, dotMat);
                             dot.position.copy(pos);
-                            dot.userData = { photo: photo };
+                            dot.userData = { photos: group, primary: first };
                             globeMesh.add(dot);
                             globeMarkers.push(dot);
 
                             // Ring around marker
                             var ringGeom = new THREE.TorusGeometry(0.04, 0.006, 8, 16);
-                            var ringMat = new THREE.MeshBasicMaterial({ color: photo.color || '#ffffff', transparent: true, opacity: 0.6 });
+                            var ringMat = new THREE.MeshBasicMaterial({ color: first.color || '#ffffff', transparent: true, opacity: 0.6 });
                             var ring = new THREE.Mesh(ringGeom, ringMat);
                             ring.position.copy(pos);
                             ring.lookAt(new THREE.Vector3(0, 0, 0));
@@ -1613,9 +1717,6 @@
                         globeAnimId = requestAnimationFrame(globeAnimate);
                         if (!globeScene || !globeRenderer || !globeCamera) return;
 
-                        if (globeAutoRotate && !globeDragging) {
-                            globeRotY += 0.0015;
-                        }
                         globeMesh.rotation.y = globeRotY;
                         globeMesh.rotation.x = globeRotX;
 
@@ -1630,7 +1731,6 @@
 
                     function onGlobeMouseDown(e) {
                         globeDragging = true;
-                        globeAutoRotate = false;
                         globePrevMouse.x = e.clientX;
                         globePrevMouse.y = e.clientY;
                     }
@@ -1657,10 +1757,13 @@
                         globeRaycaster.setFromCamera(globeMouse, globeCamera);
                         var intersects = globeRaycaster.intersectObjects(globeMarkers);
                         if (intersects.length > 0) {
-                            var photo = intersects[0].object.userData.photo;
-                            if (photo && globeHovered !== photo) {
-                                globeHovered = photo;
-                                globeTooltip.innerHTML = '<img src="' + photo.url + '" alt="" /><div><div class="globe-tooltip-title">' + photo.title + '</div><div class="globe-tooltip-loc">' + photo.location + '</div></div>';
+                            var data = intersects[0].object.userData;
+                            var primary = data.primary;
+                            if (primary && globeHovered !== primary) {
+                                globeHovered = primary;
+                                var count = data.photos ? data.photos.length : 1;
+                                var html = '<img src="' + primary.url + '" alt="" /><div><div class="globe-tooltip-title">' + primary.location + '</div><div class="globe-tooltip-loc">' + count + ' photo' + (count > 1 ? 's' : '') + '</div></div>';
+                                globeTooltip.innerHTML = html;
                                 globeTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
                                 globeTooltip.style.top = (e.clientY - rect.top - 15) + 'px';
                                 globeTooltip.classList.add('visible');
@@ -1675,18 +1778,15 @@
 
                     function onGlobeMouseUp(e) {
                         if (globeDragging && globeHovered) {
-                            // Clicked on a marker
                             openPhotoDetail(globeHovered);
                         }
                         globeDragging = false;
-                        setTimeout(function() { globeAutoRotate = true; }, 2000);
                     }
 
                     function onGlobeTouchStart(e) {
                         if (e.touches.length === 1) {
                             e.preventDefault();
                             globeDragging = true;
-                            globeAutoRotate = false;
                             globePrevMouse.x = e.touches[0].clientX;
                             globePrevMouse.y = e.touches[0].clientY;
                         }
@@ -1739,12 +1839,13 @@
                                 for (var i = 0; i < data.photos.length * 5; i++) {
                                     flowLoaded[i] = false;
                                 }
-                                for (var j = 0; j < data.photos.length * 10; j++) {
+                                for (var j = 0; j < data.photos.length * 20; j++) {
                                     gridLoaded[j] = false;
                                     gridVisible[j] = false;
                                 }
                                 nextTick(function () {
                                     revealGridItems();
+                                    setupHoverFollowers();
                                 });
                             })
                             .catch(function(err) {
@@ -1849,6 +1950,7 @@
                         gridVisible: gridVisible,
                         onGridImgLoad: onGridImgLoad,
                         revealGridItems: revealGridItems,
+                        getFlag: getFlag,
                         mapContainer: mapContainer,
                         heroCanvas: heroCanvas,
                         miniGlobeEl: miniGlobeEl

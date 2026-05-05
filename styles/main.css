@@ -540,6 +540,16 @@ html.dark .glass-strong {
     color: var(--pure-white);
 }
 
+/* Prevent anti-aliasing seams between abutting SVG paths in logos */
+.hero__logo path,
+.hero__quicknav-logo path,
+.logo-interactive path,
+footer svg path {
+    stroke: currentColor;
+    stroke-width: 0.3;
+    paint-order: stroke fill;
+}
+
 .hero__quicknav-cols {
     display: flex;
     gap: 4rem;
