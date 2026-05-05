@@ -96,24 +96,6 @@
             animation: video-glow 4s ease-in-out infinite;
         }
 
-        /* Aurora blobs */
-        .aurora-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1; overflow: hidden;
-        }
-        .aurora-blob {
-            position: absolute; border-radius: 50%; filter: blur(80px);
-            opacity: 0.5; mix-blend-mode: screen;
-        }
-        html:not(.dark) .aurora-blob { opacity: 0.35; filter: blur(100px); }
-        .blob-1 { top: -20%; right: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0,47,167,0.8), transparent 70%); animation: float 20s infinite ease-in-out; }
-        .blob-2 { bottom: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(32,190,255,0.5), transparent 70%); animation: float 18s infinite ease-in-out; animation-delay: -5s; }
-        .blob-3 { top: 40%; right: 20%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(100,0,255,0.35), transparent 70%); animation: float 24s infinite ease-in-out; animation-delay: -10s; }
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, 20px); }
-        }
-
         /* 3D Icon — same width as main site .hero__logo */
         .hero__icon-3d {
             width: min(80%, 32rem);
@@ -170,11 +152,6 @@
             <!-- Hero Section -->
             <section id="home" class="hero">
                 <div class="hero__bg"></div>
-                <div class="aurora-container">
-                    <div class="aurora-blob blob-1"></div>
-                    <div class="aurora-blob blob-2"></div>
-                    <div class="aurora-blob blob-3"></div>
-                </div>
                 <canvas ref="waveCanvas" class="absolute inset-0 z-[1] pointer-events-none"></canvas>
                 <nav class="hero__quicknav hide-mobile">
                     <div class="hero__quicknav-logo">
