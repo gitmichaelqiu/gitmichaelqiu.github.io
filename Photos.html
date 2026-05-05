@@ -511,6 +511,7 @@
         }
 
         .photo-modal-container {
+            position: relative;
             display: flex;
             width: calc(100vw - 6rem);
             max-width: 1100px;
@@ -525,18 +526,19 @@
         }
 
         .photo-modal-image {
-            flex: 0 0 55%;
+            flex: 0 0 auto;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #000;
+            background: transparent;
             overflow: hidden;
             min-height: 0;
+            min-width: 0;
         }
         .photo-modal-image img {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
         }
 
@@ -644,7 +646,7 @@
             border-top: 1px solid rgba(0,0,0,0.08);
         }
 
-        /* ── Nav Arrows (inside image area) ── */
+        /* ── Nav Arrows (at edges of entire card) ── */
         .photo-modal-nav-btn {
             position: absolute;
             top: 50%;
@@ -653,10 +655,10 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.45);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
             color: #fff;
             cursor: pointer;
             display: flex;
@@ -665,11 +667,11 @@
             transition: all 0.3s var(--mi-smooth);
         }
         .photo-modal-nav-btn:hover {
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             transform: translateY(-50%) scale(1.08);
         }
-        .photo-modal-nav-btn--prev { left: 12px; }
-        .photo-modal-nav-btn--next { right: 12px; }
+        .photo-modal-nav-btn--prev { left: -20px; }
+        .photo-modal-nav-btn--next { right: -20px; }
 
         /* ── Mobile: stack vertically ── */
         @media (max-width: 768px) {
@@ -679,7 +681,8 @@
                 max-height: 92vh;
             }
             .photo-modal-image {
-                flex: 0 0 45%;
+                flex: 0 0 40%;
+                min-height: 200px;
             }
             .photo-modal-detail {
                 flex: 1;
@@ -690,6 +693,8 @@
                 width: 36px;
                 height: 36px;
             }
+            .photo-modal-nav-btn--prev { left: -18px; }
+            .photo-modal-nav-btn--next { right: -18px; }
         }
 
         /* ── Scroll-driven section reveals ── */
@@ -874,16 +879,17 @@
                 <!-- Split layout: image left, detail right -->
                 <div class="photo-modal-container" @click.stop>
                     <!-- Image area -->
-                    <div class="photo-modal-image">
-                        <img :src="activePhoto.url" :alt="activePhoto.title">
-                        <!-- Nav arrows -->
-                        <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" @click.stop="prevPhoto">
-                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                        </button>
-                        <button class="photo-modal-nav-btn photo-modal-nav-btn--next" @click.stop="nextPhoto">
-                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                        </button>
+                    <div class="photo-modal-image" ref="modalImageEl">
+                        <img :src="activePhoto.url" :alt="activePhoto.title" @load="onModalImgLoad" ref="modalImg">
                     </div>
+
+                    <!-- Nav arrows (at card edges) -->
+                    <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" @click.stop="prevPhoto">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button class="photo-modal-nav-btn photo-modal-nav-btn--next" @click.stop="nextPhoto">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
 
                     <!-- Detail panel -->
                     <div class="photo-modal-detail" v-if="activePhoto">
@@ -1250,6 +1256,8 @@
                     // ── Photo Detail Modal ──
                     var miniGlobeEl = ref(null);
                     var miniGlobeInstance = null;
+                    var modalImg = ref(null);
+                    var modalImageEl = ref(null);
 
                     function createMiniGlobe(container, lat, lng) {
                         if (!container || !lat || !lng) return;
@@ -1277,7 +1285,7 @@
                         var mesh = new THREE.Mesh(geom, mat);
                         scene.add(mesh);
 
-                        var pos = latLngToVec3(lat, lng, 1.03);
+                        var pos = latLngToVec3(-lat, lng, 1.03);
                         var dotGeom = new THREE.SphereGeometry(0.04, 8, 8);
                         var dotMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
                         var dot = new THREE.Mesh(dotGeom, dotMat);
@@ -1327,6 +1335,28 @@
                             miniGlobeInstance = null;
                         }
                         showPhotoModal.value = false;
+                    }
+
+                    function onModalImgLoad() {
+                        nextTick(function () {
+                            var img = modalImg.value;
+                            var container = modalImageEl.value;
+                            if (!img || !container) return;
+                            var natW = img.naturalWidth;
+                            var natH = img.naturalHeight;
+                            if (!natW || !natH) return;
+                            var ratio = natW / natH;
+                            var availH = container.clientHeight;
+                            if (availH < 50) availH = window.innerHeight * 0.82;
+                            var imgW = availH * ratio;
+                            var parentW = container.parentElement ? container.parentElement.clientWidth : 1100;
+                            var detailEl = container.parentElement ? container.parentElement.querySelector('.photo-modal-detail') : null;
+                            var detailW = detailEl ? detailEl.offsetWidth : 300;
+                            var maxImgW = parentW - detailW - 40;
+                            if (imgW > maxImgW) imgW = maxImgW;
+                            if (imgW < 120) imgW = 120;
+                            container.style.flex = '0 0 ' + Math.round(imgW) + 'px';
+                        });
                     }
 
                     function updateMiniGlobe() {
@@ -2043,7 +2073,10 @@
                         getFlag: getFlag,
                         mapContainer: mapContainer,
                         heroCanvas: heroCanvas,
-                        miniGlobeEl: miniGlobeEl
+                        miniGlobeEl: miniGlobeEl,
+                        modalImg: modalImg,
+                        modalImageEl: modalImageEl,
+                        onModalImgLoad: onModalImgLoad
                     };
                 }
             }).mount('#app');
