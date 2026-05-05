@@ -198,11 +198,9 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%);
-            transition: filter 0.5s var(--mi-smooth), transform 0.5s var(--mi-smooth);
+            transition: transform 0.5s var(--mi-smooth);
         }
         .flow-card:hover img {
-            filter: grayscale(0%);
             transform: scale(1.05);
         }
         .flow-card-overlay {
@@ -216,14 +214,14 @@
         }
         .flow-card-location {
             font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.95rem;
             font-weight: 500;
             color: rgba(255,255,255,0.9);
             letter-spacing: -0.02em;
         }
         .flow-card-date {
             font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             color: rgba(255,255,255,0.6);
             letter-spacing: 0.02em;
         }
@@ -255,21 +253,8 @@
 
         /* ── Grid Mode ── */
         .grid-section {
-            height: calc(100vh - 60px);
-            overflow-y: auto;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-        .grid-section::-webkit-scrollbar {
-            width: 4px;
-        }
-        .grid-section::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .grid-section::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
+            min-height: calc(100vh - 60px);
+            padding-bottom: 4rem;
         }
         .photos-grid {
             display: grid;
@@ -329,14 +314,14 @@
         .grid-photo-title {
             font-family: 'Inter', sans-serif;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             color: #fff;
             letter-spacing: -0.03em;
             margin-bottom: 2px;
         }
         .grid-photo-meta {
             font-family: 'Inter', sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: rgba(255,255,255,0.7);
             letter-spacing: 0.01em;
         }
@@ -573,14 +558,14 @@
         }
         .photo-detail-label {
             font-family: 'Inter', sans-serif;
-            font-size: 0.65rem;
+            font-size: 0.75rem;
             color: rgba(255,255,255,0.4);
             letter-spacing: 0.04em;
             text-transform: uppercase;
         }
         .photo-detail-value {
             font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: rgba(255,255,255,0.9);
             letter-spacing: -0.02em;
             line-height: 1.3;
@@ -592,7 +577,7 @@
         }
         .photo-detail-tag {
             font-family: 'Inter', sans-serif;
-            font-size: 0.65rem;
+            font-size: 0.72rem;
             padding: 2px 8px;
             border-radius: 100px;
             background: rgba(255,255,255,0.1);
@@ -601,7 +586,7 @@
         }
         .photo-detail-diary {
             font-family: 'Playfair Display', serif;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: rgba(255,255,255,0.7);
             line-height: 1.6;
             font-style: italic;
@@ -768,7 +753,7 @@
             </section>
 
             <!-- Grid Mode -->
-            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" data-lenis-prevent style="padding-top: 2rem; border-top: none;">
+            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" style="padding-top: 2rem; border-top: none;">
                 <div class="photos-grid" ref="photosGrid" style="padding-bottom: 4rem;">
                         <div v-for="(photo, i) in gridPhotos" :key="'grid-'+i"
                             class="grid-photo-card" :class="{ loaded: gridLoaded[i], visible: gridVisible[i] }"
@@ -1003,10 +988,10 @@
                         return out;
                     });
                     var gridPhotos = computed(function () {
-                        // Repeat 4x for long grid browsing
+                        // Repeat 10x for long grid browsing
                         var src = photos.value;
                         var out = [];
-                        for (var r = 0; r < 4; r++) {
+                        for (var r = 0; r < 10; r++) {
                             for (var i = 0; i < src.length; i++) { out.push(src[i]); }
                         }
                         return out;
@@ -1162,18 +1147,19 @@
                         mode.value = newMode;
                         activeSection.value = newMode.charAt(0).toUpperCase() + newMode.slice(1);
 
+                        // Scroll to top when switching modes
+                        if (lenis) lenis.scrollTo(0, { immediate: true });
+
                         nextTick(function () {
                             lucide.createIcons();
 
                             if (newMode === 'grid') {
-                                // Trigger grid visibility
                                 revealGridItems();
                             }
                             if (newMode === 'map') {
                                 initMap();
                             }
                             if (newMode === 'flow') {
-                                // Reset flow position
                                 if (flowTrack.value) {
                                     flowTrack.value.style.transform = 'translateX(0)';
                                     flowCurrentX = 0;
@@ -1214,11 +1200,11 @@
                         scene.add(mesh);
 
                         var pos = latLngToVec3(lat, lng, 1.03);
-                        var dotGeom = new THREE.SphereGeometry(0.03, 8, 8);
+                        var dotGeom = new THREE.SphereGeometry(0.04, 8, 8);
                         var dotMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
                         var dot = new THREE.Mesh(dotGeom, dotMat);
                         dot.position.copy(pos);
-                        scene.add(dot);
+                        mesh.add(dot);
 
                         var rotY = 0;
                         var animId;
@@ -1226,8 +1212,6 @@
                             animId = requestAnimationFrame(animate);
                             rotY += 0.003;
                             mesh.rotation.y = rotY;
-                            dot.position.copy(latLngToVec3(lat, lng, 1.03));
-                            dot.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotY);
                             renderer.render(scene, camera);
                         }
                         animate();
@@ -1360,26 +1344,18 @@
                         }
                     }
 
-                    // Velocity-based scale zoom (SOI-style)
+                    // Velocity-based scale zoom (SOI-style) — only scale cards, not container
                     function applyFlowScale() {
                         if (!flowTrack.value) return;
                         var absV = Math.abs(flowVelocity);
                         var cards = flowTrack.value.querySelectorAll('.flow-card');
-                        var stripScale = 1 - 0.15 * Math.min(1, absV / 1000);
-                        var cardScale = 1 - 0.12 * Math.min(1, absV / 1000);
+                        var cardScale = 1 - 0.15 * Math.min(1, absV / 1000);
                         cards.forEach(function(card) {
                             card.style.transform = 'scale(' + cardScale + ')';
                         });
-                        if (flowContainer.value) {
-                            flowContainer.value.style.transform = 'scale(' + stripScale + ')';
-                        }
                     }
 
                     function resetFlowScale() {
-                        if (flowContainer.value) {
-                            flowContainer.value.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                            flowContainer.value.style.transform = 'scale(1)';
-                        }
                         if (flowTrack.value) {
                             var cards = flowTrack.value.querySelectorAll('.flow-card');
                             cards.forEach(function(card) {
@@ -1568,21 +1544,22 @@
                         photos.value.forEach(function(photo) {
                             if (!photo.lat || !photo.lng) return;
                             var pos = latLngToVec3(photo.lat, photo.lng, 1.02);
-                            var dotGeom = new THREE.SphereGeometry(0.018, 16, 16);
+                            // Larger marker dot
+                            var dotGeom = new THREE.SphereGeometry(0.028, 16, 16);
                             var dotMat = new THREE.MeshBasicMaterial({ color: photo.color || '#ffffff' });
                             var dot = new THREE.Mesh(dotGeom, dotMat);
                             dot.position.copy(pos);
                             dot.userData = { photo: photo };
-                            globeScene.add(dot);
+                            globeMesh.add(dot);
                             globeMarkers.push(dot);
 
-                            // Ring
-                            var ringGeom = new THREE.TorusGeometry(0.025, 0.004, 8, 16);
-                            var ringMat = new THREE.MeshBasicMaterial({ color: photo.color || '#ffffff', transparent: true, opacity: 0.5 });
+                            // Ring around marker
+                            var ringGeom = new THREE.TorusGeometry(0.04, 0.006, 8, 16);
+                            var ringMat = new THREE.MeshBasicMaterial({ color: photo.color || '#ffffff', transparent: true, opacity: 0.6 });
                             var ring = new THREE.Mesh(ringGeom, ringMat);
                             ring.position.copy(pos);
                             ring.lookAt(new THREE.Vector3(0, 0, 0));
-                            globeScene.add(ring);
+                            globeMesh.add(ring);
                         });
 
                         // Mouse events
@@ -1762,7 +1739,7 @@
                                 for (var i = 0; i < data.photos.length * 5; i++) {
                                     flowLoaded[i] = false;
                                 }
-                                for (var j = 0; j < data.photos.length * 4; j++) {
+                                for (var j = 0; j < data.photos.length * 10; j++) {
                                     gridLoaded[j] = false;
                                     gridVisible[j] = false;
                                 }
