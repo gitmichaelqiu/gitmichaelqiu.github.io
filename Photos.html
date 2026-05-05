@@ -262,12 +262,14 @@
         .grid-section {
             min-height: calc(100vh - 60px);
             padding-bottom: 4rem;
+            overflow-x: hidden;
         }
         .photos-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            padding: 0 2rem 4rem;
+            padding: 0 0 4rem;
+            width: 100%;
         }
         @media (min-width: 768px) {
             .photos-grid {
@@ -472,13 +474,13 @@
             flex-shrink: 0;
         }
 
-        /* ── Mini Globe (Photo Detail) ── */
+        /* ── Mini Globe ── */
         .mini-globe-wrapper {
             width: 100%;
             aspect-ratio: 1;
             border-radius: 8px;
             overflow: hidden;
-            margin-top: 8px;
+            margin-top: 4px;
             border: 1px solid rgba(255,255,255,0.08);
             background: #08080f;
             position: relative;
@@ -498,59 +500,67 @@
         .photo-modal-leave-to {
             opacity: 0;
         }
-        .photo-modal-enter-active .photo-modal-content,
-        .photo-modal-leave-active .photo-modal-content {
+        .photo-modal-enter-active .photo-modal-container,
+        .photo-modal-leave-active .photo-modal-container {
             transition: transform 0.5s var(--ease-out-expo), opacity 0.4s var(--mi-smooth);
         }
-        .photo-modal-enter-from .photo-modal-content,
-        .photo-modal-leave-to .photo-modal-content {
+        .photo-modal-enter-from .photo-modal-container,
+        .photo-modal-leave-to .photo-modal-container {
             transform: scale(0.95);
             opacity: 0;
         }
 
-        .photo-detail-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10004;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px 24px;
-            min-width: 260px;
-            max-width: 340px;
-            max-height: calc(100vh - 140px);
-            overflow-y: auto;
+        .photo-modal-container {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            width: calc(100vw - 6rem);
+            max-width: 1100px;
+            max-height: 82vh;
+            background: rgba(20,20,20,0.96);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.6);
         }
-        @media (max-width: 768px) {
-            .photo-detail-panel {
-                bottom: 80px;
-                left: 50%;
-                right: auto;
-                transform: translateX(-50%);
-                min-width: auto;
-                width: calc(100vw - 48px);
-                max-width: calc(100vw - 48px);
-                max-height: 30vh;
-            }
-            .photo-modal-nav {
-                display: flex;
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 10004;
-                gap: 12px;
-            }
-        }
-        .photo-detail-row {
+
+        .photo-modal-image {
+            flex: 0 0 55%;
+            position: relative;
             display: flex;
             align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .photo-modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .photo-modal-detail {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+        .photo-modal-detail::-webkit-scrollbar {
+            width: 4px;
+        }
+        .photo-modal-detail::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+        }
+
+        /* ── Detail Rows ── */
+        .photo-detail-row {
+            display: flex;
+            align-items: flex-start;
             gap: 10px;
         }
         .photo-detail-icon {
@@ -559,6 +569,7 @@
             height: 16px;
             opacity: 0.3;
             color: #fff;
+            margin-top: 2px;
         }
         .photo-detail-text {
             flex: 1;
@@ -568,7 +579,7 @@
         }
         .photo-detail-label {
             font-family: 'Inter', sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: rgba(255,255,255,0.4);
             letter-spacing: 0.04em;
             text-transform: uppercase;
@@ -583,12 +594,12 @@
         .photo-detail-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 6px;
         }
         .photo-detail-tag {
             font-family: 'Inter', sans-serif;
             font-size: 0.72rem;
-            padding: 2px 8px;
+            padding: 3px 10px;
             border-radius: 100px;
             background: rgba(255,255,255,0.1);
             color: rgba(255,255,255,0.7);
@@ -596,27 +607,56 @@
         }
         .photo-detail-diary {
             font-family: 'Playfair Display', serif;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.7);
-            line-height: 1.6;
-            font-style: italic;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
             letter-spacing: 0.01em;
             margin-top: 4px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
+
+        /* ── Light theme overrides ── */
+        html:not(.dark) .photo-modal-container {
+            background: rgba(250,250,246,0.96);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.15);
+        }
+        html:not(.dark) .photo-modal-detail::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.15);
+        }
+        html:not(.dark) .photo-detail-icon {
+            color: #333;
+        }
+        html:not(.dark) .photo-detail-label {
+            color: rgba(0,0,0,0.45);
+        }
+        html:not(.dark) .photo-detail-value {
+            color: rgba(0,0,0,0.85);
+        }
+        html:not(.dark) .photo-detail-tag {
+            background: rgba(0,0,0,0.06);
+            color: rgba(0,0,0,0.65);
+        }
+        html:not(.dark) .photo-detail-diary {
+            color: rgba(0,0,0,0.75);
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        /* ── Nav Arrows (inside image area) ── */
         .photo-modal-nav-btn {
-            position: fixed;
+            position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 10004;
-            width: 48px;
-            height: 48px;
+            z-index: 5;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.12);
             color: #fff;
             cursor: pointer;
             display: flex;
@@ -628,8 +668,29 @@
             background: rgba(0,0,0,0.7);
             transform: translateY(-50%) scale(1.08);
         }
-        .photo-modal-nav-btn--prev { left: 20px; }
-        .photo-modal-nav-btn--next { right: 20px; }
+        .photo-modal-nav-btn--prev { left: 12px; }
+        .photo-modal-nav-btn--next { right: 12px; }
+
+        /* ── Mobile: stack vertically ── */
+        @media (max-width: 768px) {
+            .photo-modal-container {
+                flex-direction: column;
+                width: calc(100vw - 2rem);
+                max-height: 92vh;
+            }
+            .photo-modal-image {
+                flex: 0 0 45%;
+            }
+            .photo-modal-detail {
+                flex: 1;
+                padding: 18px 20px;
+                gap: 12px;
+            }
+            .photo-modal-nav-btn {
+                width: 36px;
+                height: 36px;
+            }
+        }
 
         /* ── Scroll-driven section reveals ── */
         @media (max-width: 767px) {
@@ -767,7 +828,7 @@
             </section>
 
             <!-- Grid Mode -->
-            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" style="padding-top: 2rem; border-top: none;">
+            <section v-show="mode === 'grid'" id="grid-view" class="section-rk grid-section" style="padding-top: 2rem; border-top: none; padding-left: 2rem; padding-right: 2rem;">
                 <div class="photos-grid" ref="photosGrid" style="padding-bottom: 4rem;">
                         <div v-for="(photo, i) in gridPhotos" :key="'grid-'+i"
                             class="grid-photo-card" :class="{ loaded: gridLoaded[i], visible: gridVisible[i] }"
@@ -810,54 +871,54 @@
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
 
-                <!-- Image -->
-                <div class="photo-modal-content relative w-full max-w-[90vw] max-h-[85vh] flex items-center justify-center">
-                    <img :src="activePhoto.url" :alt="activePhoto.title"
-                        class="max-w-full max-h-[85vh] object-contain rounded-lg"
-                        style="box-shadow: 0 25px 80px rgba(0,0,0,0.5);">
-                </div>
+                <!-- Split layout: image left, detail right -->
+                <div class="photo-modal-container" @click.stop>
+                    <!-- Image area -->
+                    <div class="photo-modal-image">
+                        <img :src="activePhoto.url" :alt="activePhoto.title">
+                        <!-- Nav arrows -->
+                        <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" @click.stop="prevPhoto">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <button class="photo-modal-nav-btn photo-modal-nav-btn--next" @click.stop="nextPhoto">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
 
-                <!-- Nav arrows -->
-                <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" @click.stop="prevPhoto">
-                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
-                </button>
-                <button class="photo-modal-nav-btn photo-modal-nav-btn--next" @click.stop="nextPhoto">
-                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
-                </button>
-
-                <!-- Detail panel -->
-                <div class="photo-detail-panel" v-if="activePhoto">
-                    <div class="photo-detail-row">
-                        <div class="photo-detail-text">
-                            <span class="photo-detail-value" style="font-size: 1rem; font-weight: 600;">{{ activePhoto.title }}</span>
+                    <!-- Detail panel -->
+                    <div class="photo-modal-detail" v-if="activePhoto">
+                        <div class="photo-detail-row">
+                            <div class="photo-detail-text">
+                                <span class="photo-detail-value" style="font-size: 1.15rem; font-weight: 700;">{{ activePhoto.title }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="photo-detail-row">
-                        <i data-lucide="map-pin" class="photo-detail-icon w-4 h-4"></i>
-                        <div class="photo-detail-text">
-                            <span class="photo-detail-label">Location</span>
-                            <span class="photo-detail-value">{{ activePhoto.location }}</span>
+                        <div class="photo-detail-row">
+                            <i data-lucide="map-pin" class="photo-detail-icon w-4 h-4"></i>
+                            <div class="photo-detail-text">
+                                <span class="photo-detail-label">Location</span>
+                                <span class="photo-detail-value">{{ activePhoto.location }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="photo-detail-row">
-                        <i data-lucide="calendar" class="photo-detail-icon w-4 h-4"></i>
-                        <div class="photo-detail-text">
-                            <span class="photo-detail-label">Date</span>
-                            <span class="photo-detail-value">{{ activePhoto.date }}</span>
+                        <div class="photo-detail-row">
+                            <i data-lucide="calendar" class="photo-detail-icon w-4 h-4"></i>
+                            <div class="photo-detail-text">
+                                <span class="photo-detail-label">Date</span>
+                                <span class="photo-detail-value">{{ activePhoto.date }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="photo-detail-row">
-                        <i data-lucide="camera" class="photo-detail-icon w-4 h-4"></i>
-                        <div class="photo-detail-text">
-                            <span class="photo-detail-label">Camera &amp; Settings</span>
-                            <span class="photo-detail-value">{{ activePhoto.camera }} &middot; {{ activePhoto.aperture }} &middot; {{ activePhoto.shutter }}</span>
+                        <div class="photo-detail-row">
+                            <i data-lucide="camera" class="photo-detail-icon w-4 h-4"></i>
+                            <div class="photo-detail-text">
+                                <span class="photo-detail-label">Camera &amp; Settings</span>
+                                <span class="photo-detail-value">{{ activePhoto.camera }} &middot; {{ activePhoto.aperture }} &middot; {{ activePhoto.shutter }}</span>
+                            </div>
                         </div>
+                        <div class="photo-detail-tags">
+                            <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
+                        </div>
+                        <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
+                        <div class="mini-globe-wrapper" v-if="activePhoto.lat && activePhoto.lng" ref="miniGlobeEl"></div>
                     </div>
-                    <div class="photo-detail-tags">
-                        <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
-                    </div>
-                    <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
-                    <div class="mini-globe-wrapper" v-if="activePhoto.lat && activePhoto.lng" ref="miniGlobeEl"></div>
                 </div>
             </div>
         </transition>
@@ -1181,6 +1242,7 @@
                                     flowCurrentX = 0;
                                     flowVelocity = 0;
                                 }
+                                setupHoverFollowers();
                             }
                         });
                     }
@@ -1222,11 +1284,8 @@
                         dot.position.copy(pos);
                         mesh.add(dot);
 
-                        // Three.js mesh.rotation.y uses CW rotation (right-hand rule).
-                        // Marker at (cos(lat)cos(lng), sin(lat), -cos(lat)sin(lng)) must rotate to face +Z camera.
-                        // Solving x'=0, z'>0 gives θ = -π/2 - lng.
-                        var targetRotY = -Math.PI / 2 - lng * Math.PI / 180;
-                        mesh.rotation.y = targetRotY;
+                        // Rotate around Y axis to bring marker longitude to face +Z camera
+                        mesh.rotation.y = -Math.PI / 2 - lng * Math.PI / 180;
 
                         var animId;
                         function animate() {
