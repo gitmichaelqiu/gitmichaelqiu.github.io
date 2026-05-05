@@ -795,6 +795,22 @@ html.dark .grid-lines {
     color: var(--klein-blue-text);
 }
 
+.sidebar-link .mask-inner {
+    position: relative;
+}
+
+.sidebar-ext-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.3em;
+    height: 1.3em;
+    margin-left: 0.04em;
+    stroke-width: 1.5;
+    color: inherit;
+    transition: color 0.4s var(--mi-smooth);
+}
+
 /* ============================================================
    8. Works Grid & Cards
    ============================================================ */
