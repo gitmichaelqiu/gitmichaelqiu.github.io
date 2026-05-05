@@ -98,57 +98,67 @@
         /* ── Mode Toggle Bar ── */
         .mode-toggle-bar {
             position: sticky;
-            top: 0;
+            top: 1.2rem;
             z-index: 100;
             display: flex;
             justify-content: center;
-            padding: 1.2rem 0;
-            transition: background 0.4s var(--mi-smooth), box-shadow 0.4s var(--mi-smooth);
+            padding: 2.5rem 0 1rem 0;
+            pointer-events: none;
         }
         .mode-toggle-bar--scrolled {
-            background: var(--bg-primary);
-            box-shadow: 0 1px 0 var(--border-color);
+            /* wrapper handles the surface; bar stays transparent */
         }
         .mode-toggle-wrapper {
             display: flex;
             align-items: center;
-            gap: 2px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            gap: 3px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 100px;
-            padding: 2px;
+            padding: 3px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            pointer-events: auto;
+        }
+        html.dark .mode-toggle-wrapper {
+            background: rgba(22, 22, 24, 0.70);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04);
         }
         .mode-toggle-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 16px;
+            gap: 7px;
+            padding: 8px 18px;
             border-radius: 100px;
             border: none;
             cursor: pointer;
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.01em;
             color: var(--text-secondary);
             background: transparent;
-            transition: all 0.25s var(--mi-smooth);
+            transition: all 0.3s var(--mi-smooth);
             white-space: nowrap;
         }
         .mode-toggle-btn.active {
             background: var(--klein-blue);
             color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 47, 167, 0.22);
         }
         .mode-toggle-btn:not(.active):hover {
-            color: var(--text-primary);
-            background: rgba(0,0,0,0.04);
+            color: var(--klein-blue-text);
+            background: rgba(0, 47, 167, 0.05);
         }
         html.dark .mode-toggle-btn:not(.active):hover {
-            background: rgba(255,255,255,0.06);
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.08);
         }
         .mode-toggle-btn i {
-            width: 14px;
-            height: 14px;
+            width: 15px;
+            height: 15px;
         }
 
         /* ── Flow Mode (Horizontal Strip) ── */
@@ -500,18 +510,21 @@
         .photo-modal-leave-to {
             opacity: 0;
         }
-        .photo-modal-enter-active .photo-modal-container,
-        .photo-modal-leave-active .photo-modal-container {
+        .photo-modal-enter-active .photo-modal-wrapper,
+        .photo-modal-leave-active .photo-modal-wrapper {
             transition: transform 0.5s var(--ease-out-expo), opacity 0.4s var(--mi-smooth);
         }
-        .photo-modal-enter-from .photo-modal-container,
-        .photo-modal-leave-to .photo-modal-container {
+        .photo-modal-enter-from .photo-modal-wrapper,
+        .photo-modal-leave-to .photo-modal-wrapper {
             transform: scale(0.95);
             opacity: 0;
         }
 
-        .photo-modal-container {
+        .photo-modal-wrapper {
             position: relative;
+        }
+
+        .photo-modal-container {
             display: flex;
             width: calc(100vw - 6rem);
             max-width: 1100px;
@@ -670,8 +683,8 @@
             background: rgba(0,0,0,0.75);
             transform: translateY(-50%) scale(1.08);
         }
-        .photo-modal-nav-btn--prev { left: -20px; }
-        .photo-modal-nav-btn--next { right: -20px; }
+        .photo-modal-nav-btn--prev { left: -52px; }
+        .photo-modal-nav-btn--next { right: -52px; }
 
         /* ── Mobile: stack vertically ── */
         @media (max-width: 768px) {
@@ -693,8 +706,8 @@
                 width: 36px;
                 height: 36px;
             }
-            .photo-modal-nav-btn--prev { left: -18px; }
-            .photo-modal-nav-btn--next { right: -18px; }
+            .photo-modal-nav-btn--prev { left: -42px; }
+            .photo-modal-nav-btn--next { right: -42px; }
         }
 
         /* ── Scroll-driven section reveals ── */
@@ -877,54 +890,56 @@
                 </button>
 
                 <!-- Split layout: image left, detail right -->
-                <div class="photo-modal-container" @click.stop>
-                    <!-- Image area -->
-                    <div class="photo-modal-image" ref="modalImageEl">
-                        <img :src="activePhoto.url" :alt="activePhoto.title" @load="onModalImgLoad" ref="modalImg">
+                <div class="photo-modal-wrapper">
+                    <div class="photo-modal-container" @click.stop>
+                        <!-- Image area -->
+                        <div class="photo-modal-image" ref="modalImageEl">
+                            <img :src="activePhoto.url" :alt="activePhoto.title" @load="onModalImgLoad" ref="modalImg">
+                        </div>
+
+                        <!-- Detail panel -->
+                        <div class="photo-modal-detail" v-if="activePhoto">
+                            <div class="photo-detail-row">
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-value" style="font-size: 1.15rem; font-weight: 700;">{{ activePhoto.title }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-row">
+                                <i data-lucide="map-pin" class="photo-detail-icon w-4 h-4"></i>
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-label">Location</span>
+                                    <span class="photo-detail-value">{{ activePhoto.location }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-row">
+                                <i data-lucide="calendar" class="photo-detail-icon w-4 h-4"></i>
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-label">Date</span>
+                                    <span class="photo-detail-value">{{ activePhoto.date }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-row">
+                                <i data-lucide="camera" class="photo-detail-icon w-4 h-4"></i>
+                                <div class="photo-detail-text">
+                                    <span class="photo-detail-label">Camera &amp; Settings</span>
+                                    <span class="photo-detail-value">{{ activePhoto.camera }} &middot; {{ activePhoto.aperture }} &middot; {{ activePhoto.shutter }}</span>
+                                </div>
+                            </div>
+                            <div class="photo-detail-tags">
+                                <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
+                            </div>
+                            <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
+                            <div class="mini-globe-wrapper" v-if="activePhoto.lat && activePhoto.lng" ref="miniGlobeEl"></div>
+                        </div>
                     </div>
 
-                    <!-- Nav arrows (at card edges) -->
+                    <!-- Nav arrows (outside card, at wrapper edges) -->
                     <button class="photo-modal-nav-btn photo-modal-nav-btn--prev" @click.stop="prevPhoto">
                         <i data-lucide="chevron-left" class="w-5 h-5"></i>
                     </button>
                     <button class="photo-modal-nav-btn photo-modal-nav-btn--next" @click.stop="nextPhoto">
                         <i data-lucide="chevron-right" class="w-5 h-5"></i>
                     </button>
-
-                    <!-- Detail panel -->
-                    <div class="photo-modal-detail" v-if="activePhoto">
-                        <div class="photo-detail-row">
-                            <div class="photo-detail-text">
-                                <span class="photo-detail-value" style="font-size: 1.15rem; font-weight: 700;">{{ activePhoto.title }}</span>
-                            </div>
-                        </div>
-                        <div class="photo-detail-row">
-                            <i data-lucide="map-pin" class="photo-detail-icon w-4 h-4"></i>
-                            <div class="photo-detail-text">
-                                <span class="photo-detail-label">Location</span>
-                                <span class="photo-detail-value">{{ activePhoto.location }}</span>
-                            </div>
-                        </div>
-                        <div class="photo-detail-row">
-                            <i data-lucide="calendar" class="photo-detail-icon w-4 h-4"></i>
-                            <div class="photo-detail-text">
-                                <span class="photo-detail-label">Date</span>
-                                <span class="photo-detail-value">{{ activePhoto.date }}</span>
-                            </div>
-                        </div>
-                        <div class="photo-detail-row">
-                            <i data-lucide="camera" class="photo-detail-icon w-4 h-4"></i>
-                            <div class="photo-detail-text">
-                                <span class="photo-detail-label">Camera &amp; Settings</span>
-                                <span class="photo-detail-value">{{ activePhoto.camera }} &middot; {{ activePhoto.aperture }} &middot; {{ activePhoto.shutter }}</span>
-                            </div>
-                        </div>
-                        <div class="photo-detail-tags">
-                            <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
-                        </div>
-                        <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
-                        <div class="mini-globe-wrapper" v-if="activePhoto.lat && activePhoto.lng" ref="miniGlobeEl"></div>
-                    </div>
                 </div>
             </div>
         </transition>
@@ -1261,16 +1276,22 @@
 
                     function createMiniGlobe(container, lat, lng) {
                         if (!container || !lat || !lng) return;
-                        var size = container.clientWidth || 200;
-                        if (size < 50) size = 200;
+                        var rect = container.getBoundingClientRect();
+                        var size = rect.width || container.clientWidth || 0;
+                        // Guard against zero/negative sizes during layout transitions.
+                        if (size < 50) size = Math.max(window.innerWidth * 0.25, 200);
+                        var dpr = Math.min(window.devicePixelRatio, 2);
+                        var renderSize = Math.round(size * dpr);
 
                         var scene = new THREE.Scene();
                         var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10);
-                        camera.position.z = 2.5;
+                        camera.position.z = 3.0;
 
                         var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                        renderer.setSize(size, size);
-                        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        renderer.setSize(renderSize, renderSize);
+                        renderer.setPixelRatio(1);
+                        renderer.domElement.style.width = size + 'px';
+                        renderer.domElement.style.height = size + 'px';
                         container.appendChild(renderer.domElement);
 
                         scene.add(new THREE.AmbientLight(0x334466, 1.2));
@@ -1285,15 +1306,23 @@
                         var mesh = new THREE.Mesh(geom, mat);
                         scene.add(mesh);
 
-                        var pos = latLngToVec3(-lat, lng, 1.03);
+                        var pos = latLngToVec3(lat, lng, 1.03);
                         var dotGeom = new THREE.SphereGeometry(0.04, 8, 8);
                         var dotMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
                         var dot = new THREE.Mesh(dotGeom, dotMat);
                         dot.position.copy(pos);
                         mesh.add(dot);
 
-                        // Rotate around Y axis to bring marker longitude to face +Z camera
-                        mesh.rotation.y = -Math.PI / 2 - lng * Math.PI / 180;
+                        // Align marker to camera via shortest-arc quaternion, then
+                        // cancel pole lean with a world-Z roll so the pole stays vertical.
+                        var p = pos.clone().normalize();
+                        var q = new THREE.Quaternion().setFromUnitVectors(p, new THREE.Vector3(0, 0, 1));
+                        var north = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
+                        var roll = (north.x === 0 && north.y === 0) ? 0 : Math.atan2(north.x, north.y);
+                        var rollQ = new THREE.Quaternion().setFromAxisAngle(
+                            new THREE.Vector3(0, 0, 1), roll
+                        );
+                        mesh.setRotationFromQuaternion(rollQ.multiply(q));
 
                         var animId;
                         function animate() {
@@ -1321,9 +1350,12 @@
                         nextTick(function () {
                             lucide.createIcons();
                             if (miniGlobeEl.value && photo.lat && photo.lng) {
-                                nextTick(function () {
-                                    if (miniGlobeInstance) { miniGlobeInstance.destroy(); miniGlobeInstance = null; }
-                                    miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, photo.lat, photo.lng);
+                                // Wait for modal layout to settle before measuring container
+                                requestAnimationFrame(function () {
+                                    requestAnimationFrame(function () {
+                                        if (miniGlobeInstance) { miniGlobeInstance.destroy(); miniGlobeInstance = null; }
+                                        miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, photo.lat, photo.lng);
+                                    });
                                 });
                             }
                         });
@@ -1346,13 +1378,14 @@
                             var natH = img.naturalHeight;
                             if (!natW || !natH) return;
                             var ratio = natW / natH;
+                            // Reset flex so clientHeight reflects the natural container height
+                            container.style.flex = '';
                             var availH = container.clientHeight;
-                            if (availH < 50) availH = window.innerHeight * 0.82;
+                            if (availH < 50) availH = window.innerHeight * 0.8;
                             var imgW = availH * ratio;
                             var parentW = container.parentElement ? container.parentElement.clientWidth : 1100;
-                            var detailEl = container.parentElement ? container.parentElement.querySelector('.photo-modal-detail') : null;
-                            var detailW = detailEl ? detailEl.offsetWidth : 300;
-                            var maxImgW = parentW - detailW - 40;
+                            // Image takes at most 65% of card width (leaves min ~35% for detail)
+                            var maxImgW = parentW * 0.65;
                             if (imgW > maxImgW) imgW = maxImgW;
                             if (imgW < 120) imgW = 120;
                             container.style.flex = '0 0 ' + Math.round(imgW) + 'px';
@@ -1364,10 +1397,12 @@
                             miniGlobeInstance.destroy();
                             miniGlobeInstance = null;
                         }
-                        nextTick(function () {
-                            if (miniGlobeEl.value && activePhoto.value && activePhoto.value.lat && activePhoto.value.lng) {
-                                miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, activePhoto.value.lat, activePhoto.value.lng);
-                            }
+                        requestAnimationFrame(function () {
+                            requestAnimationFrame(function () {
+                                if (miniGlobeEl.value && activePhoto.value && activePhoto.value.lat && activePhoto.value.lng) {
+                                    miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, activePhoto.value.lat, activePhoto.value.lng);
+                                }
+                            });
                         });
                     }
 
