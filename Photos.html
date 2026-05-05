@@ -1193,8 +1193,8 @@
                                 // Reset flow position
                                 if (flowTrack.value) {
                                     flowTrack.value.style.transform = 'translateX(0)';
-                                    flowTargetX = 0;
                                     flowCurrentX = 0;
+                                    flowVelocity = 0;
                                 }
                             }
                         });
@@ -1211,11 +1211,12 @@
                             style: getGlobeStyle(),
                             center: [lng, lat],
                             zoom: 2.5,
+                            projection: 'globe',
                             interactive: false,
                             attributionControl: false
                         });
                         mg.on('load', function() {
-                            mg.setFog(null);
+                            try { mg.setFog(null); } catch(e) {}
                             var dot = document.createElement('div');
                             dot.className = 'mini-globe-dot';
                             new maplibregl.Marker({ element: dot })
@@ -1289,12 +1290,10 @@
                     var flowDragging = false;
                     var flowStartX = 0;
                     var flowCurrentX = 0;
-                    var flowTargetX = 0;
                     var flowLastX = 0;
                     var flowLastTime = 0;
                     var flowVelocity = 0;
                     var flowRafId = null;
-                    var flowDecay = 0.92;
 
                     function flowDragStart(e) {
                         if (!flowTrack.value) return;
@@ -1320,7 +1319,6 @@
                         flowLastX = clientX;
                         flowLastTime = now;
                         flowCurrentX = clientX - flowStartX;
-                        flowTargetX = flowCurrentX;
                         applyFlowTransform();
                     }
 
@@ -1328,38 +1326,45 @@
                         if (!flowDragging) return;
                         flowDragging = false;
                         if (flowContainer.value) flowContainer.value.classList.remove('dragging');
-                        // Apply inertia
-                        if (Math.abs(flowVelocity) > 0.05) {
-                            flowTargetX += flowVelocity * 120;
-                            clampFlowTarget();
-                            flowInertiaLoop();
+                        // SOI-style: boost velocity by 1.35x and clamp
+                        flowVelocity = Math.max(-2000, Math.min(2000, flowVelocity * 1.35));
+                        if (Math.abs(flowVelocity) > 0.5) {
+                            flowLastInertiaTime = 0;
+                            if (flowRafId) cancelAnimationFrame(flowRafId);
+                            flowRafId = requestAnimationFrame(flowInertiaLoop);
                         }
                     }
 
-                    function clampFlowTarget() {
+                    function clampFlowPosition() {
                         if (!flowTrack.value) return;
-                        var trackWidth = flowTrack.value.scrollWidth;
-                        var containerWidth = flowContainer.value ? flowContainer.value.clientWidth : window.innerWidth;
-                        var minX = Math.min(0, -(trackWidth - containerWidth - 64));
-                        var maxX = 0;
-                        if (trackWidth < containerWidth) {
-                            flowTargetX = 0;
-                        } else {
-                            flowTargetX = Math.max(minX, Math.min(maxX, flowTargetX));
-                        }
+                        var minX = getFlowMinX();
+                        if (flowCurrentX > 0) flowCurrentX = 0;
+                        if (minX < 0 && flowCurrentX < minX) flowCurrentX = minX;
                     }
 
-                    function flowInertiaLoop() {
+                    var flowLastInertiaTime = 0;
+
+                    function flowInertiaLoop(ts) {
                         if (flowDragging) return;
-                        flowTargetX += (flowTargetX - flowCurrentX) * 0.1;
-                        flowVelocity *= flowDecay;
-                        flowTargetX += flowVelocity * 16;
-                        clampFlowTarget();
-                        flowCurrentX += (flowTargetX - flowCurrentX) * 0.2;
+                        if (!flowLastInertiaTime) flowLastInertiaTime = ts;
+                        var dt = ts - flowLastInertiaTime;
+                        flowLastInertiaTime = ts;
+                        if (dt < 1) dt = 1;
+
+                        // SOI-style exponential decay: 0.88 per frame at 60fps
+                        var decay = Math.pow(0.88, dt / 16.667);
+                        flowVelocity *= decay;
+                        flowCurrentX += (dt / 1000) * flowVelocity;
+                        clampFlowPosition();
+                        if (flowCurrentX === 0 || flowCurrentX === getFlowMinX()) flowVelocity = 0;
                         applyFlowTransform();
 
-                        if (Math.abs(flowVelocity) > 0.01 || Math.abs(flowTargetX - flowCurrentX) > 0.1) {
+                        if (Math.abs(flowVelocity) > 0.5) {
                             flowRafId = requestAnimationFrame(flowInertiaLoop);
+                        } else {
+                            flowRafId = null;
+                            flowLastInertiaTime = 0;
+                            flowVelocity = 0;
                         }
                     }
 
@@ -1367,6 +1372,25 @@
                         if (flowTrack.value) {
                             flowTrack.value.style.transform = 'translateX(' + flowCurrentX + 'px)';
                         }
+                    }
+
+                    function getFlowMinX() {
+                        if (!flowTrack.value) return 0;
+                        var trackWidth = flowTrack.value.scrollWidth;
+                        var containerWidth = flowContainer.value ? flowContainer.value.clientWidth : window.innerWidth;
+                        return Math.min(0, -(trackWidth - containerWidth - 64));
+                    }
+
+                    // Wheel → horizontal conversion (SOI-style: attached to container, high multiplier)
+                    function onFlowWheel(e) {
+                        if (mode.value !== 'flow' || showPhotoModal.value) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // SOI uses 12,000x multiplier for strong response
+                        var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                        flowVelocity = Math.max(-2000, Math.min(2000, flowVelocity - delta * 12));
+                        if (flowRafId) cancelAnimationFrame(flowRafId);
+                        flowRafId = requestAnimationFrame(flowInertiaLoop);
                     }
 
                     // ── Flow Image Load ──
@@ -1394,23 +1418,30 @@
                     var mapInitialized = false;
 
                     function getGlobeStyle() {
+                        // Use OpenFreeMap Liberty style (free vector tiles, globe-compatible)
                         return {
                             "version": 8,
+                            "name": "Dark Globe",
                             "projection": {"type": "globe"},
                             "sources": {
-                                "carto-dark": {
-                                    "type": "raster",
-                                    "tiles": [
-                                        "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
-                                        "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
-                                        "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png"
-                                    ],
-                                    "tileSize": 256,
-                                    "attribution": "© <a href='https://carto.com/'>CARTO</a> © <a href='https://www.openstreetmap.org/'>OSM</a>"
+                                "openfreemap": {
+                                    "type": "vector",
+                                    "url": "https://tiles.openfreemap.org/planet.json",
+                                    "attribution": "© OpenStreetMap contributors"
                                 }
                             },
+                            "sprite": "https://styles.openfreemap.org/liberty/sprite",
+                            "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
                             "layers": [
-                                {"id": "carto-tiles", "type": "raster", "source": "carto-dark"}
+                                {"id": "background", "type": "background", "paint": {"background-color": "#0a0a14"}},
+                                {"id": "water", "type": "fill", "source": "openfreemap", "source-layer": "water", "paint": {"fill-color": "#0d0d28"}},
+                                {"id": "landcover", "type": "fill", "source": "openfreemap", "source-layer": "landcover", "paint": {"fill-color": "#12122a", "fill-opacity": 0.6}},
+                                {"id": "landuse", "type": "fill", "source": "openfreemap", "source-layer": "landuse", "paint": {"fill-color": "#151530", "fill-opacity": 0.4}},
+                                {"id": "park", "type": "fill", "source": "openfreemap", "source-layer": "park", "paint": {"fill-color": "#0f0f24", "fill-opacity": 0.5}},
+                                {"id": "boundary", "type": "line", "source": "openfreemap", "source-layer": "boundary", "filter": ["==", "admin_level", 2], "paint": {"line-color": "#1e1e44", "line-width": 0.5, "line-opacity": 0.7}},
+                                {"id": "waterway", "type": "line", "source": "openfreemap", "source-layer": "waterway", "paint": {"line-color": "#0d0d28", "line-width": 0.5}},
+                                {"id": "aeroway", "type": "line", "source": "openfreemap", "source-layer": "aeroway", "paint": {"line-color": "#1a1a3a", "line-width": 0.3}},
+                                {"id": "place-city", "type": "symbol", "source": "openfreemap", "source-layer": "place", "filter": ["==", "class", "city"], "paint": {"text-color": "#3a3a6a", "text-halo-color": "#0a0a14", "text-halo-width": 1}, "layout": {"text-field": ["get", "name"], "text-font": ["Open Sans Regular"], "text-size": 10, "text-allow-overlap": false}}
                             ]
                         };
                     }
@@ -1439,13 +1470,15 @@
                             container: mapContainer.value,
                             style: getGlobeStyle(),
                             center: [centerLng, centerLat],
-                            zoom: 3,
+                            zoom: 2.5,
                             minZoom: 1.8,
+                            bearing: 30,
+                            projection: 'globe',
                             attributionControl: false
                         });
 
                         mapInstance.on('load', function() {
-                            mapInstance.setFog(null);
+                            try { mapInstance.setFog(null); } catch(e) {}
 
                             // Add markers
                             photos.value.forEach(function(photo) {
@@ -1539,6 +1572,9 @@
                         initHeroCanvas(heroCanvas.value);
                         window.addEventListener('scroll', onScroll, { passive: true });
                         window.addEventListener('keydown', onKeyDown);
+                        if (flowContainer.value) {
+                            flowContainer.value.addEventListener('wheel', onFlowWheel, { passive: false });
+                        }
                         systemQuery.addEventListener('change', onSystemThemeChange);
 
                         nextTick().then(function () {
@@ -1580,6 +1616,9 @@
                     onUnmounted(function () {
                         window.removeEventListener('scroll', onScroll);
                         window.removeEventListener('keydown', onKeyDown);
+                        if (flowContainer.value) {
+                            flowContainer.value.removeEventListener('wheel', onFlowWheel);
+                        }
                         systemQuery.removeEventListener('change', onSystemThemeChange);
                         if (lenis) lenis.destroy();
                         if (mapInstance) { destroyMap(); }
