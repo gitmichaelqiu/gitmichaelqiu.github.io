@@ -190,17 +190,24 @@
             max-height: 70vh;
             aspect-ratio: 3/4;
             border-radius: 4px;
-            overflow: hidden;
+            overflow: visible;
             position: relative;
             cursor: pointer;
         }
-        .flow-card img {
+        .flow-card-img-wrap {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .flow-card-img-wrap img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s var(--mi-smooth);
         }
-        .flow-card:hover img {
+        .flow-card:hover .flow-card-img-wrap img {
             transform: scale(1.05);
         }
         .flow-card-overlay {
@@ -277,7 +284,7 @@
         .grid-photo-card {
             aspect-ratio: 3/4;
             border-radius: 4px;
-            overflow: hidden;
+            overflow: visible;
             position: relative;
             cursor: pointer;
             opacity: 0;
@@ -286,13 +293,20 @@
         .grid-photo-card.visible {
             animation: gridFadeUp 0.8s var(--ease-out-expo) forwards;
         }
-        .grid-photo-card img {
+        .grid-photo-img-wrap {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .grid-photo-img-wrap img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s var(--mi-smooth);
         }
-        .grid-photo-card:hover img {
+        .grid-photo-card:hover .grid-photo-img-wrap img {
             transform: scale(1.05);
         }
         .grid-photo-overlay {
@@ -735,9 +749,13 @@
                         <div class="flow-track" ref="flowTrack">
                             <div v-for="(photo, i) in flowPhotos" :key="'flow-'+i"
                                 class="flow-card" :class="{ loaded: flowLoaded[i] }"
+                                data-hover-follow
                                 @click="openPhotoDetail(photo)">
-                                <div class="flow-load-bar-track"><div class="flow-load-bar"></div></div>
-                                <img :src="photo.url" :alt="photo.title" @load="onFlowImgLoad(i)">
+                                <div class="flow-card-img-wrap">
+                                    <div class="flow-load-bar-track"><div class="flow-load-bar"></div></div>
+                                    <img :src="photo.url" :alt="photo.title" @load="onFlowImgLoad(i)">
+                                </div>
+                                <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
                                 <div class="flow-card-overlay">
                                     <div class="flow-card-location">{{ photo.location }}</div>
                                     <div class="flow-card-date">{{ photo.date }}</div>
@@ -756,8 +774,10 @@
                             :style="{ transitionDelay: (i % 4) * 0.1 + 's' }"
                             data-hover-follow
                             @click="openPhotoDetail(photo)">
-                            <div class="grid-load-bar-track"><div class="grid-load-bar"></div></div>
-                            <img :src="photo.url" :alt="photo.title" @load="onGridImgLoad(i)">
+                            <div class="grid-photo-img-wrap">
+                                <div class="grid-load-bar-track"><div class="grid-load-bar"></div></div>
+                                <img :src="photo.url" :alt="photo.title" @load="onGridImgLoad(i)">
+                            </div>
                             <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
                             <div class="grid-photo-overlay">
                                 <div>
@@ -997,6 +1017,7 @@
                     var showPhotoModal = ref(false);
                     var activePhoto = ref(null);
                     var activePhotoIndex = ref(0);
+                    var currentCluster = ref(null);
                     var flowLoaded = reactive({});
                     var gridLoaded = reactive({});
                     var gridVisible = reactive({});
@@ -1201,8 +1222,10 @@
                         dot.position.copy(pos);
                         mesh.add(dot);
 
-                        // Set rotation so marker faces the camera: rotY = lng + PI/2
-                        var targetRotY = lng * Math.PI / 180 + Math.PI / 2;
+                        // Three.js mesh.rotation.y uses CW rotation (right-hand rule).
+                        // Marker at (cos(lat)cos(lng), sin(lat), -cos(lat)sin(lng)) must rotate to face +Z camera.
+                        // Solving x'=0, z'>0 gives θ = -π/2 - lng.
+                        var targetRotY = -Math.PI / 2 - lng * Math.PI / 180;
                         mesh.rotation.y = targetRotY;
 
                         var animId;
@@ -1221,9 +1244,12 @@
                         };
                     }
 
-                    function openPhotoDetail(photo) {
+                    function openPhotoDetail(photo, cluster) {
+                        var list = cluster || photos.value;
+                        currentCluster.value = cluster || null;
                         activePhoto.value = photo;
-                        activePhotoIndex.value = photos.value.findIndex(function(p) { return p.id === photo.id; });
+                        activePhotoIndex.value = list.findIndex(function(p) { return p.id === photo.id; });
+                        if (activePhotoIndex.value < 0) activePhotoIndex.value = 0;
                         showPhotoModal.value = true;
                         nextTick(function () {
                             lucide.createIcons();
@@ -1257,19 +1283,21 @@
                     }
 
                     function prevPhoto() {
+                        var list = currentCluster.value || photos.value;
                         var idx = activePhotoIndex.value - 1;
-                        if (idx < 0) idx = photos.value.length - 1;
+                        if (idx < 0) idx = list.length - 1;
                         activePhotoIndex.value = idx;
-                        activePhoto.value = photos.value[idx];
+                        activePhoto.value = list[idx];
                         updateMiniGlobe();
                         nextTick(function () { lucide.createIcons(); });
                     }
 
                     function nextPhoto() {
+                        var list = currentCluster.value || photos.value;
                         var idx = activePhotoIndex.value + 1;
-                        if (idx >= photos.value.length) idx = 0;
+                        if (idx >= list.length) idx = 0;
                         activePhotoIndex.value = idx;
-                        activePhoto.value = photos.value[idx];
+                        activePhoto.value = list[idx];
                         updateMiniGlobe();
                         nextTick(function () { lucide.createIcons(); });
                     }
@@ -1453,7 +1481,7 @@
                     // ── Hover Followers (country flag, matches index.html pattern) ──
                     function setupHoverFollowers() {
                         nextTick(function() {
-                            var cards = document.querySelectorAll('#grid-view [data-hover-follow]');
+                            var cards = document.querySelectorAll('#grid-view [data-hover-follow], #flow-view [data-hover-follow]');
                             cards.forEach(function(item) {
                                 var follower = item.querySelector('[data-hover-follower]');
                                 if (!follower) return;
@@ -1546,6 +1574,7 @@
                     var globeAnimId = null;
                     var globeTooltip = null;
                     var globeHovered = null;
+                    var globeHoveredCluster = null;
                     var globeMouse = new THREE.Vector2();
                     var globeRaycaster = new THREE.Raycaster();
                     var globeDragging = false;
@@ -1593,18 +1622,25 @@
                         globeTooltip.className = 'globe-tooltip';
                         mapContainer.value.appendChild(globeTooltip);
 
+                        // Build location groups
+                        var locationGroups = {};
+                        photos.value.forEach(function(photo) {
+                            if (!photo.lat || !photo.lng) return;
+                            var key = photo.location;
+                            if (!locationGroups[key]) locationGroups[key] = [];
+                            locationGroups[key].push(photo);
+                        });
+
                         // Legend — one item per unique location
                         var legend = document.createElement('div');
                         legend.className = 'globe-legend';
-                        var seenLocations = {};
-                        photos.value.forEach(function(p) {
-                            if (!p.lat || !p.lng) return;
-                            if (seenLocations[p.location]) return;
-                            seenLocations[p.location] = true;
+                        Object.keys(locationGroups).forEach(function(loc) {
+                            var group = locationGroups[loc];
+                            var first = group[0];
                             var item = document.createElement('span');
                             item.className = 'globe-legend-item';
-                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (p.color || '#fff') + ';"></span>' + p.location;
-                            item.addEventListener('click', function() { openPhotoDetail(p); });
+                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (first.color || '#fff') + ';"></span>' + first.location;
+                            item.addEventListener('click', function() { openPhotoDetail(first, group); });
                             legend.appendChild(item);
                         });
                         mapContainer.value.appendChild(legend);
@@ -1634,15 +1670,8 @@
                         var starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.008, transparent: true, opacity: 0.7 });
                         globeScene.add(new THREE.Points(starsGeom, starsMat));
 
-                        // Photo markers — group by location so same-city photos share one marker
+                        // Photo markers — reuse locationGroups built above
                         globeMarkers = [];
-                        var locationGroups = {};
-                        photos.value.forEach(function(photo) {
-                            if (!photo.lat || !photo.lng) return;
-                            var key = photo.location;
-                            if (!locationGroups[key]) locationGroups[key] = [];
-                            locationGroups[key].push(photo);
-                        });
                         Object.keys(locationGroups).forEach(function(loc) {
                             var group = locationGroups[loc];
                             var first = group[0];
@@ -1761,6 +1790,7 @@
                             var primary = data.primary;
                             if (primary && globeHovered !== primary) {
                                 globeHovered = primary;
+                                globeHoveredCluster = data.photos;
                                 var count = data.photos ? data.photos.length : 1;
                                 var html = '<img src="' + primary.url + '" alt="" /><div><div class="globe-tooltip-title">' + primary.location + '</div><div class="globe-tooltip-loc">' + count + ' photo' + (count > 1 ? 's' : '') + '</div></div>';
                                 globeTooltip.innerHTML = html;
@@ -1771,6 +1801,7 @@
                             }
                         } else {
                             globeHovered = null;
+                            globeHoveredCluster = null;
                             if (globeTooltip) globeTooltip.classList.remove('visible');
                             mapContainer.value.style.cursor = globeDragging ? 'grabbing' : 'grab';
                         }
@@ -1778,7 +1809,7 @@
 
                     function onGlobeMouseUp(e) {
                         if (globeDragging && globeHovered) {
-                            openPhotoDetail(globeHovered);
+                            openPhotoDetail(globeHovered, globeHoveredCluster);
                         }
                         globeDragging = false;
                     }
