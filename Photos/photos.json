@@ -2,7 +2,7 @@
   "photos": [
     {
       "id": 1,
-      "url": "https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/main/resources/photos/01.jpeg",
+      "url": "https://raw.githubusercontent.com/gitmichaelqiu/mqiu.dev/main/resources/photos/01.jpeg",
       "title": "Sunsetz",
       "location": "Ko Chang, Thailand",
       "date": "November 2023",
@@ -17,7 +17,7 @@
     },
     {
       "id": 2,
-      "url": "https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/main/resources/photos/02.jpeg",
+      "url": "https://raw.githubusercontent.com/gitmichaelqiu/mqiu.dev/main/resources/photos/02.jpeg",
       "title": "Golden Hour",
       "location": "Ko Chang, Thailand",
       "date": "November 2023",
@@ -32,7 +32,7 @@
     },
     {
       "id": 3,
-      "url": "https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/main/resources/photos/03.jpeg",
+      "url": "https://raw.githubusercontent.com/gitmichaelqiu/mqiu.dev/main/resources/photos/03.jpeg",
       "title": "Luna Hooked on A Twig",
       "location": "Hangzhou, China",
       "date": "March 2024",
@@ -47,7 +47,7 @@
     },
     {
       "id": 4,
-      "url": "https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/main/resources/photos/04.jpeg",
+      "url": "https://raw.githubusercontent.com/gitmichaelqiu/mqiu.dev/main/resources/photos/04.jpeg",
       "title": "Shed A Light",
       "location": "Abu Dhabi, UAE",
       "date": "January 2025",
@@ -62,7 +62,7 @@
     },
     {
       "id": 5,
-      "url": "https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/main/resources/photos/05.jpeg",
+      "url": "https://raw.githubusercontent.com/gitmichaelqiu/mqiu.dev/main/resources/photos/05.jpeg",
       "title": "Mountain Ferry",
       "location": "Hokkaido, Japan",
       "date": "February 2025",
@@ -77,7 +77,7 @@
     },
     {
       "id": 6,
-      "url": "https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/main/resources/photos/06.jpeg",
+      "url": "https://raw.githubusercontent.com/gitmichaelqiu/mqiu.dev/main/resources/photos/06.jpeg",
       "title": "Lighthouse",
       "location": "Hokkaido, Japan",
       "date": "February 2025",
@@ -92,7 +92,7 @@
     },
     {
       "id": 7,
-      "url": "https://raw.githubusercontent.com/gitmichaelqiu/gitmichaelqiu.github.io/main/resources/photos/07.jpeg",
+      "url": "https://raw.githubusercontent.com/gitmichaelqiu/mqiu.dev/main/resources/photos/07.jpeg",
       "title": "Path",
       "location": "Hokkaido, Japan",
       "date": "February 2025",
