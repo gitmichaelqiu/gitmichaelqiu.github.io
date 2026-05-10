@@ -36,7 +36,10 @@
                 try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
             }
             function setStoredTheme(val) {
-                try { localStorage.setItem(STORAGE_KEY, val); } catch (e) {}
+                try {
+                    if (val === null) localStorage.removeItem(STORAGE_KEY);
+                    else localStorage.setItem(STORAGE_KEY, val);
+                } catch (e) {}
             }
 
             function resolveTheme() {
@@ -46,15 +49,29 @@
             }
 
             var isDark = ref(resolveTheme() === 'dark');
+            var themeMode = ref(getStoredTheme() || 'system');
 
             function applyTheme(dark) {
                 document.documentElement.classList.toggle('dark', dark);
             }
 
             function toggleTheme() {
-                var next = !isDark.value;
-                isDark.value = next;
-                setStoredTheme(next ? 'dark' : 'light');
+                switch (themeMode.value) {
+                    case 'dark':
+                        themeMode.value = 'light';
+                        isDark.value = false;
+                        setStoredTheme('light');
+                        break;
+                    case 'light':
+                        themeMode.value = 'system';
+                        setStoredTheme(null);
+                        isDark.value = systemQuery.matches;
+                        break;
+                    default:
+                        themeMode.value = 'dark';
+                        isDark.value = true;
+                        setStoredTheme('dark');
+                }
             }
 
             watch(isDark, function (val) {
@@ -70,7 +87,7 @@
             });
 
             function onSystemThemeChange(e) {
-                if (getStoredTheme() === null) {
+                if (themeMode.value === 'system') {
                     isDark.value = e.matches;
                 }
             }
@@ -532,6 +549,7 @@
                 navDockBottom: navDockBottom,
                 sectionLabels: sectionLabels,
                 isDark: isDark,
+                themeMode: themeMode,
                 toggleTheme: toggleTheme,
                 showVideoModal: showVideoModal,
                 openVideoModal: openVideoModal,

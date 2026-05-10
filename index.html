@@ -111,9 +111,10 @@
             <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] ||
                     activeSection }}</span></div>
             <button @click="toggleTheme" class="nav-dock__btn"
-                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
-                <span v-if="isDark"><i data-lucide="sun" class="w-5 h-5"></i></span>
-                <span v-else><i data-lucide="moon" class="w-5 h-5"></i></span>
+                :aria-label="themeMode === 'dark' ? 'Switch to light mode' : themeMode === 'light' ? 'Switch to system theme' : 'Switch to dark mode'">
+                <span v-if="themeMode === 'dark'"><i data-lucide="moon" class="w-5 h-5"></i></span>
+                <span v-else-if="themeMode === 'light'"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                <span v-else><i data-lucide="sun-moon" class="w-5 h-5"></i></span>
             </button>
             <button @click="toggleSidebar" class="nav-dock__btn" :class="{ 'active': isSidebarOpen }">
                 <i data-lucide="menu" class="w-5 h-5"></i>
