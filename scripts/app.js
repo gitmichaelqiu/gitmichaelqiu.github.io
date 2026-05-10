@@ -72,6 +72,9 @@
                         isDark.value = true;
                         setStoredTheme('dark');
                 }
+                nextTick(function () {
+                    lucide.createIcons();
+                });
             }
 
             watch(isDark, function (val) {
