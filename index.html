@@ -111,7 +111,7 @@
             <div class="nav-dock__label"><span class="nav-dock__label-text">{{ sectionLabels[activeSection] ||
                     activeSection }}</span></div>
             <button @click="toggleTheme" class="nav-dock__btn"
-                :aria-label="themeMode === 'dark' ? 'Switch to light mode' : themeMode === 'light' ? 'Switch to system theme' : 'Switch to dark mode'">
+                :aria-label="themeMode === 'system' ? 'Switch to light mode' : themeMode === 'light' ? 'Switch to dark mode' : 'Switch to system theme'">
                 <span v-if="themeMode === 'dark'"><i data-lucide="moon" class="w-5 h-5"></i></span>
                 <span v-else-if="themeMode === 'light'"><i data-lucide="sun" class="w-5 h-5"></i></span>
                 <span v-else><i data-lucide="sun-moon" class="w-5 h-5"></i></span>
@@ -543,7 +543,7 @@
 
     <script src="scripts/particles.js"></script>
     <script src="scripts/project3d.js"></script>
-    <script src="scripts/app.js"></script>
+    <script src="scripts/app.js?v=3"></script>
 </body>
 
 </html>
