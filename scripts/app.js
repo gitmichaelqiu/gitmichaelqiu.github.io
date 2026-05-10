@@ -57,20 +57,21 @@
 
             function toggleTheme() {
                 switch (themeMode.value) {
-                    case 'dark':
+                    case 'system':
                         themeMode.value = 'light';
                         isDark.value = false;
                         setStoredTheme('light');
                         break;
                     case 'light':
+                        themeMode.value = 'dark';
+                        isDark.value = true;
+                        setStoredTheme('dark');
+                        break;
+                    case 'dark':
                         themeMode.value = 'system';
                         setStoredTheme(null);
                         isDark.value = systemQuery.matches;
                         break;
-                    default:
-                        themeMode.value = 'dark';
-                        isDark.value = true;
-                        setStoredTheme('dark');
                 }
                 nextTick(function () {
                     lucide.createIcons();
