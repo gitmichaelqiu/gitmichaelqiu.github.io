@@ -1130,16 +1130,13 @@ html.dark .project-3d-wrap {
    15. Language Toggle & Chinese Font
    ============================================================ */
 html[lang="zh"] .heading-l,
-html[lang="zh"] .heading-xl,
-html[lang="zh"] .hero__name {
+html[lang="zh"] .heading-xl {
     font-family: 'Inter', 'Noto Serif SC', sans-serif;
-    font-weight: 700;
 }
 
 html[lang="zh"] .paragraph-l,
 html[lang="zh"] .paragraph-m {
     font-family: 'Inter', 'Noto Serif SC', sans-serif;
-    font-weight: 400;
 }
 
 html[lang="zh"] .text-editorial {
@@ -1159,7 +1156,6 @@ html[lang="zh"] .hero__quicknav-label {
 
 html[lang="zh"] .sidebar-link {
     font-family: 'Inter', 'Noto Serif SC', sans-serif;
-    font-weight: 700;
 }
 
 /* Language toggle button */

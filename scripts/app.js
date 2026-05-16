@@ -327,7 +327,7 @@
 
             function closeSidebar(callback) {
                 gsap.to('.sidebar-rk .mask-inner', {
-                    y: "100%",
+                    y: "105%",
                     duration: 0.5,
                     stagger: 0.05,
                     ease: "expo.in",
@@ -351,7 +351,7 @@
                     nextTick(function () {
                         lucide.createIcons();
                         gsap.from('.sidebar-rk .mask-inner', {
-                            y: "100%",
+                            y: "105%",
                             duration: 1,
                             stagger: 0.1,
                             ease: "expo.out",
@@ -540,7 +540,7 @@
                         var masks = sec.querySelectorAll('.mask-inner');
                         if (masks.length > 0) {
                             gsap.from(masks, {
-                                y: "100%",
+                                y: "105%",
                                 duration: 1.8,
                                 stagger: 0.15,
                                 ease: "power4.out",
