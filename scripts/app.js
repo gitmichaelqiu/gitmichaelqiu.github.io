@@ -91,14 +91,14 @@
                     sectionLabels: { home: 'Home', profile: 'Persona', works: 'Projects', photos: 'Story', connect: 'Links' }
                 },
                 zh: {
-                    site: { title: 'Michael Qiu | 开发爱好者' },
+                    site: { title: 'Michael Qiu | 个人开发者' },
                     hero: {
                         name: 'Michael Qiu',
-                        tagline: '给人们优秀的工具，他们就会创造出色的事物。'
+                        tagline: '给予人们美好的工具，他们便会创造美好的事物。'
                     },
                     nav: {
                         page: '页面',
-                        persona: '个人简介',
+                        persona: '简介',
                         projects: '项目',
                         story: '故事',
                         links: '链接',
@@ -109,29 +109,29 @@
                     profile: {
                         label: '个人简介',
                         heading: '拒绝<span class="text-editorial gradient-text">默认。</span>',
-                        body: '我是 Michael，一名专注于构建 macOS 工具并探索人机交互边界的高中生开发者。'
+                        body: '我是 Michael，一名专注于打破交互边界的高中生开发者。'
                     },
                     demo: { watchFull: '观看完整视频' },
                     works: {
                         label: '项目',
                         heading: '为<span class="text-editorial gradient-text">效率</span>而打造；<br>为<span class="text-editorial gradient-text">你</span>而打造。',
-                        body: '永远不要满足于默认。我创造原生系统未能提供的功能。',
+                        body: '不满足于默认，创造原生系统未能提供的功能。',
                         viewProject: '查看项目',
-                        DesktopRenamer: '在菜单栏中自定义当前桌面的名称。',
-                        OptClick: '通过 Option 键模拟右键单击。',
-                        SpaceSwitcher: '控制应用在特定工作区中的可见性。'
+                        DesktopRenamer: '自定义当前桌面的名称。',
+                        OptClick: '通过 Option 键模拟右键。',
+                        SpaceSwitcher: '控制 App 在每个桌面的行为。'
                     },
                     photos: {
                         label: '故事',
                         heading: '<span class="text-editorial gradient-text">瞬间</span>，捕捉于间隙之中。',
-                        body: '代码捕捉逻辑；<br>照片捕捉灵魂。',
+                        body: '代码捕捉逻辑；<br>相片捕捉灵魂。',
                         exploreAll: '探索全部'
                     },
                     connect: {
                         label: '链接',
-                        heading: '让我们一起构建<span class="text-editorial gradient-text">未来</span>。',
-                        blogDesc: '关于开发、设计和学习的思考。',
-                        githubDesc: '开源项目与贡献。',
+                        heading: '一起构建<span class="text-editorial gradient-text">未来</span>。',
+                        blogDesc: '关于开发、设计和学习。',
+                        githubDesc: '开源项目。',
                         kaggleDesc: '数据科学笔记与竞赛。'
                     },
                     footer: {
