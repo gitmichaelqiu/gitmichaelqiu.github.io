@@ -28,6 +28,48 @@
             var particles;
             var scrollRafPending = false;
 
+            // ── Language ──
+            var LANG_KEY = 'lang';
+            var DEFAULT_LANG = 'en';
+            var SUPPORTED_LANGS = ['en', 'zh'];
+
+            function getStoredLang() {
+                try { var v = localStorage.getItem(LANG_KEY); return SUPPORTED_LANGS.indexOf(v) >= 0 ? v : null; } catch (e) { return null; }
+            }
+            function setStoredLang(val) {
+                try { localStorage.setItem(LANG_KEY, val); } catch (e) {}
+            }
+
+            var lang = ref(getStoredLang() || DEFAULT_LANG);
+
+            function toggleLang() {
+                lang.value = lang.value === 'en' ? 'zh' : 'en';
+                setStoredLang(lang.value);
+                nextTick(function () { lucide.createIcons(); });
+            }
+
+            function t(key) {
+                var keys = key.split('.');
+                var result = translations[lang.value];
+                for (var i = 0; i < keys.length; i++) {
+                    if (result == null) break;
+                    result = result[keys[i]];
+                }
+                if (result == null) {
+                    result = translations['en'];
+                    for (var i = 0; i < keys.length; i++) {
+                        if (result == null) break;
+                        result = result[keys[i]];
+                    }
+                }
+                return result != null ? result : key;
+            }
+
+            watch(lang, function (val) {
+                document.documentElement.lang = val;
+                document.title = t('site.title');
+            }, { immediate: true });
+
             // ── Theme ──
             var STORAGE_KEY = 'theme';
             var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -95,6 +137,16 @@
                     isDark.value = e.matches;
                 }
             }
+
+            // ── Translations ──
+            var translations = {
+                en: {
+                    site: { title: 'Michael Qiu | A Development Enthusiast' }
+                },
+                zh: {
+                    site: { title: 'Michael Qiu | 开发爱好者' }
+                }
+            };
 
             // Apply theme immediately (before Vue mounts)
             applyTheme(resolveTheme() === 'dark');
@@ -555,6 +607,9 @@
                 isDark: isDark,
                 themeMode: themeMode,
                 toggleTheme: toggleTheme,
+                lang: lang,
+                toggleLang: toggleLang,
+                t: t,
                 showVideoModal: showVideoModal,
                 openVideoModal: openVideoModal,
                 closeVideoModal: closeVideoModal,

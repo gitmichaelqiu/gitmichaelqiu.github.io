@@ -1124,3 +1124,75 @@ html.dark .work-card:hover::before {
 html.dark .project-3d-wrap {
     background: radial-gradient(circle at center, rgba(0, 47, 167, 0.12) 0%, transparent 70%);
 }
+
+/* ============================================================
+   15. Language Toggle & Chinese Font
+   ============================================================ */
+html[lang="zh"] body {
+    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+}
+
+html[lang="zh"] .heading-l,
+html[lang="zh"] .heading-xl,
+html[lang="zh"] .hero__name {
+    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-weight: 700;
+}
+
+html[lang="zh"] .paragraph-l,
+html[lang="zh"] .paragraph-m {
+    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+html[lang="zh"] .text-editorial {
+    font-family: 'Noto Serif SC', 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+html[lang="zh"] .content-label {
+    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+}
+
+html[lang="zh"] .hero__quicknav-link,
+html[lang="zh"] .hero__quicknav-label {
+    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+}
+
+html[lang="zh"] .sidebar-link {
+    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-weight: 700;
+}
+
+/* Language toggle button */
+.hero__quicknav-lang {
+    display: flex;
+    align-items: center;
+}
+
+.hero__quicknav-lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.8);
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    cursor: pointer !important;
+    transition: all 0.35s var(--mi-smooth);
+}
+
+.hero__quicknav-lang-btn:hover {
+    color: var(--pure-white);
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.hero__quicknav-lang-btn span {
+    transition: opacity 0.35s var(--mi-smooth);
+}
