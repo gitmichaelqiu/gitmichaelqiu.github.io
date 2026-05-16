@@ -28,116 +28,6 @@
             var particles;
             var scrollRafPending = false;
 
-            // ── Language ──
-            var LANG_KEY = 'lang';
-            var DEFAULT_LANG = 'en';
-            var SUPPORTED_LANGS = ['en', 'zh'];
-
-            function getStoredLang() {
-                try { var v = localStorage.getItem(LANG_KEY); return SUPPORTED_LANGS.indexOf(v) >= 0 ? v : null; } catch (e) { return null; }
-            }
-            function setStoredLang(val) {
-                try { localStorage.setItem(LANG_KEY, val); } catch (e) {}
-            }
-
-            var lang = ref(getStoredLang() || DEFAULT_LANG);
-
-            function toggleLang() {
-                lang.value = lang.value === 'en' ? 'zh' : 'en';
-                setStoredLang(lang.value);
-                nextTick(function () { lucide.createIcons(); });
-            }
-
-            function t(key) {
-                var keys = key.split('.');
-                var result = translations[lang.value];
-                for (var i = 0; i < keys.length; i++) {
-                    if (result == null) break;
-                    result = result[keys[i]];
-                }
-                if (result == null) {
-                    result = translations['en'];
-                    for (var i = 0; i < keys.length; i++) {
-                        if (result == null) break;
-                        result = result[keys[i]];
-                    }
-                }
-                return result != null ? result : key;
-            }
-
-            watch(lang, function (val) {
-                document.documentElement.lang = val;
-                document.title = t('site.title');
-            }, { immediate: true });
-
-            // ── Theme ──
-            var STORAGE_KEY = 'theme';
-            var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-            function getStoredTheme() {
-                try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
-            }
-            function setStoredTheme(val) {
-                try {
-                    if (val === null) localStorage.removeItem(STORAGE_KEY);
-                    else localStorage.setItem(STORAGE_KEY, val);
-                } catch (e) {}
-            }
-
-            function resolveTheme() {
-                var stored = getStoredTheme();
-                if (stored === 'dark' || stored === 'light') return stored;
-                return systemQuery.matches ? 'dark' : 'light';
-            }
-
-            var isDark = ref(resolveTheme() === 'dark');
-            var themeMode = ref(getStoredTheme() || 'system');
-
-            function applyTheme(dark) {
-                document.documentElement.classList.toggle('dark', dark);
-            }
-
-            function toggleTheme() {
-                switch (themeMode.value) {
-                    case 'system':
-                        themeMode.value = 'light';
-                        isDark.value = false;
-                        setStoredTheme('light');
-                        break;
-                    case 'light':
-                        themeMode.value = 'dark';
-                        isDark.value = true;
-                        setStoredTheme('dark');
-                        break;
-                    case 'dark':
-                        themeMode.value = 'system';
-                        setStoredTheme(null);
-                        isDark.value = systemQuery.matches;
-                        break;
-                }
-                nextTick(function () {
-                    lucide.createIcons();
-                });
-            }
-
-            watch(isDark, function (val) {
-                document.documentElement.classList.add('theme-transitioning');
-                void document.documentElement.offsetHeight;
-                applyTheme(val);
-                setTimeout(function () {
-                    document.documentElement.classList.remove('theme-transitioning');
-                }, 600);
-                nextTick(function () {
-                    lucide.createIcons();
-                });
-            });
-
-            function onSystemThemeChange(e) {
-                if (themeMode.value === 'system') {
-                    isDark.value = e.matches;
-                }
-            }
-
             // ── Translations ──
             var translations = {
                 en: {
@@ -261,6 +151,116 @@
                     sectionLabels: { home: '首页', profile: '个人简介', works: '项目', photos: '故事', connect: 'Links' }
                 }
             };
+
+            // ── Language ──
+            var LANG_KEY = 'lang';
+            var DEFAULT_LANG = 'en';
+            var SUPPORTED_LANGS = ['en', 'zh'];
+
+            function getStoredLang() {
+                try { var v = localStorage.getItem(LANG_KEY); return SUPPORTED_LANGS.indexOf(v) >= 0 ? v : null; } catch (e) { return null; }
+            }
+            function setStoredLang(val) {
+                try { localStorage.setItem(LANG_KEY, val); } catch (e) {}
+            }
+
+            var lang = ref(getStoredLang() || DEFAULT_LANG);
+
+            function toggleLang() {
+                lang.value = lang.value === 'en' ? 'zh' : 'en';
+                setStoredLang(lang.value);
+                nextTick(function () { lucide.createIcons(); });
+            }
+
+            function t(key) {
+                var keys = key.split('.');
+                var result = translations[lang.value];
+                for (var i = 0; i < keys.length; i++) {
+                    if (result == null) break;
+                    result = result[keys[i]];
+                }
+                if (result == null) {
+                    result = translations['en'];
+                    for (var i = 0; i < keys.length; i++) {
+                        if (result == null) break;
+                        result = result[keys[i]];
+                    }
+                }
+                return result != null ? result : key;
+            }
+
+            watch(lang, function (val) {
+                document.documentElement.lang = val;
+                document.title = t('site.title');
+            }, { immediate: true });
+
+            // ── Theme ──
+            var STORAGE_KEY = 'theme';
+            var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+            function getStoredTheme() {
+                try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+            }
+            function setStoredTheme(val) {
+                try {
+                    if (val === null) localStorage.removeItem(STORAGE_KEY);
+                    else localStorage.setItem(STORAGE_KEY, val);
+                } catch (e) {}
+            }
+
+            function resolveTheme() {
+                var stored = getStoredTheme();
+                if (stored === 'dark' || stored === 'light') return stored;
+                return systemQuery.matches ? 'dark' : 'light';
+            }
+
+            var isDark = ref(resolveTheme() === 'dark');
+            var themeMode = ref(getStoredTheme() || 'system');
+
+            function applyTheme(dark) {
+                document.documentElement.classList.toggle('dark', dark);
+            }
+
+            function toggleTheme() {
+                switch (themeMode.value) {
+                    case 'system':
+                        themeMode.value = 'light';
+                        isDark.value = false;
+                        setStoredTheme('light');
+                        break;
+                    case 'light':
+                        themeMode.value = 'dark';
+                        isDark.value = true;
+                        setStoredTheme('dark');
+                        break;
+                    case 'dark':
+                        themeMode.value = 'system';
+                        setStoredTheme(null);
+                        isDark.value = systemQuery.matches;
+                        break;
+                }
+                nextTick(function () {
+                    lucide.createIcons();
+                });
+            }
+
+            watch(isDark, function (val) {
+                document.documentElement.classList.add('theme-transitioning');
+                void document.documentElement.offsetHeight;
+                applyTheme(val);
+                setTimeout(function () {
+                    document.documentElement.classList.remove('theme-transitioning');
+                }, 600);
+                nextTick(function () {
+                    lucide.createIcons();
+                });
+            });
+
+            function onSystemThemeChange(e) {
+                if (themeMode.value === 'system') {
+                    isDark.value = e.matches;
+                }
+            }
 
             var sectionLabels = computed(function () {
                 return translations[lang.value].sectionLabels;
