@@ -81,7 +81,7 @@
 
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syncopate:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Serif+SC:wght@400;700&family=Syncopate:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="../styles/main.css">
@@ -756,6 +756,26 @@
                 display: none !important;
             }
         }
+
+        /* ── Chinese Language Support ── */
+        html[lang="zh"] .flow-card-location,
+        html[lang="zh"] .flow-card-date,
+        html[lang="zh"] .grid-photo-title,
+        html[lang="zh"] .grid-photo-meta,
+        html[lang="zh"] .photo-detail-value,
+        html[lang="zh"] .photo-detail-label,
+        html[lang="zh"] .photo-detail-tag,
+        html[lang="zh"] .globe-tooltip-title,
+        html[lang="zh"] .globe-tooltip-loc,
+        html[lang="zh"] .globe-legend-item,
+        html[lang="zh"] .mode-toggle-btn {
+            font-family: 'Inter', 'Noto Serif SC', sans-serif;
+        }
+        html[lang="zh"] .photo-detail-diary {
+            font-family: 'Playfair Display', 'Noto Serif SC', serif;
+            font-style: normal;
+            font-weight: 700;
+        }
     </style>
 </head>
 
@@ -815,27 +835,34 @@
                     </div>
                     <div class="hero__quicknav-cols">
                         <div class="hero__quicknav-col">
-                            <div class="hero__quicknav-label">View</div>
-                            <a @click.prevent="setMode('flow')" href="#" class="hero__quicknav-link">Flow</a>
-                            <a @click.prevent="setMode('grid')" href="#" class="hero__quicknav-link">Grid</a>
-                            <a @click.prevent="setMode('map')" href="#" class="hero__quicknav-link">Map</a>
+                            <div class="hero__quicknav-label">{{ t('quicknav.view') }}</div>
+                            <a @click.prevent="setMode('flow')" href="#" class="hero__quicknav-link">{{ t('quicknav.flow') }}</a>
+                            <a @click.prevent="setMode('grid')" href="#" class="hero__quicknav-link">{{ t('quicknav.grid') }}</a>
+                            <a @click.prevent="setMode('map')" href="#" class="hero__quicknav-link">{{ t('quicknav.map') }}</a>
                         </div>
                         <div class="hero__quicknav-col">
-                            <div class="hero__quicknav-label">Links</div>
-                            <a href="/" class="hero__quicknav-link">Portfolio</a>
+                            <div class="hero__quicknav-label">{{ t('quicknav.links') }}</div>
+                            <a href="/" class="hero__quicknav-link">{{ t('quicknav.portfolio') }}</a>
                             <a href="https://github.com/gitmichaelqiu" target="_blank" class="hero__quicknav-link">GitHub</a>
-                            <a href="https://mqiu.dev/blog" target="_blank" class="hero__quicknav-link">Blog</a>
+                            <a href="https://mqiu.dev/blog" target="_blank" class="hero__quicknav-link">{{ t('quicknav.blog') }}</a>
                         </div>
+                    </div>
+                    <div class="hero__quicknav-lang">
+                        <button @click="toggleLang" class="hero__quicknav-lang-btn" aria-label="Switch language">
+                            <span class="hero__quicknav-lang-opt" :class="{ 'is-active': lang === 'en' }">EN</span>
+                            <span class="hero__quicknav-lang-sep">·</span>
+                            <span class="hero__quicknav-lang-opt" :class="{ 'is-active': lang === 'zh' }">中文</span>
+                        </button>
                     </div>
                 </nav>
 
                 <div class="hero__content">
                     <div class="hero__text">
                         <div class="mask-wrap">
-                            <h1 class="hero__name mask-inner">Moments</h1>
+                            <h1 class="hero__name mask-inner">{{ t('hero.heading') }}</h1>
                         </div>
                         <div class="mask-wrap">
-                            <p class="hero__tagline mask-inner">Photos captured in between.</p>
+                            <p class="hero__tagline mask-inner">{{ t('hero.tagline') }}</p>
                         </div>
                     </div>
                 </div>
@@ -848,13 +875,13 @@
             <div class="mode-toggle-bar" :class="{ 'mode-toggle-bar--scrolled': modeBarScrolled }" ref="modeBar">
                 <div class="mode-toggle-wrapper">
                     <button class="mode-toggle-btn" :class="{ active: mode === 'flow' }" @click="setMode('flow')">
-                        <i data-lucide="columns-2"></i> Flow
+                        <i data-lucide="columns-2"></i> {{ t('modes.flow') }}
                     </button>
                     <button class="mode-toggle-btn" :class="{ active: mode === 'grid' }" @click="setMode('grid')">
-                        <i data-lucide="layout-grid"></i> Grid
+                        <i data-lucide="layout-grid"></i> {{ t('modes.grid') }}
                     </button>
                     <button class="mode-toggle-btn" :class="{ active: mode === 'map' }" @click="setMode('map')">
-                        <i data-lucide="map"></i> Map
+                        <i data-lucide="map"></i> {{ t('modes.map') }}
                     </button>
                 </div>
             </div>
@@ -872,12 +899,12 @@
                                 @click="openPhotoDetail(photo)">
                                 <div class="flow-card-img-wrap">
                                     <div class="flow-load-bar-track"><div class="flow-load-bar"></div></div>
-                                    <img :src="photo.url" :alt="photo.title" @load="onFlowImgLoad(i)">
+                                    <img :src="photo.url" :alt="lang === 'zh' && photo.titleZh ? photo.titleZh : photo.title" @load="onFlowImgLoad(i)">
                                 </div>
                                 <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
                                 <div class="flow-card-overlay">
-                                    <div class="flow-card-location">{{ photo.location }}</div>
-                                    <div class="flow-card-date">{{ photo.date }}</div>
+                                    <div class="flow-card-location">{{ lang === 'zh' && photo.locationZh ? photo.locationZh : photo.location }}</div>
+                                    <div class="flow-card-date">{{ lang === 'zh' && photo.dateZh ? photo.dateZh : photo.date }}</div>
                                 </div>
                             </div>
                         </div>
@@ -895,13 +922,13 @@
                             @click="openPhotoDetail(photo)">
                             <div class="grid-photo-img-wrap">
                                 <div class="grid-load-bar-track"><div class="grid-load-bar"></div></div>
-                                <img :src="photo.url" :alt="photo.title" @load="onGridImgLoad(i)">
+                                <img :src="photo.url" :alt="lang === 'zh' && photo.titleZh ? photo.titleZh : photo.title" @load="onGridImgLoad(i)">
                             </div>
                             <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
                             <div class="grid-photo-overlay">
                                 <div>
-                                    <div class="grid-photo-title">{{ photo.title }}</div>
-                                    <div class="grid-photo-meta">{{ photo.location }} &middot; {{ photo.date }}</div>
+                                    <div class="grid-photo-title">{{ lang === 'zh' && photo.titleZh ? photo.titleZh : photo.title }}</div>
+                                    <div class="grid-photo-meta">{{ lang === 'zh' && photo.locationZh ? photo.locationZh : photo.location }} &middot; {{ lang === 'zh' && photo.dateZh ? photo.dateZh : photo.date }}</div>
                                     <div class="grid-photo-meta" style="margin-top: 2px;">{{ photo.camera }}</div>
                                 </div>
                             </div>
@@ -934,41 +961,41 @@
                     <div class="photo-modal-container" :class="{ transitioning: photoTransitioning }" @click.stop ref="modalContainer">
                         <!-- Image area -->
                         <div class="photo-modal-image" ref="modalImageEl">
-                            <img :src="activePhoto.url" :alt="activePhoto.title" @load="onModalImgLoad" ref="modalImg">
+                            <img :src="activePhoto.url" :alt="lang === 'zh' && activePhoto.titleZh ? activePhoto.titleZh : activePhoto.title" @load="onModalImgLoad" ref="modalImg">
                         </div>
 
                         <!-- Detail panel -->
                         <div class="photo-modal-detail" v-if="activePhoto">
                             <div class="photo-detail-row">
                                 <div class="photo-detail-text">
-                                    <span class="photo-detail-value" style="font-size: 1.15rem; font-weight: 700;">{{ activePhoto.title }}</span>
+                                    <span class="photo-detail-value" style="font-size: 1.15rem; font-weight: 700;">{{ lang === 'zh' && activePhoto.titleZh ? activePhoto.titleZh : activePhoto.title }}</span>
                                 </div>
                             </div>
                             <div class="photo-detail-row">
                                 <i data-lucide="map-pin" class="photo-detail-icon w-4 h-4"></i>
                                 <div class="photo-detail-text">
-                                    <span class="photo-detail-label">Location</span>
-                                    <span class="photo-detail-value">{{ activePhoto.location }}</span>
+                                    <span class="photo-detail-label">{{ t('detail.location') }}</span>
+                                    <span class="photo-detail-value">{{ lang === 'zh' && activePhoto.locationZh ? activePhoto.locationZh : activePhoto.location }}</span>
                                 </div>
                             </div>
                             <div class="photo-detail-row">
                                 <i data-lucide="calendar" class="photo-detail-icon w-4 h-4"></i>
                                 <div class="photo-detail-text">
-                                    <span class="photo-detail-label">Date</span>
-                                    <span class="photo-detail-value">{{ activePhoto.date }}</span>
+                                    <span class="photo-detail-label">{{ t('detail.date') }}</span>
+                                    <span class="photo-detail-value">{{ lang === 'zh' && activePhoto.dateZh ? activePhoto.dateZh : activePhoto.date }}</span>
                                 </div>
                             </div>
                             <div class="photo-detail-row">
                                 <i data-lucide="camera" class="photo-detail-icon w-4 h-4"></i>
                                 <div class="photo-detail-text">
-                                    <span class="photo-detail-label">Camera &amp; Settings</span>
+                                    <span class="photo-detail-label">{{ t('detail.camera') }}</span>
                                     <span class="photo-detail-value">{{ activePhoto.camera }} &middot; {{ activePhoto.aperture }} &middot; {{ activePhoto.shutter }}</span>
                                 </div>
                             </div>
                             <div class="photo-detail-tags">
                                 <span v-for="tag in activePhoto.tags" :key="tag" class="photo-detail-tag">{{ tag }}</span>
                             </div>
-                            <div class="photo-detail-diary" v-if="activePhoto.diary">{{ activePhoto.diary }}</div>
+                            <div class="photo-detail-diary" v-if="activePhoto.diary">{{ lang === 'zh' && activePhoto.diaryZh ? activePhoto.diaryZh : activePhoto.diary }}</div>
                             <div class="mini-globe-wrapper" v-if="activePhoto.lat && activePhoto.lng" ref="miniGlobeEl"></div>
                         </div>
                     </div>
@@ -989,12 +1016,7 @@
             <aside v-if="isSidebarOpen" class="fixed inset-0 sidebar-rk z-[10001] flex flex-col">
                 <div class="container flex-1 flex flex-col justify-center">
                     <div class="flex flex-col" style="gap: 1rem;">
-                        <a v-for="link in [
-                            {id: 'home', label: 'Home', action: 'scrollToTop'},
-                            {id: 'flow', label: 'Flow', action: 'setMode', arg: 'flow'},
-                            {id: 'grid', label: 'Grid', action: 'setMode', arg: 'grid'},
-                            {id: 'map', label: 'Map', action: 'setMode', arg: 'map'}
-                        ]" :key="link.id" href="#" @click.prevent="sidebarAction(link)"
+                        <a v-for="link in sidebarLinks" :key="link.id" href="#" @click.prevent="sidebarAction(link)"
                             class="sidebar-link">
                             <div class="mask-wrap">
                                 <span class="mask-inner">{{ link.label }}</span>
@@ -1002,7 +1024,7 @@
                         </a>
                         <a href="/" class="sidebar-link group">
                             <div class="mask-wrap">
-                                <span class="mask-inner">Portfolio<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
+                                <span class="mask-inner">{{ t('sidebar.portfolio') }}<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
                             </div>
                         </a>
                         <a href="https://github.com/gitmichaelqiu" target="_blank" class="sidebar-link group">
@@ -1012,7 +1034,7 @@
                         </a>
                         <a href="https://mqiu.dev/blog" target="_blank" class="sidebar-link group">
                             <div class="mask-wrap">
-                                <span class="mask-inner">Blog<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
+                                <span class="mask-inner">{{ t('sidebar.blog') }}<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
                             </div>
                         </a>
                     </div>
@@ -1095,6 +1117,79 @@
 
             createApp({
                 setup: function () {
+                    // ── Translations ──
+                    var translations = {
+                        en: {
+                            site: { title: 'Moments — Michael Qiu' },
+                            hero: { heading: 'Moments', tagline: 'Photos captured in between.' },
+                            quicknav: { view: 'View', links: 'Links', flow: 'Flow', grid: 'Grid', map: 'Map', portfolio: 'Portfolio', blog: 'Blog' },
+                            modes: { flow: 'Flow', grid: 'Grid', map: 'Map' },
+                            sidebar: { home: 'Home', flow: 'Flow', grid: 'Grid', map: 'Map', portfolio: 'Portfolio', blog: 'Blog' },
+                            detail: { location: 'Location', date: 'Date', camera: 'Camera & Settings', photo: 'photo', photos: 'photos' },
+                            sectionLabels: { flow: 'Flow', grid: 'Grid', map: 'Map' }
+                        },
+                        zh: {
+                            site: { title: '影像 — Michael Qiu' },
+                            hero: { heading: '影像', tagline: '随手记录，定格瞬间。' },
+                            quicknav: { view: '视图', links: '链接', flow: '浏览', grid: '网格', map: '地图', portfolio: '主页', blog: '博客' },
+                            modes: { flow: '浏览', grid: '网格', map: '地图' },
+                            sidebar: { home: '首页', flow: '浏览', grid: '网格', map: '地图', portfolio: '主页', blog: '博客' },
+                            detail: { location: '地点', date: '日期', camera: '相机与参数', photo: '张照片', photos: '张照片' },
+                            sectionLabels: { flow: '浏览', grid: '网格', map: '地图' }
+                        }
+                    };
+
+                    // ── Language ──
+                    var DEFAULT_LANG = 'en';
+                    var LANG_KEY = 'lang';
+                    function getStoredLang() {
+                        try { return localStorage.getItem(LANG_KEY); } catch (e) { return null; }
+                    }
+                    function setStoredLang(val) { try { localStorage.setItem(LANG_KEY, val); } catch (e) {} }
+                    var lang = ref(getStoredLang() || DEFAULT_LANG);
+
+                    function toggleLang() {
+                        lang.value = lang.value === 'en' ? 'zh' : 'en';
+                        setStoredLang(lang.value);
+                        nextTick(function () { lucide.createIcons(); });
+                    }
+
+                    function t(key) {
+                        var keys = key.split('.');
+                        var result = translations[lang.value];
+                        for (var i = 0; i < keys.length; i++) {
+                            if (result == null) break;
+                            result = result[keys[i]];
+                        }
+                        if (result == null) {
+                            result = translations['en'];
+                            for (var i = 0; i < keys.length; i++) {
+                                if (result == null) break;
+                                result = result[keys[i]];
+                            }
+                        }
+                        return result != null ? result : key;
+                    }
+
+                    var sectionLabels = computed(function () {
+                        return translations[lang.value].sectionLabels;
+                    });
+
+                    var sidebarLinks = computed(function () {
+                        return [
+                            { id: 'home', label: t('sidebar.home'), action: 'scrollToTop' },
+                            { id: 'flow', label: t('sidebar.flow'), action: 'setMode', arg: 'flow' },
+                            { id: 'grid', label: t('sidebar.grid'), action: 'setMode', arg: 'grid' },
+                            { id: 'map', label: t('sidebar.map'), action: 'setMode', arg: 'map' }
+                        ];
+                    });
+
+                    watch(lang, function (val) {
+                        document.documentElement.lang = val;
+                        document.title = t('site.title');
+                    }, { immediate: true });
+
+                    // ── App State ──
                     var isSidebarOpen = ref(false);
                     var activeSection = ref('home');
                     var showNavDock = ref(false);
@@ -1223,7 +1318,7 @@
                     // ── Sidebar ──
                     function closeSidebar(callback) {
                         gsap.to('.sidebar-rk .mask-inner', {
-                            y: "100%",
+                            y: "105%",
                             duration: 0.5,
                             stagger: 0.05,
                             ease: "expo.in",
@@ -1257,7 +1352,7 @@
                             nextTick(function () {
                                 lucide.createIcons();
                                 gsap.from('.sidebar-rk .mask-inner', {
-                                    y: "100%",
+                                    y: "105%",
                                     duration: 1,
                                     stagger: 0.1,
                                     ease: "expo.out",
@@ -1273,7 +1368,7 @@
                         var winHeight = window.innerHeight;
                         showNavDock.value = window.scrollY > winHeight * 0.2;
                         modeBarScrolled.value = window.scrollY > winHeight * 0.85;
-                        activeSection.value = mode.value.charAt(0).toUpperCase() + mode.value.slice(1);
+                        activeSection.value = sectionLabels.value[mode.value];
                     }
 
                     function onScroll() {
@@ -1294,7 +1389,7 @@
                     function setMode(newMode) {
                         if (mode.value === newMode) return;
                         mode.value = newMode;
-                        activeSection.value = newMode.charAt(0).toUpperCase() + newMode.slice(1);
+                        activeSection.value = sectionLabels.value[newMode];
 
                         nextTick(function () {
                             lucide.createIcons();
@@ -1678,10 +1773,10 @@
                     // ── Country Flag ──
                     function getFlag(location) {
                         if (!location) return '';
-                        if (location.indexOf('Thailand') !== -1) return '🇹🇭';
-                        if (location.indexOf('China') !== -1) return '🇨🇳';
-                        if (location.indexOf('UAE') !== -1) return '🇦🇪';
-                        if (location.indexOf('Japan') !== -1) return '🇯🇵';
+                        if (location.indexOf('Thailand') !== -1 || location.indexOf('泰国') !== -1) return '🇹🇭';
+                        if (location.indexOf('China') !== -1 || location.indexOf('中国') !== -1) return '🇨🇳';
+                        if (location.indexOf('UAE') !== -1 || location.indexOf('阿联酋') !== -1) return '🇦🇪';
+                        if (location.indexOf('Japan') !== -1 || location.indexOf('日本') !== -1) return '🇯🇵';
                         return '';
                     }
 
@@ -1846,7 +1941,8 @@
                             var first = group[0];
                             var item = document.createElement('span');
                             item.className = 'globe-legend-item';
-                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (first.color || '#fff') + ';"></span>' + first.location;
+                            var legendLoc = lang.value === 'zh' && first.locationZh ? first.locationZh : first.location;
+                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (first.color || '#fff') + ';"></span>' + legendLoc;
                             item.addEventListener('click', function() { openPhotoDetail(first, group); });
                             legend.appendChild(item);
                         });
@@ -1999,7 +2095,9 @@
                                 globeHovered = primary;
                                 globeHoveredCluster = data.photos;
                                 var count = data.photos ? data.photos.length : 1;
-                                var html = '<img src="' + primary.url + '" alt="" /><div><div class="globe-tooltip-title">' + primary.location + '</div><div class="globe-tooltip-loc">' + count + ' photo' + (count > 1 ? 's' : '') + '</div></div>';
+                                var locText = lang.value === 'zh' && primary.locationZh ? primary.locationZh : primary.location;
+                                var photoWord = count > 1 ? t('detail.photos') : t('detail.photo');
+                                var html = '<img src="' + primary.url + '" alt="" /><div><div class="globe-tooltip-title">' + locText + '</div><div class="globe-tooltip-loc">' + count + ' ' + photoWord + '</div></div>';
                                 globeTooltip.innerHTML = html;
                                 globeTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
                                 globeTooltip.style.top = (e.clientY - rect.top - 15) + 'px';
@@ -2125,7 +2223,7 @@
                                 var masks = sec.querySelectorAll('.mask-inner');
                                 if (masks.length > 0) {
                                     gsap.from(masks, {
-                                        y: "100%",
+                                        y: "105%",
                                         duration: 1.8,
                                         stagger: 0.15,
                                         ease: "power4.out",
@@ -2153,6 +2251,10 @@
                     });
 
                     return {
+                        lang: lang,
+                        toggleLang: toggleLang,
+                        t: t,
+                        sidebarLinks: sidebarLinks,
                         isSidebarOpen: isSidebarOpen,
                         activeSection: activeSection,
                         toggleSidebar: toggleSidebar,
