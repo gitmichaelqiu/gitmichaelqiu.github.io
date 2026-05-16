@@ -760,6 +760,7 @@ footer svg path {
 
 .nav-dock__label-text {
     display: block;
+    white-space: nowrap;
 }
 
 /* Dark overrides */
@@ -1128,10 +1129,6 @@ html.dark .project-3d-wrap {
 /* ============================================================
    15. Language Toggle & Chinese Font
    ============================================================ */
-html[lang="zh"] body {
-    font-family: 'Noto Serif SC', 'Inter', sans-serif;
-}
-
 html[lang="zh"] .heading-l,
 html[lang="zh"] .heading-xl,
 html[lang="zh"] .hero__name {
@@ -1146,8 +1143,9 @@ html[lang="zh"] .paragraph-m {
 }
 
 html[lang="zh"] .text-editorial {
-    font-family: 'Noto Serif SC', 'Playfair Display', serif;
-    font-weight: 700;
+    font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+    font-style: normal;
+    font-weight: 400;
 }
 
 html[lang="zh"] .content-label {

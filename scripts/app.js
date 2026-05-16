@@ -148,7 +148,7 @@
                         links: '链接',
                         blog: '博客'
                     },
-                    sectionLabels: { home: '首页', profile: '个人简介', works: '项目', photos: '故事', connect: 'Links' }
+                    sectionLabels: { home: '首页', profile: '个人简介', works: '项目', photos: '故事', connect: '链接' }
                 }
             };
 
