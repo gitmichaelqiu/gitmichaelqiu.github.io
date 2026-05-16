@@ -1187,7 +1187,15 @@
                     watch(lang, function (val) {
                         document.documentElement.lang = val;
                         document.title = t('site.title');
+                        activeSection.value = sectionLabels.value[mode.value];
+                        updateGlobeLegend();
                     }, { immediate: true });
+
+                    // ── Photo text helpers (reactive to lang) ──
+                    function photoTitle(p) { return lang.value === 'zh' && p.titleZh ? p.titleZh : p.title; }
+                    function photoLocation(p) { return lang.value === 'zh' && p.locationZh ? p.locationZh : p.location; }
+                    function photoDate(p) { return lang.value === 'zh' && p.dateZh ? p.dateZh : p.date; }
+                    function photoDiary(p) { return lang.value === 'zh' && p.diaryZh ? p.diaryZh : p.diary; }
 
                     // ── App State ──
                     var isSidebarOpen = ref(false);
@@ -1872,6 +1880,7 @@
                     var globeRenderer = null;
                     var globeMesh = null;
                     var globeMarkers = [];
+                    var globeLegendItems = [];
                     var globeInitialized = false;
                     var globeAnimId = null;
                     var globeTooltip = null;
@@ -1936,15 +1945,17 @@
                         // Legend — one item per unique location
                         var legend = document.createElement('div');
                         legend.className = 'globe-legend';
+                        globeLegendItems = [];
                         Object.keys(locationGroups).forEach(function(loc) {
                             var group = locationGroups[loc];
                             var first = group[0];
                             var item = document.createElement('span');
                             item.className = 'globe-legend-item';
-                            var legendLoc = lang.value === 'zh' && first.locationZh ? first.locationZh : first.location;
-                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (first.color || '#fff') + ';"></span>' + legendLoc;
+                            var legendLoc = photoLocation(first);
+                            item.innerHTML = '<span class="globe-legend-dot" style="background:' + (first.color || '#fff') + ';"></span><span class="globe-legend-text">' + legendLoc + '</span>';
                             item.addEventListener('click', function() { openPhotoDetail(first, group); });
                             legend.appendChild(item);
+                            globeLegendItems.push({ el: item, group: group, primary: first });
                         });
                         mapContainer.value.appendChild(legend);
 
@@ -2043,6 +2054,16 @@
                         globeInitialized = false;
                         globeTooltip = null;
                         globeHovered = null;
+                        globeLegendItems = [];
+                    }
+
+                    function updateGlobeLegend() {
+                        if (!globeLegendItems.length) return;
+                        globeLegendItems.forEach(function(item) {
+                            var locText = photoLocation(item.primary);
+                            var textEl = item.el.querySelector('.globe-legend-text');
+                            if (textEl) textEl.textContent = locText;
+                        });
                     }
 
                     function globeAnimate() {
@@ -2095,7 +2116,7 @@
                                 globeHovered = primary;
                                 globeHoveredCluster = data.photos;
                                 var count = data.photos ? data.photos.length : 1;
-                                var locText = lang.value === 'zh' && primary.locationZh ? primary.locationZh : primary.location;
+                                var locText = photoLocation(primary);
                                 var photoWord = count > 1 ? t('detail.photos') : t('detail.photo');
                                 var html = '<img src="' + primary.url + '" alt="" /><div><div class="globe-tooltip-title">' + locText + '</div><div class="globe-tooltip-loc">' + count + ' ' + photoWord + '</div></div>';
                                 globeTooltip.innerHTML = html;
