@@ -1143,9 +1143,9 @@ html[lang="zh"] .paragraph-m {
 }
 
 html[lang="zh"] .text-editorial {
-    font-family: 'Playfair Display', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 700;
 }
 
 html[lang="zh"] .content-label {
@@ -1171,26 +1171,32 @@ html[lang="zh"] .sidebar-link {
 .hero__quicknav-lang-btn {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.35rem;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer !important;
     font-family: 'Inter', 'Noto Serif SC', sans-serif;
     font-size: 0.95rem;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: rgba(255, 255, 255, 0.8);
-    background: none;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 100px;
-    padding: 0.4rem 1rem;
-    cursor: pointer !important;
-    transition: all 0.35s var(--mi-smooth);
+    color: rgba(255, 255, 255, 0.45);
+    transition: color 0.35s var(--mi-smooth);
 }
 
 .hero__quicknav-lang-btn:hover {
-    color: var(--pure-white);
-    border-color: rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.hero__quicknav-lang-btn span {
-    transition: opacity 0.35s var(--mi-smooth);
+.hero__quicknav-lang-opt {
+    transition: color 0.35s var(--mi-smooth);
+}
+
+.hero__quicknav-lang-opt.is-active {
+    color: var(--pure-white);
+}
+
+.hero__quicknav-lang-sep {
+    opacity: 0.25;
+    pointer-events: none;
 }
