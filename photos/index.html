@@ -1187,8 +1187,8 @@
                     watch(lang, function (val) {
                         document.documentElement.lang = val;
                         document.title = t('site.title');
-                        activeSection.value = sectionLabels.value[mode.value];
-                        updateGlobeLegend();
+                        if (activeSection) activeSection.value = sectionLabels.value[mode.value];
+                        if (globeLegendItems && globeLegendItems.length) updateGlobeLegend();
                     }, { immediate: true });
 
                     // ── Photo text helpers (reactive to lang) ──
