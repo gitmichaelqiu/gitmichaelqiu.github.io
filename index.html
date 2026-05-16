@@ -148,18 +148,18 @@
                     <div class="hero__quicknav-cols">
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
-                                Page
+                                {{ t('nav.page') }}
                             </div>
                             <a @click.prevent="handleNavClick('profile')" href="#profile"
-                                class="hero__quicknav-link">Persona</a>
+                                class="hero__quicknav-link">{{ t('nav.persona') }}</a>
                             <a @click.prevent="handleNavClick('works')" href="#works"
-                                class="hero__quicknav-link">Projects</a>
+                                class="hero__quicknav-link">{{ t('nav.projects') }}</a>
                             <a @click.prevent="handleNavClick('photos')" href="#photos"
-                                class="hero__quicknav-link">Story</a>
+                                class="hero__quicknav-link">{{ t('nav.story') }}</a>
                         </div>
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
-                                Projects
+                                {{ t('nav.projects') }}
                             </div>
                             <a href="https://desktoprenamer.mqiu.dev" target="_blank"
                                 class="hero__quicknav-link">DesktopRenamer</a>
@@ -170,14 +170,14 @@
                         </div>
                         <div class="hero__quicknav-col">
                             <div class="hero__quicknav-label">
-                                Links
+                                {{ t('nav.links') }}
                             </div>
                             <a href="https://mqiu.dev/blog" target="_blank"
-                                class="hero__quicknav-link">Blog</a>
+                                class="hero__quicknav-link">{{ t('nav.blog') }}</a>
                             <a href="https://github.com/gitmichaelqiu" target="_blank"
-                                class="hero__quicknav-link">GitHub</a>
+                                class="hero__quicknav-link">{{ t('nav.github') }}</a>
                             <a href="https://www.kaggle.com/michaelqiu0606" target="_blank"
-                                class="hero__quicknav-link">Kaggle</a>
+                                class="hero__quicknav-link">{{ t('nav.kaggle') }}</a>
                         </div>
                     </div>
                     <div class="hero__quicknav-lang">
@@ -206,10 +206,10 @@
                     </svg>
                     <div class="hero__text">
                         <div class="mask-wrap">
-                            <h1 class="hero__name mask-inner">Michael Qiu</h1>
+                            <h1 class="hero__name mask-inner">{{ t('hero.name') }}</h1>
                         </div>
                         <div class="mask-wrap">
-                            <p class="hero__tagline mask-inner">Give people wonderful tools, and they'll do wonderful things.</p>
+                            <p class="hero__tagline mask-inner">{{ t('hero.tagline') }}</p>
                         </div>
                     </div>
                 </div>
@@ -226,16 +226,14 @@
                         <div class="content-label">
                             <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
                                 <path d="M0 0L14 14H0V0Z" />
-                            </svg>Persona
+                            </svg>{{ t('profile.label') }}
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Refuse to settle for <span class="text-editorial gradient-text">the default.</span></h2>
+                                <h2 class="heading-l mb-10 mask-inner" v-html="t('profile.heading')"></h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">I'm Michael, a high school student developer
-                                    focused on building macOS utilities and exploring the boundaries
-                                    of human-computer interaction.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">{{ t('profile.body') }}</p>
                             </div>
                         </div>
                     </div>
@@ -279,7 +277,7 @@
                         class="absolute bottom-6 right-6 z-10 flex items-center gap-2 px-5 py-3 rounded-full text-white text-sm font-medium transition-all duration-300 hover:scale-105"
                         style="background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); font-family: 'Inter', sans-serif; letter-spacing: 0.02em; cursor: pointer;">
                         <i data-lucide="play" class="w-4 h-4 fill-white"></i>
-                        Watch Full Video
+                        {{ t('demo.watchFull') }}
                     </button>
                 </div>
             </section>
@@ -314,15 +312,14 @@
                         <div class="content-label">
                             <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
                                 <path d="M0 0L14 14H0V0Z" />
-                            </svg>Projects
+                            </svg>{{ t('works.label') }}
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner">Crafted for <span class="text-editorial gradient-text">productivity;</span><br>Crafted for <span class="text-editorial gradient-text">you.</span>
-                                </h2>
+                                <h2 class="heading-l mb-10 mask-inner" v-html="t('works.heading')"></h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Never be satisfied with the default. I create features that the native systems fail to offer.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner">{{ t('works.body') }}</p>
                             </div>
                         </div>
                     </div>
@@ -343,14 +340,14 @@
 
                             <p class="text-base opacity-100 mb-8 max-w-md"
                                 style="font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;letter-spacing: -0.04em;">
-                                {{ app.desc }}</p>
+                                {{ t('works.' + app.id) }}</p>
 
                             <div class="work-meta border-t-0 pt-0">
                                 <a :href="app.link" target="_blank" data-btn class="ml-auto"
                                     style="font-size: 1.2rem; letter-spacing: 0em;">
                                     <div data-btn-bg></div>
-                                    <div data-btn-inner data-text="View Project">
-                                        <span data-btn-text>View Project</span>
+                                    <div data-btn-inner :data-text="t('works.viewProject')">
+                                        <span data-btn-text>{{ t('works.viewProject') }}</span>
                                     </div>
                                 </a>
                             </div>
@@ -371,14 +368,14 @@
                         <div class="content-label">
                             <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
                                 <path d="M0 0L14 14H0V0Z" />
-                            </svg>Story
+                            </svg>{{ t('photos.label') }}
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-10 mask-inner"><span class="text-editorial gradient-text">Moments</span> captured in between.</h2>
+                                <h2 class="heading-l mb-10 mask-inner" v-html="t('photos.heading')"></h2>
                             </div>
                             <div class="mask-wrap">
-                                <p class="paragraph-l max-w-3xl mask-inner">Code captures the logic;<br>Photos capture the soul.</p>
+                                <p class="paragraph-l max-w-3xl mask-inner" v-html="t('photos.body')"></p>
                             </div>
                         </div>
                     </div>
@@ -411,7 +408,7 @@
                             class="parallax-wrap group border border-black/5 dark:border-white/10 col-span-1 md:col-span-4 aspect-[3/4] md:mt-6 flex items-center justify-center bg-klein-blue hover:bg-[#0038c8] transition-colors">
                             <div class="text-center text-white">
                                 <span class="block font-bold text-lg mb-3"
-                                    style="font-family:'Inter',sans-serif;">Explore All</span>
+                                    style="font-family:'Inter',sans-serif;">{{ t('photos.exploreAll') }}</span>
                                 <i data-lucide="arrow-up-right"
                                     class="w-8 h-8 mx-auto opacity-70 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"></i>
                             </div>
@@ -430,25 +427,25 @@
                         <div class="content-label">
                             <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
                                 <path d="M0 0L14 14H0V0Z" />
-                            </svg>Links
+                            </svg>{{ t('connect.label') }}
                         </div>
                         <div class="content-body">
                             <div class="mask-wrap">
-                                <h2 class="heading-l mb-16 mask-inner">Let's build <span class="text-editorial gradient-text">the future</span> together.</h2>
+                                <h2 class="heading-l mb-16 mask-inner" v-html="t('connect.heading')"></h2>
                             </div>
                             <div class="flex flex-col">
                                 <a v-for="link in [
-                                    { label: 'Blog', desc: 'Thoughts on development, design, and learning.', url: 'https://mqiu.dev/blog' },
-                                    { label: 'GitHub', desc: 'Open-source projects and contributions.', url: 'https://github.com/gitmichaelqiu' },
-                                    { label: 'Kaggle', desc: 'Data science notebooks and competitions.', url: 'https://www.kaggle.com/michaelqiu0606' }
-                                ]" :key="link.label" :href="link.url" target="_blank"
+                                    { key: 'blog', url: 'https://mqiu.dev/blog' },
+                                    { key: 'github', url: 'https://github.com/gitmichaelqiu' },
+                                    { key: 'kaggle', url: 'https://www.kaggle.com/michaelqiu0606' }
+                                ]" :key="link.key" :href="link.url" target="_blank"
                                     class="relative flex items-center gap-8 py-10 border-b border-black/5 dark:border-white/10 group overflow-hidden">
                                     <i data-lucide="arrow-up-right"
                                         style="stroke-width: 1.6px;"
                                         class="absolute left-0 w-20 h-20 text-klein-blue opacity-0 -translate-x-full group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"></i>
                                     <div class="group-hover:translate-x-20 transition-transform duration-500">
-                                        <span class="text-xl font-semibold block" style="font-family:'Inter',sans-serif;">{{ link.label }}</span>
-                                        <span class="text-sm opacity-50 block" style="font-family:'Inter',sans-serif;font-weight:400;">{{ link.desc }}</span>
+                                        <span class="text-xl font-semibold block" style="font-family:'Inter',sans-serif;">{{ t('nav.' + link.key) }}</span>
+                                        <span class="text-sm opacity-50 block" style="font-family:'Inter',sans-serif;font-weight:400;">{{ t('connect.' + link.key + 'Desc') }}</span>
                                     </div>
                                     <i data-lucide="arrow-up-right"
                                         style="stroke-width: 1.6px;"
@@ -481,20 +478,20 @@
                                     d="M790.05,211.64c2.79,4.74,7.36,4.74,10.15,0L919.75,8.62C922.54,3.88,920.32,0,914.82,0h-239.41c-5.5,0-7.72,3.88-4.93,8.62l119.55,203.03Z" />
                             </svg>
                         </a>
-                        <p class="text-xs text-white/70" style="font-family:'Inter',sans-serif;">&copy; 2026 - Michael Qiu.</p>
+                        <p class="text-xs text-white/70" style="font-family:'Inter',sans-serif;">{{ t('footer.copyright') }}</p>
                     </div>
                     <!-- Navigation -->
                     <div class="md:col-span-2">
-                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Page</p>
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('footer.page') }}</p>
                         <div class="flex flex-col gap-1">
-                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="footer-nav-link">Persona</a>
-                            <a @click.prevent="handleNavClick('works')" href="#works" class="footer-nav-link">Projects</a>
-                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="footer-nav-link">Story</a>
+                            <a @click.prevent="handleNavClick('profile')" href="#profile" class="footer-nav-link">{{ t('nav.persona') }}</a>
+                            <a @click.prevent="handleNavClick('works')" href="#works" class="footer-nav-link">{{ t('nav.projects') }}</a>
+                            <a @click.prevent="handleNavClick('photos')" href="#photos" class="footer-nav-link">{{ t('nav.story') }}</a>
                         </div>
                     </div>
                     <!-- Projects -->
                     <div class="md:col-span-2">
-                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Projects</p>
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('footer.projects') }}</p>
                         <div class="flex flex-col gap-1">
                             <a href="https://desktoprenamer.mqiu.dev" target="_blank" class="footer-nav-link">DesktopRenamer</a>
                             <a href="https://optclicker.mqiu.dev" target="_blank" class="footer-nav-link">OptClicker</a>
@@ -503,11 +500,11 @@
                     </div>
                     <!-- Links -->
                     <div class="md:col-span-3">
-                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">Links</p>
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('footer.links') }}</p>
                         <div class="flex flex-col gap-1">
-                            <a href="https://mqiu.dev/blog" target="_blank" class="footer-nav-link">Blog</a>
-                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">GitHub</a>
-                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="footer-nav-link">Kaggle</a>
+                            <a href="https://mqiu.dev/blog" target="_blank" class="footer-nav-link">{{ t('nav.blog') }}</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">{{ t('nav.github') }}</a>
+                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="footer-nav-link">{{ t('nav.kaggle') }}</a>
                         </div>
                     </div>
                 </div>
@@ -526,20 +523,20 @@
                 <div class="container flex-1 flex flex-col justify-center">
                     <div class="flex flex-col" style="gap: 1rem;">
                         <a v-for="link in [
-                            {id: 'home', label: 'Overview'},
-                            {id: 'profile', label: 'Persona'},
-                            {id: 'works', label: 'Projects'},
-                            {id: 'photos', label: 'Story'},
-                            {id: 'connect', label: 'Links'}
+                            {id: 'home', key: 'overview'},
+                            {id: 'profile', key: 'persona'},
+                            {id: 'works', key: 'projects'},
+                            {id: 'photos', key: 'story'},
+                            {id: 'connect', key: 'links'}
                         ]" :key="link.id" :href="'#'+link.id" @click.prevent="handleNavClick(link.id)"
                             class="sidebar-link">
                             <div class="mask-wrap">
-                                <span class="mask-inner">{{ link.label }}</span>
+                                <span class="mask-inner">{{ t('sidebar.' + link.key) }}</span>
                             </div>
                         </a>
                         <a href="https://mqiu.dev/blog" target="_blank" class="sidebar-link group">
                             <div class="mask-wrap">
-                                <span class="mask-inner">Blog<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
+                                <span class="mask-inner">{{ t('sidebar.blog') }}<i data-lucide="arrow-up-right" class="sidebar-ext-icon"></i></span>
                             </div>
                         </a>
                     </div>
