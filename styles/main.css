@@ -1132,33 +1132,33 @@ html.dark .project-3d-wrap {
 html[lang="zh"] .heading-l,
 html[lang="zh"] .heading-xl,
 html[lang="zh"] .hero__name {
-    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
     font-weight: 700;
 }
 
 html[lang="zh"] .paragraph-l,
 html[lang="zh"] .paragraph-m {
-    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
     font-weight: 400;
 }
 
 html[lang="zh"] .text-editorial {
-    font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+    font-family: 'Playfair Display', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
     font-style: normal;
     font-weight: 400;
 }
 
 html[lang="zh"] .content-label {
-    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
 }
 
 html[lang="zh"] .hero__quicknav-link,
 html[lang="zh"] .hero__quicknav-label {
-    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
 }
 
 html[lang="zh"] .sidebar-link {
-    font-family: 'Noto Serif SC', 'Inter', sans-serif;
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
     font-weight: 700;
 }
 
