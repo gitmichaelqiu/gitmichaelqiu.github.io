@@ -399,9 +399,8 @@
                             <div
                                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
                                 <p class="text-sm text-white mb-2"
-                                    style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">{{ photo.date }}</p>
-                                <h4 class="font-bold text-lg text-white" style="letter-spacing: -0.02em;">{{ photo.title
-                                    }}</h4>
+                                    style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">{{ lang === 'zh' ? photo.dateZh : photo.date }}</p>
+                                <h4 class="font-bold text-lg text-white" style="letter-spacing: -0.02em;">{{ lang === 'zh' ? photo.titleZh : photo.title }}</h4>
                             </div>
                         </div>
                         <a href="photos/"

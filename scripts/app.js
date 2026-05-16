@@ -314,13 +314,13 @@
             ];
 
             var photos = [
-                { url: 'resources/photos/01.jpeg', title: 'Sunsetz', date: 'Ko Chang, Thailand, 2023', flag: '🇹🇭' },
-                { url: 'resources/photos/02.jpeg', title: 'Golden Hour', date: 'Ko Chang, Thailand, 2023', flag: '🇹🇭' },
-                { url: 'resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', date: 'Hangzhou, China, 2024', flag: '🇨🇳' },
-                { url: 'resources/photos/04.jpeg', title: 'Shed A Light', date: 'Abu Dhabi, UAE, 2025', flag: '🇦🇪' },
-                { url: 'resources/photos/05.jpeg', title: 'Mountain Ferry', date: 'Hokkaido, Japan, 2025', flag: '🇯🇵' },
-                { url: 'resources/photos/06.jpeg', title: 'Lighthouse', date: 'Hokkaido, Japan, 2025', flag: '🇯🇵' },
-                { url: 'resources/photos/07.jpeg', title: 'Path', date: 'Hokkaido, Japan, 2025', flag: '🇯🇵' }
+                { url: 'resources/photos/01.jpeg', title: 'Sunsetz', titleZh: '日落', date: 'Ko Chang, Thailand, 2023', dateZh: '泰国象岛，2023', flag: '🇹🇭' },
+                { url: 'resources/photos/02.jpeg', title: 'Golden Hour', titleZh: '黄金时刻', date: 'Ko Chang, Thailand, 2023', dateZh: '泰国象岛，2023', flag: '🇹🇭' },
+                { url: 'resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', titleZh: '月挂枝头', date: 'Hangzhou, China, 2024', dateZh: '中国杭州，2024', flag: '🇨🇳' },
+                { url: 'resources/photos/04.jpeg', title: 'Shed A Light', titleZh: '微光', date: 'Abu Dhabi, UAE, 2025', dateZh: '阿联酋阿布扎比，2025', flag: '🇦🇪' },
+                { url: 'resources/photos/05.jpeg', title: 'Mountain Ferry', titleZh: '山间渡轮', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' },
+                { url: 'resources/photos/06.jpeg', title: 'Lighthouse', titleZh: '灯塔', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' },
+                { url: 'resources/photos/07.jpeg', title: 'Path', titleZh: '小径', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' }
             ];
 
             // ── Sidebar ──
