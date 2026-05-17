@@ -1135,6 +1135,11 @@ html[lang="zh"] .heading-xl {
     font-weight: 700;
 }
 
+html[lang="zh"] .work-card .heading-l {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
 html[lang="zh"] .paragraph-l,
 html[lang="zh"] .paragraph-m {
     font-family: 'Inter', 'Noto Serif SC', sans-serif;
