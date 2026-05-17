@@ -45,9 +45,9 @@
 
             var lang = ref(getStoredLang() || DEFAULT_LANG);
 
-            function toggleLang() {
-                lang.value = lang.value === 'en' ? 'zh' : 'en';
-                setStoredLang(lang.value);
+            function setLang(l) {
+                lang.value = l;
+                setStoredLang(l);
                 nextTick(function () { lucide.createIcons(); });
             }
 
@@ -605,7 +605,7 @@
                 themeMode: themeMode,
                 toggleTheme: toggleTheme,
                 lang: lang,
-                toggleLang: toggleLang,
+                setLang: setLang,
                 t: t,
                 showVideoModal: showVideoModal,
                 openVideoModal: openVideoModal,

@@ -181,11 +181,9 @@
                         </div>
                     </div>
                     <div class="hero__quicknav-lang">
-                        <button @click="toggleLang" class="hero__quicknav-lang-btn" aria-label="Switch language">
-                            <span class="hero__quicknav-lang-opt" :class="{ 'is-active': lang === 'en' }">EN</span>
-                            <span class="hero__quicknav-lang-sep">/</span>
-                            <span class="hero__quicknav-lang-opt" :class="{ 'is-active': lang === 'zh' }">中文</span>
-                        </button>
+                        <button @click="setLang('en')" class="hero__quicknav-lang-btn hero__quicknav-lang-opt" :class="{ 'is-active': lang === 'en' }" aria-label="Switch to English">EN</button>
+                        <span class="hero__quicknav-lang-sep">/</span>
+                        <button @click="setLang('zh')" class="hero__quicknav-lang-btn hero__quicknav-lang-opt" :class="{ 'is-active': lang === 'zh' }" aria-label="切换到中文">中文</button>
                     </div>
                 </nav>
 
