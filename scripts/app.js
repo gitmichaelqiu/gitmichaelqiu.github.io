@@ -501,6 +501,12 @@
                 window.addEventListener('scroll', onScroll, { passive: true });
                 systemQuery.addEventListener('change', onSystemThemeChange);
 
+                // Refresh ScrollTrigger after fonts/images load to prevent stuck animations
+                window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
+                }
+
                 nextTick().then(function () {
                     lucide.createIcons();
 
