@@ -183,6 +183,12 @@
             var STORAGE_KEY = 'theme';
             var systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
+            function getCookieTheme() {
+                try {
+                    var match = document.cookie.match(new RegExp('(?:^|; )' + STORAGE_KEY + '=([^;]*)'));
+                    return match ? decodeURIComponent(match[1]) : null;
+                } catch (e) { return null; }
+            }
             function getStoredTheme() {
                 try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
             }
@@ -191,16 +197,22 @@
                     if (val === null) localStorage.removeItem(STORAGE_KEY);
                     else localStorage.setItem(STORAGE_KEY, val);
                 } catch (e) {}
+                try {
+                    if (val === null) document.cookie = STORAGE_KEY + '=;path=/;domain=mqiu.dev;max-age=0;SameSite=Lax';
+                    else document.cookie = STORAGE_KEY + '=' + encodeURIComponent(val) + ';path=/;domain=mqiu.dev;max-age=31536000;SameSite=Lax';
+                } catch (e) {}
             }
 
             function resolveTheme() {
                 var stored = getStoredTheme();
                 if (stored === 'dark' || stored === 'light') return stored;
+                var cookie = getCookieTheme();
+                if (cookie === 'dark' || cookie === 'light') return cookie;
                 return systemQuery.matches ? 'dark' : 'light';
             }
 
             var isDark = ref(resolveTheme() === 'dark');
-            var themeMode = ref(getStoredTheme() || 'system');
+            var themeMode = ref(getStoredTheme() || getCookieTheme() || 'system');
 
             function applyTheme(dark) {
                 document.documentElement.classList.toggle('dark', dark);
