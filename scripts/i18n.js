@@ -76,7 +76,7 @@ window.i18n = {
             kaggle: 'Kaggle'
         },
         profile: {
-            label: '个人简介',
+            label: '简介',
             heading: '拒绝<span class="text-editorial gradient-text">默认。</span>',
             body: '我是 Michael，一名专注于打破交互边界的高中生开发者。'
         },
@@ -111,12 +111,12 @@ window.i18n = {
         },
         sidebar: {
             overview: '概览',
-            persona: '个人简介',
+            persona: '简介',
             projects: '项目',
             story: '故事',
             links: '链接',
             blog: '博客'
         },
-        sectionLabels: { home: '首页', profile: '个人简介', works: '项目', photos: '故事', connect: '链接' }
+        sectionLabels: { home: '首页', profile: '简介', works: '项目', photos: '故事', connect: '链接' }
     }
 };
