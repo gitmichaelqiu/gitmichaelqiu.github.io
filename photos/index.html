@@ -1133,7 +1133,11 @@
                     function setLang(l) {
                         lang.value = l;
                         setStoredLang(l);
-                        nextTick(function () { lucide.createIcons(); });
+                        nextTick(function () {
+                            ScrollTrigger.getAll().forEach(function (st) { st.kill(); });
+                            initScrollAnimations();
+                            lucide.createIcons();
+                        });
                     }
 
                     function t(key) {
@@ -2221,22 +2225,25 @@
                                 .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
                                 .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
 
-                            // Mask reveals for mode content
-                            gsap.utils.toArray('.section-rk').forEach(function (sec) {
-                                var masks = sec.querySelectorAll('.mask-inner');
-                                if (masks.length > 0) {
-                                    gsap.from(masks, {
-                                        y: "105%",
-                                        duration: 1.8,
-                                        stagger: 0.15,
-                                        ease: "power4.out",
-                                        scrollTrigger: {
-                                            trigger: sec,
-                                            start: "top 85%",
-                                        }
-                                    });
-                                }
-                            });
+                            function initScrollAnimations() {
+                                gsap.utils.toArray('.section-rk').forEach(function (sec) {
+                                    var masks = sec.querySelectorAll('.mask-inner');
+                                    if (masks.length > 0) {
+                                        gsap.from(masks, {
+                                            y: "105%",
+                                            duration: 1.8,
+                                            stagger: 0.15,
+                                            ease: "power4.out",
+                                            scrollTrigger: {
+                                                trigger: sec,
+                                                start: "top 85%",
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+
+                            initScrollAnimations();
                         });
                     });
 
