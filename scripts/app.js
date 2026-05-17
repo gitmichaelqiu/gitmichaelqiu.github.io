@@ -55,6 +55,90 @@
                 });
             }
 
+            function initScrollAnimations() {
+                // Mask Reveals for subsequent sections
+                gsap.utils.toArray('.section-rk:not(#home)').forEach(function (sec) {
+                    var masks = sec.querySelectorAll('.mask-inner');
+                    if (masks.length > 0) {
+                        gsap.from(masks, {
+                            y: "105%",
+                            duration: 1.8,
+                            stagger: 0.15,
+                            ease: "power4.out",
+                            scrollTrigger: {
+                                trigger: sec,
+                                start: "top 85%",
+                            }
+                        });
+                    }
+                });
+
+                // Image Parallax
+                gsap.utils.toArray('.parallax-wrap').forEach(function (wrap) {
+                    var img = wrap.querySelector('.parallax-img');
+                    gsap.fromTo(img, {
+                        y: "-15%"
+                    }, {
+                        y: "15%",
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: wrap,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: true
+                        }
+                    });
+                });
+
+                // Screenshot Parallax
+                gsap.utils.toArray('.screenshot-parallax').forEach(function (wrap) {
+                    var img = wrap.querySelector('.screenshot-parallax-img');
+                    if (!img) return;
+                    gsap.fromTo(img, {
+                        y: "-3%"
+                    }, {
+                        y: "3%",
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: wrap,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: true
+                        }
+                    });
+                });
+
+                // Gradient Parallax on editorial text
+                gsap.utils.toArray('.gradient-text').forEach(function (el) {
+                    gsap.fromTo(el, {
+                        backgroundPosition: '0% 50%'
+                    }, {
+                        backgroundPosition: '100% 50%',
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: el,
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: true
+                        }
+                    });
+                });
+
+                // Bolt Rotation
+                gsap.utils.toArray('.bolt-plus').forEach(function (bolt) {
+                    gsap.to(bolt, {
+                        rotation: 360,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: bolt,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: 1
+                        }
+                    });
+                });
+            }
+
             function t(key) {
                 var keys = key.split('.');
                 var result = translations[lang.value];
@@ -417,88 +501,6 @@
 
                     // Particles start spreading immediately
                     gsap.to(particles.state, { progress: 1, duration: 3.0, ease: "power2.out" });
-
-                    function initScrollAnimations() {
-                        // Mask Reveals for subsequent sections
-                        gsap.utils.toArray('.section-rk:not(#home)').forEach(function (sec) {
-                            var masks = sec.querySelectorAll('.mask-inner');
-                            if (masks.length > 0) {
-                                gsap.from(masks, {
-                                    y: "105%",
-                                    duration: 1.8,
-                                    stagger: 0.15,
-                                    ease: "power4.out",
-                                    scrollTrigger: {
-                                        trigger: sec,
-                                        start: "top 85%",
-                                    }
-                                });
-                            }
-                        });
-
-                        // Image Parallax
-                        gsap.utils.toArray('.parallax-wrap').forEach(function (wrap) {
-                            var img = wrap.querySelector('.parallax-img');
-                            gsap.fromTo(img, {
-                                y: "-15%"
-                            }, {
-                                y: "15%",
-                                ease: "none",
-                                scrollTrigger: {
-                                    trigger: wrap,
-                                    start: "top bottom",
-                                    end: "bottom top",
-                                    scrub: true
-                                }
-                            });
-                        });
-
-                        // Screenshot Parallax
-                        gsap.utils.toArray('.screenshot-parallax').forEach(function (wrap) {
-                            var img = wrap.querySelector('.screenshot-parallax-img');
-                            if (!img) return;
-                            gsap.fromTo(img, {
-                                y: "-3%"
-                            }, {
-                                y: "3%",
-                                ease: "none",
-                                scrollTrigger: {
-                                    trigger: wrap,
-                                    start: "top bottom",
-                                    end: "bottom top",
-                                    scrub: true
-                                }
-                            });
-                        });
-
-                        // Gradient Parallax on editorial text
-                        gsap.utils.toArray('.gradient-text').forEach(function (el) {
-                            gsap.to(el, {
-                                backgroundPosition: '100% 50%',
-                                ease: 'none',
-                                scrollTrigger: {
-                                    trigger: el,
-                                    start: 'top bottom',
-                                    end: 'bottom top',
-                                    scrub: true
-                                }
-                            });
-                        });
-
-                        // Bolt Rotation
-                        gsap.utils.toArray('.bolt-plus').forEach(function (bolt) {
-                            gsap.to(bolt, {
-                                rotation: 360,
-                                ease: "none",
-                                scrollTrigger: {
-                                    trigger: bolt,
-                                    start: "top bottom",
-                                    end: "bottom top",
-                                    scrub: 1
-                                }
-                            });
-                        });
-                    }
 
                     initScrollAnimations();
 

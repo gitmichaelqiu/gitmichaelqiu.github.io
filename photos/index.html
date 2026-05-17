@@ -1140,6 +1140,24 @@
                         });
                     }
 
+                    function initScrollAnimations() {
+                        gsap.utils.toArray('.section-rk').forEach(function (sec) {
+                            var masks = sec.querySelectorAll('.mask-inner');
+                            if (masks.length > 0) {
+                                gsap.from(masks, {
+                                    y: "105%",
+                                    duration: 1.8,
+                                    stagger: 0.15,
+                                    ease: "power4.out",
+                                    scrollTrigger: {
+                                        trigger: sec,
+                                        start: "top 85%",
+                                    }
+                                });
+                            }
+                        });
+                    }
+
                     function t(key) {
                         var keys = key.split('.');
                         var result = translations[lang.value];
@@ -2224,24 +2242,6 @@
                                 .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
                                 .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
                                 .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
-
-                            function initScrollAnimations() {
-                                gsap.utils.toArray('.section-rk').forEach(function (sec) {
-                                    var masks = sec.querySelectorAll('.mask-inner');
-                                    if (masks.length > 0) {
-                                        gsap.from(masks, {
-                                            y: "105%",
-                                            duration: 1.8,
-                                            stagger: 0.15,
-                                            ease: "power4.out",
-                                            scrollTrigger: {
-                                                trigger: sec,
-                                                start: "top 85%",
-                                            }
-                                        });
-                                    }
-                                });
-                            }
 
                             initScrollAnimations();
                         });
