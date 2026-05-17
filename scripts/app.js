@@ -36,14 +36,32 @@
             var DEFAULT_LANG = 'en';
             var SUPPORTED_LANGS = ['en', 'zh'];
 
+            function getCookieLang() {
+                try {
+                    var match = document.cookie.match(new RegExp('(?:^|; )' + LANG_KEY + '=([^;]*)'));
+                    var v = match ? decodeURIComponent(match[1]) : null;
+                    return SUPPORTED_LANGS.indexOf(v) >= 0 ? v : null;
+                } catch (e) { return null; }
+            }
+            function getBrowserLang() {
+                try {
+                    var navLang = (navigator.language || navigator.userLanguage || '').split('-')[0];
+                    return SUPPORTED_LANGS.indexOf(navLang) >= 0 ? navLang : null;
+                } catch (e) { return null; }
+            }
             function getStoredLang() {
                 try { var v = localStorage.getItem(LANG_KEY); return SUPPORTED_LANGS.indexOf(v) >= 0 ? v : null; } catch (e) { return null; }
             }
             function setStoredLang(val) {
                 try { localStorage.setItem(LANG_KEY, val); } catch (e) {}
+                try { document.cookie = LANG_KEY + '=' + encodeURIComponent(val) + ';path=/;domain=mqiu.dev;max-age=31536000;SameSite=Lax'; } catch (e) {}
             }
 
-            var lang = ref(getStoredLang() || DEFAULT_LANG);
+            function resolveLang() {
+                return getStoredLang() || getCookieLang() || getBrowserLang() || DEFAULT_LANG;
+            }
+
+            var lang = ref(resolveLang());
 
             function setLang(l) {
                 lang.value = l;
