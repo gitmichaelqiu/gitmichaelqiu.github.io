@@ -1205,23 +1205,37 @@ html[lang="zh"] .sidebar-link {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
 }
-@keyframes preloaderPulse {
-    0%, 100% { opacity: 0.25; }
-    50% { opacity: 0.55; }
+@keyframes writeLogo {
+    to { stroke-dashoffset: 0; }
 }
-#preloader-text {
+@keyframes fillLogo {
+    to { fill: rgba(255, 255, 255, 0.5); stroke-opacity: 0; }
+}
+#preloader {
+    touch-action: none;
+}
+#preloader-logo {
     position: absolute;
-    top: 50%;
+    top: 48%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 400;
-    letter-spacing: 0.22em;
-    color: rgba(255, 255, 255, 0.35);
+    width: min(380px, 78vw);
+    height: auto;
     pointer-events: none;
-    animation: preloaderPulse 2.2s ease-in-out infinite;
     user-select: none;
+}
+#preloader-logo text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 44px;
+    letter-spacing: 0.04em;
+    fill: transparent;
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 1;
+    stroke-dasharray: 500;
+    stroke-dashoffset: 500;
+    animation: writeLogo 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+               fillLogo 0.5s ease-out 1.7s forwards;
 }
 #preloader-progress {
     position: absolute;
@@ -1243,9 +1257,10 @@ html[lang="zh"] .sidebar-link {
 #preloader-progress-track::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-    animation: preloaderShimmer 1.5s ease-in-out infinite;
+    inset: -4px 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    animation: preloaderShimmer 1.4s ease-in-out infinite;
+    filter: blur(2px);
 }
 #preloader-progress-fill {
     width: 100%;

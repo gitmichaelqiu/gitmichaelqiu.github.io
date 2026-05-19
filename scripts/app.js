@@ -530,11 +530,14 @@
                         tl.set('.hero__text .mask-inner', { y: '120%' })
                             .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
                                 var el = document.getElementById('preloader');
-                                if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                if (el) {
+                                    el.style.display = 'none';
+                                    el.style.pointerEvents = 'none';
+                                    el.removeEventListener('wheel', window.__blockScroll, { capture: true });
+                                    el.removeEventListener('touchmove', window.__blockScroll, { capture: true });
+                                }
                                 document.body.style.overflow = '';
                                 document.documentElement.style.overflow = '';
-                                document.removeEventListener('wheel', window.__blockScroll);
-                                document.removeEventListener('touchmove', window.__blockScroll);
                             } })
                             .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
                             .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")

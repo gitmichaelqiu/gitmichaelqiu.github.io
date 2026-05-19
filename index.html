@@ -93,7 +93,9 @@
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
     <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;">
-        <div id="preloader-text">mqiu.dev</div>
+        <svg id="preloader-logo" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
+            <text x="200" y="40" text-anchor="middle" dominant-baseline="central">mqiu.dev</text>
+        </svg>
         <div id="preloader-progress">
             <div id="preloader-progress-track">
                 <div id="preloader-progress-fill"></div>
@@ -105,9 +107,26 @@
         // Lock scroll while preloader is visible
         document.body.style.overflow = 'hidden';
         document.documentElement.style.overflow = 'hidden';
-        window.__blockScroll = function(e) { e.preventDefault(); };
-        document.addEventListener('wheel', window.__blockScroll, { passive: false });
-        document.addEventListener('touchmove', window.__blockScroll, { passive: false });
+        var preloaderEl = document.getElementById('preloader');
+        window.__blockScroll = function(e) { e.preventDefault(); e.stopPropagation(); };
+        preloaderEl.addEventListener('wheel', window.__blockScroll, { passive: false, capture: true });
+        preloaderEl.addEventListener('touchmove', window.__blockScroll, { passive: false, capture: true });
+
+        // Set exact stroke-dasharray for SVG writing animation
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                var logoText = document.querySelector('#preloader-logo text');
+                if (logoText) {
+                    try {
+                        var len = logoText.getComputedTextLength();
+                        if (len > 0) {
+                            logoText.setAttribute('stroke-dasharray', len);
+                            logoText.setAttribute('stroke-dashoffset', len);
+                        }
+                    } catch(e) {}
+                }
+            });
+        });
 
         var RESOURCES = [
             'resources/works/desktop-renamer.png',
