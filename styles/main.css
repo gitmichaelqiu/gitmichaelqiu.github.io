@@ -1205,11 +1205,12 @@ html[lang="zh"] .sidebar-link {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
 }
-@keyframes writeLogo {
-    to { stroke-dashoffset: 0; }
-}
-@keyframes fillLogo {
-    to { fill: rgba(255, 255, 255, 0.5); stroke-opacity: 0; }
+@keyframes logoCycle {
+    0%   { stroke-dashoffset: 500; }
+    20%  { stroke-dashoffset: 0; }
+    65%  { stroke-dashoffset: 0; }
+    80%  { stroke-dashoffset: 500; }
+    100% { stroke-dashoffset: 500; }
 }
 #preloader {
     touch-action: none;
@@ -1229,13 +1230,12 @@ html[lang="zh"] .sidebar-link {
     font-weight: 500;
     font-size: 44px;
     letter-spacing: 0.04em;
-    fill: transparent;
-    stroke: rgba(255, 255, 255, 0.4);
+    fill: rgba(255, 255, 255, 0.3);
+    stroke: rgba(255, 255, 255, 0.6);
     stroke-width: 1;
     stroke-dasharray: 500;
     stroke-dashoffset: 500;
-    animation: writeLogo 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards,
-               fillLogo 0.5s ease-out 1.7s forwards;
+    animation: logoCycle 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 #preloader-progress {
     position: absolute;
@@ -1250,17 +1250,17 @@ html[lang="zh"] .sidebar-link {
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.06);
-    overflow: hidden;
+    overflow: visible;
     position: relative;
     border-radius: 1px;
 }
 #preloader-progress-track::after {
     content: '';
     position: absolute;
-    inset: -4px 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    inset: -8px 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 45%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0.9) 55%, transparent 100%);
     animation: preloaderShimmer 1.4s ease-in-out infinite;
-    filter: blur(2px);
+    filter: blur(5px);
 }
 #preloader-progress-fill {
     width: 100%;

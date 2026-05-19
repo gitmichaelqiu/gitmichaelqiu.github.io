@@ -112,22 +112,6 @@
         preloaderEl.addEventListener('wheel', window.__blockScroll, { passive: false, capture: true });
         preloaderEl.addEventListener('touchmove', window.__blockScroll, { passive: false, capture: true });
 
-        // Set exact stroke-dasharray for SVG writing animation
-        requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-                var logoText = document.querySelector('#preloader-logo text');
-                if (logoText) {
-                    try {
-                        var len = logoText.getComputedTextLength();
-                        if (len > 0) {
-                            logoText.setAttribute('stroke-dasharray', len);
-                            logoText.setAttribute('stroke-dashoffset', len);
-                        }
-                    } catch(e) {}
-                }
-            });
-        });
-
         var RESOURCES = [
             'resources/works/desktop-renamer.png',
             'resources/works/desktop-renamer-full.png',
