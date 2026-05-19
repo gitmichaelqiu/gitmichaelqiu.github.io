@@ -781,7 +781,71 @@
 
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;">
+        <div id="preloader-progress">
+            <div id="preloader-progress-track">
+                <div id="preloader-progress-fill"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        var MIN_TIME = 600;
+        var TIMEOUT  = 10000;
+        var fill = document.getElementById('preloader-progress-fill');
+        var IMG_RE = /\.(png|jpe?g|gif|webp|svg|ico)(\?|$)/i;
+
+        window.__resourcesReady = new Promise(function(resolve) {
+            var t0 = Date.now();
+            var settled = false;
+
+            function finish() {
+                if (!settled) {
+                    settled = true;
+                    if (fill) { fill.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)'; fill.style.transform = 'scaleX(1)'; }
+                    setTimeout(resolve, 200);
+                }
+            }
+
+            setTimeout(finish, TIMEOUT);
+
+            // Step 1: Fetch photo metadata to discover image URLs
+            fetch('photos.json')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    window.__photosData = data.photos;
+                    var urls = data.photos.map(function(p) { return p.url; });
+                    urls.push('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+
+                    var total = urls.length;
+                    var loaded = 0;
+
+                    function updateBar() {
+                        if (!fill) return;
+                        fill.style.transform = 'scaleX(' + (loaded / total) + ')';
+                    }
+
+                    function checkDone() {
+                        if (loaded >= total && Date.now() - t0 >= MIN_TIME) finish();
+                    }
+
+                    if (total === 0) { finish(); return; }
+
+                    urls.forEach(function(url) {
+                        var img = new Image();
+                        if (url.indexOf('http') === 0) img.crossOrigin = 'anonymous';
+                        img.onload  = function() { loaded++; updateBar(); checkDone(); };
+                        img.onerror = function() { loaded++; updateBar(); checkDone(); };
+                        img.src = url;
+                    });
+                })
+                .catch(function() {
+                    console.warn('Resource preloader: failed to fetch photos.json');
+                    finish();
+                });
+        });
+    })();
+    </script>
 
     <div id="app" class="relative min-h-screen">
         <!-- Architectural Grid Lines -->
@@ -2224,11 +2288,25 @@
 
                     // ── Fetch Photos ──
                     function loadPhotos() {
+                        if (window.__photosData) {
+                            photos.value = window.__photosData;
+                            for (var i = 0; i < window.__photosData.length * 5; i++) {
+                                flowLoaded[i] = false;
+                            }
+                            for (var j = 0; j < window.__photosData.length * 20; j++) {
+                                gridLoaded[j] = false;
+                                gridVisible[j] = false;
+                            }
+                            nextTick(function () {
+                                revealGridItems();
+                                setupHoverFollowers();
+                            });
+                            return;
+                        }
                         fetch('photos.json')
                             .then(function(res) { return res.json(); })
                             .then(function(data) {
                                 photos.value = data.photos;
-                                // Init load states for duplicated arrays
                                 for (var i = 0; i < data.photos.length * 5; i++) {
                                     flowLoaded[i] = false;
                                 }
@@ -2268,18 +2346,20 @@
                         nextTick().then(function () {
                             lucide.createIcons();
 
-                            // ── Animation Sequence ──
-                            var tl = gsap.timeline();
-                            tl.set('body', { opacity: 1 })
-                                .set('.hero__text .mask-inner', { y: '120%' })
-                                .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
-                                    var el = document.getElementById('preloader');
-                                    if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
-                                } })
-                                .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
-                                .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
-                                .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
-                                .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
+                            // ── Animation Sequence (gated on resource preloader) ──
+                            (window.__resourcesReady || Promise.resolve()).then(function() {
+                                var tl = gsap.timeline();
+                                tl.set('body', { opacity: 1 })
+                                    .set('.hero__text .mask-inner', { y: '120%' })
+                                    .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
+                                        var el = document.getElementById('preloader');
+                                        if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                    } })
+                                    .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
+                                    .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
+                                    .to('.hero__text .mask-inner', { y: 0, visibility: 'visible', duration: 0.8, stagger: 0.15, ease: "expo.out" }, "-=0.3")
+                                    .from('.hero__quicknav', { opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
+                            });
 
                             // Defer ScrollTrigger creation until browser completes layout
                             requestAnimationFrame(function () {
