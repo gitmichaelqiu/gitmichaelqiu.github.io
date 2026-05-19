@@ -520,12 +520,14 @@
                     //     });
                     // }
 
+                    // Reveal body immediately so preloader is visible
+                    gsap.set('body', { opacity: 1 });
+
                     // ── Animation Sequence (gated on resource preloader) ──
                     (window.__resourcesReady || Promise.resolve()).then(function() {
                         var tl = gsap.timeline();
 
-                        tl.set('body', { opacity: 1 })
-                            .set('.hero__text .mask-inner', { y: '120%' })
+                        tl.set('.hero__text .mask-inner', { y: '120%' })
                             .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
                                 var el = document.getElementById('preloader');
                                 if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
