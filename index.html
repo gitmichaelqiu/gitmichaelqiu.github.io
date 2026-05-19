@@ -101,6 +101,10 @@
     </div>
     <script>
     (function() {
+        // Lock scroll while preloader is visible
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
         var RESOURCES = [
             'resources/works/desktop-renamer.png',
             'resources/works/desktop-renamer-full.png',

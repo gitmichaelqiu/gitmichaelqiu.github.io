@@ -531,6 +531,8 @@
                             .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
                                 var el = document.getElementById('preloader');
                                 if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
+                                document.body.style.overflow = '';
+                                document.documentElement.style.overflow = '';
                             } })
                             .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
                             .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")

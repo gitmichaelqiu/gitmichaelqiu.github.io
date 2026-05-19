@@ -1201,6 +1201,10 @@ html[lang="zh"] .sidebar-link {
 /* ============================================================
    16. Preloader Progress Bar
    ============================================================ */
+@keyframes preloaderShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
 #preloader-progress {
     position: absolute;
     bottom: 12%;
@@ -1213,14 +1217,24 @@ html[lang="zh"] .sidebar-link {
 #preloader-progress-track {
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
     overflow: hidden;
+    position: relative;
+}
+#preloader-progress-track::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: preloaderShimmer 1.8s ease-in-out infinite;
 }
 #preloader-progress-fill {
     width: 100%;
     height: 100%;
-    background: #002FA7;
+    background: rgba(255, 255, 255, 0.5);
     transform-origin: left;
     transform: scaleX(0);
     will-change: transform;
+    position: relative;
+    z-index: 1;
 }
