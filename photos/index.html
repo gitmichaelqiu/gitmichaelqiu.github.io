@@ -782,6 +782,7 @@
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
     <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;">
+        <div id="preloader-text">mqiu.dev</div>
         <div id="preloader-progress">
             <div id="preloader-progress-track">
                 <div id="preloader-progress-fill"></div>
@@ -793,6 +794,9 @@
         // Lock scroll while preloader is visible
         document.body.style.overflow = 'hidden';
         document.documentElement.style.overflow = 'hidden';
+        window.__blockScroll = function(e) { e.preventDefault(); };
+        document.addEventListener('wheel', window.__blockScroll, { passive: false });
+        document.addEventListener('touchmove', window.__blockScroll, { passive: false });
 
         var MIN_TIME = 600;
         var TIMEOUT  = 10000;
@@ -2362,6 +2366,8 @@
                                         if (el) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
                                         document.body.style.overflow = '';
                                         document.documentElement.style.overflow = '';
+                                        document.removeEventListener('wheel', window.__blockScroll);
+                                        document.removeEventListener('touchmove', window.__blockScroll);
                                     } })
                                     .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
                                     .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")
