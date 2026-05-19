@@ -92,7 +92,93 @@
 
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;"></div>
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;">
+        <div id="preloader-progress">
+            <div id="preloader-progress-track">
+                <div id="preloader-progress-fill"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        var RESOURCES = [
+            'resources/works/desktop-renamer.png',
+            'resources/works/desktop-renamer-full.png',
+            'resources/works/desktop-renamer-full-dark.png',
+            'resources/works/opt-clicker.png',
+            'resources/works/opt-clicker-full.png',
+            'resources/works/opt-clicker-full-dark.png',
+            'resources/works/space-switcher.png',
+            'resources/works/space-switcher-full.png',
+            'resources/works/space-switcher-full-dark.png',
+            'resources/photos/01.jpeg',
+            'resources/photos/02.jpeg',
+            'resources/photos/03.jpeg',
+            'resources/photos/04.jpeg',
+            'resources/photos/05.jpeg',
+            'resources/photos/06.jpeg',
+            'resources/photos/07.jpeg',
+            'resources/demo-reel.mp4'
+        ];
+        var IMG_RE = /\.(png|jpe?g|gif|webp|svg|ico)(\?|$)/i;
+        var VID_RE = /\.(mp4|webm|mov)(\?|$)/i;
+        var MIN_TIME = 600;
+        var TIMEOUT  = 10000;
+        var fill = document.getElementById('preloader-progress-fill');
+        window.__resourcesReady = new Promise(function(resolve) {
+            var total   = RESOURCES.length;
+            var loaded  = 0;
+            var t0      = Date.now();
+            var settled = false;
+            function updateBar() {
+                if (!fill) return;
+                fill.style.transform = 'scaleX(' + (loaded / (total || 1)) + ')';
+            }
+            function checkDone() {
+                if (loaded >= total && Date.now() - t0 >= MIN_TIME) {
+                    if (!settled) {
+                        settled = true;
+                        if (fill) {
+                            fill.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                            fill.style.transform = 'scaleX(1)';
+                        }
+                        setTimeout(resolve, 200);
+                    }
+                }
+            }
+            setTimeout(function() {
+                if (!settled) {
+                    settled = true;
+                    if (fill) { fill.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)'; fill.style.transform = 'scaleX(1)'; }
+                    setTimeout(resolve, 200);
+                }
+            }, TIMEOUT);
+            if (total === 0) { setTimeout(resolve, MIN_TIME); return; }
+            RESOURCES.forEach(function(url) {
+                if (IMG_RE.test(url)) {
+                    var img = new Image();
+                    img.onload  = function() { loaded++; updateBar(); checkDone(); };
+                    img.onerror = function() { loaded++; updateBar(); checkDone(); };
+                    img.src = url;
+                } else if (VID_RE.test(url)) {
+                    var vid = document.createElement('video');
+                    vid.preload = 'auto';
+                    var done = false;
+                    function markDone() {
+                        if (!done) { done = true; loaded++; updateBar(); checkDone(); }
+                    }
+                    vid.onloadedmetadata = markDone;
+                    vid.onerror = markDone;
+                    vid.src = url;
+                    vid.load();
+                    setTimeout(markDone, 4000);
+                } else {
+                    fetch(url).then(function() { loaded++; updateBar(); checkDone(); }).catch(function() { loaded++; updateBar(); checkDone(); });
+                }
+            });
+        });
+    })();
+    </script>
 
     <div id="app" class="relative min-h-screen">
         <!-- Architectural Grid Lines -->
