@@ -781,13 +781,23 @@
 
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;">
-        <svg id="preloader-logo" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
-            <text x="200" y="40" text-anchor="middle" dominant-baseline="central">mqiu.dev</text>
-        </svg>
-        <div id="preloader-progress">
-            <div id="preloader-progress-track">
-                <div id="preloader-progress-fill"></div>
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #002FA7;">
+        <div class="container h-full relative">
+            <div class="preloader-content">
+                <div class="preloader-counter">[ <span id="preloader-percent">00</span>% ]</div>
+                <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <clipPath id="preloader-clip">
+                            <rect x="0" y="0" width="0" height="80"></rect>
+                        </clipPath>
+                    </defs>
+                    <!-- Background Outline -->
+                    <text id="preloader-text-base" x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
+                    <!-- Draw Stroke Layer -->
+                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
+                    <!-- Fill Layer -->
+                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
+                </svg>
             </div>
         </div>
     </div>
@@ -801,26 +811,92 @@
         preloaderEl.addEventListener('wheel', window.__blockScroll, { passive: false, capture: true });
         preloaderEl.addEventListener('touchmove', window.__blockScroll, { passive: false, capture: true });
 
-        var MIN_TIME = 600;
-        var TIMEOUT  = 10000;
-        var fill = document.getElementById('preloader-progress-fill');
-        var IMG_RE = /\.(png|jpe?g|gif|webp|svg|ico)(\?|$)/i;
+        var fill = document.querySelector('#preloader-clip rect');
+        var strokeText = document.querySelector('.preloader-text-stroke');
+        var percentText = document.getElementById('preloader-percent');
+        var textEl = document.getElementById('preloader-text-base');
 
         window.__resourcesReady = new Promise(function(resolve) {
-            var t0 = Date.now();
+            var total   = 0;
+            var loaded  = 0;
             var settled = false;
 
-            function finish() {
-                if (!settled) {
-                    settled = true;
-                    if (fill) { fill.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)'; fill.style.transform = 'scaleX(1)'; }
-                    setTimeout(resolve, 200);
+            // Track actual loading progress
+            var targetProgress = 0;
+            var displayedProgress = 0;
+
+            // Start animation loop
+            var lastTime = Date.now();
+            var minDuration = 800; // minimum duration in ms for 0% to 100% (fast and responsive)
+
+            function frame() {
+                var now = Date.now();
+                var dt = now - lastTime;
+                lastTime = now;
+
+                // Target progress based on resources loaded
+                targetProgress = total > 0 ? (loaded / total) : 0;
+
+                if (displayedProgress < targetProgress || targetProgress === 1) {
+                    displayedProgress += dt / minDuration;
+                    if (displayedProgress > targetProgress && targetProgress < 1) {
+                        displayedProgress = targetProgress;
+                    }
+                }
+
+                if (displayedProgress >= 1) {
+                    displayedProgress = 1;
+                }
+
+                // Calculate dynamic text width using getBBox
+                var textWidth = 220; // fallback
+                var textX = 0; // fallback
+                if (textEl) {
+                    try {
+                        var bbox = textEl.getBBox();
+                        if (bbox && bbox.width > 0) {
+                            textWidth = bbox.width;
+                            textX = bbox.x;
+                        }
+                    } catch(e) {}
+                }
+
+                // Update DOM elements
+                if (fill) {
+                    fill.setAttribute('x', textX);
+                    fill.setAttribute('width', displayedProgress * textWidth);
+                }
+                if (strokeText) strokeText.style.strokeDashoffset = 600 - (displayedProgress * 600);
+                if (percentText) percentText.textContent = String(Math.floor(displayedProgress * 100)).padStart(2, '0');
+
+                if (displayedProgress >= 1 && loaded >= total && total > 0) {
+                    if (!settled) {
+                        settled = true;
+                        if (fill) {
+                            fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                            fill.setAttribute('width', textWidth);
+                        }
+                        if (strokeText) strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                        setTimeout(resolve, 300);
+                    }
+                } else {
+                    requestAnimationFrame(frame);
                 }
             }
 
-            setTimeout(finish, TIMEOUT);
+            requestAnimationFrame(frame);
 
-            // Step 1: Fetch photo metadata to discover image URLs
+            function itemLoaded() {
+                loaded++;
+            }
+
+            var TIMEOUT = 10000;
+            setTimeout(function() {
+                if (total === 0) total = 1;
+                loaded = total;
+            }, TIMEOUT);
+
+            // Fetch photo metadata to discover image URLs
             fetch('photos.json')
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
@@ -828,31 +904,27 @@
                     var urls = data.photos.map(function(p) { return p.url; });
                     urls.push('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
 
-                    var total = urls.length;
-                    var loaded = 0;
-
-                    function updateBar() {
-                        if (!fill) return;
-                        fill.style.transform = 'scaleX(' + (loaded / total) + ')';
+                    total = urls.length;
+                    if (total === 0) {
+                        loaded = 0;
+                        total = 1;
+                        itemLoaded();
+                        return;
                     }
-
-                    function checkDone() {
-                        if (loaded >= total && Date.now() - t0 >= MIN_TIME) finish();
-                    }
-
-                    if (total === 0) { finish(); return; }
 
                     urls.forEach(function(url) {
                         var img = new Image();
                         if (url.indexOf('http') === 0) img.crossOrigin = 'anonymous';
-                        img.onload  = function() { loaded++; updateBar(); checkDone(); };
-                        img.onerror = function() { loaded++; updateBar(); checkDone(); };
+                        img.onload  = itemLoaded;
+                        img.onerror = itemLoaded;
                         img.src = url;
                     });
                 })
                 .catch(function() {
                     console.warn('Resource preloader: failed to fetch photos.json');
-                    finish();
+                    loaded = 0;
+                    total = 1;
+                    itemLoaded();
                 });
         });
     })();
