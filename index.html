@@ -459,10 +459,10 @@
                         aria-label="Close video">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
-                    <div class="video-modal-content relative w-full max-w-[90vw] max-h-[85vh]" style="aspect-ratio: 16/9;">
+                    <div class="video-modal-content relative">
                         <video src="resources/demo-reel.mp4" autoplay controls playsinline
-                            class="w-full h-full object-contain rounded-lg"
-                            style="box-shadow: 0 25px 80px rgba(0,0,0,0.5);"
+                            class="max-w-[90vw] max-h-[85vh] rounded-lg block"
+                            style="box-shadow: 0 25px 80px rgba(0,0,0,0.5); background: transparent;"
                             ref="modalVideo"></video>
                     </div>
                 </div>
