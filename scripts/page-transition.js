@@ -31,6 +31,12 @@
 
         e.preventDefault();
 
+        // Hide preloader content to show a clean Klein Blue curtain during transition
+        var content = curtain.querySelector('.preloader-content');
+        if (content) {
+            content.style.opacity = '0';
+        }
+
         // Bring curtain back to cover the page, then navigate
         curtain.style.display = '';
         curtain.style.pointerEvents = '';
@@ -42,5 +48,19 @@
                 window.location.href = href;
             }
         });
+    });
+
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+            var curtain = document.getElementById(CURTAIN_ID);
+            if (curtain) {
+                curtain.style.display = 'none';
+                curtain.style.opacity = '0';
+                var content = curtain.querySelector('.preloader-content');
+                if (content) {
+                    content.style.opacity = '';
+                }
+            }
+        }
     });
 })();
