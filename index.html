@@ -102,7 +102,7 @@
                     </clipPath>
                 </defs>
                 <!-- Background Outline -->
-                <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
+                <text id="preloader-text-base" x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
                 <!-- Draw Stroke Layer -->
                 <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
                 <!-- Fill Layer -->
@@ -141,11 +141,11 @@
         ];
         var IMG_RE = /\.(png|jpe?g|gif|webp|svg|ico)(\?|$)/i;
         var VID_RE = /\.(mp4|webm|mov)(\?|$)/i;
-        var MIN_TIME = 600;
-        var TIMEOUT  = 10000;
         var fill = document.querySelector('#preloader-clip rect');
         var strokeText = document.querySelector('.preloader-text-stroke');
         var percentText = document.getElementById('preloader-percent');
+        var textEl = document.getElementById('preloader-text-base');
+
         window.__resourcesReady = new Promise(function(resolve) {
             var total   = RESOURCES.length;
             var loaded  = 0;
@@ -157,7 +157,7 @@
 
             // Start animation loop
             var lastTime = Date.now();
-            var minDuration = 1200; // minimum duration in ms for 0% to 100%
+            var minDuration = 2500; // minimum duration in ms for 0% to 100% (slower for premium feel)
 
             function frame() {
                 var now = Date.now();
@@ -179,8 +179,24 @@
                     displayedProgress = 1;
                 }
 
+                // Calculate dynamic text width using getBBox to map progress exactly to text letters
+                var textWidth = 220; // fallback
+                var textX = 0; // fallback
+                if (textEl) {
+                    try {
+                        var bbox = textEl.getBBox();
+                        if (bbox && bbox.width > 0) {
+                            textWidth = bbox.width;
+                            textX = bbox.x;
+                        }
+                    } catch(e) {}
+                }
+
                 // Update DOM elements
-                if (fill) fill.setAttribute('width', displayedProgress * 320);
+                if (fill) {
+                    fill.setAttribute('x', textX);
+                    fill.setAttribute('width', displayedProgress * textWidth);
+                }
                 if (strokeText) strokeText.style.strokeDashoffset = 600 - (displayedProgress * 600);
                 if (percentText) percentText.textContent = String(Math.floor(displayedProgress * 100)).padStart(2, '0');
 
@@ -188,7 +204,10 @@
                     if (!settled) {
                         settled = true;
                         // Add transitions for the final complete state
-                        if (fill) fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                        if (fill) {
+                            fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                            fill.setAttribute('width', textWidth);
+                        }
                         if (strokeText) strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
                         setTimeout(resolve, 300);
                     }

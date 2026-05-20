@@ -1225,7 +1225,7 @@ html[lang="zh"] .sidebar-link {
     text-transform: uppercase;
 }
 .preloader-text-svg {
-    width: min(320px, 70vw);
+    width: clamp(160px, 40vw, 560px);
     height: auto;
     overflow: visible;
 }
