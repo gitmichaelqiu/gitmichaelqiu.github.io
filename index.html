@@ -435,7 +435,7 @@
             <!-- Demo Reel Section -->
             <section id="demo" class="relative w-full" style="border-top: none;">
                 <div class="relative w-full overflow-hidden bg-deep-navy" style="aspect-ratio: 16/9;">
-                    <video src="resources/demo-reel.mp4" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+                    <video src="resources/demo-reel.mp4" autoplay muted loop playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover"></video>
                     <!-- Soft bottom gradient -->
                     <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 12%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.03) 55%, transparent 100%);"></div>
                     <!-- Play button -->
@@ -460,7 +460,7 @@
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                     <div class="video-modal-content relative">
-                        <video src="resources/demo-reel.mp4" autoplay controls playsinline
+                        <video src="resources/demo-reel.mp4" autoplay controls playsinline preload="auto"
                             class="max-w-[90vw] max-h-[85vh] rounded-lg block"
                             style="box-shadow: 0 25px 80px rgba(0,0,0,0.5); background: transparent;"
                             ref="modalVideo"></video>
