@@ -1203,6 +1203,7 @@ html[lang="zh"] .sidebar-link {
    ============================================================ */
 #preloader {
     touch-action: none;
+    background-color: #002FA7;
 }
 .preloader-content {
     position: absolute;
@@ -1215,7 +1216,7 @@ html[lang="zh"] .sidebar-link {
     align-items: flex-start;
 }
 .preloader-counter {
-    font-family: 'Inter', monospace;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
     font-size: 1.1rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.5);
@@ -1229,31 +1230,30 @@ html[lang="zh"] .sidebar-link {
     overflow: visible;
 }
 .preloader-text-base {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
     font-size: 56px;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.05em;
     fill: none;
     stroke: rgba(255, 255, 255, 0.15);
-    stroke-width: 1.5px;
+    stroke-width: 1px;
 }
 .preloader-text-stroke {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
     font-size: 56px;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.05em;
     fill: none;
     stroke: #ffffff;
-    stroke-width: 1.5px;
+    stroke-width: 1px;
     stroke-dasharray: 600;
     stroke-dashoffset: 600;
 }
 .preloader-text-fill {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
     font-size: 56px;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.05em;
     fill: #ffffff;
-    stroke: #ffffff;
-    stroke-width: 1.5px;
+    stroke: none;
 }

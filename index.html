@@ -92,7 +92,7 @@
 
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[10002]" style="background: radial-gradient(circle at 10% 90%, #003bf4 0%, #002FA7 60%, #001e6a 100%);">
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #002FA7;">
         <div class="preloader-content">
             <div class="preloader-counter">[ <span id="preloader-percent">00</span>% ]</div>
             <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
@@ -102,11 +102,11 @@
                     </clipPath>
                 </defs>
                 <!-- Background Outline -->
-                <text x="0" y="55" class="preloader-text-base">loading</text>
+                <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
                 <!-- Draw Stroke Layer -->
-                <text x="0" y="55" class="preloader-text-stroke">loading</text>
+                <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
                 <!-- Fill Layer -->
-                <text x="0" y="55" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
+                <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
             </svg>
         </div>
     </div>
@@ -149,73 +149,94 @@
         window.__resourcesReady = new Promise(function(resolve) {
             var total   = RESOURCES.length;
             var loaded  = 0;
-            var t0      = Date.now();
             var settled = false;
-            function updateBar() {
-                var progress = loaded / (total || 1);
-                if (fill) fill.setAttribute('width', progress * 320);
-                if (strokeText) strokeText.style.strokeDashoffset = 600 - (progress * 600);
-                if (percentText) percentText.textContent = String(Math.floor(progress * 100)).padStart(2, '0');
-            }
-            function checkDone() {
-                if (loaded >= total && Date.now() - t0 >= MIN_TIME) {
+
+            // Track actual loading progress
+            var targetProgress = 0;
+            var displayedProgress = 0;
+
+            // Start animation loop
+            var lastTime = Date.now();
+            var minDuration = 1200; // minimum duration in ms for 0% to 100%
+
+            function frame() {
+                var now = Date.now();
+                var dt = now - lastTime;
+                lastTime = now;
+
+                // Target progress based on resources loaded
+                targetProgress = total > 0 ? (loaded / total) : 1;
+
+                if (displayedProgress < targetProgress || targetProgress === 1) {
+                    // Advance displayed progress at a rate of 100% per minDuration
+                    displayedProgress += dt / minDuration;
+                    if (displayedProgress > targetProgress && targetProgress < 1) {
+                        displayedProgress = targetProgress;
+                    }
+                }
+
+                if (displayedProgress >= 1) {
+                    displayedProgress = 1;
+                }
+
+                // Update DOM elements
+                if (fill) fill.setAttribute('width', displayedProgress * 320);
+                if (strokeText) strokeText.style.strokeDashoffset = 600 - (displayedProgress * 600);
+                if (percentText) percentText.textContent = String(Math.floor(displayedProgress * 100)).padStart(2, '0');
+
+                if (displayedProgress >= 1 && loaded >= total) {
                     if (!settled) {
                         settled = true;
-                        if (fill) {
-                            fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                            fill.setAttribute('width', 320);
-                        }
-                        if (strokeText) {
-                            strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                            strokeText.style.strokeDashoffset = 0;
-                        }
-                        if (percentText) {
-                            percentText.textContent = '100';
-                        }
-                        setTimeout(resolve, 200);
+                        // Add transitions for the final complete state
+                        if (fill) fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                        if (strokeText) strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                        setTimeout(resolve, 300);
                     }
+                } else {
+                    requestAnimationFrame(frame);
                 }
             }
+
+            // Start the loop
+            requestAnimationFrame(frame);
+
+            // Resource loading listeners
+            function itemLoaded() {
+                loaded++;
+            }
+
+            // Set up a safety timeout in case loading hangs
+            var TIMEOUT = 10000;
             setTimeout(function() {
-                if (!settled) {
-                    settled = true;
-                    if (fill) {
-                        fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                        fill.setAttribute('width', 320);
-                    }
-                    if (strokeText) {
-                        strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                        strokeText.style.strokeDashoffset = 0;
-                    }
-                    if (percentText) {
-                        percentText.textContent = '100';
-                    }
-                    setTimeout(resolve, 200);
-                }
+                loaded = total;
             }, TIMEOUT);
-            if (total === 0) { setTimeout(resolve, MIN_TIME); return; }
-            RESOURCES.forEach(function(url) {
-                if (IMG_RE.test(url)) {
-                    var img = new Image();
-                    img.onload  = function() { loaded++; updateBar(); checkDone(); };
-                    img.onerror = function() { loaded++; updateBar(); checkDone(); };
-                    img.src = url;
-                } else if (VID_RE.test(url)) {
-                    var vid = document.createElement('video');
-                    vid.preload = 'auto';
-                    var done = false;
-                    function markDone() {
-                        if (!done) { done = true; loaded++; updateBar(); checkDone(); }
+
+            if (total === 0) {
+                loaded = 0;
+            } else {
+                RESOURCES.forEach(function(url) {
+                    if (IMG_RE.test(url)) {
+                        var img = new Image();
+                        img.onload  = itemLoaded;
+                        img.onerror = itemLoaded;
+                        img.src = url;
+                    } else if (VID_RE.test(url)) {
+                        var vid = document.createElement('video');
+                        vid.preload = 'auto';
+                        var done = false;
+                        function markDone() {
+                            if (!done) { done = true; itemLoaded(); }
+                        }
+                        vid.onloadedmetadata = markDone;
+                        vid.onerror = markDone;
+                        vid.src = url;
+                        vid.load();
+                        setTimeout(markDone, 4000);
+                    } else {
+                        fetch(url).then(itemLoaded).catch(itemLoaded);
                     }
-                    vid.onloadedmetadata = markDone;
-                    vid.onerror = markDone;
-                    vid.src = url;
-                    vid.load();
-                    setTimeout(markDone, 4000);
-                } else {
-                    fetch(url).then(function() { loaded++; updateBar(); checkDone(); }).catch(function() { loaded++; updateBar(); checkDone(); });
-                }
-            });
+                });
+            }
         });
     })();
     </script>
