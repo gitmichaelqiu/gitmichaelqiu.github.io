@@ -92,14 +92,22 @@
 
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #01071a;">
-        <svg id="preloader-logo" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
-            <text x="200" y="40" text-anchor="middle" dominant-baseline="central">mqiu.dev</text>
-        </svg>
-        <div id="preloader-progress">
-            <div id="preloader-progress-track">
-                <div id="preloader-progress-fill"></div>
-            </div>
+    <div id="preloader" class="fixed inset-0 z-[10002]" style="background: radial-gradient(circle at 10% 90%, #003bf4 0%, #002FA7 60%, #001e6a 100%);">
+        <div class="preloader-content">
+            <div class="preloader-counter">[ <span id="preloader-percent">00</span>% ]</div>
+            <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <clipPath id="preloader-clip">
+                        <rect x="0" y="0" width="0" height="80"></rect>
+                    </clipPath>
+                </defs>
+                <!-- Background Outline -->
+                <text x="0" y="55" class="preloader-text-base">loading</text>
+                <!-- Draw Stroke Layer -->
+                <text x="0" y="55" class="preloader-text-stroke">loading</text>
+                <!-- Fill Layer -->
+                <text x="0" y="55" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
+            </svg>
         </div>
     </div>
     <script>
@@ -135,23 +143,34 @@
         var VID_RE = /\.(mp4|webm|mov)(\?|$)/i;
         var MIN_TIME = 600;
         var TIMEOUT  = 10000;
-        var fill = document.getElementById('preloader-progress-fill');
+        var fill = document.querySelector('#preloader-clip rect');
+        var strokeText = document.querySelector('.preloader-text-stroke');
+        var percentText = document.getElementById('preloader-percent');
         window.__resourcesReady = new Promise(function(resolve) {
             var total   = RESOURCES.length;
             var loaded  = 0;
             var t0      = Date.now();
             var settled = false;
             function updateBar() {
-                if (!fill) return;
-                fill.style.transform = 'scaleX(' + (loaded / (total || 1)) + ')';
+                var progress = loaded / (total || 1);
+                if (fill) fill.setAttribute('width', progress * 320);
+                if (strokeText) strokeText.style.strokeDashoffset = 600 - (progress * 600);
+                if (percentText) percentText.textContent = String(Math.floor(progress * 100)).padStart(2, '0');
             }
             function checkDone() {
                 if (loaded >= total && Date.now() - t0 >= MIN_TIME) {
                     if (!settled) {
                         settled = true;
                         if (fill) {
-                            fill.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                            fill.style.transform = 'scaleX(1)';
+                            fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                            fill.setAttribute('width', 320);
+                        }
+                        if (strokeText) {
+                            strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                            strokeText.style.strokeDashoffset = 0;
+                        }
+                        if (percentText) {
+                            percentText.textContent = '100';
                         }
                         setTimeout(resolve, 200);
                     }
@@ -160,7 +179,17 @@
             setTimeout(function() {
                 if (!settled) {
                     settled = true;
-                    if (fill) { fill.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)'; fill.style.transform = 'scaleX(1)'; }
+                    if (fill) {
+                        fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                        fill.setAttribute('width', 320);
+                    }
+                    if (strokeText) {
+                        strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                        strokeText.style.strokeDashoffset = 0;
+                    }
+                    if (percentText) {
+                        percentText.textContent = '100';
+                    }
                     setTimeout(resolve, 200);
                 }
             }, TIMEOUT);

@@ -1201,75 +1201,59 @@ html[lang="zh"] .sidebar-link {
 /* ============================================================
    16. Preloader
    ============================================================ */
-@keyframes preloaderShimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-@keyframes logoCycle {
-    0%   { stroke-dashoffset: 500; }
-    20%  { stroke-dashoffset: 0; }
-    65%  { stroke-dashoffset: 0; }
-    80%  { stroke-dashoffset: 500; }
-    100% { stroke-dashoffset: 500; }
-}
 #preloader {
     touch-action: none;
 }
-#preloader-logo {
+.preloader-content {
     position: absolute;
-    top: 48%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(380px, 78vw);
-    height: auto;
+    bottom: 8vh;
+    left: 8vw;
     pointer-events: none;
     user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
-#preloader-logo text {
-    font-family: 'Inter', sans-serif;
+.preloader-counter {
+    font-family: 'Inter', monospace;
+    font-size: 1.1rem;
     font-weight: 500;
-    font-size: 44px;
-    letter-spacing: 0.04em;
-    fill: rgba(255, 255, 255, 0.3);
-    stroke: rgba(255, 255, 255, 0.6);
-    stroke-width: 1;
-    stroke-dasharray: 500;
-    stroke-dashoffset: 500;
-    animation: logoCycle 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
 }
-#preloader-progress {
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(260px, 55vw);
-    height: 2px;
-    pointer-events: none;
-}
-#preloader-progress-track {
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.06);
+.preloader-text-svg {
+    width: min(320px, 70vw);
+    height: auto;
     overflow: visible;
-    position: relative;
-    border-radius: 1px;
 }
-#preloader-progress-track::after {
-    content: '';
-    position: absolute;
-    inset: -8px 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 45%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0.9) 55%, transparent 100%);
-    animation: preloaderShimmer 1.4s ease-in-out infinite;
-    filter: blur(5px);
+.preloader-text-base {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 56px;
+    letter-spacing: -0.03em;
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 1.5px;
 }
-#preloader-progress-fill {
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.55);
-    transform-origin: left;
-    transform: scaleX(0);
-    will-change: transform;
-    position: relative;
-    z-index: 1;
-    border-radius: 1px;
+.preloader-text-stroke {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 56px;
+    letter-spacing: -0.03em;
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 1.5px;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+}
+.preloader-text-fill {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 56px;
+    letter-spacing: -0.03em;
+    fill: #ffffff;
+    stroke: #ffffff;
+    stroke-width: 1.5px;
 }
