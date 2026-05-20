@@ -1207,8 +1207,8 @@ html[lang="zh"] .sidebar-link {
 }
 .preloader-content {
     position: absolute;
-    bottom: 8vh;
-    left: 8vw;
+    bottom: 2rem;
+    left: 2rem;
     pointer-events: none;
     user-select: none;
     display: flex;

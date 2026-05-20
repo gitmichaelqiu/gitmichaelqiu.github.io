@@ -93,21 +93,23 @@
 <body class="theme-base" style="opacity: 0;">
     <!-- Preloader -->
     <div id="preloader" class="fixed inset-0 z-[10002]" style="background-color: #002FA7;">
-        <div class="preloader-content">
-            <div class="preloader-counter">[ <span id="preloader-percent">00</span>% ]</div>
-            <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <clipPath id="preloader-clip">
-                        <rect x="0" y="0" width="0" height="80"></rect>
-                    </clipPath>
-                </defs>
-                <!-- Background Outline -->
-                <text id="preloader-text-base" x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
-                <!-- Draw Stroke Layer -->
-                <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
-                <!-- Fill Layer -->
-                <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
-            </svg>
+        <div class="container h-full relative">
+            <div class="preloader-content">
+                <div class="preloader-counter">[ <span id="preloader-percent">00</span>% ]</div>
+                <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <clipPath id="preloader-clip">
+                            <rect x="0" y="0" width="0" height="80"></rect>
+                        </clipPath>
+                    </defs>
+                    <!-- Background Outline -->
+                    <text id="preloader-text-base" x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
+                    <!-- Draw Stroke Layer -->
+                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
+                    <!-- Fill Layer -->
+                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
+                </svg>
+            </div>
         </div>
     </div>
     <script>
@@ -157,7 +159,7 @@
 
             // Start animation loop
             var lastTime = Date.now();
-            var minDuration = 2500; // minimum duration in ms for 0% to 100% (slower for premium feel)
+            var minDuration = 800; // minimum duration in ms for 0% to 100% (fast and responsive)
 
             function frame() {
                 var now = Date.now();
