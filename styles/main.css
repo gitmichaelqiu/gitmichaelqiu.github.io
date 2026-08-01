@@ -1294,6 +1294,13 @@ html[lang="zh"] .sidebar-link {
     stroke: none;
     filter: url(#preloader-outline);
 }
+.preloader-text-interior {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 900;
+    font-size: 56px;
+    letter-spacing: -0.05em;
+    fill: #002fa7;
+}
 .preloader-text-fill {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
