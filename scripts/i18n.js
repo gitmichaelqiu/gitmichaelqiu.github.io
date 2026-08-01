@@ -11,6 +11,9 @@ window.i18n = {
             projects: 'Projects',
             story: 'Story',
             links: 'Links',
+            macOSers: 'macOSers',
+            workflowSuite: 'Workflow',
+            mediaSuite: 'Media',
             blog: 'Blog',
             github: 'GitHub',
             kaggle: 'Kaggle'
@@ -28,7 +31,8 @@ window.i18n = {
             viewProject: 'View Project',
             DesktopRenamer: 'Customize the name of your current desktop in the menubar.',
             OptClick: 'Simulate right-click via Option key.',
-            SpaceSwitcher: 'Control app visibility across specific workspaces.'
+            SpaceSwitcher: 'Control app visibility across specific workspaces.',
+            VTPlayer: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.'
         },
         photos: {
             label: 'Story',
@@ -71,6 +75,9 @@ window.i18n = {
             projects: '项目',
             story: '故事',
             links: '链接',
+            macOSers: 'macOSers',
+            workflowSuite: '工作流',
+            mediaSuite: '媒体',
             blog: '博客',
             github: 'GitHub',
             kaggle: 'Kaggle'
@@ -88,7 +95,8 @@ window.i18n = {
             viewProject: '查看项目',
             DesktopRenamer: '自定义当前桌面的名称。',
             OptClick: '通过 Option 键模拟右键。',
-            SpaceSwitcher: '控制 App 在每个桌面的行为。'
+            SpaceSwitcher: '控制 App 在每个桌面的行为。',
+            VTPlayer: '在 Mac 和 iPhone 上提升视频画质，让细节更清晰、运动更流畅。'
         },
         photos: {
             label: '故事',

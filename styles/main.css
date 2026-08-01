@@ -556,6 +556,22 @@ footer svg path {
     justify-content: center;
 }
 
+.hero__quicknav-series-cols,
+.footer-series-cols {
+    display: flex;
+    gap: 2rem;
+}
+
+.suite-series {
+    margin-left: 0.2rem;
+    color: inherit;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78em;
+    font-weight: 500;
+    letter-spacing: 0;
+    opacity: 0.65;
+}
+
 .hero__quicknav-col {
     display: flex;
     flex-direction: column;
