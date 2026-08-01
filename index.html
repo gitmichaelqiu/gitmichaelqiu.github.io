@@ -107,8 +107,12 @@
                             <clipPath id="preloader-clip">
                                 <rect x="0" y="0" width="0" height="80"></rect>
                             </clipPath>
+                            <filter id="preloader-outline" x="-10%" y="-25%" width="120%" height="150%" color-interpolation-filters="sRGB">
+                                <feMorphology in="SourceGraphic" operator="dilate" radius="1.1" result="expanded"></feMorphology>
+                                <feComposite in="expanded" in2="SourceGraphic" operator="out"></feComposite>
+                            </filter>
                         </defs>
-                        <text id="preloader-text-base" x="160" y="55" text-anchor="middle" text-rendering="geometricPrecision" stroke-linejoin="round" stroke-linecap="round" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">mqiu.dev</text>
+                        <text id="preloader-text-base" x="160" y="55" text-anchor="middle" text-rendering="geometricPrecision" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">mqiu.dev</text>
                         <text x="160" y="55" text-anchor="middle" text-rendering="geometricPrecision" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">mqiu.dev</text>
                     </svg>
                 </div>
