@@ -741,6 +741,12 @@ footer svg path {
     opacity: 1;
 }
 
+html:not(.preloader-complete) .nav-dock {
+    transform: translateX(-50%) translateY(calc(100% + 2rem)) !important;
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
 .nav-dock__btn {
     display: flex;
     align-items: center;
@@ -1253,6 +1259,7 @@ html[lang="zh"] .sidebar-link {
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.9);
     opacity: 0;
+    z-index: 2;
     animation: preloader-dot 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 .preloader-fragment-a { --fragment-x: -8rem; --fragment-y: -3rem; animation-delay: 0.02s; }
@@ -1265,7 +1272,7 @@ html[lang="zh"] .sidebar-link {
     0% { opacity: 0; transform: translate(var(--fragment-x), var(--fragment-y)) scale(0.3); }
     18% { opacity: 0.9; }
     58% { opacity: 0.95; transform: translate(0, 0) scale(1); }
-    72% { opacity: 0.35; transform: translate(0, 0) scale(0.75); }
+    74% { opacity: 0.9; transform: translate(0, 0) scale(0.85); }
     100% { opacity: 0; transform: translate(calc(var(--fragment-x) * -0.18), calc(var(--fragment-y) * -0.18)) scale(0.2); }
 }
 .preloader-mark-wrap .preloader-text-svg {
@@ -1335,8 +1342,8 @@ html[lang="zh"] .sidebar-link {
 .preloader-text-base {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
-    font-size: 56px;
-    letter-spacing: -0.05em;
+    font-size: 68px;
+    letter-spacing: -0.09em;
     fill: none;
     stroke: rgba(255, 255, 255, 0.15);
     stroke-width: 1px;
@@ -1344,8 +1351,8 @@ html[lang="zh"] .sidebar-link {
 .preloader-text-stroke {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
-    font-size: 56px;
-    letter-spacing: -0.05em;
+    font-size: 68px;
+    letter-spacing: -0.09em;
     fill: none;
     stroke: #ffffff;
     stroke-width: 1px;
@@ -1355,8 +1362,8 @@ html[lang="zh"] .sidebar-link {
 .preloader-text-fill {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
-    font-size: 56px;
-    letter-spacing: -0.05em;
+    font-size: 68px;
+    letter-spacing: -0.09em;
     fill: #ffffff;
     stroke: none;
 }

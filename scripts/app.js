@@ -537,6 +537,7 @@
                                     el.removeEventListener('wheel', window.__blockScroll, { capture: true });
                                     el.removeEventListener('touchmove', window.__blockScroll, { capture: true });
                                 }
+                                document.documentElement.classList.add('preloader-complete');
                                 document.body.style.overflow = '';
                                 document.documentElement.style.overflow = '';
                             } })
