@@ -1262,18 +1262,18 @@ html[lang="zh"] .sidebar-link {
     z-index: 2;
     animation: preloader-dot 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
-.preloader-fragment-a { --fragment-x: -8rem; --fragment-y: -3rem; animation-delay: 0.02s; }
-.preloader-fragment-b { --fragment-x: 7rem; --fragment-y: -2.5rem; animation-delay: 0.12s; }
-.preloader-fragment-c { --fragment-x: -10rem; --fragment-y: 1.5rem; animation-delay: 0.2s; }
-.preloader-fragment-d { --fragment-x: 9rem; --fragment-y: 2rem; animation-delay: 0.3s; }
-.preloader-fragment-e { --fragment-x: -4rem; --fragment-y: 3.5rem; animation-delay: 0.38s; }
-.preloader-fragment-f { --fragment-x: 3rem; --fragment-y: -3.5rem; animation-delay: 0.48s; }
+.preloader-fragment-a { --dot-x: -13rem; --dot-y: -2.8rem; animation-delay: 0.02s; }
+.preloader-fragment-b { --dot-x: 13rem; --dot-y: -2.4rem; animation-delay: 0.12s; }
+.preloader-fragment-c { --dot-x: -14rem; --dot-y: 2.4rem; animation-delay: 0.2s; }
+.preloader-fragment-d { --dot-x: 14rem; --dot-y: 2.2rem; animation-delay: 0.3s; }
+.preloader-fragment-e { --dot-x: -10rem; --dot-y: -4.2rem; animation-delay: 0.38s; }
+.preloader-fragment-f { --dot-x: 10rem; --dot-y: 4rem; animation-delay: 0.48s; }
 @keyframes preloader-dot {
-    0% { opacity: 0; transform: translate(var(--fragment-x), var(--fragment-y)) scale(0.3); }
+    0% { opacity: 0; transform: translate(calc(var(--dot-x) * 1.35), calc(var(--dot-y) * 1.35)) scale(0.3); }
     18% { opacity: 0.9; }
-    58% { opacity: 0.95; transform: translate(0, 0) scale(1); }
-    74% { opacity: 0.9; transform: translate(0, 0) scale(0.85); }
-    100% { opacity: 0; transform: translate(calc(var(--fragment-x) * -0.18), calc(var(--fragment-y) * -0.18)) scale(0.2); }
+    58% { opacity: 0.95; transform: translate(var(--dot-x), var(--dot-y)) scale(1); }
+    74% { opacity: 0.9; transform: translate(var(--dot-x), var(--dot-y)) scale(0.85); }
+    100% { opacity: 0; transform: translate(calc(var(--dot-x) * 1.15), calc(var(--dot-y) * 1.15)) scale(0.2); }
 }
 .preloader-mark-wrap .preloader-text-svg {
     position: relative;
@@ -1291,13 +1291,6 @@ html[lang="zh"] .sidebar-link {
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 0.75rem;
     gap: 0.45rem;
-}
-.preloader-counter-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.86rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    opacity: 0.78;
 }
 .preloader-counter-value {
     display: inline-flex;
@@ -1344,7 +1337,7 @@ html[lang="zh"] .sidebar-link {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
     font-size: 56px;
-    letter-spacing: -0.09em;
+    letter-spacing: -0.05em;
     fill: none;
     stroke: rgba(255, 255, 255, 0.15);
     stroke-width: 1px;
@@ -1353,7 +1346,7 @@ html[lang="zh"] .sidebar-link {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
     font-size: 56px;
-    letter-spacing: -0.09em;
+    letter-spacing: -0.05em;
     fill: none;
     stroke: #ffffff;
     stroke-width: 1px;
@@ -1364,7 +1357,7 @@ html[lang="zh"] .sidebar-link {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
     font-size: 56px;
-    letter-spacing: -0.09em;
+    letter-spacing: -0.05em;
     fill: #ffffff;
     stroke: none;
 }
