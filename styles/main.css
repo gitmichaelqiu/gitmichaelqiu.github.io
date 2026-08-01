@@ -1310,5 +1310,7 @@ html[lang="zh"] .sidebar-link {
     font-size: 56px;
     letter-spacing: -0.05em;
     fill: #ffffff;
-    stroke: none;
+    stroke: #ffffff;
+    stroke-width: 0.45px;
+    paint-order: stroke;
 }
