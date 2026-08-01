@@ -95,24 +95,29 @@
     <div id="preloader" style="position: fixed; inset: 0; z-index: 10002; background-color: #002FA7; touch-action: none;">
         <div class="container h-full relative">
             <div class="preloader-content">
+                <div class="preloader-mark-wrap" aria-hidden="true">
+                    <span class="preloader-fragment preloader-fragment-a"></span>
+                    <span class="preloader-fragment preloader-fragment-b"></span>
+                    <span class="preloader-fragment preloader-fragment-c"></span>
+                    <span class="preloader-fragment preloader-fragment-d"></span>
+                    <span class="preloader-fragment preloader-fragment-e"></span>
+                    <span class="preloader-fragment preloader-fragment-f"></span>
+                    <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <clipPath id="preloader-clip">
+                                <rect x="0" y="0" width="0" height="80"></rect>
+                            </clipPath>
+                        </defs>
+                        <text id="preloader-text-base" x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
+                        <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
+                        <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
+                    </svg>
+                </div>
                 <div class="preloader-counter">
                     <span class="preloader-counter-label">Loading</span>
                     <span class="preloader-counter-value"><span id="preloader-percent">00</span><span class="preloader-counter-unit">%</span></span>
                 </div>
                 <div class="preloader-progress" aria-hidden="true"><span id="preloader-progress-bar"></span></div>
-                <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <clipPath id="preloader-clip">
-                            <rect x="0" y="0" width="0" height="80"></rect>
-                        </clipPath>
-                    </defs>
-                    <!-- Background Outline -->
-                    <text id="preloader-text-base" x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
-                    <!-- Draw Stroke Layer -->
-                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
-                    <!-- Fill Layer -->
-                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
-                </svg>
             </div>
         </div>
     </div>

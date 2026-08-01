@@ -1228,15 +1228,54 @@ html[lang="zh"] .sidebar-link {
 }
 .preloader-content {
     position: absolute;
-    bottom: 2rem;
-    left: 2rem;
+    inset: 0;
     pointer-events: none;
     user-select: none;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+}
+.preloader-mark-wrap {
+    position: relative;
+    width: min(72vw, 34rem);
+    aspect-ratio: 4 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.preloader-fragment {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.7rem;
+    height: 0.22rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    opacity: 0;
+    animation: preloader-fragment 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+.preloader-fragment-a { --fragment-x: -8rem; --fragment-y: -3rem; --fragment-r: -35deg; animation-delay: 0.02s; }
+.preloader-fragment-b { --fragment-x: 7rem; --fragment-y: -2.5rem; --fragment-r: 48deg; animation-delay: 0.12s; }
+.preloader-fragment-c { --fragment-x: -10rem; --fragment-y: 1.5rem; --fragment-r: 22deg; animation-delay: 0.2s; }
+.preloader-fragment-d { --fragment-x: 9rem; --fragment-y: 2rem; --fragment-r: -52deg; animation-delay: 0.3s; }
+.preloader-fragment-e { --fragment-x: -4rem; --fragment-y: 3.5rem; --fragment-r: 72deg; animation-delay: 0.38s; }
+.preloader-fragment-f { --fragment-x: 3rem; --fragment-y: -3.5rem; --fragment-r: -18deg; animation-delay: 0.48s; }
+@keyframes preloader-fragment {
+    0%, 100% { opacity: 0; transform: translate(var(--fragment-x), var(--fragment-y)) rotate(var(--fragment-r)) scale(0.5); }
+    20% { opacity: 0.8; }
+    62% { opacity: 0.9; transform: translate(0, 0) rotate(0deg) scale(1); }
+    78% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(0.85); }
+}
+.preloader-mark-wrap .preloader-text-svg {
+    position: relative;
+    z-index: 1;
 }
 .preloader-counter {
+    position: absolute;
+    left: 50%;
+    bottom: 3.25rem;
+    transform: translateX(-50%);
     width: clamp(160px, 40vw, 560px);
     display: flex;
     align-items: baseline;
@@ -1270,6 +1309,10 @@ html[lang="zh"] .sidebar-link {
     opacity: 0.65;
 }
 .preloader-progress {
+    position: absolute;
+    left: 50%;
+    bottom: 2.5rem;
+    transform: translateX(-50%);
     width: clamp(160px, 40vw, 560px);
     height: 1px;
     margin-bottom: 1rem;
