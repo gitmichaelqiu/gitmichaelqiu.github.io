@@ -1279,55 +1279,6 @@ html[lang="zh"] .sidebar-link {
     position: relative;
     z-index: 1;
 }
-.preloader-counter {
-    position: absolute;
-    left: 50%;
-    bottom: 3.25rem;
-    transform: translateX(-50%);
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 0.75rem;
-    gap: 0.45rem;
-}
-.preloader-counter-value {
-    display: inline-flex;
-    align-items: baseline;
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(1.55rem, 3vw, 2.4rem);
-    font-weight: 500;
-    letter-spacing: -0.08em;
-    font-variant-numeric: tabular-nums;
-    line-height: 0.9;
-}
-.preloader-counter-unit {
-    margin-left: 0.15rem;
-    font-size: 0.42em;
-    font-weight: 600;
-    letter-spacing: 0;
-    opacity: 0.65;
-}
-.preloader-progress {
-    position: absolute;
-    left: 50%;
-    bottom: 2.5rem;
-    transform: translateX(-50%);
-    width: clamp(160px, 40vw, 560px);
-    height: 1px;
-    margin-bottom: 1rem;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.25);
-}
-.preloader-progress span {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    transform: scaleX(0);
-    transform-origin: left center;
-}
 .preloader-text-svg {
     width: clamp(160px, 40vw, 560px);
     height: auto;
