@@ -325,6 +325,17 @@
                             <a @click.prevent="handleNavClick('photos')" href="#photos"
                                 class="hero__quicknav-link">{{ t('nav.story') }}</a>
                         </div>
+                        <div class="hero__quicknav-col">
+                            <div class="hero__quicknav-label">
+                                {{ t('nav.links') }}
+                            </div>
+                            <a href="https://mqiu.dev/blog" target="_blank"
+                                class="hero__quicknav-link">{{ t('nav.blog') }}</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank"
+                                class="hero__quicknav-link">{{ t('nav.github') }}</a>
+                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank"
+                                class="hero__quicknav-link">{{ t('nav.kaggle') }}</a>
+                        </div>
                         <div class="hero__quicknav-series-cols">
                             <div class="hero__quicknav-col">
                                 <div class="hero__quicknav-label">
@@ -338,17 +349,6 @@
                                 <div class="hero__quicknav-label"><span class="suite-series">/ {{ t('nav.mediaSuite') }}</span></div>
                                 <a href="https://vtplayer.mqiu.dev" target="_blank" class="hero__quicknav-link">VTPlayer</a>
                             </div>
-                        </div>
-                        <div class="hero__quicknav-col">
-                            <div class="hero__quicknav-label">
-                                {{ t('nav.links') }}
-                            </div>
-                            <a href="https://mqiu.dev/blog" target="_blank"
-                                class="hero__quicknav-link">{{ t('nav.blog') }}</a>
-                            <a href="https://github.com/gitmichaelqiu" target="_blank"
-                                class="hero__quicknav-link">{{ t('nav.github') }}</a>
-                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank"
-                                class="hero__quicknav-link">{{ t('nav.kaggle') }}</a>
                         </div>
                     </div>
                     <div class="hero__quicknav-lang">
@@ -503,7 +503,7 @@
                             </div>
 
                             <div class="screenshot-parallax mb-8">
-                                <img :src="isDark ? app.fullImgDark : app.fullImg" :alt="app.name + ' screenshot'"
+                                <img :key="app.id + (isDark ? '-dark' : '-light')" :src="isDark ? app.fullImgDark : app.fullImg" :alt="app.name + ' screenshot'"
                                     class="screenshot-parallax-img">
                             </div>
 
@@ -632,7 +632,7 @@
             <div class="container">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
                     <!-- Brand -->
-                    <div class="md:col-span-5">
+                    <div class="md:col-span-4">
                         <a href="/" class="inline-block mb-3" aria-label="Michael Qiu Home">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.8 581.48" fill="white"
                                 style="width:2.5rem;height:auto">
@@ -657,6 +657,15 @@
                             <a @click.prevent="handleNavClick('photos')" href="#photos" class="footer-nav-link">{{ t('nav.story') }}</a>
                         </div>
                     </div>
+                    <!-- Links -->
+                    <div class="md:col-span-3">
+                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('footer.links') }}</p>
+                        <div class="flex flex-col gap-1">
+                            <a href="https://mqiu.dev/blog" target="_blank" class="footer-nav-link">{{ t('nav.blog') }}</a>
+                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">{{ t('nav.github') }}</a>
+                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="footer-nav-link">{{ t('nav.kaggle') }}</a>
+                        </div>
+                    </div>
                     <!-- macOSers Collection -->
                     <div class="md:col-span-3">
                         <div class="footer-series-cols">
@@ -670,15 +679,6 @@
                                 <p class="footer-nav-label" style="margin-bottom:0.35rem;"><span class="suite-series">/ {{ t('nav.mediaSuite') }}</span></p>
                                 <a href="https://vtplayer.mqiu.dev" target="_blank" class="footer-nav-link">VTPlayer</a>
                             </div>
-                        </div>
-                    </div>
-                    <!-- Links -->
-                    <div class="md:col-span-3">
-                        <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('footer.links') }}</p>
-                        <div class="flex flex-col gap-1">
-                            <a href="https://mqiu.dev/blog" target="_blank" class="footer-nav-link">{{ t('nav.blog') }}</a>
-                            <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">{{ t('nav.github') }}</a>
-                            <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="footer-nav-link">{{ t('nav.kaggle') }}</a>
                         </div>
                     </div>
                 </div>

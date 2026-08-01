@@ -562,6 +562,11 @@ footer svg path {
     gap: 2rem;
 }
 
+.hero__quicknav-series-cols .hero__quicknav-label,
+.footer-series-cols .footer-nav-label {
+    min-height: 1.35em;
+}
+
 .suite-series {
     margin-left: 0.2rem;
     color: inherit;
