@@ -1293,17 +1293,6 @@ html[lang="zh"] .sidebar-link {
     stroke: rgba(255, 255, 255, 0.15);
     stroke-width: 1px;
 }
-.preloader-text-stroke {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-weight: 900;
-    font-size: 56px;
-    letter-spacing: -0.05em;
-    fill: none;
-    stroke: #ffffff;
-    stroke-width: 1px;
-    stroke-dasharray: 600;
-    stroke-dashoffset: 600;
-}
 .preloader-text-fill {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
