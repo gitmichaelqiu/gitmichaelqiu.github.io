@@ -1300,9 +1300,7 @@ html[lang="zh"] .sidebar-link {
     font-size: 56px;
     letter-spacing: -0.05em;
     fill: #002fa7;
-    stroke: #002fa7;
-    stroke-width: 0.5px;
-    paint-order: stroke;
+    filter: url(#preloader-interior-mask);
 }
 .preloader-text-fill {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -1311,6 +1309,6 @@ html[lang="zh"] .sidebar-link {
     letter-spacing: -0.05em;
     fill: #ffffff;
     stroke: #ffffff;
-    stroke-width: 0.45px;
+    stroke-width: 0.3px;
     paint-order: stroke;
 }
