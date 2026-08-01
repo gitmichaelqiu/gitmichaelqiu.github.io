@@ -1248,24 +1248,25 @@ html[lang="zh"] .sidebar-link {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 0.7rem;
-    height: 0.22rem;
+    width: 0.34rem;
+    height: 0.34rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.9);
     opacity: 0;
-    animation: preloader-fragment 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    animation: preloader-dot 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
-.preloader-fragment-a { --fragment-x: -8rem; --fragment-y: -3rem; --fragment-r: -35deg; animation-delay: 0.02s; }
-.preloader-fragment-b { --fragment-x: 7rem; --fragment-y: -2.5rem; --fragment-r: 48deg; animation-delay: 0.12s; }
-.preloader-fragment-c { --fragment-x: -10rem; --fragment-y: 1.5rem; --fragment-r: 22deg; animation-delay: 0.2s; }
-.preloader-fragment-d { --fragment-x: 9rem; --fragment-y: 2rem; --fragment-r: -52deg; animation-delay: 0.3s; }
-.preloader-fragment-e { --fragment-x: -4rem; --fragment-y: 3.5rem; --fragment-r: 72deg; animation-delay: 0.38s; }
-.preloader-fragment-f { --fragment-x: 3rem; --fragment-y: -3.5rem; --fragment-r: -18deg; animation-delay: 0.48s; }
-@keyframes preloader-fragment {
-    0%, 100% { opacity: 0; transform: translate(var(--fragment-x), var(--fragment-y)) rotate(var(--fragment-r)) scale(0.5); }
-    20% { opacity: 0.8; }
-    62% { opacity: 0.9; transform: translate(0, 0) rotate(0deg) scale(1); }
-    78% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(0.85); }
+.preloader-fragment-a { --fragment-x: -8rem; --fragment-y: -3rem; animation-delay: 0.02s; }
+.preloader-fragment-b { --fragment-x: 7rem; --fragment-y: -2.5rem; animation-delay: 0.12s; }
+.preloader-fragment-c { --fragment-x: -10rem; --fragment-y: 1.5rem; animation-delay: 0.2s; }
+.preloader-fragment-d { --fragment-x: 9rem; --fragment-y: 2rem; animation-delay: 0.3s; }
+.preloader-fragment-e { --fragment-x: -4rem; --fragment-y: 3.5rem; animation-delay: 0.38s; }
+.preloader-fragment-f { --fragment-x: 3rem; --fragment-y: -3.5rem; animation-delay: 0.48s; }
+@keyframes preloader-dot {
+    0% { opacity: 0; transform: translate(var(--fragment-x), var(--fragment-y)) scale(0.3); }
+    18% { opacity: 0.9; }
+    58% { opacity: 0.95; transform: translate(0, 0) scale(1); }
+    72% { opacity: 0.35; transform: translate(0, 0) scale(0.75); }
+    100% { opacity: 0; transform: translate(calc(var(--fragment-x) * -0.18), calc(var(--fragment-y) * -0.18)) scale(0.2); }
 }
 .preloader-mark-wrap .preloader-text-svg {
     position: relative;
@@ -1282,7 +1283,6 @@ html[lang="zh"] .sidebar-link {
     justify-content: space-between;
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 0.8rem;
-    text-transform: uppercase;
 }
 .preloader-counter-label {
     font-family: 'Inter', sans-serif;
