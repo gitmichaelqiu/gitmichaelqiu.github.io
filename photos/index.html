@@ -204,6 +204,8 @@
             position: relative;
             width: 100%;
             overflow: hidden;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
             cursor: grab;
             user-select: none;
             -webkit-user-select: none;
@@ -441,9 +443,10 @@
             min-height: 400px;
             position: relative;
             overflow: hidden;
-            background: #08080f;
+            background: #f4f6f9;
             cursor: grab;
         }
+        html.dark .map-container { background: #080e1a; }
         .map-container:active {
             cursor: grabbing;
         }
@@ -902,8 +905,6 @@
                 .then(function(data) {
                     window.__photosData = data.photos;
                     var urls = data.photos.map(function(p) { return p.url; });
-                    urls.push('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-
                     total = urls.length;
                     if (total === 0) {
                         loaded = 0;
@@ -1034,7 +1035,7 @@
             <!-- Flow Mode -->
             <section v-show="mode === 'flow'" id="flow-view" class="section-rk flow-section" style="padding-top: 0; border-top: none;">
                 <div class="flow-container-wrap">
-                    <div class="flow-container" ref="flowContainer"
+                    <div class="flow-container" ref="flowContainer" data-lenis-prevent
                         @mousedown="flowDragStart" @mousemove="flowDragMove" @mouseup="flowDragEnd" @mouseleave="flowDragEnd"
                         @touchstart="flowDragStart" @touchmove="flowDragMove" @touchend="flowDragEnd">
                         <div class="flow-track" ref="flowTrack">
@@ -1083,7 +1084,7 @@
 
             <!-- Map Mode -->
             <section v-show="mode === 'map'" id="map-view" class="section-rk map-section" style="padding-top: 0; border-top: none;" data-lenis-prevent>
-                <div class="map-container" ref="mapContainer"></div>
+                    <div class="map-container" ref="mapContainer"></div>
             </section>
 
         </main>
@@ -1377,22 +1378,11 @@
                     var modeBarScrolled = ref(false);
                     var photos = ref([]);
                     var flowPhotos = computed(function () {
-                        // Repeat 5x for "infinite" horizontal scroll
                         var src = photos.value;
-                        var out = [];
-                        for (var r = 0; r < 5; r++) {
-                            for (var i = 0; i < src.length; i++) { out.push(src[i]); }
-                        }
-                        return out;
+                        return src;
                     });
                     var gridPhotos = computed(function () {
-                        // Repeat 20x for long grid browsing
-                        var src = photos.value;
-                        var out = [];
-                        for (var r = 0; r < 20; r++) {
-                            for (var i = 0; i < src.length; i++) { out.push(src[i]); }
-                        }
-                        return out;
+                        return photos.value;
                     });
                     var showPhotoModal = ref(false);
                     var activePhoto = ref(null);
@@ -1634,11 +1624,21 @@
                         scene.add(dirLight);
 
                         var geom = new THREE.SphereGeometry(1, 48, 36);
-                        var texLoader = new THREE.TextureLoader();
-                        var earthTex = texLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-                        var mat = new THREE.MeshPhongMaterial({ map: earthTex, specular: 0x111111, shininess: 5 });
+                        var mat = new THREE.MeshBasicMaterial({
+                            color: isDark.value ? 0x0d1728 : 0xf1f4f8,
+                            transparent: true,
+                            opacity: 0.96
+                        });
                         var mesh = new THREE.Mesh(geom, mat);
                         scene.add(mesh);
+                        var gridGeom = new THREE.SphereGeometry(1.006, 24, 18);
+                        var gridMat = new THREE.MeshBasicMaterial({
+                            color: isDark.value ? 0x58739d : 0x91a1b8,
+                            wireframe: true,
+                            transparent: true,
+                            opacity: isDark.value ? 0.3 : 0.22
+                        });
+                        mesh.add(new THREE.Mesh(gridGeom, gridMat));
 
                         var pos = latLngToVec3(lat, lng, 1.03);
                         var dotGeom = new THREE.SphereGeometry(0.04, 8, 8);
@@ -2148,13 +2148,23 @@
                         dirLight.position.set(5, 3, 5);
                         globeScene.add(dirLight);
 
-                        // Earth
+                        // Minimalist globe: a quiet base sphere with a fine latitude/longitude grid.
                         var geom = new THREE.SphereGeometry(1, 72, 54);
-                        var texLoader = new THREE.TextureLoader();
-                        var earthTex = texLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-                        var mat = new THREE.MeshPhongMaterial({ map: earthTex, specular: 0x111111, shininess: 5 });
+                        var mat = new THREE.MeshBasicMaterial({
+                            color: isDark.value ? 0x0d1728 : 0xf1f4f8,
+                            transparent: true,
+                            opacity: 0.96
+                        });
                         globeMesh = new THREE.Mesh(geom, mat);
                         globeScene.add(globeMesh);
+                        var gridGeom = new THREE.SphereGeometry(1.006, 36, 24);
+                        var gridMat = new THREE.MeshBasicMaterial({
+                            color: isDark.value ? 0x58739d : 0x91a1b8,
+                            wireframe: true,
+                            transparent: true,
+                            opacity: isDark.value ? 0.3 : 0.22
+                        });
+                        globeMesh.add(new THREE.Mesh(gridGeom, gridMat));
 
                         // Starfield
                         var starsGeom = new THREE.BufferGeometry();
@@ -2373,10 +2383,10 @@
                     function loadPhotos() {
                         if (window.__photosData) {
                             photos.value = window.__photosData;
-                            for (var i = 0; i < window.__photosData.length * 5; i++) {
+                            for (var i = 0; i < window.__photosData.length; i++) {
                                 flowLoaded[i] = false;
                             }
-                            for (var j = 0; j < window.__photosData.length * 20; j++) {
+                            for (var j = 0; j < window.__photosData.length; j++) {
                                 gridLoaded[j] = false;
                                 gridVisible[j] = false;
                             }
@@ -2390,10 +2400,10 @@
                             .then(function(res) { return res.json(); })
                             .then(function(data) {
                                 photos.value = data.photos;
-                                for (var i = 0; i < data.photos.length * 5; i++) {
+                                for (var i = 0; i < data.photos.length; i++) {
                                     flowLoaded[i] = false;
                                 }
-                                for (var j = 0; j < data.photos.length * 20; j++) {
+                                for (var j = 0; j < data.photos.length; j++) {
                                     gridLoaded[j] = false;
                                     gridVisible[j] = false;
                                 }
