@@ -787,20 +787,26 @@
     <div id="preloader" style="position: fixed; inset: 0; z-index: 10002; background-color: #002FA7; touch-action: none;">
         <div class="container h-full relative">
             <div class="preloader-content">
-                <div class="preloader-counter">[ <span id="preloader-percent">00</span>% ]</div>
-                <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+                <div class="preloader-mark-wrap" aria-hidden="true">
+                    <span class="preloader-fragment preloader-fragment-a"></span>
+                    <span class="preloader-fragment preloader-fragment-b"></span>
+                    <span class="preloader-fragment preloader-fragment-c"></span>
+                    <span class="preloader-fragment preloader-fragment-d"></span>
+                    <span class="preloader-fragment preloader-fragment-e"></span>
+                    <span class="preloader-fragment preloader-fragment-f"></span>
+                    <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <clipPath id="preloader-clip">
                             <rect x="0" y="0" width="0" height="80"></rect>
                         </clipPath>
+                        <filter id="preloader-outline" x="-10%" y="-25%" width="120%" height="150%" color-interpolation-filters="sRGB"><feMorphology in="SourceGraphic" operator="dilate" radius="0.72"></feMorphology></filter>
+                        <filter id="preloader-interior-mask" x="-5%" y="-10%" width="110%" height="120%"><feMorphology in="SourceGraphic" operator="erode" radius="0.16"></feMorphology></filter>
                     </defs>
-                    <!-- Background Outline -->
-                    <text id="preloader-text-base" x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">loading</text>
-                    <!-- Draw Stroke Layer -->
-                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-stroke">loading</text>
-                    <!-- Fill Layer -->
-                    <text x="0" y="55" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">loading</text>
-                </svg>
+                    <text id="preloader-text-base" x="160" y="55" text-anchor="middle" text-rendering="geometricPrecision" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-base">mqiu.dev</text>
+                    <text x="160" y="55" text-anchor="middle" text-rendering="geometricPrecision" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-interior">mqiu.dev</text>
+                    <text x="160" y="55" text-anchor="middle" text-rendering="geometricPrecision" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-weight="900" letter-spacing="-0.05em" class="preloader-text-fill" clip-path="url(#preloader-clip)">mqiu.dev</text>
+                    </svg>
+                </div>
             </div>
         </div>
     </div>
@@ -815,9 +821,14 @@
         preloaderEl.addEventListener('touchmove', window.__blockScroll, { passive: false, capture: true });
 
         var fill = document.querySelector('#preloader-clip rect');
-        var strokeText = document.querySelector('.preloader-text-stroke');
-        var percentText = document.getElementById('preloader-percent');
         var textEl = document.getElementById('preloader-text-base');
+        var markWrap = document.querySelector('.preloader-mark-wrap');
+        if (markWrap && textEl) {
+            try {
+                var domainWidth = textEl.getBBox().width;
+                markWrap.style.setProperty('--dot-scale', Math.max(0.78, Math.min(1.24, domainWidth / 220)));
+            } catch (e) {}
+        }
 
         window.__resourcesReady = new Promise(function(resolve) {
             var total   = 0;
@@ -869,9 +880,6 @@
                     fill.setAttribute('x', textX);
                     fill.setAttribute('width', displayedProgress * textWidth);
                 }
-                if (strokeText) strokeText.style.strokeDashoffset = 600 - (displayedProgress * 600);
-                if (percentText) percentText.textContent = String(Math.floor(displayedProgress * 100)).padStart(2, '0');
-
                 if (displayedProgress >= 1 && loaded >= total && total > 0) {
                     if (!settled) {
                         settled = true;
@@ -879,7 +887,6 @@
                             fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
                             fill.setAttribute('width', textWidth);
                         }
-                        if (strokeText) strokeText.style.transition = 'stroke-dashoffset 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
                         setTimeout(resolve, 300);
                     }
                 } else {
@@ -1379,7 +1386,11 @@
                     var photos = ref([]);
                     var flowPhotos = computed(function () {
                         var src = photos.value;
-                        return src;
+                        var out = [];
+                        for (var r = 0; r < 3; r++) {
+                            for (var i = 0; i < src.length; i++) out.push(src[i]);
+                        }
+                        return out;
                     });
                     var gridPhotos = computed(function () {
                         return photos.value;
@@ -1583,8 +1594,8 @@
                             }
                             if (newMode === 'flow') {
                                 if (flowTrack.value) {
-                                    flowTrack.value.style.transform = 'translateX(0)';
-                                    flowCurrentX = 0;
+                                    flowCurrentX = -getFlowSetWidth();
+                                    flowTrack.value.style.transform = 'translateX(' + flowCurrentX + 'px)';
                                     flowVelocity = 0;
                                 }
                                 setupHoverFollowers();
@@ -1631,18 +1642,18 @@
                         });
                         var mesh = new THREE.Mesh(geom, mat);
                         scene.add(mesh);
-                        var gridGeom = new THREE.SphereGeometry(1.006, 24, 18);
-                        var gridMat = new THREE.MeshBasicMaterial({
-                            color: isDark.value ? 0x58739d : 0x91a1b8,
-                            wireframe: true,
+                        var borderGeom = new THREE.SphereGeometry(1.008, 48, 36);
+                        var borderMat = new THREE.MeshBasicMaterial({
+                            map: createCountryBorderTexture(isDark.value),
                             transparent: true,
-                            opacity: isDark.value ? 0.3 : 0.22
+                            opacity: isDark.value ? 0.9 : 0.72,
+                            depthWrite: false
                         });
-                        mesh.add(new THREE.Mesh(gridGeom, gridMat));
+                        mesh.add(new THREE.Mesh(borderGeom, borderMat));
 
                         var pos = latLngToVec3(lat, lng, 1.03);
-                        var dotGeom = new THREE.SphereGeometry(0.04, 8, 8);
-                        var dotMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+                        var dotGeom = new THREE.SphereGeometry(0.035, 12, 12);
+                        var dotMat = new THREE.MeshBasicMaterial({ color: isDark.value ? 0xb8d4ff : 0x002fa7 });
                         var dot = new THREE.Mesh(dotGeom, dotMat);
                         dot.position.copy(pos);
                         mesh.add(dot);
@@ -1844,6 +1855,7 @@
                         flowLastX = clientX;
                         flowLastTime = now;
                         flowCurrentX = clientX - flowStartX;
+                        clampFlowPosition();
                         applyFlowTransform();
                     }
 
@@ -1884,9 +1896,10 @@
 
                     function clampFlowPosition() {
                         if (!flowTrack.value) return;
-                        var minX = getFlowMinX();
-                        if (flowCurrentX > 0) flowCurrentX = 0;
-                        if (minX < 0 && flowCurrentX < minX) flowCurrentX = minX;
+                        var setWidth = getFlowSetWidth();
+                        if (setWidth <= 0) return;
+                        while (flowCurrentX > 0) flowCurrentX -= setWidth;
+                        while (flowCurrentX < -setWidth * 2) flowCurrentX += setWidth;
                     }
 
                     var flowLastInertiaTime = 0;
@@ -1903,7 +1916,6 @@
                         flowVelocity *= decay;
                         flowCurrentX += (dt / 1000) * flowVelocity;
                         clampFlowPosition();
-                        if (flowCurrentX === 0 || flowCurrentX === getFlowMinX()) flowVelocity = 0;
                         applyFlowTransform();
                         applyFlowScale();
 
@@ -1928,6 +1940,11 @@
                         var trackWidth = flowTrack.value.scrollWidth;
                         var containerWidth = flowContainer.value ? flowContainer.value.clientWidth : window.innerWidth;
                         return Math.min(0, -(trackWidth - containerWidth - 64));
+                    }
+
+                    function getFlowSetWidth() {
+                        if (!flowTrack.value) return 0;
+                        return flowTrack.value.scrollWidth / 3;
                     }
 
                     // Wheel → horizontal conversion (SOI-style: attached to container, high multiplier)
@@ -2063,6 +2080,7 @@
                     var globeRenderer = null;
                     var globeMesh = null;
                     var globeMarkers = [];
+                    var globeMarkerRings = [];
                     var globeLegendItems = [];
                     var globeInitialized = false;
                     var globeAnimId = null;
@@ -2076,6 +2094,36 @@
                     var globeAutoRotate = false;
                     var globeRotY = 0;
                     var globeRotX = 0.3;
+                    var countryMapURL = 'https://upload.wikimedia.org/wikipedia/commons/5/51/BlankMap-Equirectangular.svg';
+
+                    function createCountryBorderTexture(dark) {
+                        var canvas = document.createElement('canvas');
+                        canvas.width = 1440;
+                        canvas.height = 720;
+                        var context = canvas.getContext('2d');
+                        var texture = new THREE.CanvasTexture(canvas);
+                        var image = new Image();
+                        image.crossOrigin = 'anonymous';
+                        image.onload = function () {
+                            context.clearRect(0, 0, canvas.width, canvas.height);
+                            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                            var pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+                            var color = dark ? [235, 242, 255] : [20, 43, 78];
+                            for (var i = 0; i < pixels.data.length; i += 4) {
+                                var alpha = pixels.data[i + 3] / 255;
+                                var luminance = (pixels.data[i] * 0.299) + (pixels.data[i + 1] * 0.587) + (pixels.data[i + 2] * 0.114);
+                                var border = Math.max(0, Math.min(1, (220 - luminance) / 180)) * alpha;
+                                pixels.data[i] = color[0];
+                                pixels.data[i + 1] = color[1];
+                                pixels.data[i + 2] = color[2];
+                                pixels.data[i + 3] = Math.round(border * 255);
+                            }
+                            context.putImageData(pixels, 0, 0);
+                            texture.needsUpdate = true;
+                        };
+                        image.src = countryMapURL;
+                        return texture;
+                    }
 
                     function latLngToVec3(lat, lng, radius) {
                         var phi = (90 - lat) * Math.PI / 180;
@@ -2157,14 +2205,14 @@
                         });
                         globeMesh = new THREE.Mesh(geom, mat);
                         globeScene.add(globeMesh);
-                        var gridGeom = new THREE.SphereGeometry(1.006, 36, 24);
-                        var gridMat = new THREE.MeshBasicMaterial({
-                            color: isDark.value ? 0x58739d : 0x91a1b8,
-                            wireframe: true,
+                        var borderGeom = new THREE.SphereGeometry(1.008, 72, 54);
+                        var borderMat = new THREE.MeshBasicMaterial({
+                            map: createCountryBorderTexture(isDark.value),
                             transparent: true,
-                            opacity: isDark.value ? 0.3 : 0.22
+                            opacity: isDark.value ? 0.9 : 0.72,
+                            depthWrite: false
                         });
-                        globeMesh.add(new THREE.Mesh(gridGeom, gridMat));
+                        globeMesh.add(new THREE.Mesh(borderGeom, borderMat));
 
                         // Starfield
                         var starsGeom = new THREE.BufferGeometry();
@@ -2179,14 +2227,16 @@
 
                         // Photo markers — reuse locationGroups built above
                         globeMarkers = [];
+                        globeMarkerRings = [];
                         Object.keys(locationGroups).forEach(function(loc) {
                             var group = locationGroups[loc];
                             var first = group[0];
                             var pos = latLngToVec3(first.lat, first.lng, 1.02);
                             // Marker dot — slightly larger for groups
-                            var size = group.length > 1 ? 0.035 : 0.028;
+                            var size = group.length > 1 ? 0.038 : 0.03;
                             var dotGeom = new THREE.SphereGeometry(size, 16, 16);
-                            var dotMat = new THREE.MeshBasicMaterial({ color: first.color || '#ffffff' });
+                            var markerColor = isDark.value ? 0xb8d4ff : 0x002fa7;
+                            var dotMat = new THREE.MeshBasicMaterial({ color: markerColor });
                             var dot = new THREE.Mesh(dotGeom, dotMat);
                             dot.position.copy(pos);
                             dot.userData = { photos: group, primary: first };
@@ -2194,12 +2244,13 @@
                             globeMarkers.push(dot);
 
                             // Ring around marker
-                            var ringGeom = new THREE.TorusGeometry(0.04, 0.006, 8, 16);
-                            var ringMat = new THREE.MeshBasicMaterial({ color: first.color || '#ffffff', transparent: true, opacity: 0.6 });
+                            var ringGeom = new THREE.TorusGeometry(group.length > 1 ? 0.056 : 0.046, 0.004, 8, 24);
+                            var ringMat = new THREE.MeshBasicMaterial({ color: markerColor, transparent: true, opacity: 0.62, depthWrite: false });
                             var ring = new THREE.Mesh(ringGeom, ringMat);
                             ring.position.copy(pos);
                             ring.lookAt(new THREE.Vector3(0, 0, 0));
                             globeMesh.add(ring);
+                            globeMarkerRings.push(ring);
                         });
 
                         // Mouse events
@@ -2244,6 +2295,7 @@
                         globeRenderer = null;
                         globeMesh = null;
                         globeMarkers = [];
+                        globeMarkerRings = [];
                         globeInitialized = false;
                         globeTooltip = null;
                         globeHovered = null;
@@ -2270,6 +2322,11 @@
                         var t = Date.now() * 0.002;
                         globeMarkers.forEach(function(m, i) {
                             m.scale.setScalar(1 + 0.15 * Math.sin(t + i));
+                        });
+                        globeMarkerRings.forEach(function(ring, i) {
+                            var pulse = (Math.sin(t + i) + 1) * 0.5;
+                            ring.scale.setScalar(1 + pulse * 0.28);
+                            ring.material.opacity = 0.42 + (1 - pulse) * 0.28;
                         });
 
                         globeRenderer.render(globeScene, globeCamera);
@@ -2391,6 +2448,8 @@
                                 gridVisible[j] = false;
                             }
                             nextTick(function () {
+                                flowCurrentX = -getFlowSetWidth();
+                                applyFlowTransform();
                                 revealGridItems();
                                 setupHoverFollowers();
                             });
@@ -2408,6 +2467,8 @@
                                     gridVisible[j] = false;
                                 }
                                 nextTick(function () {
+                                    flowCurrentX = -getFlowSetWidth();
+                                    applyFlowTransform();
                                     revealGridItems();
                                     setupHoverFollowers();
                                 });
