@@ -1284,25 +1284,26 @@ html[lang="zh"] .sidebar-link {
     left: 50%;
     bottom: 3.25rem;
     transform: translateX(-50%);
-    width: clamp(160px, 40vw, 560px);
+    width: auto;
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
     color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.75rem;
+    gap: 0.45rem;
 }
 .preloader-counter-label {
     font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    opacity: 0.65;
+    font-size: 0.86rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    opacity: 0.78;
 }
 .preloader-counter-value {
     display: inline-flex;
     align-items: baseline;
     font-family: 'Inter', sans-serif;
-    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    font-size: clamp(1.55rem, 3vw, 2.4rem);
     font-weight: 500;
     letter-spacing: -0.08em;
     font-variant-numeric: tabular-nums;
@@ -1342,7 +1343,7 @@ html[lang="zh"] .sidebar-link {
 .preloader-text-base {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
-    font-size: 68px;
+    font-size: 56px;
     letter-spacing: -0.09em;
     fill: none;
     stroke: rgba(255, 255, 255, 0.15);
@@ -1351,7 +1352,7 @@ html[lang="zh"] .sidebar-link {
 .preloader-text-stroke {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
-    font-size: 68px;
+    font-size: 56px;
     letter-spacing: -0.09em;
     fill: none;
     stroke: #ffffff;
@@ -1362,7 +1363,7 @@ html[lang="zh"] .sidebar-link {
 .preloader-text-fill {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-weight: 900;
-    font-size: 68px;
+    font-size: 56px;
     letter-spacing: -0.09em;
     fill: #ffffff;
     stroke: none;
