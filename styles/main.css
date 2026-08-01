@@ -1290,7 +1290,7 @@ html[lang="zh"] .sidebar-link {
     font-weight: 900;
     font-size: 56px;
     letter-spacing: -0.05em;
-    fill: rgba(255, 255, 255, 0.72);
+    fill: #ffffff;
     stroke: none;
     filter: url(#preloader-outline);
 }
