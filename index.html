@@ -95,7 +95,11 @@
     <div id="preloader" style="position: fixed; inset: 0; z-index: 10002; background-color: #002FA7; touch-action: none;">
         <div class="container h-full relative">
             <div class="preloader-content">
-                <div class="preloader-counter">[ <span id="preloader-percent">00</span>% ]</div>
+                <div class="preloader-counter">
+                    <span class="preloader-counter-label">Loading</span>
+                    <span class="preloader-counter-value"><span id="preloader-percent">00</span><span class="preloader-counter-unit">%</span></span>
+                </div>
+                <div class="preloader-progress" aria-hidden="true"><span id="preloader-progress-bar"></span></div>
                 <svg class="preloader-text-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <clipPath id="preloader-clip">
@@ -146,6 +150,7 @@
         var fill = document.querySelector('#preloader-clip rect');
         var strokeText = document.querySelector('.preloader-text-stroke');
         var percentText = document.getElementById('preloader-percent');
+        var progressBar = document.getElementById('preloader-progress-bar');
         var textEl = document.getElementById('preloader-text-base');
 
         window.__resourcesReady = new Promise(function(resolve) {
@@ -201,6 +206,7 @@
                 }
                 if (strokeText) strokeText.style.strokeDashoffset = 600 - (displayedProgress * 600);
                 if (percentText) percentText.textContent = String(Math.floor(displayedProgress * 100)).padStart(2, '0');
+                if (progressBar) progressBar.style.transform = 'scaleX(' + displayedProgress + ')';
 
                 if (displayedProgress >= 1 && loaded >= total) {
                     if (!settled) {
