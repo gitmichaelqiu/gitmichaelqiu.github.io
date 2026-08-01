@@ -1269,11 +1269,11 @@ html[lang="zh"] .sidebar-link {
 .preloader-fragment-e { --dot-x: -10rem; --dot-y: -4.2rem; animation-delay: 0.38s; }
 .preloader-fragment-f { --dot-x: 10rem; --dot-y: 4rem; animation-delay: 0.48s; }
 @keyframes preloader-dot {
-    0% { opacity: 0; transform: translate(calc(var(--dot-x) * 1.35), calc(var(--dot-y) * 1.35)) scale(0.3); }
+    0% { opacity: 0; transform: translate(calc(var(--dot-x) * 1.35 * var(--dot-scale, 1)), calc(var(--dot-y) * 1.35 * var(--dot-scale, 1))) scale(0.3); }
     18% { opacity: 0.9; }
-    58% { opacity: 0.95; transform: translate(var(--dot-x), var(--dot-y)) scale(1); }
-    74% { opacity: 0.9; transform: translate(var(--dot-x), var(--dot-y)) scale(0.85); }
-    100% { opacity: 0; transform: translate(calc(var(--dot-x) * 1.15), calc(var(--dot-y) * 1.15)) scale(0.2); }
+    58% { opacity: 0.95; transform: translate(calc(var(--dot-x) * var(--dot-scale, 1)), calc(var(--dot-y) * var(--dot-scale, 1))) scale(1); }
+    74% { opacity: 0.9; transform: translate(calc(var(--dot-x) * var(--dot-scale, 1)), calc(var(--dot-y) * var(--dot-scale, 1))) scale(0.85); }
+    100% { opacity: 0; transform: translate(calc(var(--dot-x) * 1.15 * var(--dot-scale, 1)), calc(var(--dot-y) * 1.15 * var(--dot-scale, 1))) scale(0.2); }
 }
 .preloader-mark-wrap .preloader-text-svg {
     position: relative;

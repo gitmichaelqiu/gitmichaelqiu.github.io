@@ -155,6 +155,13 @@
         var VID_RE = /\.(mp4|webm|mov)(\?|$)/i;
         var fill = document.querySelector('#preloader-clip rect');
         var textEl = document.getElementById('preloader-text-base');
+        var markWrap = document.querySelector('.preloader-mark-wrap');
+        if (markWrap && textEl) {
+            try {
+                var domainWidth = textEl.getBBox().width;
+                markWrap.style.setProperty('--dot-scale', Math.max(0.78, Math.min(1.24, domainWidth / 220)));
+            } catch (e) {}
+        }
 
         window.__resourcesReady = new Promise(function(resolve) {
             var total   = RESOURCES.length;
