@@ -1019,13 +1019,6 @@ html.dark .work-card:hover::before {
     cursor: default !important;
 }
 
-/* Keep the cursor synchronized with the same :hover region used to highlight
-   navigation links, including browser-specific glyph hit-testing edges. */
-html.link-cursor-active,
-html.link-cursor-active * {
-    cursor: default !important;
-}
-
 .footer-nav-label {
     font-family: 'Inter', sans-serif;
     font-size: 1.1rem;
