@@ -619,6 +619,8 @@ footer svg path {
     text-decoration: none;
     transition: color 0.35s var(--mi-smooth);
     cursor: pointer !important;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .hero__quicknav-link::before,
@@ -1001,6 +1003,8 @@ html.dark .work-card:hover::before {
     transition: color 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     text-decoration: none;
     cursor: pointer !important;
+    user-select: none;
+    -webkit-user-select: none;
 }
 .footer-nav-link:hover {
     color: #ffffff;
