@@ -603,9 +603,9 @@ footer svg path {
 }
 
 .hero__quicknav-link {
-    display: inline-flex;
+    display: block;
+    width: max-content;
     align-self: flex-start;
-    align-items: center;
     font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
     font-weight: 500;
@@ -615,8 +615,6 @@ footer svg path {
     text-decoration: none;
     transition: color 0.35s var(--mi-smooth);
     cursor: pointer !important;
-    padding: 0.08em 0.12em;
-    margin: -0.08em -0.12em;
 }
 
 .hero__quicknav-link:hover {
@@ -970,9 +968,9 @@ html.dark .work-card:hover::before {
    10. Footer
    ============================================================ */
 .footer-nav-link {
-    display: inline-flex;
+    display: block;
+    width: max-content;
     align-self: flex-start;
-    align-items: center;
     font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
     font-weight: 500;
@@ -982,8 +980,6 @@ html.dark .work-card:hover::before {
     transition: color 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     text-decoration: none;
     cursor: pointer !important;
-    padding: 0.08em 0.12em;
-    margin: -0.08em -0.12em;
 }
 .footer-nav-link:hover {
     color: #ffffff;
