@@ -603,6 +603,8 @@ footer svg path {
 }
 
 .hero__quicknav-link {
+    position: relative;
+    z-index: 0;
     display: block;
     width: max-content;
     align-self: flex-start;
@@ -614,6 +616,15 @@ footer svg path {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     transition: color 0.35s var(--mi-smooth);
+    cursor: pointer !important;
+}
+
+.hero__quicknav-link::before,
+.footer-nav-link::before {
+    content: '';
+    position: absolute;
+    inset: -0.24em -0.35em;
+    z-index: 1;
     cursor: pointer !important;
 }
 
@@ -968,6 +979,8 @@ html.dark .work-card:hover::before {
    10. Footer
    ============================================================ */
 .footer-nav-link {
+    position: relative;
+    z-index: 0;
     display: block;
     width: max-content;
     align-self: flex-start;
