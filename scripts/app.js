@@ -502,15 +502,6 @@
                 window.addEventListener('scroll', onScroll, { passive: true });
                 systemQuery.addEventListener('change', onSystemThemeChange);
 
-                // Some browsers resolve the cursor from painted glyph pixels while
-                // :hover resolves from the full anchor box. Keep both states aligned.
-                function syncLinkCursor() {
-                    var linkHovered = document.querySelector('.hero__quicknav-link:hover, .footer-nav-link:hover');
-                    document.documentElement.classList.toggle('link-cursor-active', !!linkHovered);
-                }
-                document.addEventListener('mousemove', syncLinkCursor, { passive: true });
-                document.addEventListener('mouseleave', syncLinkCursor, { passive: true });
-
                 // Refresh ScrollTrigger after fonts/images load to prevent stuck animations
                 window.addEventListener('load', function () { ScrollTrigger.refresh(); });
                 if (document.fonts && document.fonts.ready) {

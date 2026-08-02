@@ -581,7 +581,7 @@ footer svg path {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    cursor: pointer;
+    cursor: default;
 }
 
 .hero__quicknav-label {
@@ -618,7 +618,7 @@ footer svg path {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     transition: color 0.35s var(--mi-smooth);
-    cursor: pointer !important;
+    cursor: default !important;
     user-select: none;
     -webkit-user-select: none;
 }
@@ -629,17 +629,17 @@ footer svg path {
     position: absolute;
     inset: -0.24em -0.35em;
     z-index: 1;
-    cursor: pointer !important;
+    cursor: default !important;
 }
 
 .hero__quicknav-link:hover {
     color: var(--pure-white);
-    cursor: pointer !important;
+    cursor: default !important;
 }
 
 .hero__quicknav-link:hover::before,
 .footer-nav-link:hover::before {
-    cursor: pointer !important;
+    cursor: default !important;
 }
 
 .hero__quicknav-scroll {
@@ -1012,18 +1012,18 @@ html.dark .work-card:hover::before {
 }
 
 .footer-nav-links {
-    cursor: pointer;
+    cursor: default;
 }
 
 .footer-nav-links > .footer-nav-link {
-    cursor: pointer !important;
+    cursor: default !important;
 }
 
 /* Keep the cursor synchronized with the same :hover region used to highlight
    navigation links, including browser-specific glyph hit-testing edges. */
 html.link-cursor-active,
 html.link-cursor-active * {
-    cursor: pointer !important;
+    cursor: default !important;
 }
 
 .footer-nav-label {
