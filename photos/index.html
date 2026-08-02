@@ -189,6 +189,21 @@
             height: 15px;
         }
 
+        /* A restrained architectural treatment for the photo page's top nav. */
+        .hero__quicknav {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(to bottom, rgba(2, 4, 18, 0.16), transparent 78%);
+        }
+        .hero__quicknav-logo,
+        .hero__quicknav-cols,
+        .hero__quicknav-lang {
+            text-shadow: 0 1px 14px rgba(0, 0, 0, 0.22);
+        }
+        .hero__quicknav-link { opacity: 0.78; }
+        .hero__quicknav-link:hover,
+        .hero__quicknav-lang-btn:hover,
+        .hero__quicknav-lang-opt.is-active { opacity: 1; }
+
         /* ── Flow Mode (Horizontal Strip) ── */
         .flow-section {
             min-height: calc(100vh - 60px);
@@ -1652,10 +1667,12 @@
                         mesh.add(new THREE.Mesh(borderGeom, borderMat));
 
                         var pos = latLngToVec3(lat, lng, 1.03);
-                        var dotGeom = new THREE.SphereGeometry(0.035, 12, 12);
+                        var normal = pos.clone().normalize();
+                        var dotGeom = new THREE.ConeGeometry(0.03, 0.08, 6);
                         var dotMat = new THREE.MeshBasicMaterial({ color: isDark.value ? 0xb8d4ff : 0x002fa7 });
                         var dot = new THREE.Mesh(dotGeom, dotMat);
-                        dot.position.copy(pos);
+                        dot.position.copy(normal).multiplyScalar(1.055);
+                        dot.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal.clone().multiplyScalar(-1));
                         mesh.add(dot);
 
                         // Align marker to camera via shortest-arc quaternion, then
@@ -2098,8 +2115,8 @@
 
                     function createCountryBorderTexture(dark) {
                         var canvas = document.createElement('canvas');
-                        canvas.width = 1440;
-                        canvas.height = 720;
+                        canvas.width = 2048;
+                        canvas.height = 1024;
                         var context = canvas.getContext('2d');
                         var texture = new THREE.CanvasTexture(canvas);
                         var image = new Image();
@@ -2232,13 +2249,17 @@
                             var group = locationGroups[loc];
                             var first = group[0];
                             var pos = latLngToVec3(first.lat, first.lng, 1.02);
-                            // Marker dot — slightly larger for groups
-                            var size = group.length > 1 ? 0.038 : 0.03;
-                            var dotGeom = new THREE.SphereGeometry(size, 16, 16);
+                            // Minimal location pin: a small faceted teardrop anchored to
+                            // the surface, with the point touching the mapped location.
+                            var normal = pos.clone().normalize();
+                            var pinHeight = group.length > 1 ? 0.092 : 0.078;
+                            var pinRadius = group.length > 1 ? 0.034 : 0.029;
+                            var dotGeom = new THREE.ConeGeometry(pinRadius, pinHeight, 6);
                             var markerColor = isDark.value ? 0xb8d4ff : 0x002fa7;
                             var dotMat = new THREE.MeshBasicMaterial({ color: markerColor });
                             var dot = new THREE.Mesh(dotGeom, dotMat);
-                            dot.position.copy(pos);
+                            dot.position.copy(normal).multiplyScalar(1.055);
+                            dot.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal.clone().multiplyScalar(-1));
                             dot.userData = { photos: group, primary: first };
                             globeMesh.add(dot);
                             globeMarkers.push(dot);
