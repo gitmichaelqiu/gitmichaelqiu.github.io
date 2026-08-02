@@ -743,32 +743,122 @@
         @media (max-width: 768px) {
             .photo-modal-container {
                 flex-direction: column;
-                width: calc(100vw - 2rem);
-                max-height: 92vh;
+                width: min(100vw - 1rem, 34rem);
+                max-height: calc(100svh - 1rem);
+                border-radius: 14px;
             }
             .photo-modal-image {
-                flex: 0 0 40%;
-                min-height: 200px;
+                flex: 0 0 auto;
+                height: min(42svh, 24rem);
+                min-height: 160px;
             }
             .photo-modal-detail {
-                flex: 1;
-                padding: 18px 20px;
+                flex: 1 1 auto;
+                min-height: 0;
+                padding: 16px 18px calc(18px + env(safe-area-inset-bottom));
                 gap: 12px;
+                overflow-y: auto;
             }
             .photo-modal-nav-btn {
                 width: 36px;
                 height: 36px;
+                top: 27%;
             }
-            .photo-modal-nav-btn--prev { left: -42px; }
-            .photo-modal-nav-btn--next { right: -42px; }
+            .photo-modal-nav-btn--prev { left: 10px; }
+            .photo-modal-nav-btn--next { right: 10px; }
         }
 
         /* ── Scroll-driven section reveals ── */
         @media (max-width: 767px) {
+            .mode-toggle-bar {
+                top: max(0.75rem, env(safe-area-inset-top));
+                width: 100%;
+                padding: 0 0.75rem;
+            }
+            .mode-toggle-wrapper {
+                width: min(100%, 23rem);
+                justify-content: space-between;
+                gap: 2px;
+                padding: 3px;
+            }
+            .mode-toggle-btn {
+                flex: 1 1 0;
+                justify-content: center;
+                gap: 5px;
+                min-height: 38px;
+                padding: 7px 8px;
+                font-size: 0.78rem;
+            }
+            .mode-toggle-btn i {
+                width: 14px;
+                height: 14px;
+            }
             .flow-card {
-                width: calc(65vw - 12px);
-                min-width: 160px;
-                max-height: 55vh;
+                width: min(72vw, 18rem);
+                min-width: 0;
+                max-height: 58svh;
+                border-radius: 7px;
+            }
+            .flow-card-img-wrap {
+                border-radius: 7px;
+            }
+            .flow-track {
+                gap: 12px;
+                padding: 0 0.75rem;
+            }
+            .flow-card-overlay {
+                padding: 1.5rem 0.9rem 0.9rem;
+            }
+            .flow-card-location {
+                font-size: 0.82rem;
+            }
+            .flow-card-date {
+                font-size: 0.7rem;
+            }
+            .grid-section {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            .photos-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+            .grid-photo-card {
+                border-radius: 6px;
+            }
+            .grid-photo-img-wrap {
+                border-radius: 6px;
+            }
+            .grid-photo-overlay {
+                opacity: 1;
+                padding: 0.75rem;
+                background: linear-gradient(to top, rgba(0,0,0,0.62), transparent 55%);
+            }
+            .grid-photo-title {
+                font-size: 0.82rem;
+            }
+            .grid-photo-meta {
+                font-size: 0.68rem;
+            }
+            .map-section {
+                height: calc(100svh - 3.5rem);
+                min-height: 25rem;
+            }
+            .map-container {
+                min-height: 0;
+            }
+            .globe-legend {
+                left: 0.75rem;
+                right: 0.75rem;
+                bottom: max(0.75rem, env(safe-area-inset-bottom));
+                gap: 6px 10px;
+            }
+            .globe-legend-item {
+                font-size: 0.62rem;
+            }
+            .globe-tooltip {
+                max-width: calc(100vw - 2rem);
+                white-space: normal;
             }
             .hide-mobile {
                 display: none !important;
