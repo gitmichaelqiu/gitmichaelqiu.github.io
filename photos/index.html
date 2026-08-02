@@ -2329,7 +2329,28 @@
                             starsVerts.push(s.x, s.y, s.z);
                         }
                         starsGeom.setAttribute('position', new THREE.Float32BufferAttribute(starsVerts, 3));
-                        var starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.008, transparent: true, opacity: 0.7 });
+                        // Use a soft circular sprite instead of square point pixels;
+                        // square stars become distracting floating blocks at some zooms.
+                        var starCanvas = document.createElement('canvas');
+                        starCanvas.width = 32;
+                        starCanvas.height = 32;
+                        var starContext = starCanvas.getContext('2d');
+                        var starGradient = starContext.createRadialGradient(16, 16, 0, 16, 16, 16);
+                        starGradient.addColorStop(0, 'rgba(255,255,255,0.95)');
+                        starGradient.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+                        starGradient.addColorStop(1, 'rgba(255,255,255,0)');
+                        starContext.fillStyle = starGradient;
+                        starContext.fillRect(0, 0, 32, 32);
+                        var starTexture = new THREE.CanvasTexture(starCanvas);
+                        var starsMat = new THREE.PointsMaterial({
+                            color: 0xffffff,
+                            map: starTexture,
+                            alphaTest: 0.02,
+                            size: 0.006,
+                            transparent: true,
+                            opacity: 0.48,
+                            depthWrite: false
+                        });
                         globeScene.add(new THREE.Points(starsGeom, starsMat));
 
                         // Photo markers — reuse locationGroups built above
