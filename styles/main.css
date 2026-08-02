@@ -632,6 +632,12 @@ footer svg path {
 
 .hero__quicknav-link:hover {
     color: var(--pure-white);
+    cursor: pointer !important;
+}
+
+.hero__quicknav-link:hover::before,
+.footer-nav-link:hover::before {
+    cursor: pointer !important;
 }
 
 .hero__quicknav-scroll {
@@ -998,6 +1004,7 @@ html.dark .work-card:hover::before {
 }
 .footer-nav-link:hover {
     color: #ffffff;
+    cursor: pointer !important;
 }
 
 .footer-nav-links {
