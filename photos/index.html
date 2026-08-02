@@ -1716,15 +1716,10 @@
                         showPhotoModal.value = true;
                         nextTick(function () {
                             lucide.createIcons();
-                            if (miniGlobeEl.value && photo.lat && photo.lng) {
-                                // Wait for modal layout to settle before measuring container
-                                requestAnimationFrame(function () {
-                                    requestAnimationFrame(function () {
-                                        if (miniGlobeInstance) { miniGlobeInstance.destroy(); miniGlobeInstance = null; }
-                                        miniGlobeInstance = createMiniGlobe(miniGlobeEl.value, photo.lat, photo.lng);
-                                    });
-                                });
-                            }
+                            // The first modal frame still has its image/flex dimensions
+                            // unresolved. Render the globe through the same settled-layout
+                            // path used after an image load.
+                            updateMiniGlobe();
                         });
                     }
 
@@ -1760,6 +1755,7 @@
                             if (imgW > maxImgW) imgW = maxImgW;
                             if (imgW < 120) imgW = 120;
                             container.style.flex = '0 0 ' + Math.round(imgW) + 'px';
+                            updateMiniGlobe();
                         });
                     }
 
@@ -2536,6 +2532,7 @@
                                             el.removeEventListener('wheel', window.__blockScroll, { capture: true });
                                             el.removeEventListener('touchmove', window.__blockScroll, { capture: true });
                                         }
+                                        document.documentElement.classList.add('preloader-complete');
                                         document.body.style.overflow = '';
                                         document.documentElement.style.overflow = '';
                                     } })
