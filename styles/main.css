@@ -581,6 +581,7 @@ footer svg path {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    cursor: pointer;
 }
 
 .hero__quicknav-label {
@@ -593,6 +594,7 @@ footer svg path {
     letter-spacing: 0em;
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 0.35rem;
+    cursor: default;
 }
 
 .hero__quicknav-label-icon {
@@ -996,6 +998,14 @@ html.dark .work-card:hover::before {
 }
 .footer-nav-link:hover {
     color: #ffffff;
+}
+
+.footer-nav-links {
+    cursor: pointer;
+}
+
+.footer-nav-links > .footer-nav-link {
+    cursor: pointer !important;
 }
 
 .footer-nav-label {

@@ -663,7 +663,7 @@
                     <!-- Navigation -->
                     <div class="md:col-span-2">
                         <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('footer.page') }}</p>
-                        <div class="flex flex-col gap-1">
+                        <div class="footer-nav-links flex flex-col gap-1">
                             <a @click.prevent="handleNavClick('profile')" href="#profile" class="footer-nav-link">{{ t('nav.persona') }}</a>
                             <a @click.prevent="handleNavClick('works')" href="#works" class="footer-nav-link">{{ t('nav.projects') }}</a>
                             <a @click.prevent="handleNavClick('photos')" href="#photos" class="footer-nav-link">{{ t('nav.story') }}</a>
@@ -672,7 +672,7 @@
                     <!-- Links -->
                     <div class="md:col-span-3">
                         <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('footer.links') }}</p>
-                        <div class="flex flex-col gap-1">
+                        <div class="footer-nav-links flex flex-col gap-1">
                             <a href="https://mqiu.dev/blog" target="_blank" class="footer-nav-link">{{ t('nav.blog') }}</a>
                             <a href="https://github.com/gitmichaelqiu" target="_blank" class="footer-nav-link">{{ t('nav.github') }}</a>
                             <a href="https://www.kaggle.com/michaelqiu0606" target="_blank" class="footer-nav-link">{{ t('nav.kaggle') }}</a>
@@ -681,13 +681,13 @@
                     <!-- macOSers Collection -->
                     <div class="md:col-span-3">
                         <div class="footer-series-cols">
-                            <div class="flex flex-col gap-1">
+                            <div class="footer-nav-links flex flex-col gap-1">
                                 <p class="footer-nav-label" style="margin-bottom:0.35rem;">{{ t('nav.macOSers') }} <span class="suite-series">/ {{ t('nav.workflowSuite') }}</span></p>
                                 <a href="https://desktoprenamer.mqiu.dev" target="_blank" class="footer-nav-link">DesktopRenamer</a>
                                 <a href="https://optclicker.mqiu.dev" target="_blank" class="footer-nav-link">OptClicker</a>
                                 <a href="https://spaceswitcher.mqiu.dev" target="_blank" class="footer-nav-link">SpaceSwitcher</a>
                             </div>
-                            <div class="flex flex-col gap-1">
+                            <div class="footer-nav-links flex flex-col gap-1">
                                 <p class="footer-nav-label" style="margin-bottom:0.35rem;"><span class="suite-series">/ {{ t('nav.mediaSuite') }}</span></p>
                                 <a href="https://vtplayer.mqiu.dev" target="_blank" class="footer-nav-link">VTPlayer</a>
                             </div>
