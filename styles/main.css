@@ -581,7 +581,6 @@ footer svg path {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    cursor: default;
 }
 
 .hero__quicknav-label {
@@ -594,7 +593,6 @@ footer svg path {
     letter-spacing: 0em;
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 0.35rem;
-    cursor: default;
 }
 
 .hero__quicknav-label-icon {
@@ -618,7 +616,6 @@ footer svg path {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     transition: color 0.35s var(--mi-smooth);
-    cursor: default !important;
     user-select: none;
     -webkit-user-select: none;
 }
@@ -629,17 +626,11 @@ footer svg path {
     position: absolute;
     inset: -0.24em -0.35em;
     z-index: 1;
-    cursor: default !important;
+    cursor: pointer !important;
 }
 
 .hero__quicknav-link:hover {
     color: var(--pure-white);
-    cursor: default !important;
-}
-
-.hero__quicknav-link:hover::before,
-.footer-nav-link:hover::before {
-    cursor: default !important;
 }
 
 .hero__quicknav-scroll {
@@ -1009,14 +1000,6 @@ html.dark .work-card:hover::before {
 .footer-nav-link:hover {
     color: #ffffff;
     cursor: pointer !important;
-}
-
-.footer-nav-links {
-    cursor: default;
-}
-
-.footer-nav-links > .footer-nav-link {
-    cursor: default !important;
 }
 
 .footer-nav-label {
