@@ -22,8 +22,7 @@
     var surfaceCells = [];
     var rippleCells = [];
     var activeSurfaceCells = new Set();
-    var rippleFrame = 0;
-    var rippleActive = false;
+    var activeRipples = [];
     var surfaceFrame = 0;
     var surfaceUnit = 3;
     var pointerInside = false;
@@ -56,10 +55,8 @@
         lastSurfaceFrame = 0;
     }
 
-    function stopRipple() {
-        if (rippleFrame) window.cancelAnimationFrame(rippleFrame);
-        rippleFrame = 0;
-        rippleActive = false;
+    function stopRipples() {
+        activeRipples = [];
         rippleCells.forEach(function (cell) {
             if (!cell.wave) return;
             cell.element.textContent = cell.original;
@@ -69,7 +66,7 @@
     }
 
     function measureCells() {
-        stopRipple();
+        stopRipples();
         clearSurface();
         clickableCells = [];
         surfaceCells = [];
@@ -154,45 +151,35 @@
         if (!hit) return;
 
         var maxDistance = 0;
-        rippleCells.forEach(function (cell) {
-            cell.distance = Math.hypot(cell.x + cell.offsetX - originX, cell.y + cell.offsetY - originY);
-            maxDistance = Math.max(maxDistance, cell.distance);
+        var samples = new Map();
+        surfaceCells.forEach(function (cell) {
+            var dx = cell.x + cell.offsetX - originX;
+            var dy = cell.y + cell.offsetY - originY;
+            var distance = Math.hypot(dx, dy);
+            samples.set(cell, {
+                distance: distance,
+                radialX: distance ? dx / distance : 0,
+                radialY: distance ? dy / distance : 0,
+                pushed: false,
+                echoed: false
+            });
+            maxDistance = Math.max(maxDistance, distance);
         });
-
-        stopRipple();
-        clearSurface();
 
         if (!maxDistance) return;
 
-        rippleActive = true;
-        var startedAt = performance.now();
-        var firstSpeed = maxDistance / 640;
-        var echoSpeed = maxDistance / 570;
-        var echoDelay = 180;
-        var firstDuration = 72;
-        var echoDuration = 64;
-
-        function drawFrame(now) {
-            var elapsed = now - startedAt;
-            var finishedAt = echoDelay + maxDistance / echoSpeed + echoDuration;
-
-            rippleCells.forEach(function (cell) {
-                var firstArrival = cell.distance / firstSpeed;
-                var echoArrival = echoDelay + cell.distance / echoSpeed;
-                var wave = elapsed >= echoArrival && elapsed < echoArrival + echoDuration ? 2 :
-                    elapsed >= firstArrival && elapsed < firstArrival + firstDuration ? 1 : 0;
-                setCellWave(cell, wave);
-            });
-
-            if (elapsed < finishedAt) {
-                rippleFrame = window.requestAnimationFrame(drawFrame);
-            } else {
-                stopRipple();
-                requestSurfaceFrame();
-            }
-        }
-
-        rippleFrame = window.requestAnimationFrame(drawFrame);
+        activeRipples.push({
+            startedAt: performance.now(),
+            maxDistance: maxDistance,
+            speed: maxDistance / 640,
+            echoSpeed: maxDistance / 570,
+            echoDelay: 180,
+            firstDuration: 72,
+            echoDuration: 64,
+            impulse: surfaceUnit * 0.42,
+            samples: samples
+        });
+        requestSurfaceFrame();
     }
 
     var blinkTimer = 0;
@@ -250,15 +237,16 @@
     }
 
     function requestSurfaceFrame() {
-        if (!surfaceFrame && !rippleActive &&
-            (pointerInside || activeSurfaceCells.size || surfaceMouse.speed > surfaceUnit * 0.01)) {
+        if (!surfaceFrame &&
+            (pointerInside || activeSurfaceCells.size || activeRipples.length ||
+                surfaceMouse.speed > surfaceUnit * 0.01)) {
             surfaceFrame = window.requestAnimationFrame(renderSurface);
         }
     }
 
     function renderSurface(now) {
         surfaceFrame = 0;
-        if (rippleActive || document.hidden) return;
+        if (document.hidden) return;
 
         var frameScale = lastSurfaceFrame ? Math.min(2.5, (now - lastSurfaceFrame) / 16.67) : 1;
         frameScale = Math.max(0.5, frameScale);
@@ -301,6 +289,53 @@
             });
         }
 
+        activeRipples.forEach(function (ripple) {
+            var elapsed = now - ripple.startedAt;
+            ripple.samples.forEach(function (sample, cell) {
+                var distanceFade = 1 - 0.5 * (sample.distance / ripple.maxDistance);
+                var firstArrival = sample.distance / ripple.speed;
+                var echoArrival = ripple.echoDelay + sample.distance / ripple.echoSpeed;
+
+                if (!sample.pushed && elapsed >= firstArrival) {
+                    sample.pushed = true;
+                    cell.velocityX += sample.radialX * ripple.impulse * distanceFade;
+                    cell.velocityY += sample.radialY * ripple.impulse * distanceFade;
+                    activeSurfaceCells.add(cell);
+                }
+
+                if (!sample.echoed && elapsed >= echoArrival) {
+                    sample.echoed = true;
+                    cell.velocityX += sample.radialX * ripple.impulse * 0.24 * distanceFade;
+                    cell.velocityY += sample.radialY * ripple.impulse * 0.24 * distanceFade;
+                    activeSurfaceCells.add(cell);
+                }
+            });
+        });
+
+        activeRipples = activeRipples.filter(function (ripple) {
+            var finishesAt = ripple.startedAt + ripple.echoDelay +
+                ripple.maxDistance / ripple.echoSpeed + ripple.echoDuration;
+            return now < finishesAt;
+        });
+
+        rippleCells.forEach(function (cell) {
+            var wave = 0;
+            activeRipples.forEach(function (ripple) {
+                var sample = ripple.samples.get(cell);
+                if (!sample) return;
+
+                var elapsed = now - ripple.startedAt;
+                var firstArrival = sample.distance / ripple.speed;
+                var echoArrival = ripple.echoDelay + sample.distance / ripple.echoSpeed;
+                if (elapsed >= echoArrival && elapsed < echoArrival + ripple.echoDuration) {
+                    wave = Math.max(wave, 2);
+                } else if (elapsed >= firstArrival && elapsed < firstArrival + ripple.firstDuration) {
+                    wave = Math.max(wave, 1);
+                }
+            });
+            setCellWave(cell, wave);
+        });
+
         var damping = Math.pow(0.94, frameScale);
         var maxOffset = surfaceUnit * 4.2;
         activeSurfaceCells.forEach(function (cell) {
@@ -330,7 +365,8 @@
             cell.element.classList.add('is-wave-active');
         });
 
-        if (activeSurfaceCells.size || surfaceMouse.speed > surfaceUnit * 0.01) {
+        if (activeSurfaceCells.size || activeRipples.length ||
+            surfaceMouse.speed > surfaceUnit * 0.01) {
             surfaceFrame = window.requestAnimationFrame(renderSurface);
         } else {
             surfaceMouse.speed = 0;
@@ -385,7 +421,7 @@
             frameTimer = 0;
             surfaceFrame = 0;
             setEyeState('open');
-            stopRipple();
+            stopRipples();
             clearSurface();
             pointerInside = false;
             previousPointer = null;
