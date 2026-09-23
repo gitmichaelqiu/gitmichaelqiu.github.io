@@ -1025,6 +1025,17 @@ html.dark .work-card:hover::before {
     padding-right: clamp(224px, 22vw, 304px);
 }
 
+.footer-signoff::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    right: calc(clamp(224px, 22vw, 288px) + 0.75rem);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
 .footer-signoff__wordmark {
     position: relative;
     z-index: 1;
@@ -1090,6 +1101,10 @@ html.dark .work-card:hover::before {
 @media (max-width: 1023px) {
     .footer-signoff {
         padding-right: clamp(7rem, 22vw, 11rem);
+    }
+
+    .footer-signoff::before {
+        right: calc(clamp(143px, 18vw, 224px) + 0.75rem);
     }
 
     .footer-signoff__art {
