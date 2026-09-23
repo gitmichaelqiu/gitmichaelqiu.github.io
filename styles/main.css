@@ -1020,6 +1020,90 @@ html.dark .work-card:hover::before {
     color: var(--text-primary);
 }
 
+.footer-signoff {
+    position: relative;
+    padding-right: clamp(224px, 22vw, 304px);
+}
+
+.footer-signoff__wordmark {
+    position: relative;
+    z-index: 1;
+    align-self: end;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.footer-signoff__art {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    bottom: -4rem;
+    width: clamp(224px, 22vw, 288px);
+    aspect-ratio: 1;
+    container-type: inline-size;
+}
+
+.footer-signoff__ascii {
+    display: block;
+    width: max-content;
+    margin: 0;
+    overflow: visible;
+    color: #f8f9ff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: clamp(1px, 0.24vw, 3.333px);
+    font-size: calc(100cqw / 59.5);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: pre;
+    filter: drop-shadow(0 0.5rem 0.8rem rgba(0, 10, 60, 0.2));
+    animation: footer-ascii-drift 12s ease-in-out infinite alternate;
+}
+
+.footer-ascii-char {
+    transition: color 180ms ease, text-shadow 180ms ease;
+}
+
+.footer-ascii-char.t1 { color: #5270c6; }
+.footer-ascii-char.t2 { color: #617dce; }
+.footer-ascii-char.t3 { color: #6f8ad5; }
+.footer-ascii-char.t4 { color: #839bdd; }
+.footer-ascii-char.t5 { color: #98ace4; }
+.footer-ascii-char.t6 { color: #adbeec; }
+.footer-ascii-char.t7 { color: #c0cef3; }
+.footer-ascii-char.t8 { color: #ced9f6; }
+.footer-ascii-char.t9 { color: #dce3f9; }
+.footer-ascii-char.t10 { color: #eaeefc; }
+.footer-ascii-char.t11 { color: #f8f9ff; }
+
+@keyframes footer-ascii-drift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-0.4rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footer-signoff__ascii {
+        animation: none;
+    }
+}
+
+@media (max-width: 1023px) {
+    .footer-signoff {
+        padding-right: clamp(7rem, 22vw, 11rem);
+    }
+
+    .footer-signoff__art {
+        bottom: -1rem;
+        width: clamp(143px, 18vw, 224px);
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1023px) {
+    .footer-signoff__art {
+        bottom: -2rem;
+    }
+}
+
 /* ============================================================
    11. Scroll Progress Dot
    ============================================================ */
@@ -1146,6 +1230,15 @@ html.dark .work-card:hover::before {
     .hero__logo {
         width: min(60%, 16rem);
     }
+
+    .footer-signoff {
+        padding-right: clamp(7rem, 22vw, 11rem);
+    }
+
+    .footer-signoff__wordmark {
+        font-size: clamp(1.8rem, 10vw, 3.5rem);
+    }
+
 }
 
 /* Project Screenshot */
