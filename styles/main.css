@@ -1020,6 +1020,10 @@ html.dark .work-card:hover::before {
     color: var(--text-primary);
 }
 
+.site-footer {
+    isolation: isolate;
+}
+
 .footer-signoff {
     position: relative;
     padding-right: clamp(224px, 22vw, 304px);
@@ -1046,12 +1050,15 @@ html.dark .work-card:hover::before {
 
 .footer-signoff__art {
     position: absolute;
-    z-index: 2;
+    z-index: -1;
     right: 0;
     bottom: -4rem;
     width: clamp(224px, 22vw, 288px);
     aspect-ratio: 1;
     container-type: inline-size;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .footer-signoff__ascii {
