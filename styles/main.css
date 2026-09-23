@@ -1078,10 +1078,6 @@ html.dark .work-card:hover::before {
     animation: footer-ascii-drift 12s ease-in-out infinite alternate;
 }
 
-.footer-ascii-char {
-    transition: color 180ms ease, text-shadow 180ms ease;
-}
-
 .footer-ascii-char.t1 { color: #5270c6; }
 .footer-ascii-char.t2 { color: #617dce; }
 .footer-ascii-char.t3 { color: #6f8ad5; }
@@ -1093,6 +1089,7 @@ html.dark .work-card:hover::before {
 .footer-ascii-char.t9 { color: #dce3f9; }
 .footer-ascii-char.t10 { color: #eaeefc; }
 .footer-ascii-char.t11 { color: #f8f9ff; }
+.footer-ascii-char.footer-ascii-blink-closed { color: var(--klein-blue); }
 
 @keyframes footer-ascii-drift {
     from { transform: translateY(0); }
