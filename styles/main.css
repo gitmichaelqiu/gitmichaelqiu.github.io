@@ -1078,6 +1078,7 @@ html.dark .work-card:hover::before {
     animation: footer-ascii-drift 12s ease-in-out infinite alternate;
 }
 
+.footer-ascii-char { display: inline-block; }
 .footer-ascii-char.t1 { color: #5270c6; }
 .footer-ascii-char.t2 { color: #617dce; }
 .footer-ascii-char.t3 { color: #6f8ad5; }
@@ -1090,6 +1091,8 @@ html.dark .work-card:hover::before {
 .footer-ascii-char.t10 { color: #eaeefc; }
 .footer-ascii-char.t11 { color: #f8f9ff; }
 .footer-ascii-char.footer-ascii-blink-closed { color: var(--klein-blue); }
+.footer-ascii-char.is-rippled { color: #fff; }
+.footer-ascii-char.is-rippled.is-ripple-echo { color: #b9ccff; }
 
 @keyframes footer-ascii-drift {
     from { transform: translateY(0); }
