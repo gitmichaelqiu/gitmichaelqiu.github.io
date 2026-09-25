@@ -929,7 +929,8 @@ html.dark .grid-lines {
 .works-suite-toggle {
     display: flex;
     justify-content: center;
-    margin-top: 2rem;
+    width: 100%;
+    margin: 0 0 2rem;
 }
 
 .works-grid {
@@ -977,6 +978,15 @@ html.dark .work-card:hover::before {
 
 .work-card:nth-child(even) {
     padding-top: 8rem;
+}
+
+.suite-card-enter-active {
+    transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+
+.suite-card-enter-from {
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 .work-meta {
@@ -1174,6 +1184,15 @@ html.dark .work-card:hover::before {
 @media (prefers-reduced-motion: reduce) {
     .footer-signoff__ascii {
         animation: none;
+    }
+
+    .suite-card-enter-active {
+        transition-duration: 0.01ms;
+        transition-delay: 0ms !important;
+    }
+
+    .suite-card-enter-from {
+        transform: none;
     }
 }
 

@@ -489,7 +489,7 @@
                 <div class="container">
 
 
-                    <div class="content-grid mb-16">
+                    <div class="content-grid mb-8">
                         <div class="content-label">
                             <svg class="section-label-icon" viewBox="0 0 14 14" fill="currentColor">
                                 <path d="M0 0L14 14H0V0Z" />
@@ -502,22 +502,23 @@
                             <div class="mask-wrap">
                                 <p class="paragraph-l max-w-3xl mask-inner">{{ t('works.body') }}</p>
                             </div>
-                            <div class="works-suite-toggle">
-                                <div class="mode-toggle-wrapper" role="group" :aria-label="t('works.suiteToggle')">
-                                    <button type="button" class="mode-toggle-btn" :class="{ active: activeSuite === 'workflow' }" :aria-pressed="activeSuite === 'workflow'" aria-controls="works-grid" @click="setActiveSuite('workflow')">
-                                        <i data-lucide="layout-grid" aria-hidden="true"></i>{{ t('nav.workflowSuite') }}
-                                    </button>
-                                    <button type="button" class="mode-toggle-btn" :class="{ active: activeSuite === 'media' }" :aria-pressed="activeSuite === 'media'" aria-controls="works-grid" @click="setActiveSuite('media')">
-                                        <i data-lucide="film" aria-hidden="true"></i>{{ t('nav.mediaSuite') }}
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
-                    <div id="works-grid" class="works-grid">
+                    <div class="works-suite-toggle">
+                        <div class="mode-toggle-wrapper" role="group" :aria-label="t('works.suiteToggle')">
+                            <button type="button" class="mode-toggle-btn" :class="{ active: activeSuite === 'workflow' }" :aria-pressed="activeSuite === 'workflow'" aria-controls="works-grid" @click="setActiveSuite('workflow')">
+                                <i data-lucide="layout-grid" aria-hidden="true"></i>{{ t('nav.workflowSuite') }}
+                            </button>
+                            <button type="button" class="mode-toggle-btn" :class="{ active: activeSuite === 'media' }" :aria-pressed="activeSuite === 'media'" aria-controls="works-grid" @click="setActiveSuite('media')">
+                                <i data-lucide="film" aria-hidden="true"></i>{{ t('nav.mediaSuite') }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <transition-group name="suite-card" tag="div" id="works-grid" class="works-grid">
                         <div v-for="(app, i) in apps" :key="app.id" class="work-card group"
-                            data-hover-follow>
+                            :style="{ transitionDelay: (i * 0.08) + 's' }" data-hover-follow>
                             <div class="flex justify-between items-start mb-8">
                                 <span class="text-klein-blue !text-2xl md:!text-4xl font-light"
                                     style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">0{{i+1}}</span>
@@ -544,7 +545,7 @@
                             </div>
                             <img :src="app.img" data-hover-follower class="card-subimg">
                         </div>
-                    </div>
+                    </transition-group>
 
                 </div>
             </section>
