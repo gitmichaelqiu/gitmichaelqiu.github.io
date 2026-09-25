@@ -88,6 +88,9 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="styles/main.css?v=10">
+    <style>
+        #app[v-cloak] { visibility: hidden; }
+    </style>
 </head>
 
 <body class="theme-base">
@@ -142,6 +145,12 @@
             'resources/works/space-switcher.png',
             'resources/works/space-switcher-full.png',
             'resources/works/space-switcher-full-dark.png',
+            'resources/works/vtplayer-app-icon.png',
+            'resources/works/vt-player-full.png',
+            'resources/works/vt-player-full-dark.png',
+            'resources/works/wallpainter.png',
+            'resources/works/wallpainter-full.png',
+            'resources/works/wallpainter-full-dark.png',
             'resources/photos/01.jpeg',
             'resources/photos/02.jpeg',
             'resources/photos/03.jpeg',
@@ -164,7 +173,7 @@
         }
 
         window.__resourcesReady = new Promise(function(resolve) {
-            var total   = RESOURCES.length;
+            var total   = RESOURCES.length + 1;
             var loaded  = 0;
             var settled = false;
 
@@ -235,14 +244,23 @@
 
             // Resource loading listeners
             function itemLoaded() {
-                loaded++;
+                loaded = Math.min(total, loaded + 1);
             }
 
-            // Set up a safety timeout in case loading hangs
-            var TIMEOUT = 10000;
-            setTimeout(function() {
-                loaded = total;
-            }, TIMEOUT);
+            // Keep the preloader up until eager page assets and fonts are ready.
+            function markPageReady() {
+                var fontsReady = document.fonts && document.fonts.ready;
+                if (fontsReady) {
+                    fontsReady.then(itemLoaded, itemLoaded);
+                } else {
+                    itemLoaded();
+                }
+            }
+            if (document.readyState === 'complete') {
+                markPageReady();
+            } else {
+                window.addEventListener('load', markPageReady, { once: true });
+            }
 
             if (total === 0) {
                 loaded = 0;
@@ -250,8 +268,22 @@
                 RESOURCES.forEach(function(url) {
                     if (IMG_RE.test(url)) {
                         var img = new Image();
-                        img.onload  = itemLoaded;
-                        img.onerror = itemLoaded;
+                        var imageDone = false;
+                        function markImageDone(waitForDecode) {
+                            if (imageDone) return;
+                            imageDone = true;
+                            if (waitForDecode && typeof img.decode === 'function') {
+                                try {
+                                    img.decode().then(itemLoaded, itemLoaded);
+                                } catch (e) {
+                                    itemLoaded();
+                                }
+                            } else {
+                                itemLoaded();
+                            }
+                        }
+                        img.onload = function() { markImageDone(true); };
+                        img.onerror = function() { markImageDone(false); };
                         img.src = url;
                     } else if (VID_RE.test(url)) {
                         var vid = document.createElement('video');
@@ -260,11 +292,11 @@
                         function markDone() {
                             if (!done) { done = true; itemLoaded(); }
                         }
-                        vid.onloadedmetadata = markDone;
+                        vid.oncanplay = markDone;
                         vid.onerror = markDone;
                         vid.src = url;
                         vid.load();
-                        setTimeout(markDone, 4000);
+                        setTimeout(markDone, 15000);
                     } else {
                         fetch(url).then(itemLoaded).catch(itemLoaded);
                     }
@@ -274,7 +306,7 @@
     })();
     </script>
 
-    <div id="app" class="relative min-h-screen">
+    <div id="app" v-cloak class="relative min-h-screen">
         <!-- Architectural Grid Lines -->
         <div class="grid-lines">
             <div v-for="i in 12" :key="i" class="grid-line"></div>
