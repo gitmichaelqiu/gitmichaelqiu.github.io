@@ -206,14 +206,6 @@ html.dark .glass-strong {
     border-top: 1px solid var(--border-color);
 }
 
-#works {
-    padding-bottom: 0;
-}
-
-#works > .container {
-    padding-bottom: 8rem;
-}
-
 /* Tagline Wrapper */
 .tagline-wrapper {
     display: grid;
@@ -935,14 +927,16 @@ html.dark .grid-lines {
    8. Works Grid & Cards
    ============================================================ */
 .works-suite-toggle {
-    position: sticky;
-    top: 1.5rem;
-    z-index: 1001;
     display: flex;
     justify-content: center;
     width: 100%;
     margin: 0 0 2rem;
     pointer-events: none;
+}
+
+.works-suite-toggle.is-pinned {
+    position: relative;
+    z-index: 1001;
 }
 
 .works-grid {

@@ -491,9 +491,31 @@
 
             // ── Scroll Tracking (throttled via rAF) ──
 
+            function updateSuiteTogglePosition() {
+                var row = document.querySelector('.works-suite-toggle');
+                var toggle = row && row.querySelector('.mode-toggle-wrapper');
+                var storySection = document.getElementById('photos');
+                if (!row || !toggle || !storySection) return;
+
+                var rowTop = row.getBoundingClientRect().top;
+                var storyTop = storySection.getBoundingClientRect().top;
+                var toggleHeight = toggle.getBoundingClientRect().height;
+                var topOffset = parseFloat(window.getComputedStyle(document.documentElement).fontSize) * 1.5;
+
+                if (rowTop <= topOffset && storyTop > 0) {
+                    var targetTop = Math.min(topOffset, storyTop - toggleHeight);
+                    row.classList.add('is-pinned');
+                    toggle.style.transform = 'translateY(' + (targetTop - rowTop) + 'px)';
+                } else {
+                    row.classList.remove('is-pinned');
+                    toggle.style.transform = '';
+                }
+            }
+
             function updateScrollProgress() {
                 scrollRafPending = false;
                 var winHeight = window.innerHeight;
+                updateSuiteTogglePosition();
                 showNavDock.value = window.scrollY > winHeight * 0.2;
                 var sections = ['home', 'profile', 'works', 'photos', 'connect'];
                 var current = 'home';
@@ -538,7 +560,9 @@
             onMounted(function () {
                 initLenis();
                 window.addEventListener('scroll', onScroll, { passive: true });
+                window.addEventListener('resize', onScroll, { passive: true });
                 systemQuery.addEventListener('change', onSystemThemeChange);
+                updateSuiteTogglePosition();
 
                 // Refresh ScrollTrigger after fonts/images load to prevent stuck animations
                 window.addEventListener('load', function () { ScrollTrigger.refresh(); });
@@ -687,6 +711,7 @@
             onUnmounted(function () {
                 cancelSuiteRevealTimers();
                 window.removeEventListener('scroll', onScroll);
+                window.removeEventListener('resize', onScroll);
                 systemQuery.removeEventListener('change', onSystemThemeChange);
                 if (particles) particles.destroy();
                 if (lenis) lenis.destroy();
