@@ -348,9 +348,14 @@
             function setActiveSuite(suite) {
                 if (suite === activeSuite.value) return;
 
-                var worksSection = document.getElementById('works');
-                if (lenis && worksSection && worksSection.getBoundingClientRect().top < -1) {
-                    lenis.scrollTo(worksSection, { duration: 1.2 });
+                var toggleRow = document.querySelector('.works-suite-toggle');
+                if (lenis && toggleRow) {
+                    var rowTop = toggleRow.getBoundingClientRect().top;
+                    var dockTop = getSuiteToggleDockTop();
+                    var targetScroll = Math.max(0, window.scrollY + rowTop - dockTop);
+                    if (rowTop < dockTop - 1 && targetScroll < window.scrollY - 1) {
+                        lenis.scrollTo(targetScroll, { duration: 1.2 });
+                    }
                 }
 
                 activeSuite.value = suite;
@@ -498,6 +503,10 @@
 
             // ── Scroll Tracking (throttled via rAF) ──
 
+            function getSuiteToggleDockTop() {
+                return parseFloat(window.getComputedStyle(document.documentElement).fontSize) * 1.5;
+            }
+
             function updateSuiteTogglePosition() {
                 var row = document.querySelector('.works-suite-toggle');
                 var toggle = row && row.querySelector('.mode-toggle-wrapper');
@@ -507,7 +516,7 @@
                 var rowTop = row.getBoundingClientRect().top;
                 var storyTop = storySection.getBoundingClientRect().top;
                 var toggleHeight = toggle.getBoundingClientRect().height;
-                var topOffset = parseFloat(window.getComputedStyle(document.documentElement).fontSize) * 1.5;
+                var topOffset = getSuiteToggleDockTop();
 
                 if (rowTop <= topOffset && storyTop > 0) {
                     var targetTop = Math.min(topOffset, storyTop - toggleHeight);
