@@ -516,17 +516,17 @@
                         </div>
                     </div>
 
-                    <transition-group name="suite-card" tag="div" id="works-grid" class="works-grid">
-                        <div v-for="(app, i) in apps" :key="app.id" class="work-card group"
-                            :style="{ transitionDelay: (i * 0.08) + 's' }" data-hover-follow>
+                    <div id="works-grid" class="works-grid">
+                        <div v-for="app in allApps" :key="app.id" v-show="app.suite === activeSuite" class="work-card group"
+                            :class="{ 'suite-card-offset': app.suiteIndex % 2 === 0, 'suite-card-reveal': hasSwitchedSuite, 'suite-card-visible': !hasSwitchedSuite || visibleSuiteAppIds.includes(app.id) }" data-hover-follow>
                             <div class="flex justify-between items-start mb-8">
                                 <span class="text-klein-blue !text-2xl md:!text-4xl font-light"
-                                    style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">0{{i+1}}</span>
+                                    style="font-family:'Inter',sans-serif;letter-spacing:-0.04em;">0{{app.suiteIndex}}</span>
                                 <h3 class="heading-l">{{ app.name }}</h3>
                             </div>
 
                             <div class="screenshot-parallax mb-8">
-                                <img :key="app.id + (isDark ? '-dark' : '-light')" :src="isDark ? app.fullImgDark : app.fullImg" :alt="app.name + ' screenshot'"
+                                <img v-if="app.suite === activeSuite" :key="app.id + (isDark ? '-dark' : '-light')" :src="isDark ? app.fullImgDark : app.fullImg" :alt="app.name + ' screenshot'"
                                     class="screenshot-parallax-img">
                             </div>
 
@@ -545,7 +545,7 @@
                             </div>
                             <img :src="app.img" data-hover-follower class="card-subimg">
                         </div>
-                    </transition-group>
+                    </div>
 
                 </div>
             </section>

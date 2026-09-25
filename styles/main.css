@@ -976,17 +976,23 @@ html.dark .work-card:hover::before {
     z-index: 1;
 }
 
-.work-card:nth-child(even) {
+.work-card.suite-card-offset {
     padding-top: 8rem;
 }
 
-.suite-card-enter-active {
-    transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+.work-card.suite-card-reveal {
+    opacity: 0;
+    translate: 0 30px;
+    transition:
+        opacity 0.8s var(--ease-out-expo),
+        translate 0.8s var(--ease-out-expo),
+        background-color 0.6s var(--mi-smooth),
+        transform 0.5s var(--mi-smooth);
 }
 
-.suite-card-enter-from {
-    opacity: 0;
-    transform: translateY(30px);
+.work-card.suite-card-reveal.suite-card-visible {
+    opacity: 1;
+    translate: 0 0;
 }
 
 .work-meta {
@@ -1186,13 +1192,8 @@ html.dark .work-card:hover::before {
         animation: none;
     }
 
-    .suite-card-enter-active {
-        transition-duration: 0.01ms;
-        transition-delay: 0ms !important;
-    }
-
-    .suite-card-enter-from {
-        transform: none;
+    .work-card.suite-card-reveal {
+        transition-duration: 0.01ms, 0.01ms, 0.6s, 0.5s;
     }
 }
 

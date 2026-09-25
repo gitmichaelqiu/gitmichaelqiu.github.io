@@ -305,15 +305,44 @@
             });
 
             var activeSuite = ref('workflow');
+            var hasSwitchedSuite = ref(false);
+            var visibleSuiteAppIds = ref([]);
+            var suiteRevealTimers = [];
+            var suiteRevealGeneration = 0;
             var allApps = [
-                { id: 'DesktopRenamer', suite: 'workflow', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', fullImgDark: 'resources/works/desktop-renamer-full-dark.png', link: 'https://desktoprenamer.mqiu.dev' },
-                { id: 'OptClick', suite: 'workflow', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', fullImgDark: 'resources/works/opt-clicker-full-dark.png', link: 'https://optclicker.mqiu.dev' },
-                { id: 'SpaceSwitcher', suite: 'workflow', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', fullImgDark: 'resources/works/space-switcher-full-dark.png', link: 'https://spaceswitcher.mqiu.dev' },
-                { id: 'VTPlayer', suite: 'media', name: 'VTPlayer', desc: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.', img: 'resources/works/vtplayer-app-icon.png', fullImg: 'resources/works/vt-player-full-dark.png', fullImgDark: 'resources/works/vt-player-full.png', link: 'https://vtplayer.mqiu.dev' },
-                { id: 'WallPainter', suite: 'media', name: 'WallPainter', desc: 'Set a different Apple Aerial wallpaper for every macOS space.', img: 'resources/works/wallpainter.png', fullImg: 'resources/works/wallpainter-full.png', fullImgDark: 'resources/works/wallpainter-full-dark.png', link: 'https://wallpainter.mqiu.dev' }
+                { id: 'DesktopRenamer', suite: 'workflow', suiteIndex: 1, name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', fullImgDark: 'resources/works/desktop-renamer-full-dark.png', link: 'https://desktoprenamer.mqiu.dev' },
+                { id: 'OptClick', suite: 'workflow', suiteIndex: 2, name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', fullImgDark: 'resources/works/opt-clicker-full-dark.png', link: 'https://optclicker.mqiu.dev' },
+                { id: 'SpaceSwitcher', suite: 'workflow', suiteIndex: 3, name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', fullImgDark: 'resources/works/space-switcher-full-dark.png', link: 'https://spaceswitcher.mqiu.dev' },
+                { id: 'VTPlayer', suite: 'media', suiteIndex: 1, name: 'VTPlayer', desc: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.', img: 'resources/works/vtplayer-app-icon.png', fullImg: 'resources/works/vt-player-full-dark.png', fullImgDark: 'resources/works/vt-player-full.png', link: 'https://vtplayer.mqiu.dev' },
+                { id: 'WallPainter', suite: 'media', suiteIndex: 2, name: 'WallPainter', desc: 'Set a different Apple Aerial wallpaper for every macOS space.', img: 'resources/works/wallpainter.png', fullImg: 'resources/works/wallpainter-full.png', fullImgDark: 'resources/works/wallpainter-full-dark.png', link: 'https://wallpainter.mqiu.dev' }
             ];
             var apps = computed(function () {
                 return allApps.filter(function (app) { return app.suite === activeSuite.value; });
+            });
+
+            function cancelSuiteRevealTimers() {
+                suiteRevealGeneration += 1;
+                suiteRevealTimers.forEach(function (timer) { window.clearTimeout(timer); });
+                suiteRevealTimers = [];
+            }
+
+            watch(activeSuite, function () {
+                cancelSuiteRevealTimers();
+                var generation = suiteRevealGeneration;
+                hasSwitchedSuite.value = true;
+                visibleSuiteAppIds.value = [];
+
+                nextTick(function () {
+                    if (generation !== suiteRevealGeneration) return;
+
+                    apps.value.forEach(function (app, i) {
+                        var timer = window.setTimeout(function () {
+                            if (generation !== suiteRevealGeneration) return;
+                            visibleSuiteAppIds.value.push(app.id);
+                        }, i * 80);
+                        suiteRevealTimers.push(timer);
+                    });
+                });
             });
 
             function setActiveSuite(suite) {
@@ -656,6 +685,7 @@
             });
 
             onUnmounted(function () {
+                cancelSuiteRevealTimers();
                 window.removeEventListener('scroll', onScroll);
                 systemQuery.removeEventListener('change', onSystemThemeChange);
                 if (particles) particles.destroy();
@@ -666,8 +696,10 @@
                 isSidebarOpen: isSidebarOpen,
                 activeSection: activeSection,
                 toggleSidebar: toggleSidebar,
-                apps: apps,
+                allApps: allApps,
                 activeSuite: activeSuite,
+                hasSwitchedSuite: hasSwitchedSuite,
+                visibleSuiteAppIds: visibleSuiteAppIds,
                 setActiveSuite: setActiveSuite,
                 photos: photos,
                 handleNavClick: handleNavClick,
