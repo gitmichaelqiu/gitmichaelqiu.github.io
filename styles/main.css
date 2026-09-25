@@ -255,6 +255,72 @@ html.dark .glass-strong {
     scale: 1.2;
 }
 
+/* Shared segmented mode and suite switcher */
+.mode-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 100px;
+    padding: 3px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
+    pointer-events: auto;
+}
+
+html.dark .mode-toggle-wrapper {
+    background: rgba(18, 18, 18, 0.85);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.mode-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text-secondary);
+    background: transparent;
+    transition: all 0.3s var(--mi-smooth);
+    white-space: nowrap;
+}
+
+.mode-toggle-btn.active {
+    background: var(--klein-blue);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 47, 167, 0.22);
+}
+
+.mode-toggle-btn:not(.active):hover {
+    color: var(--klein-blue-text);
+    background: rgba(0, 47, 167, 0.05);
+}
+
+html.dark .mode-toggle-btn:not(.active):hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mode-toggle-btn:focus-visible {
+    outline: 2px solid var(--klein-blue);
+    outline-offset: 2px;
+}
+
+.mode-toggle-btn i,
+.mode-toggle-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
 /* Screenshot Parallax — full image visible, gentle movement */
 .screenshot-parallax {
     overflow: visible;
@@ -860,6 +926,12 @@ html.dark .grid-lines {
 /* ============================================================
    8. Works Grid & Cards
    ============================================================ */
+.works-suite-toggle {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
 .works-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1223,6 +1295,28 @@ html.dark .work-card:hover::before {
 
     .content-body {
         grid-column: 1 / -1;
+    }
+
+    .mode-toggle-wrapper {
+        width: min(100%, 23rem);
+        justify-content: space-between;
+        gap: 2px;
+        padding: 3px;
+    }
+
+    .mode-toggle-btn {
+        flex: 1 1 0;
+        justify-content: center;
+        gap: 5px;
+        min-height: 38px;
+        padding: 7px 8px;
+        font-size: 0.78rem;
+    }
+
+    .mode-toggle-btn i,
+    .mode-toggle-btn svg {
+        width: 14px;
+        height: 14px;
     }
 
     .works-grid {

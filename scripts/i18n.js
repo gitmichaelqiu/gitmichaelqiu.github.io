@@ -28,11 +28,13 @@ window.i18n = {
             label: 'Projects',
             heading: 'Crafted for <span class="text-editorial gradient-text">productivity;</span><br>Crafted for <span class="text-editorial gradient-text">you.</span>',
             body: 'Never be satisfied with the default. I create features that the native systems fail to offer.',
+            suiteToggle: 'Choose a project suite',
             viewProject: 'View Project',
             DesktopRenamer: 'Customize the name of your current desktop in the menubar.',
             OptClick: 'Simulate right-click via Option key.',
             SpaceSwitcher: 'Control app visibility across specific workspaces.',
-            VTPlayer: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.'
+            VTPlayer: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.',
+            WallPainter: 'Set a different Apple Aerial wallpaper for every macOS space.'
         },
         photos: {
             label: 'Story',
@@ -92,11 +94,13 @@ window.i18n = {
             label: '项目',
             heading: '为<span class="text-editorial gradient-text">效率</span>而打造；<br>为<span class="text-editorial gradient-text">你</span>而打造。',
             body: '不满足于默认，创造原生系统未能提供的功能。',
+            suiteToggle: '选择项目系列',
             viewProject: '查看项目',
             DesktopRenamer: '自定义当前桌面的名称。',
             OptClick: '通过 Option 键模拟右键。',
             SpaceSwitcher: '控制 App 在每个桌面的行为。',
-            VTPlayer: '在 Mac 和 iPhone 上提升视频画质，让细节更清晰、运动更流畅。'
+            VTPlayer: '在 Mac 和 iPhone 上提升视频画质，让细节更清晰、运动更流畅。',
+            WallPainter: '为每个 macOS 桌面设置不同的 Apple 航拍壁纸。'
         },
         photos: {
             label: '故事',

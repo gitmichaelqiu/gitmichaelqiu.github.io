@@ -304,12 +304,21 @@
                 }
             });
 
-            var apps = [
-                { id: 'DesktopRenamer', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', fullImgDark: 'resources/works/desktop-renamer-full-dark.png', link: 'https://desktoprenamer.mqiu.dev' },
-                { id: 'OptClick', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', fullImgDark: 'resources/works/opt-clicker-full-dark.png', link: 'https://optclicker.mqiu.dev' },
-                { id: 'SpaceSwitcher', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', fullImgDark: 'resources/works/space-switcher-full-dark.png', link: 'https://spaceswitcher.mqiu.dev' },
-                { id: 'VTPlayer', name: 'VTPlayer', desc: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.', img: 'resources/works/vtplayer-app-icon.png', fullImg: 'resources/works/vt-player-full-dark.png', fullImgDark: 'resources/works/vt-player-full.png', link: 'https://vtplayer.mqiu.dev' }
+            var activeSuite = ref('workflow');
+            var allApps = [
+                { id: 'DesktopRenamer', suite: 'workflow', name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', fullImgDark: 'resources/works/desktop-renamer-full-dark.png', link: 'https://desktoprenamer.mqiu.dev' },
+                { id: 'OptClick', suite: 'workflow', name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', fullImgDark: 'resources/works/opt-clicker-full-dark.png', link: 'https://optclicker.mqiu.dev' },
+                { id: 'SpaceSwitcher', suite: 'workflow', name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', fullImgDark: 'resources/works/space-switcher-full-dark.png', link: 'https://spaceswitcher.mqiu.dev' },
+                { id: 'VTPlayer', suite: 'media', name: 'VTPlayer', desc: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.', img: 'resources/works/vtplayer-app-icon.png', fullImg: 'resources/works/vt-player-full-dark.png', fullImgDark: 'resources/works/vt-player-full.png', link: 'https://vtplayer.mqiu.dev' },
+                { id: 'WallPainter', suite: 'media', name: 'WallPainter', desc: 'Set a different Apple Aerial wallpaper for every macOS space.', img: 'resources/works/wallpainter.png', fullImg: 'resources/works/wallpainter-full.png', fullImgDark: 'resources/works/wallpainter-full-dark.png', link: 'https://wallpainter.mqiu.dev' }
             ];
+            var apps = computed(function () {
+                return allApps.filter(function (app) { return app.suite === activeSuite.value; });
+            });
+
+            function setActiveSuite(suite) {
+                activeSuite.value = suite;
+            }
 
             var photos = [
                 { url: 'resources/photos/01.jpeg', title: 'Sunsetz', titleZh: '日落', date: 'Ko Chang, Thailand, 2023', dateZh: '泰国象岛，2023', flag: '🇹🇭' },
@@ -658,6 +667,8 @@
                 activeSection: activeSection,
                 toggleSidebar: toggleSidebar,
                 apps: apps,
+                activeSuite: activeSuite,
+                setActiveSuite: setActiveSuite,
                 photos: photos,
                 handleNavClick: handleNavClick,
                 isBooting: isBooting,
