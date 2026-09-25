@@ -305,6 +305,8 @@
             });
 
             var activeSuite = ref('workflow');
+            var suiteSwitchGeneration = 0;
+            var pendingSuite = null;
             var hasSwitchedSuite = ref(false);
             var visibleSuiteAppIds = ref([]);
             var suiteRevealTimers = [];
@@ -346,7 +348,32 @@
             });
 
             function setActiveSuite(suite) {
-                activeSuite.value = suite;
+                suiteSwitchGeneration += 1;
+                var generation = suiteSwitchGeneration;
+
+                if (suite === activeSuite.value) {
+                    pendingSuite = null;
+                    return;
+                }
+
+                pendingSuite = suite;
+
+                function applySuite() {
+                    if (generation !== suiteSwitchGeneration || pendingSuite !== suite) return;
+                    activeSuite.value = suite;
+                    pendingSuite = null;
+                }
+
+                var worksSection = document.getElementById('works');
+                if (!lenis || !worksSection || Math.abs(worksSection.getBoundingClientRect().top) <= 1) {
+                    applySuite();
+                    return;
+                }
+
+                lenis.scrollTo(worksSection, {
+                    duration: 1.2,
+                    onComplete: applySuite
+                });
             }
 
             var photos = [
