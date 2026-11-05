@@ -136,17 +136,35 @@
             preloaderEl.addEventListener('touchmove', window.__blockScroll, { passive: false, capture: true });
         }
 
-        // The branded reveal now waits for the Vue app to mount, not optional media.
-        window.__resourcesReady = Promise.resolve();
         var fill = document.querySelector('#preloader-clip rect');
         var textEl = document.getElementById('preloader-text-base');
-        if (fill && textEl) {
+        var markWrap = document.querySelector('.preloader-mark-wrap');
+        if (markWrap && textEl) {
             try {
-                var bounds = textEl.getBBox();
-                fill.setAttribute('x', bounds.x);
-                fill.setAttribute('width', bounds.width);
+                var domainWidth = textEl.getBBox().width;
+                markWrap.style.setProperty('--dot-scale', Math.max(0.78, Math.min(1.24, domainWidth / 220)));
             } catch (e) {}
         }
+        // Keep the branded fill animation, but let it finish on a short timer instead of waiting for media.
+        window.__resourcesReady = new Promise(function(resolve) {
+            var startTime = null;
+            var duration = 800;
+            function animateFill(time) {
+                if (startTime === null) startTime = time;
+                var progress = Math.min((time - startTime) / duration, 1);
+                if (fill) {
+                    fill.setAttribute('x', '0');
+                    fill.setAttribute('width', 320 * progress);
+                }
+                if (progress < 1) {
+                    requestAnimationFrame(animateFill);
+                } else {
+                    if (fill) fill.setAttribute('width', '320');
+                    resolve();
+                }
+            }
+            requestAnimationFrame(animateFill);
+        });
     })();
 </script>
 
