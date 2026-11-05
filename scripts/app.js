@@ -286,6 +286,19 @@
                 showVideoModal.value = false;
             }
 
+            function loadModalVideo(video) {
+                if (!video) return;
+                var poster = video.dataset.lazyPoster;
+                if (poster && !video.getAttribute('poster')) {
+                    video.setAttribute('poster', poster);
+                }
+                var source = video.dataset.lazySrc;
+                if (source && !video.getAttribute('src')) {
+                    video.setAttribute('src', source);
+                    video.load();
+                }
+            }
+
             watch(showVideoModal, function (val) {
                 if (val) {
                     // Wait for transition to start rendering before trying to play
@@ -293,6 +306,7 @@
                         nextTick(function () {
                             lucide.createIcons();
                             if (modalVideo.value) {
+                                loadModalVideo(modalVideo.value);
                                 modalVideo.value.play().catch(function () {});
                             }
                         });
@@ -310,11 +324,11 @@
             var suiteRevealTimers = [];
             var suiteRevealGeneration = 0;
             var allApps = [
-                { id: 'DesktopRenamer', suite: 'workflow', suiteIndex: 1, name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.png', fullImg: 'resources/works/desktop-renamer-full.png', fullImgDark: 'resources/works/desktop-renamer-full-dark.png', link: 'https://desktoprenamer.mqiu.dev' },
-                { id: 'OptClick', suite: 'workflow', suiteIndex: 2, name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.png', fullImg: 'resources/works/opt-clicker-full.png', fullImgDark: 'resources/works/opt-clicker-full-dark.png', link: 'https://optclicker.mqiu.dev' },
-                { id: 'SpaceSwitcher', suite: 'workflow', suiteIndex: 3, name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.png', fullImg: 'resources/works/space-switcher-full.png', fullImgDark: 'resources/works/space-switcher-full-dark.png', link: 'https://spaceswitcher.mqiu.dev' },
-                { id: 'VTPlayer', suite: 'media', suiteIndex: 1, name: 'VTPlayer', desc: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.', img: 'resources/works/vtplayer-app-icon.png', fullImg: 'resources/works/vt-player-full-dark.png', fullImgDark: 'resources/works/vt-player-full.png', link: 'https://vtplayer.mqiu.dev' },
-                { id: 'WallPainter', suite: 'media', suiteIndex: 2, name: 'WallPainter', desc: 'Set a different Apple Aerial wallpaper for every macOS space.', img: 'resources/works/wallpainter.png', fullImg: 'resources/works/wallpainter-full.png', fullImgDark: 'resources/works/wallpainter-full-dark.png', link: 'https://wallpainter.mqiu.dev' }
+                { id: 'DesktopRenamer', suite: 'workflow', suiteIndex: 1, name: 'DesktopRenamer', desc: 'Customize the name of your current desktop in the menubar.', img: 'resources/works/desktop-renamer.webp', fullImg: 'resources/works/desktop-renamer-full.webp', fullImgDark: 'resources/works/desktop-renamer-full-dark.webp', link: 'https://desktoprenamer.mqiu.dev' },
+                { id: 'OptClick', suite: 'workflow', suiteIndex: 2, name: 'OptClicker', desc: 'Simulate right-click via Option key.', img: 'resources/works/opt-clicker.webp', fullImg: 'resources/works/opt-clicker-full.webp', fullImgDark: 'resources/works/opt-clicker-full-dark.webp', link: 'https://optclicker.mqiu.dev' },
+                { id: 'SpaceSwitcher', suite: 'workflow', suiteIndex: 3, name: 'SpaceSwitcher', desc: 'Control app visibility across specific workspaces.', img: 'resources/works/space-switcher.webp', fullImg: 'resources/works/space-switcher-full.webp', fullImgDark: 'resources/works/space-switcher-full-dark.webp', link: 'https://spaceswitcher.mqiu.dev' },
+                { id: 'VTPlayer', suite: 'media', suiteIndex: 1, name: 'VTPlayer', desc: 'Enhance video with sharper detail and smoother motion on Mac and iPhone.', img: 'resources/works/vtplayer-app-icon.webp', fullImg: 'resources/works/vt-player-full-dark.webp', fullImgDark: 'resources/works/vt-player-full.webp', link: 'https://vtplayer.mqiu.dev' },
+                { id: 'WallPainter', suite: 'media', suiteIndex: 2, name: 'WallPainter', desc: 'Set a different Apple Aerial wallpaper for every macOS space.', img: 'resources/works/wallpainter.webp', fullImg: 'resources/works/wallpainter-full.webp', fullImgDark: 'resources/works/wallpainter-full-dark.webp', link: 'https://wallpainter.mqiu.dev' }
             ];
             var apps = computed(function () {
                 return allApps.filter(function (app) { return app.suite === activeSuite.value; });
@@ -362,13 +376,13 @@
             }
 
             var photos = [
-                { url: 'resources/photos/01.jpeg', title: 'Sunsetz', titleZh: '日落', date: 'Ko Chang, Thailand, 2023', dateZh: '泰国象岛，2023', flag: '🇹🇭' },
-                { url: 'resources/photos/02.jpeg', title: 'Golden Hour', titleZh: '黄金时刻', date: 'Ko Chang, Thailand, 2023', dateZh: '泰国象岛，2023', flag: '🇹🇭' },
-                { url: 'resources/photos/03.jpeg', title: 'Luna Hooked on A Twig', titleZh: '月挂枝头', date: 'Hangzhou, China, 2024', dateZh: '中国杭州，2024', flag: '🇨🇳' },
-                { url: 'resources/photos/04.jpeg', title: 'Shed A Light', titleZh: '微光', date: 'Abu Dhabi, UAE, 2025', dateZh: '阿联酋阿布扎比，2025', flag: '🇦🇪' },
-                { url: 'resources/photos/05.jpeg', title: 'Mountain Ferry', titleZh: '山间渡轮', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' },
-                { url: 'resources/photos/06.jpeg', title: 'Lighthouse', titleZh: '灯塔', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' },
-                { url: 'resources/photos/07.jpeg', title: 'Path', titleZh: '小径', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' }
+                { url: 'resources/photos/01-preview.webp', title: 'Sunsetz', titleZh: '日落', date: 'Ko Chang, Thailand, 2023', dateZh: '泰国象岛，2023', flag: '🇹🇭' },
+                { url: 'resources/photos/02-preview.webp', title: 'Golden Hour', titleZh: '黄金时刻', date: 'Ko Chang, Thailand, 2023', dateZh: '泰国象岛，2023', flag: '🇹🇭' },
+                { url: 'resources/photos/03-preview.webp', title: 'Luna Hooked on A Twig', titleZh: '月挂枝头', date: 'Hangzhou, China, 2024', dateZh: '中国杭州，2024', flag: '🇨🇳' },
+                { url: 'resources/photos/04-preview.webp', title: 'Shed A Light', titleZh: '微光', date: 'Abu Dhabi, UAE, 2025', dateZh: '阿联酋阿布扎比，2025', flag: '🇦🇪' },
+                { url: 'resources/photos/05-preview.webp', title: 'Mountain Ferry', titleZh: '山间渡轮', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' },
+                { url: 'resources/photos/06-preview.webp', title: 'Lighthouse', titleZh: '灯塔', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' },
+                { url: 'resources/photos/07-preview.webp', title: 'Path', titleZh: '小径', date: 'Hokkaido, Japan, 2025', dateZh: '日本北海道，2025', flag: '🇯🇵' }
             ];
 
             // ── Sidebar ──
@@ -602,7 +616,7 @@
                     // Reveal body immediately so preloader is visible
                     gsap.set('body', { opacity: 1 });
 
-                    // ── Animation Sequence (gated on resource preloader) ──
+                    // ── Animation Sequence (starts after the Vue app mounts) ──
                     (window.__resourcesReady || Promise.resolve()).then(function() {
                         var tl = gsap.timeline();
 
@@ -618,6 +632,7 @@
                                 document.documentElement.classList.add('preloader-complete');
                                 document.body.style.overflow = '';
                                 document.documentElement.style.overflow = '';
+                                window.dispatchEvent(new Event('mqiu:app-ready'));
                             } })
                             .to('.hero__bg', { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
                             .from('.grid-line', { scaleY: 0, duration: 0.6, stagger: 0.015, ease: "expo.inOut" }, "-=0.7")

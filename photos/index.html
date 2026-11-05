@@ -847,131 +847,28 @@
     </div>
     <script>
     (function() {
-        // Lock scroll while preloader is visible
         document.body.style.overflow = 'hidden';
         document.documentElement.style.overflow = 'hidden';
         var preloaderEl = document.getElementById('preloader');
         window.__blockScroll = function(e) { e.preventDefault(); e.stopPropagation(); };
-        preloaderEl.addEventListener('wheel', window.__blockScroll, { passive: false, capture: true });
-        preloaderEl.addEventListener('touchmove', window.__blockScroll, { passive: false, capture: true });
-
-        var fill = document.querySelector('#preloader-clip rect');
-        var textEl = document.getElementById('preloader-text-base');
-        var markWrap = document.querySelector('.preloader-mark-wrap');
-        if (markWrap && textEl) {
-            try {
-                var domainWidth = textEl.getBBox().width;
-                markWrap.style.setProperty('--dot-scale', Math.max(0.78, Math.min(1.24, domainWidth / 220)));
-            } catch (e) {}
+        if (preloaderEl) {
+            preloaderEl.addEventListener('wheel', window.__blockScroll, { passive: false, capture: true });
+            preloaderEl.addEventListener('touchmove', window.__blockScroll, { passive: false, capture: true });
         }
 
-        window.__resourcesReady = new Promise(function(resolve) {
-            var total   = 0;
-            var loaded  = 0;
-            var settled = false;
-
-            // Track actual loading progress
-            var targetProgress = 0;
-            var displayedProgress = 0;
-
-            // Start animation loop
-            var lastTime = Date.now();
-            var minDuration = 800; // minimum duration in ms for 0% to 100% (fast and responsive)
-
-            function frame() {
-                var now = Date.now();
-                var dt = now - lastTime;
-                lastTime = now;
-
-                // Target progress based on resources loaded
-                targetProgress = total > 0 ? (loaded / total) : 0;
-
-                if (displayedProgress < targetProgress || targetProgress === 1) {
-                    displayedProgress += dt / minDuration;
-                    if (displayedProgress > targetProgress && targetProgress < 1) {
-                        displayedProgress = targetProgress;
-                    }
-                }
-
-                if (displayedProgress >= 1) {
-                    displayedProgress = 1;
-                }
-
-                // Calculate dynamic text width using getBBox
-                var textWidth = 220; // fallback
-                var textX = 0; // fallback
-                if (textEl) {
-                    try {
-                        var bbox = textEl.getBBox();
-                        if (bbox && bbox.width > 0) {
-                            textWidth = bbox.width;
-                            textX = bbox.x;
-                        }
-                    } catch(e) {}
-                }
-
-                // Update DOM elements
-                if (fill) {
-                    fill.setAttribute('x', textX);
-                    fill.setAttribute('width', displayedProgress * textWidth);
-                }
-                if (displayedProgress >= 1 && loaded >= total && total > 0) {
-                    if (!settled) {
-                        settled = true;
-                        if (fill) {
-                            fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                            fill.setAttribute('width', textWidth);
-                        }
-                        setTimeout(resolve, 300);
-                    }
-                } else {
-                    requestAnimationFrame(frame);
-                }
-            }
-
-            requestAnimationFrame(frame);
-
-            function itemLoaded() {
-                loaded++;
-            }
-
-            var TIMEOUT = 10000;
-            setTimeout(function() {
-                if (total === 0) total = 1;
-                loaded = total;
-            }, TIMEOUT);
-
-            // Fetch photo metadata to discover image URLs
-            fetch('photos.json')
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    window.__photosData = data.photos;
-                    var urls = data.photos.map(function(p) { return p.url; });
-                    total = urls.length;
-                    if (total === 0) {
-                        loaded = 0;
-                        total = 1;
-                        itemLoaded();
-                        return;
-                    }
-
-                    urls.forEach(function(url) {
-                        var img = new Image();
-                        if (url.indexOf('http') === 0) img.crossOrigin = 'anonymous';
-                        img.onload  = itemLoaded;
-                        img.onerror = itemLoaded;
-                        img.src = url;
-                    });
-                })
-                .catch(function() {
-                    console.warn('Resource preloader: failed to fetch photos.json');
-                    loaded = 0;
-                    total = 1;
-                    itemLoaded();
-                });
-        });
+        // The branded reveal now waits for the Vue app to mount, not optional media.
+        window.__resourcesReady = Promise.resolve();
+        var fill = document.querySelector('#preloader-clip rect');
+        var textEl = document.getElementById('preloader-text-base');
+        if (fill && textEl) {
+            try {
+                var bounds = textEl.getBBox();
+                fill.setAttribute('x', bounds.x);
+                fill.setAttribute('width', bounds.width);
+            } catch (e) {}
+        }
     })();
-    </script>
+</script>
 
     <div id="app" class="relative min-h-screen">
         <!-- Architectural Grid Lines -->
@@ -1087,7 +984,7 @@
                                 @click="openPhotoDetail(photo)">
                                 <div class="flow-card-img-wrap">
                                     <div class="flow-load-bar-track"><div class="flow-load-bar"></div></div>
-                                    <img :src="photo.url" :alt="lang === 'zh' && photo.titleZh ? photo.titleZh : photo.title" @load="onFlowImgLoad(i)">
+                                    <img :src="photo.thumbnail || photo.url" :alt="lang === 'zh' && photo.titleZh ? photo.titleZh : photo.title" @load="onFlowImgLoad(i)" loading="lazy" decoding="async">
                                 </div>
                                 <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
                                 <div class="flow-card-overlay">
@@ -1110,7 +1007,7 @@
                             @click="openPhotoDetail(photo)">
                             <div class="grid-photo-img-wrap">
                                 <div class="grid-load-bar-track"><div class="grid-load-bar"></div></div>
-                                <img :src="photo.url" :alt="lang === 'zh' && photo.titleZh ? photo.titleZh : photo.title" @load="onGridImgLoad(i)">
+                                <img :src="photo.thumbnail || photo.url" :alt="lang === 'zh' && photo.titleZh ? photo.titleZh : photo.title" @load="onGridImgLoad(i)" loading="lazy" decoding="async">
                             </div>
                             <span data-hover-follower class="photo-flag">{{ getFlag(photo.location) }}</span>
                             <div class="grid-photo-overlay">
@@ -1149,7 +1046,7 @@
                     <div class="photo-modal-container" :class="{ transitioning: photoTransitioning }" @click.stop ref="modalContainer">
                         <!-- Image area -->
                         <div class="photo-modal-image" ref="modalImageEl">
-                            <img :src="activePhoto.url" :alt="lang === 'zh' && activePhoto.titleZh ? activePhoto.titleZh : activePhoto.title" @load="onModalImgLoad" ref="modalImg">
+                            <img :src="activePhoto.url" :alt="lang === 'zh' && activePhoto.titleZh ? activePhoto.titleZh : activePhoto.title" @load="onModalImgLoad" ref="modalImg" loading="eager" fetchpriority="high" decoding="async">
                         </div>
 
                         <!-- Detail panel -->
@@ -2430,7 +2327,7 @@
                                 var count = data.photos ? data.photos.length : 1;
                                 var locText = photoLocation(primary);
                                 var photoWord = count > 1 ? t('detail.photos') : t('detail.photo');
-                                var html = '<img src="' + primary.url + '" alt="" /><div><div class="globe-tooltip-title">' + locText + '</div><div class="globe-tooltip-loc">' + count + ' ' + photoWord + '</div></div>';
+                                var html = '<img src="' + (primary.thumbnail || primary.url) + '" alt="" loading="lazy" decoding="async"><div><div class="globe-tooltip-title">' + locText + '</div><div class="globe-tooltip-loc">' + count + ' ' + photoWord + '</div></div>';
                                 globeTooltip.innerHTML = html;
                                 globeTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
                                 globeTooltip.style.top = (e.clientY - rect.top - 15) + 'px';
@@ -2565,7 +2462,7 @@
                             // Reveal body immediately so preloader is visible
                             gsap.set('body', { opacity: 1 });
 
-                            // ── Animation Sequence (gated on resource preloader) ──
+                            // ── Animation Sequence (starts after the Vue app mounts) ──
                             (window.__resourcesReady || Promise.resolve()).then(function() {
                                 var tl = gsap.timeline();
                                 tl.set('.hero__text .mask-inner', { y: '120%' })
@@ -2578,6 +2475,7 @@
                                             el.removeEventListener('touchmove', window.__blockScroll, { capture: true });
                                         }
                                         document.documentElement.classList.add('preloader-complete');
+                                        window.dispatchEvent(new Event('mqiu:app-ready'));
                                         document.body.style.overflow = '';
                                         document.documentElement.style.overflow = '';
                                     } })
