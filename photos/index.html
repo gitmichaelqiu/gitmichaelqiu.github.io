@@ -1247,6 +1247,7 @@
 
     </script>
     <script src="../scripts/i18n-photos.js"></script>
+    <script src="../scripts/lazy-media.js"></script>
     <script>
         (function () {
             var createApp = Vue.createApp;
@@ -2454,6 +2455,11 @@
 
                     // ── Fetch Photos ──
                     function loadPhotos() {
+                        var resolvePhotosData;
+                        window.__criticalMediaDataReady = new Promise(function (resolve) {
+                            resolvePhotosData = resolve;
+                        });
+
                         if (window.__photosData) {
                             photos.value = window.__photosData;
                             for (var i = 0; i < window.__photosData.length; i++) {
@@ -2468,6 +2474,7 @@
                                 applyFlowTransform();
                                 revealGridItems();
                                 setupHoverFollowers();
+                                resolvePhotosData();
                             });
                             return;
                         }
@@ -2487,11 +2494,13 @@
                                     applyFlowTransform();
                                     revealGridItems();
                                     setupHoverFollowers();
+                                    resolvePhotosData();
                                 });
                             })
                             .catch(function(err) {
                                 console.warn('Failed to load photos.json, using fallback:', err);
                                 photos.value = [];
+                                nextTick(resolvePhotosData);
                             });
                     }
 
