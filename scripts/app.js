@@ -617,7 +617,8 @@
                     gsap.set('body', { opacity: 1 });
 
                     // ── Animation Sequence (starts after the Vue app mounts) ──
-                    (window.__resourcesReady || Promise.resolve()).then(function() {
+                    if (window.__startPreloaderAnimation) window.__startPreloaderAnimation();
+                    (window.__preloaderReady || Promise.resolve()).then(function() {
                         var tl = gsap.timeline();
 
                         tl.set('.hero__text .mask-inner', { y: '120%' })

@@ -865,26 +865,65 @@
                 markWrap.style.setProperty('--dot-scale', Math.max(0.78, Math.min(1.24, domainWidth / 220)));
             } catch (e) {}
         }
-        // Keep the branded fill animation, but let it finish on a short timer instead of waiting for media.
-        window.__resourcesReady = new Promise(function(resolve) {
-            var startTime = null;
-            var duration = 800;
-            function animateFill(time) {
-                if (startTime === null) startTime = time;
-                var progress = Math.min((time - startTime) / duration, 1);
-                if (fill) {
-                    fill.setAttribute('x', '0');
-                    fill.setAttribute('width', 320 * progress);
-                }
-                if (progress < 1) {
-                    requestAnimationFrame(animateFill);
-                } else {
-                    if (fill) fill.setAttribute('width', '320');
-                    resolve();
-                }
+
+        var animationComplete = false;
+        function measureText() {
+            var textX = 0;
+            var textWidth = 220;
+            if (textEl) {
+                try {
+                    var bounds = textEl.getBBox();
+                    if (bounds && bounds.width > 0) {
+                        textWidth = bounds.width;
+                        textX = bounds.x;
+                    }
+                } catch (e) {}
             }
-            requestAnimationFrame(animateFill);
+            return { x: textX, width: textWidth };
+        }
+        function refreshCompletedFill() {
+            if (!animationComplete || !fill) return;
+            var bounds = measureText();
+            fill.setAttribute('x', bounds.x);
+            fill.setAttribute('width', bounds.width);
+        }
+
+        window.__preloaderReady = new Promise(function(resolve) {
+            var started = false;
+            window.__startPreloaderAnimation = function() {
+                if (started) return;
+                started = true;
+                var startTime = null;
+                var duration = 800;
+                function animateFill(time) {
+                    if (startTime === null) startTime = time;
+                    var progress = Math.min((time - startTime) / duration, 1);
+                    var bounds = measureText();
+                    if (fill) {
+                        fill.setAttribute('x', bounds.x);
+                        fill.setAttribute('width', progress * bounds.width);
+                    }
+                    if (progress < 1) {
+                        requestAnimationFrame(animateFill);
+                    } else {
+                        animationComplete = true;
+                        if (fill) {
+                            fill.style.transition = 'width 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                            refreshCompletedFill();
+                        }
+                        setTimeout(resolve, 300);
+                    }
+                }
+                requestAnimationFrame(animateFill);
+            };
         });
+
+        if (document.fonts) {
+            document.fonts.ready.then(refreshCompletedFill);
+            if (document.fonts.addEventListener) {
+                document.fonts.addEventListener('loadingdone', refreshCompletedFill);
+            }
+        }
     })();
 </script>
 
@@ -2481,7 +2520,8 @@
                             gsap.set('body', { opacity: 1 });
 
                             // ── Animation Sequence (starts after the Vue app mounts) ──
-                            (window.__resourcesReady || Promise.resolve()).then(function() {
+                            if (window.__startPreloaderAnimation) window.__startPreloaderAnimation();
+                            (window.__preloaderReady || Promise.resolve()).then(function() {
                                 var tl = gsap.timeline();
                                 tl.set('.hero__text .mask-inner', { y: '120%' })
                                     .to('#preloader', { opacity: 0, duration: 0.8, ease: "power2.inOut", delay: 0.3, onComplete: function () {
