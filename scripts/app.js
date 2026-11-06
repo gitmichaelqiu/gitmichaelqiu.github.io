@@ -286,8 +286,15 @@
                 showVideoModal.value = false;
             }
 
+            function onVideoModalAfterLeave() {
+                if (!showVideoModal.value && window.mqiuMedia) window.mqiuMedia.setModalActive(false);
+            }
+
             function loadModalVideo(video) {
                 if (!video) return;
+                if (window.mqiuMedia && window.mqiuMedia.loadOnDemand) {
+                    return window.mqiuMedia.loadOnDemand(video);
+                }
                 var poster = video.dataset.lazyPoster;
                 if (poster && !video.getAttribute('poster')) {
                     video.setAttribute('poster', poster);
@@ -297,17 +304,23 @@
                     video.setAttribute('src', source);
                     video.load();
                 }
+                return Promise.resolve(video.readyState >= 2);
             }
 
             watch(showVideoModal, function (val) {
+                if (val && window.mqiuMedia) window.mqiuMedia.setModalActive(true);
                 if (val) {
                     // Wait for transition to start rendering before trying to play
                     nextTick(function () {
                         nextTick(function () {
                             lucide.createIcons();
                             if (modalVideo.value) {
-                                loadModalVideo(modalVideo.value);
-                                modalVideo.value.play().catch(function () {});
+                                var video = modalVideo.value;
+                                loadModalVideo(video).then(function (ready) {
+                                    if (ready && showVideoModal.value && video.isConnected) {
+                                        video.play().catch(function () {});
+                                    }
+                                });
                             }
                         });
                     });
@@ -617,6 +630,7 @@
                     gsap.set('body', { opacity: 1 });
 
                     // ── Animation Sequence (starts after the Vue app mounts) ──
+                    window.dispatchEvent(new Event('mqiu:media-init'));
                     if (window.__startPreloaderAnimation) window.__startPreloaderAnimation();
                     (window.__preloaderReady || Promise.resolve()).then(function() {
                         var tl = gsap.timeline();
@@ -774,6 +788,7 @@
                 showVideoModal: showVideoModal,
                 openVideoModal: openVideoModal,
                 closeVideoModal: closeVideoModal,
+                onVideoModalAfterLeave: onVideoModalAfterLeave,
                 modalVideo: modalVideo
             };
         }

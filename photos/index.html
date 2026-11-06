@@ -2529,6 +2529,7 @@
                             gsap.set('body', { opacity: 1 });
 
                             // ── Animation Sequence (starts after the Vue app mounts) ──
+                            window.dispatchEvent(new Event('mqiu:media-init'));
                             if (window.__startPreloaderAnimation) window.__startPreloaderAnimation();
                             (window.__preloaderReady || Promise.resolve()).then(function() {
                                 var tl = gsap.timeline();
